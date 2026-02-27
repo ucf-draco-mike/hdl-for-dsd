@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3.4: Blocking vs. Nonblocking — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 3 · Procedural Combinational Logic
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Blocking vs. Nonblocking</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~6 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Rule (For Now)</h2>
+    <div class="golden-rule" style="font-size:1.1em;margin-top:1em;">
+        Combinational → <code>=</code> (blocking)<br>
+        Sequential → <code>&lt;=</code> (nonblocking)
+    </div>
+    <pre class="synth fragment" style="margin-top:1em;"><code class="language-verilog">// Combinational: use =
+always @(*) begin
+    y = a & b;       // blocking — evaluates immediately
+end
+
+// Sequential: use <=  (Day 4)
+always @(posedge clk) begin
+    q <= d;          // nonblocking — all update "at once"
+end</code></pre>
+    <aside class="notes">Here's the simple rule. For combinational always-star blocks, use blocking assignment, equals sign. For sequential always-posedge blocks, use nonblocking, less-than-equals. We'll explain WHY on Day 4. For now, memorize this rule.</aside>
+</section>
+<section>
+    <h2>Why This Matters (Preview)</h2>
+    <p style="font-size:0.85em;">Mixing them up causes simulation/synthesis mismatches:</p>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="panel panel-good" style="font-size:0.7em;">
+            <strong>Correct:</strong> <code>=</code> in <code>@(*)</code><br>
+            Immediate evaluation, like wires.
+        </div>
+        <div class="panel panel-bad" style="font-size:0.7em;">
+            <strong>Dangerous:</strong> <code>=</code> in <code>@(posedge clk)</code><br>
+            Creates race conditions between registers.
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:1em;">
+        Day 4 will show you the exact failure mode with a timing diagram. For now: <strong>memorize the rule</strong>.
+    </div>
+    <aside class="notes">Mixing them up causes real problems. We'll see the exact failure mode on Day 4 with timing diagrams. For now, just memorize: equals in always-star, less-than-equals in always-posedge.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;<code>=</code> (blocking) for combinational <code>always @(*)</code>.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;<code>&lt;=</code> (nonblocking) for sequential <code>always @(posedge clk)</code>.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing them causes race conditions — Day 4 will prove it.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 3 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

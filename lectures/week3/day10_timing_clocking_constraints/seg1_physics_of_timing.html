@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.1: The Physics of Timing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 10 · Timing, Clocking &amp; Constraints
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The Physics of Timing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Why Timing Matters</h2>
+    <p style="font-size:0.85em;">Every gate and wire has a <strong>propagation delay</strong>. Signals take time to travel through combinational logic between flip-flops.</p>
+    <p class="fragment" style="font-size:0.85em;">If the signal arrives <strong>too late</strong>, the receiving flip-flop captures garbage.</p>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:1em;">
+        Timing determines the maximum clock frequency of your design.
+    </div>
+    <aside class="notes">Every gate and wire has propagation delay. If signals arrive at a flip-flop too late — after the setup time — the flip-flop captures garbage. Timing determines your maximum clock frequency.</aside>
+</section>
+<section>
+    <h2>Setup and Hold Time</h2>
+    <pre style="font-family:monospace;font-size:0.5em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+         ┌───┐       ┌───┐
+clk  ────┘   └───────┘   └────
+             ↑
+         ←t_su→←t_h→
+     data must  data must
+     be stable  stay stable
+     BEFORE     AFTER
+    </pre>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Setup time (t_su):</strong> Data must be stable <em>before</em> the clock edge</p>
+        <p class="fragment"><strong>Hold time (t_h):</strong> Data must stay stable <em>after</em> the clock edge</p>
+        <p class="fragment"><strong>Violation:</strong> Metastability or incorrect capture. Design fails.</p>
+    </div>
+    <aside class="notes">Setup time: data must be stable before the clock edge. Hold time: data must remain stable after. Violate either one and you get metastability or incorrect capture. This is why timing analysis exists.</aside>
+</section>
+<section>
+    <h2>Critical Path and Slack</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Critical path:</strong> The longest combinational delay between any two flip-flops. This limits your maximum clock frequency.</p>
+        <p class="fragment"><strong>Slack:</strong> How much time margin you have.<br>
+            <code>slack = clock_period − (propagation_delay + setup_time)</code></p>
+        <p class="fragment"><span style="color:#2E7D32;">Positive slack ✓</span> = timing is met. Design works at this frequency.</p>
+        <p class="fragment"><span style="color:#C62828;">Negative slack ✗</span> = timing violated. Design may fail unpredictably.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>At 25 MHz:</strong> clock period = 40 ns. Plenty of room for simple iCE40 designs. Timing becomes critical at higher frequencies or with deep logic chains.
+    </div>
+    <aside class="notes">Critical path is the longest delay between flip-flops. Slack is your timing margin. Positive slack means the design meets timing. Negative means it may fail. At 25 MHz with a 40 ns period, most simple designs have plenty of margin.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Every gate/wire has delay. Signals must arrive before setup time.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Critical path = longest delay = limits max frequency.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Slack = clock_period − (delay + setup). Positive = good. Negative = broken.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;25 MHz (40 ns) gives plenty of margin for simple iCE40 designs.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Timing Constraints &amp; Reports</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Telling the tools what clock you have — and reading the results.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

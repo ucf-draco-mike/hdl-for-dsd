@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.3: The iCE40 PLL — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 10 · Timing, Clocking &amp; Constraints
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The iCE40 PLL</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>What Is a PLL?</h2>
+    <p style="font-size:0.85em;">A <strong>Phase-Locked Loop</strong> generates a new clock frequency from a reference clock. The iCE40 has a built-in PLL primitive.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Input:</strong> 25 MHz crystal oscillator</p>
+        <p class="fragment"><strong>Output:</strong> Nearly any frequency from ~16 MHz to ~275 MHz</p>
+        <p class="fragment"><strong>Lock signal:</strong> Goes high when the PLL output is stable</p>
+    </div>
+    <pre class="synth fragment"><code class="language-bash"># Use icepll to calculate divider values
+$ icepll -i 25 -o 50
+# F_PLLIN: 25.000 MHz  F_PLLOUT: 50.000 MHz
+# DIVR: 0  DIVF: 31  DIVQ: 4  FILTER_RANGE: 2</code></pre>
+    <aside class="notes">The PLL generates custom frequencies from the 25 MHz crystal. The icepll command-line tool calculates the divider values you need. Feed it input and output frequencies, and it gives you the parameters.</aside>
+</section>
+<section>
+    <h2>PLL Instantiation</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>wire w_pll_clk, w_pll_locked;
+
+SB_PLL40_CORE #(
+    .FEEDBACK_PATH("SIMPLE"),
+<span class="fragment">    .DIVR(4'b0000),         // from icepll
+    .DIVF(7'b0011111),      // from icepll
+    .DIVQ(3'b100),          // from icepll
+    .FILTER_RANGE(3'b010)   // from icepll</span>
+) pll_inst (
+<span class="fragment">    .REFERENCECLK(i_clk),   // 25 MHz input
+    .PLLOUTCORE(w_pll_clk), // generated clock
+    .LOCK(w_pll_locked),    // stable indicator
+    .RESETB(1'b1),          // active-low reset
+    .BYPASS(1'b0)</span>
+);</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Always wait for <code>LOCK</code></strong> before using the PLL clock. Use <code>!w_pll_locked</code> as your reset condition.
+    </div>
+    <aside class="notes">Instantiate the SB_PLL40_CORE primitive with the divider values from icepll. Always wait for the LOCK signal before using the PLL clock. Use not-locked as your reset.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;PLL generates custom frequencies from 25 MHz reference.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Use <code>icepll -i 25 -o &lt;target&gt;</code> to get divider values.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Instantiate <code>SB_PLL40_CORE</code> with those values.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Always wait for <code>LOCK</code> — use <code>!locked</code> as reset.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Clock Domain Crossing</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">When signals move between different clocks — and how to handle it safely.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

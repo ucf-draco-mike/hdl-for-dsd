@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 9.1: ROM in Verilog — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 9 · Memory: RAM, ROM &amp; Block RAM
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">ROM in Verilog</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>What Is ROM in an FPGA?</h2>
+    <p style="font-size:0.85em;">ROM = Read-Only Memory. Data is fixed at synthesis/programming time.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Use cases:</strong> lookup tables, character maps, sine tables, instruction memory, configuration data</p>
+        <p class="fragment"><strong>FPGA reality:</strong> No true ROM hardware. ROM is implemented as either LUTs (small) or initialized block RAM (large).</p>
+    </div>
+    <aside class="notes">ROM in an FPGA isn't a separate chip — it's either LUT logic or initialized block RAM. Use it for lookup tables, character maps, instruction memory, and fixed data patterns.</aside>
+</section>
+<section>
+    <h2>Approach 1: <code>case</code>-Based ROM</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module rom_case (
+    input  wire [3:0] i_addr,
+    output reg  [7:0] o_data
+);
+    always @(*) begin
+        case (i_addr)
+<span class="fragment">            4'h0: o_data = 8'h3E;
+            4'h1: o_data = 8'h41;
+            4'h2: o_data = 8'h49;
+            // ... up to 15 entries
+            default: o_data = 8'h00;</span>
+        endcase
+    end
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Pros:</strong> Readable, easy to edit. <strong>Cons:</strong> Doesn't scale — 256 entries = 256 case items.
+    </div>
+    <aside class="notes">A case-based ROM is just a case statement. Works great for small lookup tables — the 7-segment decoder from Day 2 was exactly this pattern. But it doesn't scale beyond a few dozen entries.</aside>
+</section>
+<section>
+    <h2>Approach 2: Array + <code>$readmemh</code></h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module rom_array #(
+    parameter ADDR_WIDTH = 8,
+    parameter DATA_WIDTH = 8,
+    parameter MEM_FILE   = "rom_data.hex"
+)(
+    input  wire [ADDR_WIDTH-1:0] i_addr,
+    output wire [DATA_WIDTH-1:0] o_data
+);
+<span class="fragment">    reg [DATA_WIDTH-1:0] r_mem [0:(1<<ADDR_WIDTH)-1];
+
+    initial begin
+        $readmemh(MEM_FILE, r_mem);  // load from hex file
+    end</span>
+<span class="fragment">
+    assign o_data = r_mem[i_addr];  // asynchronous read</span>
+endmodule</code></pre>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Async read → LUT-based.</strong> For block RAM inference, you need a synchronous (clocked) read. Next slide.
+    </div>
+    <aside class="notes">The standard approach for larger ROMs: declare a memory array, initialize it from a hex file with readmemh. This asynchronous version maps to LUTs. For block RAM inference, you need a synchronous read.</aside>
+</section>
+<section>
+    <h2>Synchronous ROM → Block RAM Inference</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module rom_sync #(
+    parameter ADDR_WIDTH = 8,
+    parameter DATA_WIDTH = 8,
+    parameter MEM_FILE   = "rom_data.hex"
+)(
+    input  wire                  i_clk,
+    input  wire [ADDR_WIDTH-1:0] i_addr,
+    output reg  [DATA_WIDTH-1:0] o_data
+);
+    reg [DATA_WIDTH-1:0] r_mem [0:(1<<ADDR_WIDTH)-1];
+
+    initial $readmemh(MEM_FILE, r_mem);
+
+<span class="fragment">    // Synchronous read — this is the key for block RAM inference
+    always @(posedge i_clk)
+        o_data <= r_mem[i_addr];</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        The <strong>one-cycle read latency</strong> is the price of block RAM. Apply address on cycle N, data available on cycle N+1.
+    </div>
+    <aside class="notes">Add a clock to the read and the synthesizer can infer block RAM. The trade-off: one cycle of latency. Apply the address, and the data appears on the next clock edge. This is how all FPGA block RAM works.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;<code>case</code>-ROM for small tables. Array + <code>$readmemh</code> for larger ones.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Async read → LUT-based. Sync read → <strong>block RAM inference</strong>.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Block RAM has one-cycle read latency — address on cycle N, data on N+1.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Parameterize width, depth, and data file for reuse.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">RAM in Verilog</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Writeable memory — single-port and dual-port patterns.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

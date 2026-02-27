@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7.4: FSM Design Methodology — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 7 · Finite State Machines
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">FSM Design Methodology</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Step-by-Step FSM Design</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>1. Define states:</strong> What modes does the system have?</p>
+        <p class="fragment"><strong>2. Define transitions:</strong> What causes each state change?</p>
+        <p class="fragment"><strong>3. Define outputs:</strong> What does each state produce? (Moore)</p>
+        <p class="fragment"><strong>4. Draw the state diagram:</strong> Circles + arrows + labels</p>
+        <p class="fragment"><strong>5. Code using the 3-block template</strong></p>
+        <p class="fragment"><strong>6. Verify:</strong> Self-checking testbench for every transition</p>
+    </div>
+    <aside class="notes">Six steps. Define states, transitions, and outputs. Draw the state diagram. Code it using the 3-block template. Verify every transition with a testbench. This is the methodology for every FSM.</aside>
+</section>
+<section>
+    <h2>Example: Traffic Light Controller</h2>
+    <pre style="font-family:monospace;font-size:0.5em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+         ┌───────────────┐  timer expires
+         │               ▼
+      ┌──────┐      ┌──────┐
+      │GREEN │─────►│YELLOW│
+      │ NS   │      │ NS   │
+      └──────┘      └──┬───┘
+         ▲              │ timer expires
+         │              ▼
+      ┌──────┐      ┌──────┐
+      │YELLOW│◄─────│GREEN │
+      │ EW   │      │ EW   │
+      └──────┘      └──────┘
+         timer expires
+    </pre>
+    <p style="font-size:0.7em;text-align:center;">Four states, each with a timer. When the timer expires, advance to the next state.</p>
+    <aside class="notes">Traffic light: four states cycling with timers. Green NS, Yellow NS, Green EW, Yellow EW. Each has a timer that triggers the transition. This is a classic FSM example that maps perfectly to the 3-block template.</aside>
+</section>
+<section>
+    <h2>Common FSM Mistakes</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#C62828;">✗</span> <strong>No default in next-state logic</strong> → latch on <code>r_next_state</code></p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> <strong>Forgetting output defaults</strong> → latches on output signals</p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> <strong>Using <code>=</code> in the state register</strong> → should be <code>&lt;=</code></p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> <strong>No <code>default</code> case</strong> → stuck in illegal state forever</p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> <strong>Putting logic in Block 1</strong> → keep it as a simple flip-flop</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Checklist:</strong> Default assignment in Blocks 2 &amp; 3 ✓ · <code>default</code> case in both ✓ · <code>&lt;=</code> in Block 1 ✓ · <code>=</code> in Blocks 2 &amp; 3 ✓
+    </div>
+    <aside class="notes">Common mistakes: forgetting defaults causes latches. Using blocking in the state register. No default case leaves you stuck in illegal states. Put logic in Block 1. The checklist at the bottom should be your go-to before submitting any FSM.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Methodology: states → transitions → outputs → diagram → code → test.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;3-block template works for any FSM. Memorize it.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Checklist: defaults in Blocks 2 &amp; 3, <code>default</code> case, correct assignments.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Test every transition — including reset and illegal states.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 7 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.4: Clock Domain Crossing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 10 · Timing, Clocking &amp; Constraints
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Clock Domain Crossing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Clock Domain Crossing Problem</h2>
+    <p style="font-size:0.85em;">Signals generated in one clock domain can violate setup/hold when sampled in another. This is <strong>exactly the metastability problem from Day 5</strong> — but between two clocks instead of async input vs. clock.</p>
+    <div class="fragment callout-danger" style="font-size:0.8em;">
+        <strong>Single-bit crossing:</strong> Use the 2-FF synchronizer — same as Day 5.<br>
+        <strong>Multi-bit crossing:</strong> Much harder. Different bits can arrive at different times → corrupted values.
+    </div>
+    <aside class="notes">Clock domain crossing is the metastability problem between two clocks. Single-bit: use a 2-FF synchronizer. Multi-bit is harder because different bits can arrive at different times, causing corrupted intermediate values.</aside>
+</section>
+<section>
+    <h2>Multi-Bit CDC: Gray Code</h2>
+    <pre class="synth"><code class="language-verilog">// Binary to Gray: only one bit changes per increment
+assign gray = binary ^ (binary >> 1);
+
+// Gray to Binary: reconstruct from MSB down
+assign binary[N-1] = gray[N-1];
+generate
+    for (g = N-2; g >= 0; g = g - 1) begin : g2b
+        assign binary[g] = binary[g+1] ^ gray[g];
+    end
+endgenerate</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Safe for counters/pointers:</strong> Gray code guarantees only one bit changes per increment, so the receiver sees either the old or new value — never a corrupted mix.
+    </div>
+    <aside class="notes">Gray code guarantees only one bit changes per increment. Synchronize the Gray-coded value across clock domains, then convert back to binary. The receiver sees either the old value or the new value, never a corrupt mix. This is the foundation of dual-clock FIFOs.</aside>
+</section>
+<section>
+    <h2>When To Worry About CDC</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#C62828;">✗</span> PLL clock domain ↔ raw 25 MHz domain</p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> Data from another chip with a different clock</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> External async inputs (already handled with synchronizers)</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> Single-clock designs have <strong>zero</strong> CDC problems</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        Rule: avoid unnecessary clock domains. One clock = zero CDC problems.
+    </div>
+    <aside class="notes">The best CDC strategy is avoidance. One clock means zero CDC problems. Every additional clock multiplies verification complexity. Only add clock domains when you truly need different frequencies.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;CDC = metastability between two clock domains.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Single-bit: 2-FF synchronizer. Multi-bit: Gray code.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;One clock = zero CDC problems. Avoid unnecessary domains.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;If you must cross: Gray-coded counters or async FIFOs.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 10 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

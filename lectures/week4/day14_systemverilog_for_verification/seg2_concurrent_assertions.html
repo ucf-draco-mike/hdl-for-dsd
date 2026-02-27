@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.2: Concurrent Assertions — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 14 · SystemVerilog for Verification
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Concurrent Assertions</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Multi-Cycle Protocol Checks</h2>
+    <p style="font-size:0.85em;">Immediate assertions check one moment. <strong>Concurrent assertions</strong> check sequences across multiple clock cycles — perfect for protocol verification.</p>
+    <pre class="sim"><code class="language-verilog" data-noescape><span class="fragment">// After valid is asserted, busy must go high next cycle
+property p_valid_then_busy;
+    @(posedge i_clk) disable iff (i_reset)
+    i_valid |=> o_busy;      // |=> = non-overlapping implication
+endproperty
+
+assert property (p_valid_then_busy)
+    else $error("Busy not asserted after valid");</span></code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <code>|=></code> means "if the left side is true, then one cycle later the right side must be true." The assertion checks this on <em>every</em> clock edge.
+    </div>
+    <aside class="notes">Concurrent assertions check sequences across clock cycles. The implication operator says: if the left side is true, then the right side must follow. This checks every clock edge, continuously, for the entire simulation.</aside>
+</section>
+<section>
+    <h2>Common Sequence Operators</h2>
+    <table style="font-size:0.65em;margin-top:0.5em;">
+        <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+            <tr><td><code>##1</code></td><td>One cycle delay</td><td><code>a ##1 b</code> — a, then b next cycle</td></tr>
+            <tr><td><code>##[1:3]</code></td><td>1-to-3 cycle delay</td><td><code>a ##[1:3] b</code> — b within 1-3 cycles</td></tr>
+            <tr><td><code>|‑></code></td><td>Overlapping implication</td><td>if a, then b <em>same cycle</em></td></tr>
+            <tr><td><code>|=></code></td><td>Non-overlapping</td><td>if a, then b <em>next cycle</em></td></tr>
+            <tr><td><code>[*N]</code></td><td>Repetition</td><td><code>a[*3]</code> — a for 3 consecutive cycles</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">Key operators: hash-hash for cycle delays, implication arrows for if-then relationships, and repetition for consecutive cycles. These compose into powerful protocol checks.</aside>
+</section>
+<section>
+    <h2>UART Protocol Assertions</h2>
+    <pre class="sim"><code class="language-verilog" data-noescape>// TX line high when idle
+property p_idle_high;
+    @(posedge i_clk) disable iff (i_reset)
+    (state == S_IDLE) |-> (o_tx == 1'b1);
+endproperty
+<span class="fragment">
+// Start bit is low
+property p_start_low;
+    @(posedge i_clk) disable iff (i_reset)
+    (state == S_START) |-> (o_tx == 1'b0);
+endproperty</span>
+<span class="fragment">
+// After stop, return to idle
+property p_stop_then_idle;
+    @(posedge i_clk) disable iff (i_reset)
+    (state == S_STOP && w_baud_tick) |=> (state == S_IDLE);
+endproperty</span></code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        These assertions monitor protocol compliance on <strong>every clock cycle</strong> of <strong>every simulation</strong>. No waveform inspection needed.
+    </div>
+    <aside class="notes">Four assertions that completely describe UART TX protocol compliance. Idle must be high, start must be low, stop must be high, and the FSM must return to idle after stop. These run continuously — any violation is caught instantly.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Concurrent assertions check multi-cycle sequences — perfect for protocols.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;<code>|=></code> (non-overlapping): if A, then B next cycle.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;<code>disable iff (reset)</code>: don't check during reset.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Write once, check every cycle of every simulation — always-on monitors.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Functional Coverage</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Answering the question: have we tested enough?</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

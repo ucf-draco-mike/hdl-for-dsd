@@ -1,0 +1,74 @@
+# =============================================================================
+# Makefile Template — iCE40 Go Board Projects
+# Accelerated HDL for Digital System Design · UCF
+# =============================================================================
+# Usage:
+#   make           → synthesize, place & route, generate bitstream
+#   make prog      → program the Go Board
+#   make sim       → simulate with Icarus Verilog + GTKWave
+#   make show      → visualize synthesized netlist in Yosys
+#   make stat      → print resource utilization
+#   make clean     → remove all build artifacts
+#
+# To use in a new project, copy this file and set PROJECT, TOP, and SRCS.
+# =============================================================================
+
+# ---- Project Configuration ----
+PROJECT  ?= my_project
+TOP      ?= $(PROJECT)
+PCF      ?= ../../shared/pcf/go_board.pcf
+
+# Source files — add all .v and .sv files for your project
+SRCS     ?= $(wildcard *.v) $(wildcard *.sv)
+
+# Testbench — override with: make sim TB=tb_my_module.v
+TB       ?= tb_$(PROJECT).v
+
+# ---- FPGA Configuration ----
+DEVICE   = hx1k
+PACKAGE  = vq100
+
+# ---- Tool Flags ----
+YOSYS_FLAGS   = -p "synth_ice40 -top $(TOP) -json $(PROJECT).json"
+NEXTPNR_FLAGS = --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) --json $(PROJECT).json --asc $(PROJECT).asc
+IVERILOG_FLAGS = -g2012 -Wall
+
+# ---- Build Targets ----
+
+all: $(PROJECT).bin
+
+$(PROJECT).json: $(SRCS)
+	yosys $(YOSYS_FLAGS) $(SRCS)
+
+$(PROJECT).asc: $(PROJECT).json $(PCF)
+	nextpnr-ice40 $(NEXTPNR_FLAGS)
+
+$(PROJECT).bin: $(PROJECT).asc
+	icepack $< $@
+
+# ---- Programming ----
+prog: $(PROJECT).bin
+	iceprog $<
+
+# ---- Simulation ----
+sim: $(TB) $(SRCS)
+	iverilog $(IVERILOG_FLAGS) -o sim.vvp $(TB) $(filter-out $(TB),$(SRCS))
+	vvp sim.vvp
+	@echo ""
+	@echo "=== Simulation complete. Open waveforms with: gtkwave dump.vcd ==="
+
+wave: sim
+	gtkwave dump.vcd &
+
+# ---- Analysis ----
+show: $(SRCS)
+	yosys -p "read_verilog -sv $(SRCS); synth_ice40 -top $(TOP); show"
+
+stat: $(SRCS)
+	yosys -p "read_verilog -sv $(SRCS); synth_ice40 -top $(TOP); stat"
+
+# ---- Cleanup ----
+clean:
+	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
+
+.PHONY: all prog sim wave show stat clean

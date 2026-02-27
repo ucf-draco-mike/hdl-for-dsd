@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12.2: UART RX Implementation — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 12 · UART RX, SPI &amp; IP Integration
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART RX Implementation</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>UART RX Module Structure</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module uart_rx #(
+    parameter CLK_FREQ  = 25_000_000,
+    parameter BAUD_RATE = 115_200
+)(
+    input  wire       i_clk, i_reset,
+    input  wire       i_rx,          // serial input (async!)
+    output reg  [7:0] o_data,        // received byte
+    output reg        o_valid        // one-cycle pulse when ready
+);
+<span class="fragment">    localparam CLKS_PER_OS = CLK_FREQ / (BAUD_RATE * 16);  // ~13
+
+    // Synchronizer (RX is async!)
+    reg r_rx_sync_0, r_rx_sync;
+    always @(posedge i_clk) begin
+        r_rx_sync_0 <= i_rx;
+        r_rx_sync   <= r_rx_sync_0;
+    end</span></code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        Built-in 2-FF synchronizer — the RX pin is asynchronous to our clock. Everything downstream uses <code>r_rx_sync</code>.
+    </div>
+    <aside class="notes">The RX module starts with a built-in 2-FF synchronizer because the RX pin is asynchronous. The oversample counter ticks at 16 times the baud rate. Everything downstream uses the synchronized signal.</aside>
+</section>
+<section>
+    <h2>RX FSM States</h2>
+    <pre style="font-family:monospace;font-size:0.55em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+    ┌──────┐ falling   ┌───────┐ mid-bit    ┌──────┐
+    │ IDLE │──────────►│ START │───────────►│ DATA │
+    │      │  edge     │verify │  confirmed │ ×8   │
+    └──────┘           └───┬───┘            └──┬───┘
+       ▲                   │ noise              │ 8 bits done
+       │                   │ (abort)            ▼
+       │                   ▼               ┌──────┐
+       │              ┌──────┐             │ STOP │
+       └──────────────│ back │◄────────────│verify│
+                      │to idle│            └──────┘
+    </pre>
+    <div style="font-size:0.75em;margin-top:0.5em;">
+        <p class="fragment"><strong>IDLE:</strong> Wait for falling edge (start bit)</p>
+        <p class="fragment"><strong>START:</strong> Count to mid-bit (7 oversamples). Verify still low.</p>
+        <p class="fragment"><strong>DATA:</strong> Count 16 oversamples per bit. Sample at center. 8 bits.</p>
+        <p class="fragment"><strong>STOP:</strong> Verify stop bit is high. Assert <code>o_valid</code>.</p>
+    </div>
+    <aside class="notes">Four states. IDLE waits for a falling edge. START counts to mid-bit and verifies it's a real start bit. DATA collects 8 bits at the center of each bit period. STOP verifies the stop bit and pulses o_valid.</aside>
+</section>
+<section>
+    <h2>The Loopback Test</h2>
+    <pre class="synth"><code class="language-verilog">// Loopback: RX → TX (echo everything back)
+uart_rx #(.CLK_FREQ(25_000_000)) rx_inst (
+    .i_clk(i_clk), .i_reset(i_reset),
+    .i_rx(i_uart_rx),
+    .o_data(w_rx_data), .o_valid(w_rx_valid)
+);
+
+uart_tx #(.CLK_FREQ(25_000_000)) tx_inst (
+    .i_clk(i_clk), .i_reset(i_reset),
+    .i_valid(w_rx_valid), .i_data(w_rx_data),
+    .o_tx(o_uart_tx), .o_busy()
+);</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Loopback:</strong> Type in the terminal → RX receives → TX echoes back → you see what you typed. If it works, both RX and TX are correct.
+    </div>
+    <aside class="notes">The loopback test: connect RX output to TX input. Type a character in the terminal, the FPGA receives it and echoes it back. If you see what you typed, both modules work correctly. This is your hardware verification.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;RX FSM: IDLE → START (verify) → DATA (8 bits) → STOP (valid pulse).
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Built-in synchronizer — RX is always asynchronous.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Loopback test: RX → TX echo. Type and see your character returned.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;If loopback works, both RX and TX are verified on real hardware.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">SPI Protocol</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The other serial protocol — with a shared clock and chip select.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 15: Integration Briefing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 15 · Final Project Build Day
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Integration Strategy</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 0 of 4 · ~0 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Integration Trap</h2>
+    <div class="golden-rule" style="font-size:1.1em;margin-top:1em;">
+        Big Bang Integration: write everything, connect everything, hope it works.
+    </div>
+    <p class="fragment" style="font-size:0.9em;text-align:center;margin-top:1em;color:#C62828;">
+        It never works.
+    </p>
+    <p class="fragment" style="font-size:0.85em;text-align:center;">
+        Wall of errors. No idea which module is broken. No path forward.
+    </p>
+    <aside class="notes">Big bang integration is the number one failure mode on project day. The fix is incremental integration.</aside>
+</section>
+<section>
+    <h2>Incremental Integration</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Step 1:</strong> Verify module library — all testbenches pass</p>
+        <p class="fragment"><strong>Step 2:</strong> Skeleton top module + heartbeat LED → synthesize immediately</p>
+        <p class="fragment"><strong>Step 3:</strong> Add ONE module. Synthesize. Verify on hardware. Repeat.</p>
+        <p class="fragment"><strong>Step 4:</strong> UART printf debugging for hardware-only issues</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
+        Each step produces a <strong>working</strong> system. If something breaks, it was the last thing you added.
+    </div>
+    <aside class="notes">Four steps. The key insight: each step produces a working system. When something breaks, you know exactly what caused it — the last module you added.</aside>
+</section>
+<section>
+    <h2>Today's Plan</h2>
+    <table style="font-size:0.75em;">
+        <tbody>
+            <tr><td><strong>Now–0:15</strong></td><td>This briefing (done soon!)</td></tr>
+            <tr><td><strong>0:15–0:45</strong></td><td>Individual check-ins (I come to you)</td></tr>
+            <tr><td><strong>0:45–2:00</strong></td><td>Build time (I'm on call)</td></tr>
+            <tr><td><strong>2:00–2:15</strong></td><td>Status round (30 sec each)</td></tr>
+            <tr><td><strong>2:15–2:30</strong></td><td>Buffer / overflow debugging</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        Something must work on hardware by tomorrow.
+    </div>
+    <aside class="notes">15 minutes of briefing, then build time. Status round at 2pm is public — commit to what you will have ready.</aside>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

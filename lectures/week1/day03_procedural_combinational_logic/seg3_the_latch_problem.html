@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3.3: The Latch Problem — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 3 · Procedural Combinational Logic
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The Latch Problem</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>What Is an Unintentional Latch?</h2>
+    <p style="font-size:0.85em;">If a signal assigned in an <code>always @(*)</code> block is <strong>not assigned in every possible path</strong>, the synthesizer must preserve its old value.</p>
+    <p class="fragment" style="font-size:0.85em;">The only hardware that "remembers" a value without a clock is a <strong>latch</strong>.</p>
+    <div class="fragment callout-danger" style="font-size:0.8em;">
+        Latches are almost never what you want. They are timing-hazard-prone, hard to test, and most FPGA tools handle them poorly.
+    </div>
+    <aside class="notes">If a signal isn't assigned in every path through an always-star block, the synthesizer infers a latch to hold the old value. Latches are almost never what you want — they cause timing hazards and are hard to test.</aside>
+</section>
+<section>
+    <h2>How Latches Are Inferred</h2>
+    <pre class="mistake"><code class="language-verilog" data-noescape>always @(*) begin
+    if (sel)
+        y = a;
+    // NO else! What happens when sel=0?
+    // y must keep its old value → LATCH inferred
+end</code></pre>
+    <pre class="mistake fragment"><code class="language-verilog" data-noescape>always @(*) begin
+    case (opcode)
+        2'b00: result = a + b;
+        2'b01: result = a - b;
+        // 2'b10 and 2'b11 not specified → LATCH
+    endcase
+end</code></pre>
+    <aside class="notes">Two classic latch inference patterns. First: if without else. When sel is 0, y must keep its old value, so a latch is inferred. Second: incomplete case — missing entries mean the output holds its value.</aside>
+</section>
+<section>
+    <h2>Three Techniques to Prevent Latches</h2>
+    <div style="font-size:0.8em;">
+    <div class="fragment">
+        <h3 style="color:#2E7D32;">① Default assignment at the top</h3>
+        <pre class="synth"><code class="language-verilog">always @(*) begin
+    y = 4'b0;          // default — covers ALL paths
+    if (sel) y = a;    // override only when needed
+end</code></pre>
+    </div>
+    <div class="fragment">
+        <h3 style="color:#2E7D32;">② Complete if/else chains</h3>
+        <pre class="synth"><code class="language-verilog">always @(*) begin
+    if (sel) y = a;
+    else     y = b;    // every path assigns y
+end</code></pre>
+    </div>
+    <div class="fragment">
+        <h3 style="color:#2E7D32;">③ Default in case statements</h3>
+        <pre class="synth"><code class="language-verilog">always @(*) begin
+    case (opcode)
+        2'b00: result = a + b;
+        2'b01: result = a - b;
+        default: result = 4'b0; // catches everything else
+    endcase
+end</code></pre>
+    </div></div>
+    <aside class="notes">Three techniques. One: default assignment at the top of the block — this is my preferred approach. Two: complete if/else chains, always have an else. Three: default case in case statements. Technique 1 is the safest because it works globally.</aside>
+</section>
+<section>
+    <h2>How to Detect Latches</h2>
+    <pre class="synth"><code class="language-bash"># Yosys will TELL you if it infers a latch:
+yosys -p "synth_ice40 -top my_module" my_module.v
+
+# Look for this in the output:
+# Warning: Latch inferred for signal `\y'</code></pre>
+    <div class="callout" style="font-size:0.8em;margin-top:1em;">
+        <strong>In lab today:</strong> you'll intentionally create a latch, see Yosys warn about it, then fix it. Never ignore latch warnings.
+    </div>
+    <aside class="notes">Yosys tells you when it infers a latch. Look for the warning in the synthesis output. In lab today you'll intentionally create one, see the warning, and fix it. Never ignore latch warnings.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Incomplete assignments in <code>always @(*)</code> → <strong>latch</strong>.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Latches are almost never intentional. Treat latch warnings as errors.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Prevention: default assignment at the top, complete else chains, default case.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Yosys will warn you — <strong>never ignore latch warnings</strong>.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Blocking vs. Nonblocking</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~6 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The simple rule that will save you from one of Verilog's biggest pitfalls.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

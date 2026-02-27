@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.1: Assertions — Executable Specs — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 14 · SystemVerilog for Verification
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Assertions</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>What Are Assertions?</h2>
+    <p style="font-size:0.85em;">An assertion is a statement that must <strong>always</strong> be true. If it's ever false during simulation, the simulator reports an error.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Executable documentation:</strong> Design rules the simulator checks automatically</p>
+        <p class="fragment"><strong>Always-on monitors:</strong> Unlike directed tests, assertions run continuously</p>
+        <p class="fragment"><strong>Bug locators:</strong> Fire at the exact signal and time of the violation</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        Directed tests check specific moments. Assertions check <em>every</em> moment.
+    </div>
+    <aside class="notes">Assertions are executable specifications. They describe rules that must always be true and the simulator checks them automatically, continuously, on every cycle. When a rule is violated, the assertion fires with the exact signal and time. Much more powerful than directed test checks.</aside>
+</section>
+<section>
+    <h2>Immediate Assertions</h2>
+    <pre class="sim"><code class="language-verilog" data-noescape>always_ff @(posedge i_clk) begin
+    state <= next_state;
+
+<span class="fragment">    // Assert: state should never be undefined
+    assert (state !== 'x)
+        else $error("State is undefined at time %0t", $time);</span>
+
+<span class="fragment">    // Assert: don't accept data while busy
+    assert (!(o_busy && i_valid))
+        else $warning("Valid asserted while busy");</span>
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Severity levels:</strong> <code>$info</code> (note), <code>$warning</code> (potential issue), <code>$error</code> (definite bug), <code>$fatal</code> (stop simulation).
+    </div>
+    <aside class="notes">Immediate assertions check a condition at a specific point in procedural code. If the condition is false, the else clause fires with the specified severity. Use $error for definite bugs, $warning for potential issues, $fatal to stop simulation immediately.</aside>
+</section>
+<section>
+    <h2>Assertions in Design Modules</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module counter_mod_n #(parameter int N = 16) (
+    input  logic                 i_clk, i_reset, i_enable,
+    output logic [$clog2(N)-1:0] o_count
+);
+    always_ff @(posedge i_clk) begin
+        if (i_reset) o_count <= '0;
+        else if (i_enable)
+            o_count <= (o_count == N-1) ? '0 : o_count + 1;
+    end
+
+<span class="fragment">    // Design assertion — runs every cycle, ignored by synthesis
+    always_ff @(posedge i_clk)
+        assert (o_count < N)
+            else $fatal(1, "Counter exceeded max: %0d >= %0d",
+                        o_count, N);</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        Assertions in RTL are ignored by synthesis but active during <em>every</em> simulation. Always-on bug detection.
+    </div>
+    <aside class="notes">You can embed assertions directly in design RTL. Synthesis ignores them, but they're active during every simulation. This assertion fires immediately if a bug ever causes the counter to exceed its maximum. Compare that to manually inspecting waveforms.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Assertions = executable specifications. Always on, every cycle.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Immediate assertions: checked at a specific point in procedural code.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Embed in RTL: ignored by synthesis, active in simulation.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Severity: <code>$info</code> → <code>$warning</code> → <code>$error</code> → <code>$fatal</code>.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Concurrent Assertions</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Checking multi-cycle protocol behavior — sequences and properties.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

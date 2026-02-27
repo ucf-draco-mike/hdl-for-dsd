@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7.2: The 3-Always-Block Style — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 7 · Finite State Machines
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The 3-Always-Block Style</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The 3-Always-Block Template</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// ===== State Encoding =====
+localparam S_IDLE = 2'b00;
+localparam S_RUN  = 2'b01;
+localparam S_DONE = 2'b10;
+
+reg [1:0] r_state, r_next_state;
+<span class="fragment">
+// ===== Block 1: State Register (Sequential) =====
+always @(posedge i_clk) begin
+    if (i_reset) r_state <= S_IDLE;
+    else         r_state <= r_next_state;
+end</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Block 1 is always this simple. Just a flip-flop with reset. <strong>Never put logic here.</strong>
+    </div>
+    <aside class="notes">Block 1 is always trivial — just a flip-flop that loads next_state on each clock edge, with a reset to IDLE. Never put any logic in this block. It's always correct by construction.</aside>
+</section>
+<section>
+    <h2>Block 2: Next-State Logic</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// ===== Block 2: Next-State Logic (Combinational) =====
+always @(*) begin
+    r_next_state = r_state;  // DEFAULT: stay in current state
+<span class="fragment">
+    case (r_state)
+        S_IDLE: begin
+            if (i_start) r_next_state = S_RUN;
+        end
+        S_RUN: begin
+            if (i_done)  r_next_state = S_DONE;
+        end
+        S_DONE: begin
+            r_next_state = S_IDLE;  // unconditional
+        end
+        default: r_next_state = S_IDLE;
+    endcase</span>
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Critical:</strong> <code>r_next_state = r_state;</code> as the first line prevents latches and handles "stay in state" as the default behavior.
+    </div>
+    <aside class="notes">Block 2 computes the next state. The critical line is the default assignment at the top — r_next_state equals r_state. This prevents latches and means if no transition fires, we stay put. The default case catches illegal states.</aside>
+</section>
+<section>
+    <h2>Block 3: Output Logic (Moore)</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// ===== Block 3: Output Logic (Combinational — Moore) =====
+always @(*) begin
+    // Defaults — prevents latches on ALL outputs
+    o_busy    = 1'b0;
+    o_done    = 1'b0;
+    o_led     = 1'b0;
+<span class="fragment">
+    case (r_state)
+        S_IDLE: begin
+            // all defaults — nothing active
+        end
+        S_RUN: begin
+            o_busy = 1'b1;
+            o_led  = 1'b1;
+        end
+        S_DONE: begin
+            o_done = 1'b1;
+        end
+        default: ; // defaults apply
+    endcase</span>
+end</code></pre>
+    <aside class="notes">Block 3 maps states to outputs. Default all outputs first — prevents latches. Then override in each state. Moore style: outputs depend only on r_state, not on any inputs.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Block 1: <code>always @(posedge clk)</code> — just a flip-flop. Always trivial.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Block 2: <code>always @(*)</code> — next-state logic. Default: stay in current state.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Block 3: <code>always @(*)</code> — output logic. Default all outputs first.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Template works for any FSM. Memorize it.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">State Encoding</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~8 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Binary, one-hot, and Gray — how encoding choice affects your hardware.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

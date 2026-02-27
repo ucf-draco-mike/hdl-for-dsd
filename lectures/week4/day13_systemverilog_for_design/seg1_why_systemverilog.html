@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 13.1: Why SystemVerilog? — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 13 · SystemVerilog for Design
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Why SystemVerilog?</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Evolution</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Verilog (IEEE 1364):</strong> Standardized 1995, major update 2001. What you've been writing.</p>
+        <p class="fragment"><strong>SystemVerilog (IEEE 1800):</strong> Superset of Verilog. First standardized 2005, latest revision 2017.</p>
+        <p class="fragment"><strong>Key point:</strong> Every legal Verilog file is legal SystemVerilog. You can mix them freely. Everything you've learned still works.</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        SystemVerilog doesn't replace Verilog — it adds safety features that catch bugs the compiler used to silently accept.
+    </div>
+    <aside class="notes">SystemVerilog is a superset of Verilog. Everything you've written still works. SV adds design features like logic, intent-based always blocks, and enums, plus verification features like assertions and coverage. In industry, SV has largely replaced Verilog for new designs.</aside>
+</section>
+<section>
+    <h2>Why Learn It Now?</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Industry standard:</strong> SystemVerilog has largely replaced Verilog for new designs.</p>
+        <p class="fragment"><strong>Safety:</strong> SV catches bugs that Verilog silently accepts — unintentional latches, wrong assignment types, type mismatches.</p>
+        <p class="fragment"><strong>Readability:</strong> <code>enum</code> states, <code>logic</code> type, <code>always_ff</code>/<code>always_comb</code> make intent explicit.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Today:</strong> Design features — making RTL safer and more readable.<br>
+        <strong>Tomorrow:</strong> Verification features — making testbenches more powerful.
+    </div>
+    <aside class="notes">In industry, SystemVerilog is the standard. The design features catch real bugs — especially unintentional latches, which become compile-time errors instead of silent synthesis warnings. Today is design features, tomorrow is verification.</aside>
+</section>
+<section>
+    <h2>Toolchain Support</h2>
+    <table style="font-size:0.65em;margin-top:0.5em;">
+        <thead><tr><th>Tool</th><th>SV Support</th><th>Flag</th></tr></thead>
+        <tbody>
+            <tr><td>Icarus Verilog</td><td>Partial (<code>logic</code>, <code>always_ff/comb</code>, basic <code>enum</code>)</td><td><code>-g2012</code></td></tr>
+            <tr><td>Verilator</td><td>Excellent (synthesis-oriented)</td><td>Default</td></tr>
+            <tr><td>Yosys</td><td>Good (many design constructs)</td><td><code>read_verilog -sv</code></td></tr>
+            <tr><td>Commercial</td><td>Full (Questa, VCS, Xcelium)</td><td>Default</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        We'll use <code>iverilog -g2012</code> for simulation and <code>yosys read_verilog -sv</code> for synthesis. Some advanced features will be demonstration-only.
+    </div>
+    <aside class="notes">Icarus supports the core design features with the -g2012 flag. Yosys handles most SV synthesis constructs. For the full verification story tomorrow, we'll note where tool support ends and commercial tools begin.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;SystemVerilog is a <strong>superset</strong> of Verilog — all your code still works.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;SV catches bugs Verilog silently accepts (latches, wrong assignments).
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Industry standard for new designs. Learning it now is career-relevant.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;<code>iverilog -g2012</code> and <code>yosys read_verilog -sv</code> for our toolchain.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;"><code>logic</code> — One Type to Rule Them All</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~10 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Replacing the confusing wire/reg distinction.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

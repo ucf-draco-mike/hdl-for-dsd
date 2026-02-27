@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6.1: Testbench Anatomy — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 6 · Testbenches &amp; Simulation-Driven Development
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Testbench Anatomy</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Why Testbenches Are Not Optional</h2>
+    <p style="font-size:0.85em;">From today forward, this is the workflow:</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p><strong>1.</strong> Write the module (DUT)</p>
+        <p><strong>2.</strong> Write the testbench</p>
+        <p><strong>3.</strong> Simulate and verify in GTKWave</p>
+        <p><strong>4.</strong> Fix bugs found in simulation</p>
+        <p><strong>5.</strong> Only then synthesize and program</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        In industry, verification-to-design code ratios are <strong>3:1 to 10:1</strong>. More testbench code than design code. A bug in simulation costs minutes. A bug on hardware costs hours. A bug in an ASIC costs millions.
+    </div>
+    <aside class="notes">From today forward, every design gets a testbench. This is industry standard. Verification to design ratios are 3 to 1 at minimum. A bug found in simulation costs minutes. On hardware, hours. On an ASIC, millions.</aside>
+</section>
+<section>
+    <h2>Testbench Structure</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape><span class="fragment">`timescale 1ns / 1ps            // time unit / precision</span>
+<span class="fragment">
+module tb_my_module;            // NO PORTS — top of simulation</span>
+<span class="fragment">
+    // 1. Signal declarations (reg for inputs, wire for outputs)
+    reg        clk, reset;
+    reg  [3:0] a, b;
+    wire [3:0] result;</span>
+<span class="fragment">
+    // 2. DUT instantiation
+    alu_4bit uut (.i_a(a), .i_b(b), .o_result(result));</span>
+<span class="fragment">
+    // 3. Clock generation
+    initial clk = 0;
+    always #20 clk = ~clk;     // 25 MHz (40ns period)</span>
+<span class="fragment">
+    // 4. Waveform dump
+    initial begin
+        $dumpfile("dump.vcd");
+        $dumpvars(0, tb_my_module);
+    end</span>
+<span class="fragment">
+    // 5. Stimulus
+    initial begin
+        reset = 1; a = 0; b = 0;
+        #100; reset = 0;
+        // ... test cases ...
+        $finish;
+    end</span>
+endmodule</code></pre>
+    <aside class="notes">A testbench has no ports — it's the top of the simulation world. Inputs are reg because you drive them. Outputs are wire because the DUT drives them. Five sections: declarations, DUT instantiation, clock, waveform dump, and stimulus.</aside>
+</section>
+<section>
+    <h2>Key Elements Explained</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Element</th><th>Purpose</th><th>Why</th></tr></thead>
+        <tbody>
+            <tr><td><code>`timescale 1ns/1ps</code></td><td>Set time units</td><td><code>#10</code> = 10ns; precision to 1ps</td></tr>
+            <tr><td><code>reg</code> for inputs</td><td>You drive them</td><td>Assigned in <code>initial</code>/<code>always</code></td></tr>
+            <tr><td><code>wire</code> for outputs</td><td>DUT drives them</td><td>You observe, not drive</td></tr>
+            <tr><td><code>always #20 clk</code></td><td>25 MHz clock</td><td>40ns period = 20ns half-period</td></tr>
+            <tr><td><code>$dumpfile/$dumpvars</code></td><td>VCD for GTKWave</td><td><code>0</code> = all hierarchy levels</td></tr>
+            <tr><td><code>$finish</code></td><td>End simulation</td><td>Without it, clock runs forever</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">Quick reference for the key elements. timescale sets time units. Inputs are reg, outputs are wire. The clock pattern is idiomatic. dumpfile and dumpvars generate the waveform file. $finish stops the simulation.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Testbench = no-port module. <code>reg</code> for DUT inputs, <code>wire</code> for outputs.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;<code>`timescale</code>, clock gen, <code>$dumpfile/$dumpvars</code>, <code>$finish</code> — memorize the template.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Every design gets a testbench from today forward.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Simulate first. Synthesize second. Program last.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Self-Checking Testbenches</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Automated pass/fail — because eyeballing waveforms doesn't scale.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

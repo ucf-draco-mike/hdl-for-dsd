@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6.3: Tasks for Organization — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 6 · Testbenches &amp; Simulation-Driven Development
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Tasks for Organization</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The <code>task</code> Construct</h2>
+    <p style="font-size:0.85em;">A <code>task</code> is a reusable block of testbench code — like a function but it can include time-consuming operations (<code>#</code> delays, <code>@(posedge clk)</code>).</p>
+    <pre class="sim-only fragment"><code class="language-verilog">task apply_and_check;
+    input [3:0] in_a, in_b;
+    input [2:0] in_op;
+    input [3:0] expected;
+    input [8*20-1:0] name;
+begin
+    a = in_a; b = in_b; opcode = in_op;
+    @(posedge clk);  // wait one clock
+    @(posedge clk);  // let combinational settle
+    check_result(expected, result, name);
+end
+endtask</code></pre>
+    <aside class="notes">Tasks are reusable testbench procedures. Unlike functions, they can include delays and clock-edge waits. Combine stimulus application and result checking into one call.</aside>
+</section>
+<section>
+    <h2>Clean Test Cases with Tasks</h2>
+    <pre class="sim-only"><code class="language-verilog">initial begin
+    // Reset
+    reset = 1; #100; reset = 0; #100;
+
+    // Clean, readable test cases
+    apply_and_check(4'd3, 4'd5, 3'b000, 4'd8,  "ADD 3+5");
+    apply_and_check(4'd7, 4'd3, 3'b001, 4'd4,  "SUB 7-3");
+    apply_and_check(4'hA, 4'hC, 3'b010, 4'h8,  "AND A&C");
+    apply_and_check(4'hA, 4'hC, 3'b011, 4'hE,  "OR  A|C");
+    apply_and_check(4'hF, 4'd0, 3'b101, 4'h0,  "NOT F");
+
+    // Summary report
+    // ...
+    $finish;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Each test is one line. Easy to add more. Easy to read. Easy to maintain.
+    </div>
+    <aside class="notes">With tasks, each test case is a single readable line. Easy to add more, easy to maintain. This is how professional verification engineers write testbenches.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;<code>task</code> can include delays and clock waits — unlike functions.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Combine stimulus + checking in one reusable task.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Result: one-line test cases that are easy to read and extend.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">File-Driven Testing</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~13 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Load test vectors from a file — separate data from testbench logic.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

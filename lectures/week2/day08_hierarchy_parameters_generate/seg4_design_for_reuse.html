@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8.4: Design for Reuse — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 8 · Hierarchy, Parameters &amp; Generate
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Design for Reuse</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~6 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Your Growing Module Library</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Module</th><th>Built</th><th>Parameterized?</th><th>Testbench?</th></tr></thead>
+        <tbody>
+            <tr><td><code>hex_to_7seg</code></td><td>Day 2</td><td>—</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>debounce</code></td><td>Day 5</td><td>✓ CLKS_TO_STABLE</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>counter_mod_n</code></td><td>Day 5</td><td>✓ N</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>edge_detector</code></td><td>Day 5</td><td>—</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>synchronizer</code></td><td>Day 5</td><td>—</td><td>✓</td></tr>
+            <tr><td><code>shift_reg_piso</code></td><td>Day 5</td><td>✓ WIDTH</td><td>Day 6 ✓</td></tr>
+        </tbody>
+    </table>
+    <p class="fragment" style="font-size:0.8em;margin-top:0.5em;">These modules get reused in Week 3 for UART and SPI. <strong>Building a tested library now pays off later.</strong></p>
+    <aside class="notes">Look at what you've built: debounce, counters, shift registers, decoders, edge detectors. All parameterized and tested. These become your building blocks for UART and SPI in Week 3.</aside>
+</section>
+<section>
+    <h2>Reuse Checklist</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> <strong>Parameterized</strong> widths, thresholds, and timing values</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> <strong>Self-checking testbench</strong> included</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> <strong>ANSI-style ports</strong> with <code>i_/o_/r_/w_</code> naming</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> <strong>Documented</strong> — header comment with description, ports, parameters</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> <strong>Active-high internal logic</strong> (handle active-low at boundaries)</p>
+        <p class="fragment"><span style="color:#2E7D32;">✓</span> <strong>No hardcoded magic numbers</strong> — use <code>parameter</code>/<code>localparam</code></p>
+    </div>
+    <aside class="notes">The reuse checklist. Parameterized, tested, documented, clean naming, active-high internally, no magic numbers. Follow this and your modules work in any project.</aside>
+</section>
+<section>
+    <h2>Week 2 Complete — What You Can Build Now</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#FFC904;">★</span> Counter variations (mod-N, up/down, loadable)</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> Shift registers (SIPO, PISO — UART building blocks)</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> Synchronizers and debouncers for real-world inputs</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> Self-checking testbenches with structured reporting</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> Finite state machines using the 3-block template</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> Parameterized, hierarchical designs with generate blocks</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        Week 3: Memory, Timing, and Serial Communication. You'll connect your Go Board to a PC.
+    </div>
+    <aside class="notes">Week 2 complete. You can now build counter variations, shift registers, synchronizers, debouncers, self-checking testbenches, FSMs, and parameterized hierarchical designs. Next week: memory, timing, and serial communication. You'll talk to a PC.</aside>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 8 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

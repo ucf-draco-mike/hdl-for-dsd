@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1.3: Anatomy of a Verilog Module — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 1 · Welcome to Hardware Thinking
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Anatomy of a Verilog Module</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Module: Verilog's Building Block</h2>
+    <p style="margin-top:0.5em;">Every Verilog design is composed of <strong>modules</strong>.</p>
+    <div class="callout" style="margin-top:1em;font-size:0.85em;">
+        Think of a module as a <strong>chip on a circuit board</strong> with labeled pins.
+        You define what goes in, what comes out, and what happens inside.
+    </div>
+    <aside class="notes">Every Verilog design is composed of modules. A module is a self-contained hardware block with defined inputs and outputs. Think of it as a chip on a circuit board with labeled pins.</aside>
+</section>
+<section>
+    <h2>Building a Module Step by Step</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape><span class="fragment highlight-current-blue" data-fragment-index="1">module led_driver (</span>
+<span class="fragment highlight-current-blue" data-fragment-index="2">    input  wire i_switch,</span>
+<span class="fragment highlight-current-blue" data-fragment-index="3">    output wire o_led</span>
+<span class="fragment highlight-current-blue" data-fragment-index="4">);</span>
+<span class="fragment highlight-current-blue" data-fragment-index="5">
+    assign o_led = i_switch;</span>
+<span class="fragment highlight-current-blue" data-fragment-index="6">
+endmodule</span></code></pre>
+    <div style="font-size:0.7em;margin-top:0.5em;">
+        <p class="fragment" data-fragment-index="1"><code>module led_driver</code> — keyword + name (<code>snake_case</code>)</p>
+        <p class="fragment" data-fragment-index="2"><code>input wire i_switch</code> — input port with <code>i_</code> prefix</p>
+        <p class="fragment" data-fragment-index="4"><code>);</code> — port list ends with <strong>semicolon</strong> (most common typo!)</p>
+        <p class="fragment" data-fragment-index="5"><code>assign</code> — permanent wire, always active</p>
+        <p class="fragment" data-fragment-index="6"><code>endmodule</code> — no semicolon after this</p>
+    </div>
+    <aside class="notes">Let's build a module line by line. module keyword, then the name. Input port with wire type and i_ prefix. Output port with o_ prefix. Don't forget the semicolon after the closing parenthesis. assign creates a permanent connection. endmodule closes the definition, no semicolon.</aside>
+</section>
+<section>
+    <h2>What <code>assign</code> Really Means</h2>
+    <pre class="synth"><code class="language-verilog">assign o_led = i_switch;</code></pre>
+    <div class="two-col" style="margin-top:1em;">
+        <div class="col fragment">
+            <h3 style="color:#C62828;">NOT: one-time computation</h3>
+            <p style="font-size:0.75em;">"Compute i_switch and store in o_led"</p>
+        </div>
+        <div class="col fragment">
+            <h3 style="color:#2E7D32;">YES: permanent wire</h3>
+            <p style="font-size:0.75em;">"Create a physical connection. When input changes, output changes instantly."</p>
+        </div>
+    </div>
+    <aside class="notes">assign does NOT mean compute and store. It means create a permanent physical wire. When the input changes, the output changes. The wire exists for the entire lifetime of the hardware.</aside>
+</section>
+<section>
+    <h2>Multiple Assigns = Parallel Hardware</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module button_logic (
+    input  wire i_switch1, i_switch2,
+    output wire o_led1, o_led2, o_led3
+);
+<span class="fragment">    assign o_led1 = i_switch1 & i_switch2;  // AND gate</span>
+<span class="fragment">    assign o_led2 = i_switch1 | i_switch2;  // OR gate</span>
+<span class="fragment">    assign o_led3 = i_switch1 ^ i_switch2;  // XOR gate</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        All three gates exist <strong>simultaneously</strong>. The order of these lines doesn't matter.
+    </div>
+    <aside class="notes">Each assign creates a physical gate. Three gates exist simultaneously. The order you write these lines is irrelevant — the hardware is identical regardless.</aside>
+</section>
+<section>
+    <h2>Naming Conventions</h2>
+    <table style="margin-top:0.5em;">
+        <thead><tr><th>Prefix</th><th>Meaning</th><th>Examples</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td><code>i_</code></td><td>Input port</td><td><code>i_clk</code>, <code>i_reset</code>, <code>i_data</code></td></tr>
+            <tr class="fragment"><td><code>o_</code></td><td>Output port</td><td><code>o_led</code>, <code>o_tx</code>, <code>o_valid</code></td></tr>
+            <tr class="fragment"><td><code>r_</code></td><td>Register (sequential)</td><td><code>r_count</code>, <code>r_state</code></td></tr>
+            <tr class="fragment"><td><code>w_</code></td><td>Wire (combinational)</td><td><code>w_sum</code>, <code>w_carry</code></td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Not required by the language, but eliminates an entire class of bugs.
+    </div>
+    <aside class="notes">We use consistent naming prefixes throughout this course. i_ for inputs, o_ for outputs, r_ for registers, w_ for wires. This tells you at a glance what every signal is.</aside>
+</section>
+<section>
+    <h2>The #1 Syntax Error</h2>
+    <pre class="mistake"><code class="language-verilog" data-noescape>module my_module (
+    input  wire a,
+    output wire y
+)                         // ← MISSING SEMICOLON!
+    assign y = a;
+endmodule</code></pre>
+    <div class="fragment">
+    <pre class="synth"><code class="language-verilog" data-noescape>module my_module (
+    input  wire a,
+    output wire y
+);                        // ← CORRECT
+    assign y = a;
+endmodule</code></pre>
+    </div>
+    <p class="fragment" style="font-size:0.75em;color:#888;">You <em>will</em> make this mistake. Now you know what to look for.</p>
+    <aside class="notes">The number one syntax error: forgetting the semicolon after the closing parenthesis of the port list. The error message won't always point to the right line. You will make this mistake. Now you know what to look for.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Modules are the fundamental building block — inputs, outputs, behavior.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;<code>assign</code> = permanent wire, not a one-time computation.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Use ANSI-style ports and consistent naming (<code>i_</code>, <code>o_</code>, <code>r_</code>, <code>w_</code>).
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Don't forget the semicolon after <code>);</code> in the port list.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Digital Logic Refresher</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~8 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Gates → Verilog. The concepts you already know, in a new language.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

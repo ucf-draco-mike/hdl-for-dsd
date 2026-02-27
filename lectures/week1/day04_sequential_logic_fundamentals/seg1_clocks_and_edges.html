@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4.1: Clocks and Edge-Triggered Behavior — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 4 · Sequential Logic Fundamentals
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Clocks &amp; Edge-Triggered Behavior</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Clock: Heartbeat of Sequential Logic</h2>
+    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+         ┌───┐   ┌───┐   ┌───┐   ┌───┐
+clk  ────┘   └───┘   └───┘   └───┘   └───
+         ↑       ↑       ↑       ↑
+     posedge  posedge  posedge  posedge
+    </pre>
+    <p style="font-size:0.8em;">On each <strong>positive edge</strong>, every flip-flop captures its input. Between edges, combinational logic computes the next values.</p>
+    <p class="fragment" style="font-size:0.8em;">This is <strong>Register Transfer Level (RTL)</strong> design — the fundamental abstraction of synchronous digital design.</p>
+    <aside class="notes">In sequential logic, the clock is everything. On each positive edge, every flip-flop captures its input. Between edges, combinational logic computes next values. This is Register Transfer Level design — the fundamental abstraction.</aside>
+</section>
+<section>
+    <h2>The Go Board's Clock</h2>
+    <div style="font-size:0.85em;">
+        <p class="fragment"><strong>Frequency:</strong> 25 MHz crystal oscillator (pin 15)</p>
+        <p class="fragment"><strong>Period:</strong> 1 / 25,000,000 = <strong>40 ns</strong></p>
+        <p class="fragment"><strong>Problem:</strong> 25 MHz is far too fast for human eyes</p>
+        <p class="fragment"><strong>Solution:</strong> Clock divider — our first sequential design!</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;">
+        To blink an LED at 1 Hz, we need to count <strong>25,000,000</strong> clock cycles. That requires a counter — which requires a flip-flop — which requires <code>always @(posedge clk)</code>.
+    </div>
+    <aside class="notes">The Go Board has a 25 MHz clock. That's a 40 nanosecond period — way too fast to see. To blink an LED at 1 Hz, we need to count 25 million clock cycles. That's our first sequential design.</aside>
+</section>
+<section>
+    <h2>The Fundamental Sequential Pattern</h2>
+    <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
+    r_q <= r_d;
+end</code></pre>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th></th><th>Combinational</th><th>Sequential</th></tr></thead>
+        <tbody>
+            <tr><td>Sensitivity</td><td><code>always @(*)</code></td><td><code>always @(posedge clk)</code></td></tr>
+            <tr><td>Assignment</td><td>Blocking <code>=</code></td><td>Nonblocking <code>&lt;=</code></td></tr>
+            <tr><td>Output</td><td>Changes with inputs</td><td>Changes on clock edge only</td></tr>
+            <tr><td>Synthesizes to</td><td>Gates, muxes</td><td>Flip-flops, registers</td></tr>
+            <tr><td>Has memory?</td><td>No</td><td><strong>Yes</strong></td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">Here's the fundamental pattern. always at posedge clk with nonblocking assignment. Compare with combinational: different sensitivity, different assignment, different hardware.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Clock edges define when state changes — everything else is combinational.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;<code>always @(posedge clk)</code> + <code>&lt;=</code> = flip-flop / register.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;The Go Board's 25 MHz clock needs dividers for human-visible rates.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;RTL = registers + combinational logic + clock.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Nonblocking Assignment — Why It Matters</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The most important 'why' in Verilog — with a timing diagram proof.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

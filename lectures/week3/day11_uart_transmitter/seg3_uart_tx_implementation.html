@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11.3: Implementation Walk-Through — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 11 · UART Transmitter
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART TX Implementation</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>UART TX — Complete Module (Part 1)</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module uart_tx #(
+    parameter CLK_FREQ  = 25_000_000,
+    parameter BAUD_RATE = 115_200
+)(
+    input  wire       i_clk, i_reset,
+    input  wire       i_valid,
+    input  wire [7:0] i_data,
+    output reg        o_tx,
+    output wire       o_busy
+);
+<span class="fragment">    localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;  // 217
+    localparam S_IDLE=2'd0, S_START=2'd1, S_DATA=2'd2, S_STOP=2'd3;
+
+    reg [1:0] r_state;
+    reg [$clog2(CLKS_PER_BIT)-1:0] r_baud_cnt;
+    reg [7:0] r_shift;
+    reg [2:0] r_bit_idx;</span></code></pre>
+    <aside class="notes">Module header with parameterized clock frequency and baud rate. localparam derives clocks-per-bit automatically. Four states, a baud counter, a shift register, and a bit index.</aside>
+</section>
+<section>
+    <h2>UART TX — Complete Module (Part 2)</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>    wire w_baud_tick = (r_baud_cnt == CLKS_PER_BIT - 1);
+
+    always @(posedge i_clk) begin
+        if (i_reset) begin
+            r_state <= S_IDLE; o_tx <= 1'b1; // idle = high
+        end else begin
+            case (r_state)
+<span class="fragment">                S_IDLE: begin
+                    o_tx <= 1'b1;
+                    r_baud_cnt <= 0;
+                    r_bit_idx  <= 0;
+                    if (i_valid) begin
+                        r_shift <= i_data;   // latch data
+                        r_state <= S_START;
+                    end
+                end</span>
+<span class="fragment">                S_START: begin
+                    o_tx <= 1'b0;            // start bit = low
+                    r_baud_cnt <= r_baud_cnt + 1;
+                    if (w_baud_tick) begin
+                        r_baud_cnt <= 0;
+                        r_state <= S_DATA;
+                    end
+                end</span></code></pre>
+    <aside class="notes">IDLE: line high, wait for valid, latch data. START: drive line low for one full bit period. When the baud counter ticks, move to DATA state.</aside>
+</section>
+<section>
+    <h2>UART TX — Complete Module (Part 3)</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape><span class="fragment">                S_DATA: begin
+                    o_tx <= r_shift[0];      // LSB first
+                    r_baud_cnt <= r_baud_cnt + 1;
+                    if (w_baud_tick) begin
+                        r_baud_cnt <= 0;
+                        r_shift <= {1'b0, r_shift[7:1]};  // shift right
+                        r_bit_idx <= r_bit_idx + 1;
+                        if (r_bit_idx == 3'd7)
+                            r_state <= S_STOP;
+                    end
+                end</span>
+<span class="fragment">                S_STOP: begin
+                    o_tx <= 1'b1;            // stop bit = high
+                    r_baud_cnt <= r_baud_cnt + 1;
+                    if (w_baud_tick) begin
+                        r_baud_cnt <= 0;
+                        r_state <= S_IDLE;
+                    end
+                end</span>
+            endcase
+        end
+    end
+    assign o_busy = (r_state != S_IDLE);
+endmodule</code></pre>
+    <aside class="notes">DATA: output the LSB of the shift register, shift right on each baud tick, count 8 bits. STOP: drive line high for one bit period, then return to IDLE. o_busy is high whenever we're not idle.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Complete UART TX: ~50 lines of Verilog. FSM + shift register + counter.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;IDLE → latch data. START → line low. DATA → shift 8 bits. STOP → line high.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;<code>o_busy</code> protects against sending while transmitting.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Parameterized: change CLK_FREQ or BAUD_RATE and it recalculates.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Connecting to a PC</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~8 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Hardware setup, terminal emulators, and your first 'Hello World' moment.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

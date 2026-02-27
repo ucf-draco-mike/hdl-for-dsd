@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1.4: Digital Logic Refresher — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 1 · Welcome to Hardware Thinking
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Digital Logic Refresher You Need</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>What You Must Have Cold</h2>
+    <div style="font-size:0.85em;margin-top:0.5em;">
+        <p class="fragment"><strong>Logic gates:</strong> AND, OR, NOT, NAND, NOR, XOR, XNOR</p>
+        <p class="fragment"><strong>Boolean algebra:</strong> DeMorgan's, distribution, complement</p>
+        <p class="fragment"><strong>Combinational vs. sequential:</strong><br>
+            <span style="margin-left:1.5em;">Combinational = f(current inputs)</span><br>
+            <span style="margin-left:1.5em;">Sequential = f(inputs, stored state)</span></p>
+        <p class="fragment"><strong>Truth tables ↔ Boolean expressions:</strong> both directions</p>
+        <p class="fragment"><strong>The D flip-flop:</strong> captures D on clock edge</p>
+    </div>
+    <aside class="notes">Checklist of prerequisites. Logic gates and truth tables. Boolean algebra. Combinational vs sequential. Truth tables to expressions and back. And the D flip-flop.</aside>
+</section>
+<section>
+    <h2>Gates → Verilog: The Translation Table</h2>
+    <table style="margin-top:0.5em;">
+        <thead><tr><th>Digital Logic</th><th>Verilog</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td>Wire</td><td><code>assign y = a;</code></td></tr>
+            <tr class="fragment"><td>AND gate</td><td><code>assign y = a & b;</code></td></tr>
+            <tr class="fragment"><td>OR gate</td><td><code>assign y = a | b;</code></td></tr>
+            <tr class="fragment"><td>NOT (inverter)</td><td><code>assign y = ~a;</code></td></tr>
+            <tr class="fragment"><td>XOR gate</td><td><code>assign y = a ^ b;</code></td></tr>
+            <tr class="fragment"><td>2:1 Multiplexer</td><td><code>assign y = sel ? a : b;</code></td></tr>
+            <tr class="fragment"><td>D flip-flop</td><td><code>always @(posedge clk) q <= d;</code></td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">The Rosetta Stone between digital logic and Verilog. Wire is assign. AND is ampersand. OR is pipe. NOT is tilde. XOR is caret. The mux uses the conditional operator. And the D flip-flop uses always at posedge with the nonblocking assignment.</aside>
+</section>
+<section>
+    <h2>Compound Expressions</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape><span class="fragment">// NAND: ~(a & b)    NOR: ~(a | b)</span>
+<span class="fragment">
+// Sum-of-products: y = AB + CD
+assign y = (a & b) | (c & d);</span>
+<span class="fragment">
+// DeMorgan's: these produce IDENTICAL hardware
+assign y1 = ~(a & b);
+assign y2 = ~a | ~b;     // same gate!</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>The synthesizer optimizes.</strong> Write for readability — the tool reduces to minimum hardware.
+    </div>
+    <aside class="notes">Compound expressions work like Boolean algebra. NAND, NOR, sum of products. DeMorgan's produces identical hardware. The synthesizer optimizes — write for readability.</aside>
+</section>
+<section>
+    <h2>Combinational vs. Sequential in Verilog</h2>
+    <div class="two-col" style="margin-top:1em;">
+        <div class="col">
+            <h3 style="color:#1565C0;">Combinational</h3>
+            <pre class="synth"><code class="language-verilog">// Output changes whenever
+// inputs change
+assign y = a & b;</code></pre>
+            <p style="font-size:0.65em;">No clock. No memory. <strong>Weeks 1–2 focus.</strong></p>
+        </div>
+        <div class="col">
+            <h3 style="color:#E65100;">Sequential</h3>
+            <pre class="synth"><code class="language-verilog">// Output changes only on
+// the clock edge
+always @(posedge clk)
+    q <= d;</code></pre>
+            <p style="font-size:0.65em;">Clock-driven. Has memory. <strong>Introduced Day 4.</strong></p>
+        </div>
+    </div>
+    <aside class="notes">Preview of combinational versus sequential. Combinational: assign, no clock, no memory. That's our focus for the first few days. Sequential: always at posedge clk, clock-driven, has memory. Introduced on Day 4.</aside>
+</section>
+<section>
+    <h2>You Already Know the Hardware</h2>
+    <p style="font-size:1.1em;text-align:center;margin-top:0.5em;">
+        Gates ✓ &ensp; Boolean algebra ✓ &ensp; Truth tables ✓ &ensp; Flip-flops ✓
+    </p>
+    <div class="golden-rule" style="margin-top:1.5em;font-size:1.1em;">
+        This course teaches you the <em>language</em> to describe it.
+    </div>
+    <aside class="notes">You already know the hardware from your digital logic courses. This course teaches you the language to describe it in Verilog.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <p style="font-size:0.75em;color:#888;">Before class, make sure you can answer:</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Q1:</strong> Name three differences between software and Verilog.</p>
+        <p class="fragment"><strong>Q2:</strong> What happens to <code>#10</code> during synthesis? During simulation?</p>
+        <p class="fragment"><strong>Q3:</strong> Write a 2-input AND module from memory.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:1em;">
+        If Q3 feels hard, re-watch Video 3. Getting the module template into muscle memory saves you time in lab.
+    </div>
+    <aside class="notes">Self-check before class. Can you name three differences? What happens to hash-10 in synthesis? Can you write a module from memory? If not, re-watch the relevant video. See you in class!</aside>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

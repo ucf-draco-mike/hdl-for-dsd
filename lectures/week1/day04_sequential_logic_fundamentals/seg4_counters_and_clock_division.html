@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4.4: Counters and Clock Division — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 4 · Sequential Logic Fundamentals
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Counters &amp; Clock Division</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~13 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Free-Running Counter</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>reg [7:0] r_count;
+
+always @(posedge i_clk)
+    r_count <= r_count + 1;
+<span class="fragment">
+// What happens?
+// Cycle 0: r_count = 8'h00
+// Cycle 1: r_count = 8'h01
+// ...
+// Cycle 255: r_count = 8'hFF
+// Cycle 256: r_count = 8'h00  ← rollover!</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        An 8-bit counter rolls over every 256 cycles. An N-bit counter rolls over every 2<sup>N</sup> cycles.
+    </div>
+    <aside class="notes">A free-running counter increments every clock cycle and rolls over when it reaches its maximum. 8-bit counter rolls over every 256 cycles. N-bit counter every 2-to-the-N cycles.</aside>
+</section>
+<section>
+    <h2>Clock Division: 25 MHz → 1 Hz</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// 25 MHz clock → 1 Hz blink
+// Need to count 25,000,000 cycles per half-period
+// log2(25000000) ≈ 25 bits
+<span class="fragment">
+reg [24:0] r_counter;
+reg        r_led;
+
+always @(posedge i_clk) begin
+    if (r_counter == 25_000_000 - 1) begin
+        r_counter <= 0;
+        r_led     <= ~r_led;    // toggle
+    end else begin
+        r_counter <= r_counter + 1;
+    end
+end</span>
+
+<span class="fragment">assign o_led1 = r_led;</span></code></pre>
+    <aside class="notes">To get 1 Hz from 25 MHz, count to 25 million per half-period. That needs a 25-bit counter. When it hits the target, reset and toggle the LED output. This is your first real sequential design — you'll build it in lab today.</aside>
+</section>
+<section>
+    <h2>Choosing Divider Rates</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Target Frequency</th><th>Count Target</th><th>Counter Bits</th></tr></thead>
+        <tbody>
+            <tr><td>~1 Hz (visible blink)</td><td>12,500,000</td><td>24</td></tr>
+            <tr><td>~2 Hz (fast blink)</td><td>6,250,000</td><td>23</td></tr>
+            <tr><td>~1 kHz (audio range)</td><td>12,500</td><td>14</td></tr>
+            <tr><td>~100 Hz (display refresh)</td><td>125,000</td><td>17</td></tr>
+        </tbody>
+    </table>
+    <div class="callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Quick trick:</strong> Use the MSB of a free-running counter as a divided clock.<br>
+        Bit 23 of a 25 MHz counter toggles at ~1.5 Hz. Bit 24 at ~0.75 Hz. Close enough for LEDs!
+    </div>
+    <aside class="notes">Quick reference for common divider rates. And here's a trick: just use the MSB of a free-running counter as your divided output. Bit 23 gives you about 1.5 Hz. Not exact, but great for LED blinking.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Counters are the fundamental sequential building block.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;N-bit counter rolls over every 2<sup>N</sup> cycles.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Clock divider: count to a target, then toggle or reset.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Quick trick: use counter MSBs for approximate clock division.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 4 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

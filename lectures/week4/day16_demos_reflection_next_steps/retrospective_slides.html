@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 16: Course Retrospective — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 16 · Demos, Reflection &amp; Next Steps
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Retrospective &amp; Next Steps</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 0 of 4 · ~0 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>What We Built in 4 Weeks</h2>
+    <div style="font-size:0.75em;">
+        <p class="fragment"><span style="color:#FFC904;">★</span> <strong>Week 1:</strong> Gates → muxes → ALU → 7-seg → flip-flops</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> <strong>Week 2:</strong> Counters → FSMs → testbenches → parameterized modules</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> <strong>Week 3:</strong> Memory → timing → UART TX/RX → your FPGA talks to your PC</p>
+        <p class="fragment"><span style="color:#FFC904;">★</span> <strong>Week 4:</strong> SystemVerilog → assertions → final project → working system</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
+        ~20-25 verified, reusable modules. A genuine IP library.
+    </div>
+    <aside class="notes">Recap the arc: from first gate to a complete working system in four weeks. Each student has built and tested 20+ modules.</aside>
+</section>
+<section>
+    <h2>Skills Progression</h2>
+    <table style="font-size:0.6em;margin-top:0.3em;">
+        <thead><tr><th>Skill</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Design</strong></td><td>Gates, muxes</td><td>FSMs, counters</td><td>Memory, protocols</td><td>SV, integration</td></tr>
+            <tr><td><strong>Verification</strong></td><td>Waveforms</td><td>Self-checking TBs</td><td>Protocol TBs</td><td>Assertions</td></tr>
+            <tr><td><strong>Tools</strong></td><td>iverilog</td><td>yosys, nextpnr</td><td>icepll, terminal</td><td>Full flow</td></tr>
+            <tr><td><strong>Hardware</strong></td><td>LED blink</td><td>Buttons</td><td>UART to PC</td><td>Complete system</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">Show the progression across all four dimensions. Students should feel how far they have come.</aside>
+</section>
+<section>
+    <h2>The Transferable Skills</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Thinking in parallelism:</strong> Hardware is concurrent. So are GPUs, distributed systems, and modern software.</p>
+        <p class="fragment"><strong>Verification discipline:</strong> "Does the test pass?" applies to any engineering artifact.</p>
+        <p class="fragment"><strong>Interface design:</strong> Clean boundaries, handshakes, protocols — universal.</p>
+        <p class="fragment"><strong>Debugging methodology:</strong> Systematic narrowing from symptom to root cause.</p>
+        <p class="fragment"><strong>Resource awareness:</strong> Every gate costs area and power. Efficiency thinking transfers everywhere.</p>
+    </div>
+    <aside class="notes">The HDL syntax may fade. These deeper skills transfer to any engineering domain. Parallelism thinking, verification discipline, interface design, debugging method, and resource awareness.</aside>
+</section>
+<section>
+    <h2>Where to Go From Here</h2>
+    <div style="font-size:0.75em;">
+        <p class="fragment"><strong>FPGA Engineering:</strong> DSP, networking, defense. Larger FPGAs, vendor tools.</p>
+        <p class="fragment"><strong>ASIC Design:</strong> Processors, GPUs, AI accelerators. Deep SV, STA, physical design.</p>
+        <p class="fragment"><strong>Verification:</strong> UVM, constrained random, formal. Majority of chip project effort.</p>
+        <p class="fragment"><strong>Hardware Security:</strong> Side-channels, fault injection, trojans. Crypto in hardware.</p>
+        <p class="fragment"><strong>Embedded Systems:</strong> HW/SW co-design, RTOS, bus protocols.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        Keep the Go Board. Try one more project within a week. The skills stick when you keep building.
+    </div>
+    <aside class="notes">Five career paths where these skills directly apply. The most important advice: keep building. Try one more project within a week of the course ending.</aside>
+</section>
+<section>
+    <div class="golden-rule" style="font-size:1.1em;margin-top:2em;">
+        Four weeks ago, you had never written a line of HDL.<br><br>
+        Today you have a working FPGA system<br>you designed, verified, and built from gates.<br><br>
+        That's a genuine engineering achievement.
+    </div>
+    <p class="fragment" style="font-size:0.85em;text-align:center;margin-top:1.5em;">
+        Go build things.
+    </p>
+    <aside class="notes">Final words. Let this land. Four weeks, from zero to a working system. Go build things.</aside>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5.4: Button Debouncing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 5 · Counters, Shift Registers &amp; Debouncing
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Button Debouncing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>The Bounce Problem</h2>
+    <pre style="font-family:monospace;font-size:0.55em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+Ideal:    ‾‾‾‾‾‾‾‾‾‾‾|_________________________|‾‾‾‾‾‾‾‾‾‾‾
+                     press                    release
+
+Reality:  ‾‾‾‾‾‾‾‾‾‾‾|‾|_|‾|__________________|‾|_|‾‾‾‾‾‾‾‾
+                      ↑ ↑ ↑ ↑                  ↑ ↑ ↑
+                      bounces (~1-10 ms)       bounces
+    </pre>
+    <p style="font-size:0.8em;">Mechanical switches bounce for <strong>1–10 ms</strong>. At 25 MHz, that's up to <strong>250,000 clock cycles</strong> of random toggling. Your counter increments on every edge it sees.</p>
+    <aside class="notes">Mechanical switches don't transition cleanly. They bounce for 1 to 10 milliseconds. At 25 MHz, that's up to 250,000 cycles of random toggling. Your counter sees every bounce as a separate press.</aside>
+</section>
+<section>
+    <h2>Counter-Based Debounce</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module debounce #(
+    parameter CLKS_TO_STABLE = 250_000  // ~10ms at 25MHz
+)(
+    input  wire i_clk,
+    input  wire i_bouncy,
+    output reg  o_clean
+);
+<span class="fragment">    reg [$clog2(CLKS_TO_STABLE)-1:0] r_count;
+    reg r_sync_0, r_sync_1;  // 2-FF synchronizer built in</span>
+
+<span class="fragment">    always @(posedge i_clk) begin
+        r_sync_0 <= i_bouncy;      // synchronize
+        r_sync_1 <= r_sync_0;</span>
+
+<span class="fragment">        if (r_sync_1 != o_clean) begin
+            r_count <= r_count + 1;
+            if (r_count == CLKS_TO_STABLE - 1) begin
+                o_clean <= r_sync_1;   // accept new value
+                r_count <= 0;
+            end
+        end else begin
+            r_count <= 0;   // input matches output — reset counter
+        end</span>
+    end
+endmodule</code></pre>
+    <aside class="notes">The debounce module has a built-in 2-FF synchronizer and a counter. When the synchronized input differs from the clean output, start counting. If it stays different for CLKS_TO_STABLE cycles, accept the new value. If it bounces back, reset the counter.</aside>
+</section>
+<section>
+    <h2>The Complete Input Pipeline</h2>
+    <div style="text-align:center;font-size:0.8em;margin-top:1em;">
+        <span style="background:#FFEBEE;padding:0.3em 0.6em;border-radius:4px;">Button (async)</span>
+        →
+        <span style="background:#E3F2FD;padding:0.3em 0.6em;border-radius:4px;">Synchronizer (2-FF)</span>
+        →
+        <span style="background:#E8F5E9;padding:0.3em 0.6em;border-radius:4px;">Debounce (counter)</span>
+        →
+        <span style="background:#FFF8E1;padding:0.3em 0.6em;border-radius:4px;">Edge Detect</span>
+    </div>
+    <pre class="synth fragment" style="margin-top:1em;"><code class="language-verilog">// Edge detector — produces 1-clock pulse on rising edge
+reg r_clean_prev;
+always @(posedge i_clk) r_clean_prev <= o_clean;
+wire w_press = o_clean & ~r_clean_prev;  // rising edge</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Pipeline:</strong> synchronize → debounce → edge detect. This gives you a single clean pulse per button press. Reusable everywhere.
+    </div>
+    <aside class="notes">The complete input pipeline: synchronize the async signal, debounce it, then edge-detect for a clean single-cycle pulse. This is a reusable pattern for every button input in every design.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Buttons bounce for 1–10ms = up to 250K cycles at 25 MHz.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Counter-based debounce: require stable input for N cycles before accepting.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Always synchronize <strong>before</strong> debouncing.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Edge detection gives one clean pulse per press. Pipeline: sync → debounce → edge.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 5 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

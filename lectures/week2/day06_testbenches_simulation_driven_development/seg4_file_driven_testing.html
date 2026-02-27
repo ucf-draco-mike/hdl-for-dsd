@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6.4: File-Driven Testing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 6 · Testbenches &amp; Simulation-Driven Development
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">File-Driven &amp; Sequential Testing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~13 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Loading Test Vectors from Files</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape><span class="fragment">// test_vectors.txt — one vector per line (hex)
+// a  b  op  expected
+// 3  5  0   8
+// 7  3  1   4
+// A  C  2   8</span>
+<span class="fragment">
+reg [3:0] test_mem [0:255];  // storage for vectors
+integer i;
+
+initial begin
+    $readmemh("test_vectors.txt", test_mem);</span>
+<span class="fragment">
+    for (i = 0; i < 256; i = i + 1) begin
+        // extract fields from packed vector
+        a = test_mem[i][15:12];
+        b = test_mem[i][11:8];
+        opcode = test_mem[i][7:4];
+        // ... check against test_mem[i][3:0] ...
+    end
+end</span></code></pre>
+    <aside class="notes">readmemh loads hex values from a text file into a memory array. You can store hundreds of test vectors in a file and loop through them. This separates test data from testbench logic.</aside>
+</section>
+<section>
+    <h2>Sequential Testbench Pattern</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape>// For sequential DUTs, use clock-edge-based stimulus
+task reset_dut;
+begin
+    i_reset = 1;
+    repeat(5) @(posedge clk);  // hold reset for 5 cycles
+    i_reset = 0;
+    @(posedge clk);
+end
+endtask
+<span class="fragment">
+task wait_cycles;
+    input integer n;
+    integer i;
+begin
+    for (i = 0; i < n; i = i + 1)
+        @(posedge clk);
+end
+endtask</span>
+<span class="fragment">
+// Usage:
+initial begin
+    reset_dut;
+    // Apply input, wait for output
+    i_data = 8'hA5;
+    i_valid = 1;
+    @(posedge clk);
+    i_valid = 0;
+    wait_cycles(10);     // wait for processing
+    check_result(expected, o_data, "test 1");
+end</span></code></pre>
+    <aside class="notes">For sequential designs, use clock-edge-based stimulus. Reset with repeat-posedge. Use wait_cycles for delays. Apply inputs synchronously to clock edges. This is the pattern for all sequential testbenches.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;<code>$readmemh</code>/<code>$readmemb</code> load test vectors from files.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Sequential testbenches: <code>@(posedge clk)</code> and <code>repeat</code> for timing.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Separate test data from testbench logic for maintainability.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;From today: <strong>no design without a self-checking testbench.</strong>
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 6 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

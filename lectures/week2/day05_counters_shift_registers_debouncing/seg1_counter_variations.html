@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5.1: Counter Variations — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 5 · Counters, Shift Registers &amp; Debouncing
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Counter Variations</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Beyond the Free-Running Counter</h2>
+    <p style="font-size:0.85em;">Day 4 gave you a simple incrementing counter. Real designs need:</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Modulo-N:</strong> counts 0 to N−1, then wraps (any period)</p>
+        <p class="fragment"><strong>Up/Down:</strong> direction-controlled counting</p>
+        <p class="fragment"><strong>Loadable:</strong> preset starting value (timers, address generators)</p>
+    </div>
+    <aside class="notes">Day 4 gave you simple counters. Now we build the variations you'll actually use in real designs: modulo-N, up/down, and loadable counters.</aside>
+</section>
+<section>
+    <h2>Modulo-N Counter</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module counter_mod_n #(
+    parameter N = 10
+)(
+    input  wire                  i_clk,
+    input  wire                  i_reset,
+    output reg  [$clog2(N)-1:0]  o_count,
+    output wire                  o_wrap
+);
+<span class="fragment">    always @(posedge i_clk) begin
+        if (i_reset)
+            o_count <= 0;
+        else if (o_count == N - 1)
+            o_count <= 0;
+        else
+            o_count <= o_count + 1;
+    end</span>
+<span class="fragment">
+    assign o_wrap = (o_count == N - 1);</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <code>$clog2(N)</code> returns ceil(log₂(N)) — automatic width sizing. Change N, and the counter width adjusts. No manual math.
+    </div>
+    <aside class="notes">The modulo-N counter wraps at any value, not just powers of two. The key new feature is dollar-clog2 — automatic width calculation. Change N and the bit width adjusts automatically. The wrap output pulses for one cycle at rollover.</aside>
+</section>
+<section>
+    <h2>Up/Down and Loadable Counters</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Up/Down counter — direction control
+always @(posedge i_clk) begin
+    if (i_reset)        o_count <= 0;
+    else if (i_enable) begin
+        if (i_direction) o_count <= o_count - 1;  // down
+        else             o_count <= o_count + 1;  // up
+    end
+end</code></pre>
+    <pre class="synth fragment"><code class="language-verilog" data-noescape>// Loadable counter — preset starting value
+always @(posedge i_clk) begin
+    if (i_reset)         o_count <= 0;
+    else if (i_load)     o_count <= i_data;    // parallel load
+    else if (i_enable)   o_count <= o_count + 1;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Priority matters:</strong> reset > load > enable. The <code>if/else</code> chain defines hardware priority.
+    </div>
+    <aside class="notes">Up/down adds a direction input. Loadable adds a parallel load — useful for timers and baud rate dividers. Notice the priority: reset beats load, load beats enable. The if/else chain defines this hardware priority.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Modulo-N: count to N−1, then wrap. <code>$clog2(N)</code> sizes automatically.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Up/Down: direction input selects increment or decrement.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Loadable: parallel load for timer presets and address generators.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;Priority is defined by <code>if/else</code> order: reset > load > enable.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Shift Registers</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The building block behind UART and SPI — data moves one bit per clock.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

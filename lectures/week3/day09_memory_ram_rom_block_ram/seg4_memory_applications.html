@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 9.4: Practical Memory Applications — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 9 · Memory: RAM, ROM &amp; Block RAM
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Memory Applications</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Pattern Sequencer</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// LED pattern player — reads patterns from ROM
+module pattern_sequencer #(
+    parameter PATTERN_LEN = 16
+)(
+    input  wire       i_clk, i_reset,
+    input  wire       i_tick,    // advance rate (from clock divider)
+    output wire [3:0] o_leds
+);
+<span class="fragment">    reg [$clog2(PATTERN_LEN)-1:0] r_addr;
+    reg [3:0] r_pattern [0:PATTERN_LEN-1];
+
+    initial $readmemb("pattern.mem", r_pattern);</span>
+<span class="fragment">
+    always @(posedge i_clk) begin
+        if (i_reset) r_addr <= 0;
+        else if (i_tick)
+            r_addr <= (r_addr == PATTERN_LEN-1) ? 0 : r_addr + 1;
+    end
+
+    assign o_leds = r_pattern[r_addr];</span>
+endmodule</code></pre>
+    <aside class="notes">A pattern sequencer reads LED patterns from a ROM at a programmable rate. The ROM is loaded from a file. A counter steps through addresses on each tick. Simple but powerful — change the file to change the animation.</aside>
+</section>
+<section>
+    <h2>More Applications</h2>
+    <div style="font-size:0.8em;">
+        <div class="fragment">
+            <h3>Sine Wave Lookup Table</h3>
+            <p>256-entry ROM with one quarter of a sine wave. Use address manipulation for all four quadrants. Feed to a DAC or PWM for audio.</p>
+        </div>
+        <div class="fragment">
+            <h3>Character ROM</h3>
+            <p>Store font bitmaps (e.g., 8×8 pixels per character). Address = {char_code, row}. Data = 8-bit pixel pattern. Essential for VGA text display.</p>
+        </div>
+        <div class="fragment">
+            <h3>Instruction Memory</h3>
+            <p>ROM holding a program for a simple processor. Address = program counter. Data = instruction word. (Final project option!)</p>
+        </div>
+    </div>
+    <aside class="notes">Beyond LED patterns: sine tables for audio, character ROMs for VGA text, instruction memory for simple processors. All use the same ROM pattern — just different data files and addressing.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;ROMs are lookup tables — change the data file, change the behavior.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Counter + ROM = sequencer. Classic pattern for animations, waveforms.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Character ROM: address = {char, row}, data = pixel pattern.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">④</span>&ensp;<code>$readmemh</code>/<code>$readmemb</code> works in both simulation and synthesis.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 9 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

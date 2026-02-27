@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7.3: State Encoding — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .two-col { display: flex; gap: 2em; }
+        .two-col .col { flex: 1; }
+        .panel { padding: 1em; border-radius: 8px; }
+        .panel-sw { background: #F3E5F5; border: 2px solid #9C27B0; }
+        .panel-hw { background: #E3F2FD; border: 2px solid #1565C0; }
+        .panel-good { background: #E8F5E9; border: 2px solid #2E7D32; }
+        .panel-bad { background: #FFEBEE; border: 2px solid #C62828; }
+        .panel-neutral { background: #FFF8E1; border: 2px solid #F9A825; }
+        .check { color: #2E7D32; font-weight: 700; }
+        .cross { color: #C62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 7 · Finite State Machines
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">State Encoding</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+</section>
+
+<section>
+    <h2>Encoding Options</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Binary — minimum bits: ceil(log2(N))
+localparam S_IDLE = 2'b00;
+localparam S_RUN  = 2'b01;
+localparam S_DONE = 2'b10;
+<span class="fragment">
+// One-Hot — one FF per state, one bit high at a time
+localparam S_IDLE = 3'b001;
+localparam S_RUN  = 3'b010;
+localparam S_DONE = 3'b100;</span>
+<span class="fragment">
+// Gray — adjacent states differ by 1 bit
+localparam S_A = 2'b00;
+localparam S_B = 2'b01;
+localparam S_C = 2'b11;
+localparam S_D = 2'b10;</span></code></pre>
+    <aside class="notes">Three encoding options. Binary uses minimum flip-flops. One-hot uses one FF per state but simpler next-state logic — often faster on FPGAs. Gray encoding minimizes bit transitions — useful for clock domain crossing.</aside>
+</section>
+<section>
+    <h2>Which Encoding to Use?</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Encoding</th><th>FFs</th><th>Logic Depth</th><th>Best For</th></tr></thead>
+        <tbody>
+            <tr><td>Binary</td><td>Minimum</td><td>Deeper</td><td>Small FSMs, resource-constrained</td></tr>
+            <tr><td>One-Hot</td><td>One per state</td><td>Shallow</td><td>FPGAs (LUT-rich), speed-critical</td></tr>
+            <tr><td>Gray</td><td>Minimum</td><td>Moderate</td><td>Clock domain crossing</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Practical advice:</strong> Use binary encoding with <code>localparam</code> (our default). FPGA tools like Yosys can automatically re-encode to one-hot if it's faster. Don't over-optimize encoding manually.
+    </div>
+    <aside class="notes">Practical advice: use binary with localparam. Yosys can re-encode automatically if one-hot is better for the target. Don't manually optimize encoding unless you have a specific reason.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">①</span>&ensp;Binary: minimum FFs, our default. One-hot: faster on FPGAs.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">②</span>&ensp;Gray: adjacent states differ by 1 bit — for clock domain crossing.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:#FFC904;font-size:1.3em;font-weight:700;">③</span>&ensp;Use <code>localparam</code> for state values. Let tools optimize encoding.
+        </p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">FSM Design Methodology</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Step-by-step: state diagram → Verilog → testbench. With a complete example.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>
