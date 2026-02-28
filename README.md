@@ -34,73 +34,57 @@ hdl-course/
 ├── docs/
 │   ├── curriculum.md            ← full 16-day curriculum & session map
 │   ├── syllabus.md              ← student-facing syllabus
-│   └── setup_guide.md           ← toolchain installation instructions
+│   ├── setup_guide.md           ← toolchain installation instructions
+│   ├── video_lecture_scaffold.md ← lecture production guide
+│   └── day*_*.md                ← detailed daily session plans (instructor guides)
 │
 ├── lectures/                    ← pre-class video lecture materials
-│   ├── theme/                   ← UCF-branded reveal.js theme
-│   │   └── ucf-hdl.css
-│   ├── week1/
-│   │   ├── day01_welcome_to_hardware_thinking/
-│   │   │   ├── seg1_hdl_not_software.html
-│   │   │   ├── seg2_synthesis_vs_simulation.html
-│   │   │   ├── seg3_anatomy_of_a_module.html
-│   │   │   ├── seg4_digital_logic_refresher.html
-│   │   │   ├── quiz.md
-│   │   │   ├── code/            ← Verilog examples from the lecture
-│   │   │   ├── diagrams/        ← WaveDrom, Mermaid, SVG
-│   │   │   └── README.md
-│   │   ├── day02_.../
-│   │   ...
-│   ├── week2/
-│   ├── week3/
-│   └── week4/
+│   ├── theme/ucf-hdl.css        ← UCF-branded reveal.js theme
+│   ├── week1/ through week4/   ← slide decks (reveal.js HTML)
 │
 ├── labs/                        ← in-class lab materials & starter code
-│   ├── week1/
-│   │   ├── day01/
-│   │   ├── day02/
-│   │   ...
-│   ├── week2/
-│   ├── week3/
-│   └── week4/
+│   ├── week1/day01/ through day04/
+│   ├── week2/day05/ through day08/
+│   ├── week3/day09/ through day12/
+│   └── week4/day13/ through day16/
 │
 ├── projects/                    ← final project specifications & rubrics
 │
-├── shared/                      ← common resources used across the course
-│   ├── pcf/                     ← Go Board pin constraint files
-│   │   └── go_board.pcf
-│   ├── lib/                     ← reusable module library (builds across weeks)
-│   └── scripts/                 ← build helpers, Makefiles
-│       └── Makefile.template
+├── shared/
+│   ├── pcf/go_board.pcf         ← Go Board pin constraint file
+│   ├── lib/                     ← reusable verified module library
+│   └── scripts/Makefile.template ← build automation template
 │
-└── assets/
-    └── img/                     ← logos, board photos, etc.
+├── scripts/                     ← slide generators & build tools
+│   ├── generate_week1.py through generate_week4.py
+│   └── build_repo.py           ← repository scaffolding generator
+│
+└── assets/img/                  ← logos, board photos, etc.
 ```
 
-## Lecture Format
+## Quick Start
 
-Each day's pre-class material is split into **4 short video segments** (8–15 min each), totaling ~40–50 min per day. This matches research on optimal video length for flipped instruction.
+### 1. Install the Toolchain
 
-Slides are built with [reveal.js](https://revealjs.com/) — HTML-based, git-friendly, with syntax-highlighted code and progressive builds. Speaker notes contain the full narration script.
+See [`docs/setup_guide.md`](docs/setup_guide.md) for platform-specific instructions.
 
-| Day | Video 1 | Video 2 | Video 3 | Video 4 | Total |
-|-----|---------|---------|---------|---------|-------|
-| 1   | HDL ≠ Software (12m) | Synthesis vs. Sim (10m) | Module Anatomy (12m) | Logic Refresher (8m) | ~42m |
-| 2   | Data Types & Vectors (15m) | Operators (12m) | Sized Literals (8m) | 7-Segment Display (10m) | ~45m |
-| 3   | `always @(*)` (12m) | `if/else` & `case` (15m) | Latch Problem (12m) | Blocking vs. Nonblocking (6m) | ~45m |
-| 4   | Clocks & Edges (12m) | Nonblocking Deep Dive (15m) | FF Variants (10m) | Counters & Dividers (13m) | ~50m |
-| 5   | Counter Variations (10m) | Shift Registers (12m) | Metastability (12m) | Debouncing (11m) | ~45m |
-| 6   | Testbench Anatomy (12m) | Self-Checking TBs (15m) | Tasks (10m) | File-Driven Testing (13m) | ~50m |
-| 7   | FSM Theory (12m) | 3-Block Style (15m) | State Encoding (8m) | FSM Methodology (15m) | ~50m |
-| 8   | Hierarchy (12m) | Parameters (15m) | Generate Blocks (12m) | Design for Reuse (6m) | ~45m |
-| 9   | ROM (12m) | RAM (12m) | iCE40 Memory (10m) | Memory Applications (11m) | ~45m |
-| 10  | Physics of Timing (15m) | Timing Reports (12m) | iCE40 PLL (12m) | Clock Domain Crossing (11m) | ~50m |
-| 11  | UART Protocol (15m) | TX Architecture (15m) | Implementation (12m) | PC Connection (8m) | ~50m |
-| 12  | UART RX Oversampling (15m) | RX Implementation (15m) | SPI Protocol (12m) | IP Integration (8m) | ~50m |
-| 13  | Why SystemVerilog? (8m) | `logic` Type (10m) | Intent Blocks (12m) | enum/struct/package (15m) | ~45m |
-| 14  | Assertions (15m) | Concurrent Assertions (12m) | Coverage (12m) | Interfaces & UVM Road (11m) | ~50m |
+```bash
+# Ubuntu/Debian (quickest path)
+sudo apt install -y yosys nextpnr-ice40 fpga-icestorm iverilog gtkwave git make
+```
 
-**Total pre-class video: ~660 min (~11 hours)**
+### 2. Verify Installation
+
+```bash
+yosys --version && nextpnr-ice40 --version && iverilog -V
+```
+
+### 3. First Build (Day 1)
+
+```bash
+cd labs/week1/day01
+make prog    # synthesize + program the Go Board
+```
 
 ## Toolchain Quick Reference
 
@@ -117,13 +101,6 @@ icepack top.asc top.bin
 iceprog top.bin
 ```
 
-## Getting Started
-
-1. **Install the toolchain** — see [`docs/setup_guide.md`](docs/setup_guide.md)
-2. **Get the Go Board** — [nandland.com](https://nandland.com/the-go-board/)
-3. **Watch the Day 1 videos** — `lectures/week1/day01_welcome_to_hardware_thinking/`
-4. **Come to class ready to build**
-
 ## License
 
-Course materials are provided for educational use. See [LICENSE](LICENSE) for details.
+Course materials © UCF ECE. Verilog source code released under MIT License for educational use.
