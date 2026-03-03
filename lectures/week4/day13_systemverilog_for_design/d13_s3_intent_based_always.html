@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 13.3: Intent-Based Always Blocks — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Intent-Based Always</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Why SV?</span>
+        <span class="seg-label ">logic Type</span>
+        <span class="seg-label active">always_ff/comb</span>
+        <span class="seg-label ">enum/struct/pkg</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 13.</aside>
+</section>
+
+<section>
+    <h2>Three Flavors of <code>always</code></h2>
+    <table style="font-size:0.65em;margin-top:0.3em;">
+        <thead><tr><th>Block</th><th>Intent</th><th>Enforcement</th></tr></thead>
+        <tbody>
+            <tr><td><code>always_ff</code></td><td>Sequential (flip-flops)</td><td>Must use clock edge. Warns on <code>=</code> (blocking).</td></tr>
+            <tr class="fragment"><td><code>always_comb</code></td><td>Combinational</td><td>Auto-sensitivity. <strong>Errors on latch inference!</strong></td></tr>
+            <tr class="fragment"><td><code>always_latch</code></td><td>Intentional latch</td><td>Documents intent. Rare in FPGA design.</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        <code>always_comb</code> catching latches is the single biggest safety win of SystemVerilog.
+    </div>
+    <aside class="notes">Three always flavors: always_ff for sequential, always_comb for combinational, always_latch for intentional latches. always_comb catching latches at compile time is the #1 safety improvement.</aside>
+</section>
+<section>
+    <h2>Side-by-Side Comparison</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;">
+    <pre class="sim" style="font-size:0.45em;"><code class="language-verilog">// Verilog
+always @(posedge i_clk)
+    if (i_reset) r_state &lt;= S_IDLE;
+    else         r_state &lt;= r_next;
+
+always @(*) begin
+    r_next = r_state; // default
+    case (r_state) ...
+    endcase
+end</code></pre>
+    <pre class="synth" style="font-size:0.45em;"><code class="language-verilog">// SystemVerilog
+always_ff @(posedge i_clk)
+    if (i_reset) state &lt;= S_IDLE;
+    else         state &lt;= next_state;
+
+always_comb begin
+    next_state = state; // default
+    case (state) ...
+    endcase
+end</code></pre>
+    </div>
+    <div style="font-size:0.75em;margin-top:0.5em;">
+        <p class="fragment"><strong>Drop the <code>r_</code> prefix:</strong> <code>always_ff</code> tells you it&rsquo;s a register. The prefix is redundant.</p>
+        <p class="fragment"><strong>Missing <code>default</code>?</strong> <code>always_comb</code> flags it as a compile error. <code>always @(*)</code> silently infers a latch.</p>
+    </div>
+    <aside class="notes">Side by side: same structure, stronger checking. Drop the r_ prefix since always_ff declares register intent explicitly. Missing default? always_comb catches it; always @(*) silently infers a latch.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>always_ff</code>: enforces clock edge, non-blocking, single driver.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>always_comb</code>: auto-sensitivity, <strong>errors on latch inference</strong>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>always_latch</code>: documents intentional latches (rare in FPGA).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Same RTL, stronger compiler checking. Bugs found earlier.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;"><code>enum</code>, <code>struct</code>, and <code>package</code></h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~15 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Type safety for FSMs, grouped signals, and shared definitions.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

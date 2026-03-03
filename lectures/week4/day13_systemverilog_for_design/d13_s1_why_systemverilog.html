@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 13.1: Why SystemVerilog? — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Why SystemVerilog?</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Why SV?</span>
+        <span class="seg-label ">logic Type</span>
+        <span class="seg-label ">always_ff/comb</span>
+        <span class="seg-label ">enum/struct/pkg</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 13.</aside>
+</section>
+
+<section>
+    <h2>The Evolution</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Verilog (IEEE 1364)</strong> — 1995, updated 2001. The foundation you know.</p>
+        <p class="fragment"><strong>SystemVerilog (IEEE 1800)</strong> — 2005, latest 2017. A <strong>superset</strong> of Verilog.</p>
+        <p class="fragment">Every legal Verilog file is legal SystemVerilog. You can <strong>mix them freely</strong>.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        Same hardware, better language. Today: design features. Tomorrow: verification features.
+    </div>
+    <aside class="notes">SystemVerilog is a superset of Verilog. Every Verilog file is valid SV. Today we add design safety features; tomorrow, verification power.</aside>
+</section>
+<section>
+    <h2>What SV Adds for Design</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong><code>logic</code></strong> — replaces <code>wire</code> and <code>reg</code></p>
+        <p class="fragment"><strong><code>always_ff</code>, <code>always_comb</code></strong> — compiler-enforced intent</p>
+        <p class="fragment"><strong><code>enum</code></strong> — type-safe FSM states</p>
+        <p class="fragment"><strong><code>struct packed</code></strong> — grouped signals with dot notation</p>
+        <p class="fragment"><strong><code>package</code></strong> — shared types across modules</p>
+    </div>
+    <div class="fragment" style="font-size:0.75em;margin-top:0.5em;color:#888;">
+        Toolchain: <code>iverilog -g2012</code> for sim, <code>yosys read_verilog -sv</code> for synthesis.
+    </div>
+    <aside class="notes">Five key design features: logic type, intent-based always blocks, enum, struct, package. All synthesizable. Use iverilog -g2012 and yosys -sv.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;SystemVerilog is a <strong>superset</strong> of Verilog — mix freely.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Design features catch bugs Verilog silently accepts.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;In industry, SV has largely replaced Verilog for new designs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Toolchain: <code>iverilog -g2012</code>, <code>yosys read_verilog -sv</code>.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;"><code>logic</code> — One Type to Rule Them All</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~10 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Eliminating the wire/reg confusion forever.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

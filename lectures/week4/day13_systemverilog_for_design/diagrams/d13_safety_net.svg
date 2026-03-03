@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Inter, sans-serif">
+  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">SystemVerilog Safety Net — Design Features</text>
+
+  <!-- Column headers -->
+  <rect x="30" y="40" width="220" height="30" rx="4" fill="#FFEBEE"/>
+  <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#C62828">Verilog Risk</text>
+  <rect x="270" y="40" width="200" height="30" rx="4" fill="#E8F5E9"/>
+  <text x="370" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32">SV Protection</text>
+  <rect x="490" y="40" width="200" height="30" rx="4" fill="#E3F2FD"/>
+  <text x="590" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">How It Helps</text>
+
+  <!-- Row 1 -->
+  <rect x="30" y="78" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="140" y="95" text-anchor="middle" font-size="9" fill="#333">Latch from incomplete</text>
+  <text x="140" y="107" text-anchor="middle" font-size="9" fill="#333">always @(*)</text>
+  <rect x="270" y="78" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="370" y="100" text-anchor="middle" font-size="9" fill="#333" font-weight="600">always_comb errors</text>
+  <rect x="490" y="78" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="590" y="100" text-anchor="middle" font-size="9" fill="#333">Compile-time catch</text>
+
+  <!-- Row 2 -->
+  <rect x="30" y="126" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="140" y="143" text-anchor="middle" font-size="9" fill="#333">Blocking = in sequential</text>
+  <text x="140" y="155" text-anchor="middle" font-size="9" fill="#333">block</text>
+  <rect x="270" y="126" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="370" y="148" text-anchor="middle" font-size="9" fill="#333" font-weight="600">always_ff warns on =</text>
+  <rect x="490" y="126" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="590" y="148" text-anchor="middle" font-size="9" fill="#333">Enforces &lt;= usage</text>
+
+  <!-- Row 3 -->
+  <rect x="30" y="174" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="140" y="197" text-anchor="middle" font-size="9" fill="#333">reg ≠ register confusion</text>
+  <rect x="270" y="174" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="370" y="197" text-anchor="middle" font-size="9" fill="#333" font-weight="600">logic is usage-neutral</text>
+  <rect x="490" y="174" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="590" y="197" text-anchor="middle" font-size="9" fill="#333">No misleading keyword</text>
+
+  <!-- Row 4 -->
+  <rect x="30" y="222" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="140" y="245" text-anchor="middle" font-size="9" fill="#333">State encoding mismatch</text>
+  <rect x="270" y="222" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="370" y="245" text-anchor="middle" font-size="9" fill="#333" font-weight="600">enum is type-checked</text>
+  <rect x="490" y="222" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="590" y="245" text-anchor="middle" font-size="9" fill="#333">Invalid state = warning</text>
+
+  <!-- Row 5 -->
+  <rect x="30" y="270" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="140" y="293" text-anchor="middle" font-size="9" fill="#333">Duplicate constants</text>
+  <rect x="270" y="270" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="370" y="293" text-anchor="middle" font-size="9" fill="#333" font-weight="600">package — single source</text>
+  <rect x="490" y="270" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="590" y="293" text-anchor="middle" font-size="9" fill="#333">Change once, used everywhere</text>
+</svg>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.3: Functional Coverage — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · SystemVerilog for Verification</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Functional Coverage</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Assertions</span>
+        <span class="seg-label ">Concurrent Assert</span>
+        <span class="seg-label active">Coverage</span>
+        <span class="seg-label ">Interfaces/UVM</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 14.</aside>
+</section>
+
+<section>
+    <h2>The Coverage Question</h2>
+    <p style="font-size:0.85em;">Assertions check <strong>correctness</strong>. Coverage measures <strong>completeness</strong>.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Code coverage:</strong> &ldquo;Did every line execute?&rdquo; — necessary but not sufficient.</p>
+        <p class="fragment"><strong>Functional coverage:</strong> &ldquo;Did I test <em>interesting combinations</em>?&rdquo; — you define what matters.</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        100% code coverage ≠ 100% bug-free. But 60% functional coverage = 40% of interesting scenarios untested.
+    </div>
+    <aside class="notes">Assertions check correctness. Coverage measures completeness. Code coverage is necessary but not sufficient. Functional coverage lets you define what 'interesting' means.</aside>
+</section>
+<section>
+    <h2><code>covergroup</code> Example</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>covergroup alu_cov @(posedge clk);
+<span class="fragment">    cp_op: coverpoint opcode {
+        bins add = {2'b00}; bins sub = {2'b01};
+        bins bw_and = {2'b10}; bins bw_or = {2'b11};
+    }</span>
+<span class="fragment">    cp_a: coverpoint a {
+        bins zero = {4'h0};
+        bins mid  = {[4'h1:4'hE]};
+        bins max  = {4'hF};
+    }</span>
+<span class="fragment">    // Cross: every opcode × every operand range
+    cx_full: cross cp_op, cp_a;</span>
+endgroup</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Run your tests → check coverage report → add tests for gaps → repeat. <strong>Coverage-driven workflow.</strong>
+    </div>
+    <aside class="notes">Covergroup defines what to measure. Coverpoints are individual signals with bins. Cross coverage checks combinations. Run tests, find gaps, add tests, repeat.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Assertions = correctness. Coverage = completeness.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>covergroup</code> + <code>coverpoint</code> + <code>bins</code> = measurement framework.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>cross</code> checks interesting combinations automatically.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Coverage-driven: define → test → measure → fill gaps → repeat.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Interfaces &amp; the Road to UVM</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Bundled signals, and where industry verification goes next.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

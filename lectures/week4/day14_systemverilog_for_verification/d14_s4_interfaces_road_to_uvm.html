@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.4: Interfaces &amp; Road to UVM — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · SystemVerilog for Verification</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Interfaces &amp; UVM</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Assertions</span>
+        <span class="seg-label ">Concurrent Assert</span>
+        <span class="seg-label ">Coverage</span>
+        <span class="seg-label active">Interfaces/UVM</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 14.</aside>
+</section>
+
+<section>
+    <h2><code>interface</code> — Bundled Connections</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>interface uart_if (input logic clk);
+    logic       tx, rx;
+    logic [7:0] tx_data, rx_data;
+    logic       tx_valid, tx_busy, rx_valid;
+<span class="fragment">
+    modport dut_tx (
+        input  clk, tx_data, tx_valid,
+        output tx, tx_busy
+    );
+    modport testbench (
+        input  clk, tx, tx_busy, rx_data, rx_valid,
+        output rx, tx_data, tx_valid
+    );</span>
+endinterface</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <code>modport</code> defines <strong>different views</strong> of the same signals. DUT sees inputs/outputs; testbench sees the inverse.
+    </div>
+    <aside class="notes">Interfaces bundle related signals. Modport defines different views — DUT and testbench see inverse directions. One interface replaces long port lists.</aside>
+</section>
+<section>
+    <h2>The Verification Maturity Scale</h2>
+    <img src="diagrams/d14_verification_pyramid.svg" alt="Verification pyramid" style="width:100%;max-width:560px;display:block;margin:0.3em auto;">
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        You&rsquo;re at Level 3 with awareness of Level 4. That&rsquo;s a strong foundation.
+    </div>
+    <aside class="notes">The verification maturity pyramid puts your skills in context. You've gone from waveforms to self-checking TBs to assertions in four weeks. Strong foundation for whatever comes next.</aside>
+</section>
+<section>
+    <h2>The Road to UVM</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>UVM (Universal Verification Methodology):</strong> industry standard framework</p>
+        <p class="fragment">Components: <strong>driver</strong> (generates stimulus) → <strong>monitor</strong> (observes outputs) → <strong>scoreboard</strong> (checks correctness)</p>
+        <p class="fragment">Uses <strong>constrained random</strong> testing: specify legal input space, let the tool explore</p>
+        <p class="fragment">Connected through <strong>interfaces</strong> — what you just learned</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        What we&rsquo;ve learned is the <strong>foundation</strong>. Assertions, coverage, interfaces — these are all UVM building blocks.
+    </div>
+    <aside class="notes">UVM: industry standard. Driver + monitor + scoreboard, constrained random testing, all connected via interfaces. What you've learned is the foundation for all of this.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Difference between <code>assert (cond) else $error</code> and <code>if (!cond) $display("Error")</code>?</p>
+        <div class="fragment quiz-answer">Assertions are standardized (tools count/filter/report), have severity levels ($info/$warning/$error/$fatal), can be globally toggled, and are visible to formal verification tools.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> Write a concurrent assertion: after reset falls, TX must be high within 2 cycles.</p>
+        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.85em;white-space:pre;line-height:1.4;">property p_post_reset;
+  @(posedge clk) $fell(reset)
+    |=> ##[0:1] (o_tx == 1'b1);
+endproperty
+assert property (p_post_reset);</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> Coverage report shows 85%. Ship?</p>
+        <div class="fragment quiz-answer">Depends on what&rsquo;s missing. If the missing 15% are don&rsquo;t-care states, possibly fine. If they include critical edge cases (overflow, error handling), need more tests. Goals: 95%+ for safety-critical, 80-90% for general.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> A module has 12 ports. You add a 13th. Files to modify with Verilog vs. SV interface?</p>
+        <div class="fragment quiz-answer"><strong>Verilog:</strong> every file that instantiates the module. <strong>SV interface:</strong> only the interface definition + module internals. Instantiation sites update automatically.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p><h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 14 · Hands-On Lab</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

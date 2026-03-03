@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 16: Course Retrospective — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 16 · Course Wrap</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Reflection &amp; Next Steps</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Accelerated HDL for Digital System Design</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <aside class="notes">After the demos — retrospective and where to go from here.</aside>
+</section>
+
+<section>
+    <h2>What You Built in 4 Weeks</h2>
+    <div style="font-size:0.75em;">
+        <p class="fragment"><strong>Week 1:</strong> Combinational + sequential fundamentals. First LED blink from HDL.</p>
+        <p class="fragment"><strong>Week 2:</strong> Counters, shift registers, debounce, FSMs, hierarchy, testbenches. Verified module library.</p>
+        <p class="fragment"><strong>Week 3:</strong> Memory, timing/PLL, UART TX + RX, SPI. &ldquo;HELLO&rdquo; on the PC terminal.</p>
+        <p class="fragment"><strong>Week 4:</strong> SystemVerilog, assertions, coverage. Complete demonstrated system.</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        From &ldquo;what is an FPGA?&rdquo; to a complete, verified, hardware-demonstrated system. In 16 sessions.
+    </div>
+    <aside class="notes">Recap the journey. From zero HDL to a complete system in 16 sessions. That's a real accomplishment.</aside>
+</section>
+
+<section>
+    <h2>Your Module Library</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;font-size:0.7em;">
+        <div style="background:#E3F2FD;padding:0.5em 0.8em;border-radius:6px;">
+            <p style="font-weight:700;color:#1565C0;">Combinational</p>
+            <p>mux, decoder, hex_to_7seg, ALU</p>
+        </div>
+        <div style="background:#E8F5E9;padding:0.5em 0.8em;border-radius:6px;">
+            <p style="font-weight:700;color:#2E7D32;">Sequential</p>
+            <p>DFF, counter_mod_n, shift_reg, debounce</p>
+        </div>
+        <div style="background:#FFF8E1;padding:0.5em 0.8em;border-radius:6px;">
+            <p style="font-weight:700;color:#E65100;">FSMs</p>
+            <p>traffic_light, button_FSM, uart_tx, uart_rx</p>
+        </div>
+        <div style="background:#F3E5F5;padding:0.5em 0.8em;border-radius:6px;">
+            <p style="font-weight:700;color:#7B1FA2;">Infrastructure</p>
+            <p>ROM, RAM, PLL, loopback, pattern_sequencer</p>
+        </div>
+    </div>
+    <p class="fragment" style="font-size:0.8em;margin-top:0.5em;">Every module has a testbench. Every module is reusable. This is how real design teams work.</p>
+    <aside class="notes">Your module library. Every module tested, every module reusable. This is industry practice.</aside>
+</section>
+
+<section>
+    <h2>Skills You Gained</h2>
+    <div style="font-size:0.75em;">
+        <p class="fragment"><strong>Design:</strong> Combinational, sequential, FSM, hierarchy, parameterization</p>
+        <p class="fragment"><strong>Verification:</strong> Self-checking TBs, assertions, coverage awareness</p>
+        <p class="fragment"><strong>Communication:</strong> UART TX/RX, SPI concepts, IP integration</p>
+        <p class="fragment"><strong>Tools:</strong> Icarus, Yosys, nextpnr, GTKWave — full open-source flow</p>
+        <p class="fragment"><strong>SystemVerilog:</strong> logic, always_ff/comb, enum, struct, package, assertions</p>
+        <p class="fragment"><strong>Engineering practice:</strong> Incremental integration, UART debugging, timing analysis</p>
+    </div>
+    <aside class="notes">Six categories of skills. Design, verification, communication protocols, tools, SystemVerilog, and engineering practice.</aside>
+</section>
+
+<section>
+    <h2>Where to Go From Here</h2>
+    <div style="font-size:0.75em;">
+        <p class="fragment"><strong>FPGA Engineering:</strong> Larger FPGAs (Artix-7, ECP5), Vivado/Quartus, higher-speed I/O, DDR memory</p>
+        <p class="fragment"><strong>ASIC Design:</strong> Standard cell flow, timing closure, DFT, physical design</p>
+        <p class="fragment"><strong>Verification:</strong> UVM, constrained random, formal verification (SVA, model checking)</p>
+        <p class="fragment"><strong>Hardware Security:</strong> Side-channel analysis, fault injection, logic locking, trojan detection</p>
+        <p class="fragment"><strong>Embedded Systems:</strong> RISC-V soft cores, SoC integration, Linux on FPGA</p>
+        <p class="fragment"><strong>Open-Source Ecosystem:</strong> Amaranth HDL, LiteX, SymbiFlow, OpenTitan</p>
+    </div>
+    <aside class="notes">Six pathways. Tailor this to your audience — CompE students heading toward chip design, security research, embedded, or software.</aside>
+</section>
+
+<section>
+    <h2>Resources</h2>
+    <div style="font-size:0.75em;">
+        <p><strong>Learning:</strong></p>
+        <p style="margin-left:1em;">fpga4fun.com · nandland.com · zipcpu.com/blog · asic-world.com</p>
+        <p style="margin-top:0.5em;"><strong>Tools:</strong></p>
+        <p style="margin-left:1em;">Yosys · nextpnr · Verilator · Icarus Verilog · GTKWave</p>
+        <p style="margin-top:0.5em;"><strong>Communities:</strong></p>
+        <p style="margin-left:1em;">r/FPGA · 1BitSquared Discord · Lattice forums · RISC-V Foundation</p>
+        <p style="margin-top:0.5em;"><strong>Books:</strong></p>
+        <p style="margin-left:1em;">Harris &amp; Harris, <em>Digital Design and Computer Architecture</em></p>
+        <p style="margin-left:1em;">Cummings papers on clock domain crossing and coding guidelines</p>
+    </div>
+    <aside class="notes">Resources for continued learning. Books, websites, communities, and tools.</aside>
+</section>
+
+<section>
+    <h2>Course Feedback</h2>
+    <div style="font-size:0.85em;text-align:center;">
+        <p>What worked well?</p>
+        <p class="fragment">What would you change?</p>
+        <p class="fragment">What surprised you?</p>
+        <p class="fragment">What do you wish we&rsquo;d covered?</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:1em;">
+        Please fill out the anonymous feedback form before you leave today.
+    </div>
+    <aside class="notes">Anonymous written feedback. Four questions. Collect before they leave.</aside>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <h2 style="color:#FFC904;font-size:1.8em;">You Keep the Go Board.</h2>
+        <p style="color:#E8E8E4;font-size:0.9em;margin-top:1em;">Keep building. Keep learning. Keep tinkering.</p>
+        <p style="color:#888;font-size:0.7em;margin-top:2em;">The open-source toolchain you learned was built by volunteers<br>who believed this technology should be accessible to everyone.</p>
+        <p style="color:#FFC904;font-size:0.8em;margin-top:1em;">Pay it forward.</p>
+    </div>
+    <aside class="notes">They keep the Go Board. Encourage them to try one more project within a week. Pay it forward.</aside>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealNotes]});</script>
+</body></html>

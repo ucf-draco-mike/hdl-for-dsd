@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 13.2: logic — One Type — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The <code>logic</code> Type</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Why SV?</span>
+        <span class="seg-label active">logic Type</span>
+        <span class="seg-label ">always_ff/comb</span>
+        <span class="seg-label ">enum/struct/pkg</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 13.</aside>
+</section>
+
+<section>
+    <h2>The <code>wire</code> / <code>reg</code> Problem</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;font-size:0.75em;">
+        <div style="background:#FFEBEE;padding:0.5em 0.8em;border-radius:6px;">
+            <p><strong>Verilog confusion:</strong></p>
+            <p><code>reg</code> does NOT mean register</p>
+            <p><code>wire</code> does NOT mean just a wire</p>
+            <p>You must decide <em>before coding</em></p>
+        </div>
+        <div class="fragment" style="background:#E8F5E9;padding:0.5em 0.8em;border-radius:6px;">
+            <p><strong>SystemVerilog fix:</strong></p>
+            <p><code>logic</code> = one type for both</p>
+            <p>Works with <code>assign</code> or <code>always</code></p>
+            <p>Decision made <em>by usage</em></p>
+        </div>
+    </div>
+    <aside class="notes">Verilog's wire/reg distinction confuses everyone because reg doesn't mean register. SystemVerilog's logic type eliminates this entirely — one type, usage determines behavior.</aside>
+</section>
+<section>
+    <h2><code>logic</code> in Practice</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Verilog — you must choose wire vs. reg
+input  wire       i_clk;
+output reg  [7:0] o_data;  // is this a register? Maybe not!
+wire   [3:0] w_sum;
+
+<span class="fragment">// SystemVerilog — logic everywhere
+input  logic       i_clk;
+output logic [7:0] o_data;  // no misleading "reg" keyword
+logic  [3:0] sum;</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>One restriction:</strong> <code>logic</code> can only have <strong>one driver</strong>. Multi-driver buses (rare in FPGA) still use <code>wire</code>. This catches accidental multi-driver bugs.
+    </div>
+    <aside class="notes">logic replaces both wire and reg. One restriction: single driver only. That's actually a feature — catches accidental multi-driver bugs that Verilog would silently resolve.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>logic</code> replaces <code>wire</code> and <code>reg</code>. One type for everything.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Eliminates the &ldquo;<code>reg</code> doesn&rsquo;t mean register&rdquo; confusion.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Single-driver restriction catches multi-driver bugs at compile time.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Use <code>wire</code> only for tri-state or multi-driver buses (rare).</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Intent-Based Always Blocks</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Telling the compiler what you mean — and having it check.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

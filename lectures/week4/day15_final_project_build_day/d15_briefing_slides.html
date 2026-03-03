@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 15: Integration Briefing — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 15 · Final Project</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Build Day</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Integration Strategy Briefing · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <aside class="notes">15 minutes of strategy, then you build for 2 hours. Let's make the most of it.</aside>
+</section>
+
+<section>
+    <h2>The #1 Failure Mode</h2>
+    <div style="font-size:1.2em;text-align:center;margin-top:1em;">
+        <p class="fragment" style="color:#C62828;font-weight:700;">Big Bang Integration</p>
+    </div>
+    <div class="fragment" style="font-size:0.85em;text-align:center;margin-top:0.5em;">
+        <p>Write all modules → connect everything at once → hope it works</p>
+    </div>
+    <p class="fragment" style="font-size:0.9em;text-align:center;margin-top:1em;color:#C62828;">
+        It never works.
+    </p>
+    <p class="fragment" style="font-size:0.85em;text-align:center;">
+        Wall of errors. No idea which module is broken. No path forward.
+    </p>
+    <aside class="notes">Big bang integration is the number one failure mode on project day. The fix is incremental integration.</aside>
+</section>
+
+<section>
+    <h2>Incremental Integration</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Step 1:</strong> Verify module library — all testbenches pass</p>
+        <p class="fragment"><strong>Step 2:</strong> Skeleton top module + heartbeat LED → synthesize immediately</p>
+        <p class="fragment"><strong>Step 3:</strong> Add ONE module. Synthesize. Verify on hardware. Repeat.</p>
+        <p class="fragment"><strong>Step 4:</strong> UART printf debugging for hardware-only issues</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
+        Each step produces a <strong>working</strong> system. If something breaks, it was the last thing you added.
+    </div>
+    <aside class="notes">Four steps. The key insight: each step produces a working system. When something breaks, you know exactly what caused it.</aside>
+</section>
+
+<section>
+    <h2>Step 2: Skeleton Top Module</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module top_project (
+    input  logic i_clk,
+    input  logic i_switch1, i_switch2, i_switch3, i_switch4,
+    input  logic i_uart_rx,
+    output logic o_uart_tx,
+    output logic o_led1, o_led2, o_led3, o_led4,
+    // ... 7-seg ports ...
+);
+    // Heartbeat — proves FPGA is configured and running
+    logic [23:0] heartbeat;
+    always_ff @(posedge i_clk)
+        heartbeat &lt;= heartbeat + 1;
+    assign o_led4 = ~heartbeat[23];
+
+    // Stub everything else
+    assign o_uart_tx = 1'b1;  // idle high
+    assign {o_led1, o_led2, o_led3} = 3'b111; // off
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Synthesize and program this <strong>first</strong>. Heartbeat blinks? Toolchain works. Now add modules one at a time.
+    </div>
+    <aside class="notes">Skeleton top with heartbeat. Synthesize immediately. If the LED blinks, your toolchain and FPGA are working before you add any complexity.</aside>
+</section>
+
+<section>
+    <h2>Common Late-Stage Panics</h2>
+    <div style="font-size:0.75em;">
+        <p class="fragment"><strong>&ldquo;Works in sim, not on hardware&rdquo;</strong> → Check pin mappings, debounce, clock frequency params. Add debug LEDs.</p>
+        <p class="fragment"><strong>&ldquo;I can&rsquo;t fit it&rdquo;</strong> → Check <code>stat</code> output. Often caused by synthesis inferring unexpected logic (e.g., huge multipliers).</p>
+        <p class="fragment"><strong>&ldquo;Timing fails&rdquo;</strong> → Usually fine at 25 MHz. Check for long combinational chains (wide muxes, deep priority encoders).</p>
+        <p class="fragment"><strong>&ldquo;I haven&rsquo;t started&rdquo;</strong> → Simplest possible demo: heartbeat + one button-driven action. Start there.</p>
+    </div>
+    <aside class="notes">Four common panics and their fixes. The key message: there's always a path forward, even if it means reducing scope.</aside>
+</section>
+
+<section>
+    <h2>UART Printf Debugging</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Hardware printf: send a status byte via UART
+always_ff @(posedge i_clk) begin
+    if (w_debug_trigger &amp;&amp; !w_uart_busy) begin
+        uart_data  &lt;= {"S", state};  // or a debug code
+        uart_valid &lt;= 1'b1;
+    end else
+        uart_valid &lt;= 1'b0;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Your UART TX module becomes a <strong>hardware debugger</strong>. Send state codes, counter values, or flag bytes to the PC terminal.
+    </div>
+    <aside class="notes">UART printf debugging: reuse your UART TX to send debug data to the PC terminal. This is a real industry technique — hardware printf.</aside>
+</section>
+
+<section>
+    <h2>Today&rsquo;s Plan</h2>
+    <table style="font-size:0.75em;">
+        <tbody>
+            <tr><td><strong>Now–0:15</strong></td><td>This briefing (done!)</td></tr>
+            <tr><td><strong>0:15–0:45</strong></td><td>Individual check-ins (I come to you)</td></tr>
+            <tr><td><strong>0:45–2:00</strong></td><td>Build time (I&rsquo;m on call)</td></tr>
+            <tr><td><strong>2:00–2:15</strong></td><td>Status round (30 sec each)</td></tr>
+            <tr><td><strong>2:15–2:30</strong></td><td>Buffer / overflow debugging</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        Something must work on hardware by tomorrow.
+    </div>
+    <aside class="notes">15 minutes of briefing, then build time. Status round at 2pm is public. Something must work on hardware by tomorrow.</aside>
+</section>
+
+<section>
+    <h2>Homework for Tonight</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>1.</strong> Finish the minimum viable demo. Something must work on hardware.</p>
+        <p class="fragment"><strong>2.</strong> Prepare your block diagram (hand-drawn is fine if clear).</p>
+        <p class="fragment"><strong>3.</strong> Run your testbenches one final time.</p>
+        <p class="fragment"><strong>4.</strong> Synthesize and check timing. Know your LUT/FF count and Fmax.</p>
+        <p class="fragment"><strong>5.</strong> Prepare a 1-minute reflection: what surprised you?</p>
+    </div>
+    <aside class="notes">Five things for tonight. The minimum viable demo is non-negotiable. Everything else helps your presentation quality.</aside>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <h2 style="color:#FFC904;font-size:1.8em;">Go Build.</h2>
+        <p style="color:#E8E8E4;font-size:0.9em;margin-top:1em;">I&rsquo;ll start check-ins in 2 minutes.</p>
+    </div>
+    <aside class="notes">End of briefing. Start circulating for check-ins.</aside>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

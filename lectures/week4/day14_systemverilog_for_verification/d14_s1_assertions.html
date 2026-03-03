@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.1: Assertions — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · SystemVerilog for Verification</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Assertions — Executable Specs</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Assertions</span>
+        <span class="seg-label ">Concurrent Assert</span>
+        <span class="seg-label ">Coverage</span>
+        <span class="seg-label ">Interfaces/UVM</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 14.</aside>
+</section>
+
+<section>
+    <h2>What Are Assertions?</h2>
+    <p style="font-size:0.85em;">Statements that <strong>must always be true</strong>. If ever false → simulator reports error.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Executable documentation:</strong> design rules the simulator can check</p>
+        <p class="fragment"><strong>Always-on monitors:</strong> run continuously, not just at test points</p>
+        <p class="fragment"><strong>Bug locators:</strong> exact signal + exact time of violation</p>
+    </div>
+    <aside class="notes">Assertions are statements that must always be true. They're executable documentation, always-on monitors, and precise bug locators. Much more powerful than if-based checks.</aside>
+</section>
+<section>
+    <h2>Immediate Assertions</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>always_ff @(posedge i_clk) begin
+    state &lt;= next_state;
+
+<span class="fragment">    // Assert: state must never be undefined
+    assert (state !== 'x)
+        else $error("State is X at time %0t", $time);</span>
+
+<span class="fragment">    // Assert: if busy, valid must not be asserted
+    assert (!(o_busy &amp;&amp; i_valid))
+        else $error("Valid during busy at %0t", $time);</span>
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Like an <code>if</code> check but: standardized severity, tool-countable, formally verifiable, globally toggleable.
+    </div>
+    <aside class="notes">Immediate assertions: checked at a specific procedural point. Like if-checks but standardized: tools can count, filter, and report them uniformly. Also visible to formal tools.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Assert-Driven Bug Hunt</h2>
+    <p style="margin-top:0.5em;">Add assertions to UART TX, then intentionally break the stop bit — watch the assertion fire</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day14_ex01_uart_tx_assertions.sv</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Assert-Driven Bug Hunt</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Assertions = executable specs. Must always be true.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Immediate: checked at a point. <code>assert (cond) else $error(...)</code></p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Severity levels: <code>$info</code>, <code>$warning</code>, <code>$error</code>, <code>$fatal</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Unlike <code>if</code>-checks: standardized, countable, formally verifiable.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Concurrent Assertions</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Multi-cycle protocol checking — assert property.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

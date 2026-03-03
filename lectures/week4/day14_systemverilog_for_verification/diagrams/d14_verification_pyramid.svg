@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 360" font-family="Inter, sans-serif">
+  <text x="340" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Verification Maturity Scale</text>
+
+  <!-- Pyramid layers (bottom = widest = simplest) -->
+  <!-- Level 1: Visual waveform inspection -->
+  <polygon points="60,320 620,320 570,275 110,275" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="340" y="303" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="600">Level 1: Visual Waveform Inspection</text>
+
+  <!-- Level 2: Self-checking testbenches -->
+  <polygon points="110,275 570,275 520,230 160,230" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="340" y="258" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="600">Level 2: Self-Checking Testbenches</text>
+
+  <!-- Level 3: Immediate assertions (YOU ARE HERE) -->
+  <polygon points="160,230 520,230 470,185 210,185" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="340" y="213" text-anchor="middle" font-size="10" fill="#E65100" font-weight="700">Level 3: Assertions (Immediate)</text>
+
+  <!-- "YOU ARE HERE" marker -->
+  <rect x="490" y="195" width="120" height="24" rx="12" fill="#FFC904" stroke="#E65100" stroke-width="1.5"/>
+  <text x="550" y="211" text-anchor="middle" font-size="9" font-weight="700" fill="#333">YOU ARE HERE</text>
+  <line x1="490" y1="207" x2="475" y2="207" stroke="#E65100" stroke-width="1.5"/>
+  <polygon points="475,203 468,207 475,211" fill="#E65100"/>
+
+  <!-- Level 4: Concurrent assertions + coverage -->
+  <polygon points="210,185 470,185 420,140 260,140" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5"/>
+  <text x="340" y="168" text-anchor="middle" font-size="10" fill="#7B1FA2" font-weight="600">Level 4: Concurrent + Coverage</text>
+
+  <!-- Level 5: Constrained random + UVM -->
+  <polygon points="260,140 420,140 380,95 300,95" fill="#FCE4EC" stroke="#C62828" stroke-width="1.5"/>
+  <text x="340" y="123" text-anchor="middle" font-size="10" fill="#C62828" font-weight="600">Level 5: UVM / Random</text>
+
+  <!-- Level 6: Formal verification -->
+  <polygon points="300,95 380,95 355,55 325,55" fill="#263238" stroke="#263238" stroke-width="1.5"/>
+  <text x="340" y="80" text-anchor="middle" font-size="9" fill="#FFFFFF" font-weight="600">Formal</text>
+
+  <!-- Axis labels -->
+  <text x="30" y="190" text-anchor="middle" font-size="8" fill="#888" transform="rotate(-90,30,190)">Verification Power →</text>
+  <text x="340" y="345" text-anchor="middle" font-size="8" fill="#888">Effort &amp; Complexity →</text>
+
+  <!-- Context annotations -->
+  <text x="60" y="310" font-size="7" fill="#1565C0">Week 1</text>
+  <text x="115" y="265" font-size="7" fill="#2E7D32">Week 2+</text>
+  <text x="173" y="220" font-size="7" fill="#E65100">Today</text>
+  <text x="225" y="175" font-size="7" fill="#7B1FA2">Awareness</text>
+  <text x="270" y="130" font-size="7" fill="#C62828">Next course</text>
+  <text x="312" y="68" font-size="7" fill="#90A4AE">Advanced</text>
+</svg>
