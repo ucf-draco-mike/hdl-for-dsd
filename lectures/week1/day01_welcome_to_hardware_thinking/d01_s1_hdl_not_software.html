@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1.1: HDL ≠ Software — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ==================== TITLE SLIDE ==================== -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom: 1em;">
+        <span style="color: #FFC904; font-weight: 700; font-size: 0.6em; letter-spacing: 0.15em; text-transform: uppercase;">
+            Accelerated HDL for Digital System Design
+        </span>
+    </div>
+    <h1 style="color: #FFC904; border-bottom: none; font-size: 2.2em;">
+        HDL ≠ Software
+    </h1>
+    <p class="subtitle" style="color: #E8E8E4;">
+        Day 1, Video 1 of 4 &nbsp;·&nbsp; ~12 minutes
+    </p>
+    <p class="course-info" style="color: #888;">
+        UCF College of Engineering &amp; Computer Science<br>
+        Department of Electrical &amp; Computer Engineering
+    </p>
+    <!-- Segment breadcrumb -->
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">HDL ≠ Software</span>
+        <span class="seg-label">Synth vs Sim</span>
+        <span class="seg-label">Module Anatomy</span>
+        <span class="seg-label">Logic Refresher</span>
+    </div>
+    <aside class="notes">
+        Welcome to the first video in the Accelerated HDL for Digital System Design course.
+        This is Video 1 of 4 for Day 1. It's about 12 minutes long.
+        This video tackles the single most important concept you need to internalize
+        before you write your first line of Verilog.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 2: THE CENTRAL MISCONCEPTION ==================== -->
+<section>
+    <h2>The Central Misconception</h2>
+    <p style="font-size: 0.9em; margin-top: 0.5em;">
+        If you know C, Python, or Java, your instinct will be to read Verilog
+        top-to-bottom and imagine it executing <strong>line by line</strong>.
+    </p>
+    <div class="fragment golden-rule" style="margin-top: 1em;">
+        This instinct is wrong.
+    </div>
+    <p class="fragment" style="font-size: 0.85em; margin-top: 1em;">
+        Unlearning it is the single most important thing you'll do this week.
+    </p>
+    <aside class="notes">
+        If you know C, Python, or Java — and most of you do — your instinct will be
+        to read Verilog top to bottom, imagining it executing line by line, like a program.
+        This instinct is wrong. And unlearning it is the single most important thing
+        you'll do in the first week of this course.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 3: SIDE-BY-SIDE CODE ==================== -->
+<section>
+    <h2>Software vs. Hardware</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
+        <div class="col">
+            <h3 style="color: #7B1FA2;">Software (C)</h3>
+            <pre><code class="language-c" data-noescape>a = b + c;
+d = a * 2;</code></pre>
+            <p class="fragment" style="font-size: 0.7em;" data-fragment-index="1">
+                Line 1 executes, completes,<br>
+                <strong>then</strong> line 2 executes.
+            </p>
+        </div>
+        <div class="col">
+            <h3 style="color: #1565C0;">Hardware (Verilog)</h3>
+            <pre class="synth"><code class="language-verilog" data-noescape>assign a = b + c;
+assign d = a * 2;</code></pre>
+            <p class="fragment" style="font-size: 0.7em;" data-fragment-index="1">
+                Both describe hardware that<br>
+                <strong>exists simultaneously</strong>.
+            </p>
+        </div>
+    </div>
+    <div class="fragment callout" data-fragment-index="2" style="font-size: 0.8em; margin-top: 0.5em;">
+        There is an adder. There is a shifter. They are <strong>both always active</strong>.
+        When <code>b</code> changes, <code>a</code> and <code>d</code> both update — through physical gates.
+    </div>
+    <aside class="notes">
+        Look at these two examples. In C, line 1 executes and completes,
+        then line 2 executes. There's a clear temporal ordering.
+        In Verilog, these two assign statements describe hardware that exists simultaneously.
+        There is an adder and there is a shifter, and they are both always active.
+        When b or c changes, a changes, and d changes — all propagating through physical gates.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 4: THREE FUNDAMENTAL DIFFERENCES ==================== -->
+<section>
+    <h2>Three Fundamental Differences</h2>
+    <table style="margin-top: 0.5em;">
+        <thead>
+            <tr><th>Concept</th><th style="color: #9C27B0;">Software</th><th style="color: #1565C0;">Hardware (Verilog)</th></tr>
+        </thead>
+        <tbody>
+            <tr class="fragment">
+                <td><strong>Execution</strong></td>
+                <td>Sequential — one at a time</td>
+                <td>Concurrent — all at once</td>
+            </tr>
+            <tr class="fragment">
+                <td><strong>Assignment</strong></td>
+                <td>"Compute and store"</td>
+                <td>"Create a permanent connection"</td>
+            </tr>
+            <tr class="fragment">
+                <td><strong>Time</strong></td>
+                <td>Implicit — program counter</td>
+                <td>Explicit — propagation delay, clock edges</td>
+            </tr>
+        </tbody>
+    </table>
+    <aside class="notes">
+        Three fundamental differences. First: execution model.
+        Software is sequential — one instruction at a time. Hardware is concurrent — everything operates simultaneously.
+        Second: what assignment means. In software, it means compute a value and store it.
+        In hardware, it means create a permanent physical connection — like soldering a wire.
+        Third: time. In software, time is implicit — the program counter advances.
+        In hardware, time is explicit — signals propagate with real physical delay,
+        and clock edges define when things happen.
+        These three differences will come up again and again throughout this course.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 5: THE RIVER ANALOGY (with SVG) ==================== -->
+<section data-background-color="#FAFAFA">
+    <h2>The River Analogy</h2>
+    <div style="margin-top: 0.5em;">
+        <img src="diagrams/d01_river_analogy.svg" alt="Software as recipe vs Hardware as river system" style="width: 100%; max-width: 850px; display: block; margin: 0 auto;">
+    </div>
+    <div class="fragment golden-rule" style="margin-top: 0.5em;">
+        You are not writing instructions.<br>
+        You are describing the geography of the river.
+    </div>
+    <aside class="notes">
+        Here's an analogy that will carry you through the entire first week.
+        Software is like following a recipe: do step 1, then step 2, then step 3. Sequential.
+        Hardware is like a river system. Water flows through ALL tributaries simultaneously.
+        If you add a dam here, it affects the flow over there. Everything is happening at once.
+        [PAUSE — let this sink in]
+        You are not writing instructions. You are describing the geography of the river.
+        When you're confused about why Verilog behaves a certain way, come back to this analogy.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 6: MORE CODE = MORE HARDWARE ==================== -->
+<section>
+    <h2>More Code = More Hardware</h2>
+    <div class="two-col">
+        <div class="col">
+            <h3 style="color: #7B1FA2;">Software</h3>
+            <pre><code class="language-c" data-noescape>x = a + b;
+y = c + d;</code></pre>
+            <p style="font-size: 0.7em;" class="fragment" data-fragment-index="1">
+                May reuse the <strong>same CPU adder</strong> at different times.
+            </p>
+        </div>
+        <div class="col">
+            <h3 style="color: #1565C0;">Verilog</h3>
+            <pre class="synth"><code class="language-verilog" data-noescape>assign x = a + b;
+assign y = c + d;</code></pre>
+            <p style="font-size: 0.7em;" class="fragment" data-fragment-index="1">
+                Each implies its <strong>own physical adder</strong>.
+                Two adders exist on the chip.
+            </p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" data-fragment-index="2" style="margin-top: 0.5em; font-size: 0.8em;">
+        <strong>Resource awareness:</strong> More lines of Verilog = more gates = more FPGA resources consumed.
+        You cannot <code>malloc</code> a flip-flop. Everything is fixed at synthesis time.
+    </div>
+    <aside class="notes">
+        Here's another critical difference. In software, x equals a plus b and y equals c plus d
+        may reuse the same physical adder in the CPU at different times.
+        In Verilog, each assign statement with an addition implies its OWN physical adder.
+        Two additions means two adders exist on the chip simultaneously.
+        This means more Verilog equals more hardware, more gates, more FPGA resources consumed.
+        You cannot malloc a flip-flop. All hardware resources are fixed at synthesis time.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 7: PARALLELISM IS FREE ==================== -->
+<section>
+    <h2>Parallelism Is Free</h2>
+    <div class="panel panel-hw" style="margin-top: 0.5em;">
+        <pre class="synth"><code class="language-verilog" data-noescape>assign sum      = a + b;       // adder
+assign product  = c * d;       // multiplier
+assign result   = sum | product; // OR gate</code></pre>
+    </div>
+    <div style="font-size: 0.85em; margin-top: 0.5em;">
+        <p class="fragment">All three operations happen <strong>at the same time</strong>.</p>
+        <p class="fragment">No threads. No cores. No synchronization primitives.</p>
+        <p class="fragment">In hardware, <strong>parallelism is the default</strong>. Sequentiality is what takes effort.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top: 0.8em; font-size: 0.95em;">
+        Software: sequential by default, parallel takes work.<br>
+        Hardware: parallel by default, sequential takes work.
+    </div>
+    <aside class="notes">
+        And here's the beautiful flip side. In software, parallelism is hard.
+        You need threads, cores, locks, synchronization.
+        In hardware, parallelism is free. All three of these operations happen simultaneously.
+        No threads. No cores. No synchronization primitives.
+        In fact, it's the opposite: in hardware, making things happen in sequence
+        requires explicit effort — you need clocks and state machines.
+        Software: sequential by default, parallel takes work.
+        Hardware: parallel by default, sequential takes work.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 8: KEY TAKEAWAYS ==================== -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top: 0.5em;">
+        <p class="fragment" style="font-size: 0.85em;">
+            <span style="color: var(--ucf-gold); font-size: 1.3em; font-weight: 700;">①</span>&ensp;
+            Verilog describes <strong>concurrent hardware</strong>, not sequential instructions.
+        </p>
+        <p class="fragment" style="font-size: 0.85em;">
+            <span style="color: var(--ucf-gold); font-size: 1.3em; font-weight: 700;">②</span>&ensp;
+            <code>assign</code> creates a permanent connection — a wire, not a variable.
+        </p>
+        <p class="fragment" style="font-size: 0.85em;">
+            <span style="color: var(--ucf-gold); font-size: 1.3em; font-weight: 700;">③</span>&ensp;
+            More Verilog = more hardware. Resources are fixed at synthesis time.
+        </p>
+        <p class="fragment" style="font-size: 0.85em;">
+            <span style="color: var(--ucf-gold); font-size: 1.3em; font-weight: 700;">④</span>&ensp;
+            Parallelism is free. Sequentiality takes effort.
+        </p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top: 1em;">
+        You are describing the geography of the river — not writing a recipe.
+    </div>
+    <aside class="notes">
+        Let me recap the key points from this video.
+        One: Verilog describes concurrent hardware, not sequential instructions.
+        Two: assign creates a permanent connection — think of it as a wire, not a variable.
+        Three: More Verilog means more hardware. Resources are fixed at synthesis time.
+        Four: Parallelism is free. Sequentiality is what takes effort.
+        Remember: you are describing the geography of the river, not writing a recipe.
+    </aside>
+</section>
+
+<!-- ==================== BRIDGE SLIDE ==================== -->
+<section data-background-color="#000000">
+    <div style="text-align: center;">
+        <p style="color: #FFC904; font-size: 0.7em; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+            Up Next
+        </p>
+        <h2 style="color: #FFFFFF; font-size: 1.8em;">Synthesis vs. Simulation</h2>
+        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.5em;">
+            Day 1, Video 2 of 4 &nbsp;·&nbsp; ~10 minutes
+        </p>
+        <p style="color: #888; font-size: 0.6em; margin-top: 2em;">
+            The same Verilog file, two very different tools, two very different purposes.
+        </p>
+    </div>
+    <aside class="notes">
+        That's the end of Video 1. Next up: Synthesis versus Simulation.
+        The same Verilog file gets consumed by two very different tools
+        that do two very different things. Understanding this distinction is critical
+        before you write your first design. See you in the next video.
+    </aside>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    showSlideNumber: 'all',
+    width: 1280,
+    height: 720,
+    margin: 0.04,
+    transition: 'slide',
+    transitionSpeed: 'default',
+    backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

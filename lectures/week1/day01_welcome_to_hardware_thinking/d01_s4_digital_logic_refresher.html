@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1.4: Digital Logic Refresher — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        /* Quiz-specific styles */
+        .quiz-answer {
+            background: #E8F5E9; border: 1px solid #2E7D32; border-radius: 6px;
+            padding: 0.6em 0.8em; margin-top: 0.4em; font-size: 0.7em;
+        }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 1 · Welcome to Hardware Thinking
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Digital Logic Refresher</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">HDL ≠ Software</span>
+        <span class="seg-label">Synth vs Sim</span>
+        <span class="seg-label">Module Anatomy</span>
+        <span class="seg-label active">Logic Refresher</span>
+    </div>
+    <aside class="notes">Last video for Day 1. About 8 minutes. This is a targeted refresher — not a re-teach. If any of this feels unfamiliar, review your digital logic notes before class.</aside>
+</section>
+
+<!-- PREREQUISITES CHECKLIST -->
+<section>
+    <h2>What You Must Have Cold</h2>
+    <div style="font-size:0.85em;margin-top:0.5em;">
+        <p class="fragment"><strong>Logic gates:</strong> AND, OR, NOT, NAND, NOR, XOR, XNOR</p>
+        <p class="fragment"><strong>Boolean algebra:</strong> DeMorgan's, distribution, complement</p>
+        <p class="fragment"><strong>Combinational vs. sequential:</strong><br>
+            <span style="margin-left:1.5em;">Combinational = f(current inputs)</span><br>
+            <span style="margin-left:1.5em;">Sequential = f(inputs, stored state)</span></p>
+        <p class="fragment"><strong>Truth tables ↔ Boolean expressions:</strong> both directions</p>
+        <p class="fragment"><strong>The D flip-flop:</strong> captures D on clock edge</p>
+    </div>
+    <aside class="notes">Checklist of prerequisites. Logic gates and truth tables. Boolean algebra — especially DeMorgan's. Combinational versus sequential distinction. Truth tables to expressions and back. And the D flip-flop. If any of these are fuzzy, review your digital logic notes before class.</aside>
+</section>
+
+<!-- GATES → VERILOG TRANSLATION TABLE -->
+<section>
+    <h2>Gates → Verilog: The Translation Table</h2>
+    <table style="margin-top:0.5em;">
+        <thead><tr><th>Digital Logic</th><th>Verilog</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td>Wire</td><td><code>assign y = a;</code></td></tr>
+            <tr class="fragment"><td>AND gate</td><td><code>assign y = a &amp; b;</code></td></tr>
+            <tr class="fragment"><td>OR gate</td><td><code>assign y = a | b;</code></td></tr>
+            <tr class="fragment"><td>NOT (inverter)</td><td><code>assign y = ~a;</code></td></tr>
+            <tr class="fragment"><td>XOR gate</td><td><code>assign y = a ^ b;</code></td></tr>
+            <tr class="fragment"><td>2:1 Multiplexer</td><td><code>assign y = sel ? a : b;</code></td></tr>
+            <tr class="fragment"><td>D flip-flop</td><td><code>always @(posedge clk) q &lt;= d;</code></td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">The Rosetta Stone between digital logic and Verilog. Wire is assign. AND is ampersand. OR is pipe. NOT is tilde. XOR is caret. The mux uses the conditional operator — question mark colon. And the D flip-flop uses always at posedge with the nonblocking assignment operator, less-than-equals. This table is worth memorizing.</aside>
+</section>
+
+<!-- COMPOUND EXPRESSIONS -->
+<section>
+    <h2>Compound Expressions</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape><span class="fragment">// NAND: ~(a & b)    NOR: ~(a | b)</span>
+<span class="fragment">
+// Sum-of-products: y = AB + CD
+assign y = (a & b) | (c & d);</span>
+<span class="fragment">
+// DeMorgan's: these produce IDENTICAL hardware
+assign y1 = ~(a & b);
+assign y2 = ~a | ~b;     // same gate!</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>The synthesizer optimizes.</strong> Write for readability — the tool reduces to minimum hardware.
+    </div>
+    <aside class="notes">Compound expressions work like Boolean algebra. NAND is tilde-open-paren a-ampersand b-close-paren. Sum of products translates directly. DeMorgan's: these two lines produce identical hardware — the synthesizer knows the algebraic equivalence and optimizes. Write for readability, and trust the tool to reduce to minimum hardware.</aside>
+</section>
+
+<!-- ▶ LIVE DEMO CUE -->
+<section class="live-demo" data-background-color="#000000">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Gates in Verilog</h2>
+    <p style="margin-top:0.5em;">Gate-level Verilog → <code>assign</code> equivalents</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">
+        AND → OR → XOR → compound expression → verify identical output
+    </p>
+    <aside class="notes">[SWITCH TO EDITOR] Quick demo: let's write each gate as an assign statement, then show a compound expression. AND, OR, XOR, a sum-of-products. The point is to see how the Verilog maps directly to logic you already know. [KEEP IT FAST — 60–90 seconds]</aside>
+</section>
+
+<!-- COMBINATIONAL VS SEQUENTIAL PREVIEW -->
+<section>
+    <h2>Combinational vs. Sequential in Verilog</h2>
+    <div class="two-col" style="margin-top:1em;">
+        <div class="col">
+            <h3 style="color:#1565C0;">Combinational</h3>
+            <pre class="synth"><code class="language-verilog">// Output changes whenever
+// inputs change
+assign y = a & b;</code></pre>
+            <p style="font-size:0.65em;">No clock. No memory. <strong>Weeks 1–2 focus.</strong></p>
+        </div>
+        <div class="col">
+            <h3 style="color:#E65100;">Sequential</h3>
+            <pre class="synth"><code class="language-verilog">// Output changes only on
+// the clock edge
+always @(posedge clk)
+    q <= d;</code></pre>
+            <p style="font-size:0.65em;">Clock-driven. Has memory. <strong>Introduced Day 4.</strong></p>
+        </div>
+    </div>
+    <aside class="notes">Preview of combinational versus sequential in Verilog. Combinational: assign, no clock, no memory. Output changes whenever inputs change. That's our focus for the first few days. Sequential: always at posedge clk, clock-driven, has memory. Output only changes on the rising edge of the clock. We introduce this properly on Day 4. For now, just know both exist.</aside>
+</section>
+
+<!-- YOU ALREADY KNOW THE HARDWARE -->
+<section>
+    <h2>You Already Know the Hardware</h2>
+    <p style="font-size:1.1em;text-align:center;margin-top:0.5em;">
+        Gates ✓ &ensp; Boolean algebra ✓ &ensp; Truth tables ✓ &ensp; Flip-flops ✓
+    </p>
+    <div class="golden-rule" style="margin-top:1.5em;font-size:1.1em;">
+        This course teaches you the <em>language</em> to describe it.
+    </div>
+    <aside class="notes">You already know the hardware from your digital logic courses. Gates, Boolean algebra, truth tables, flip-flops — all of that is prerequisite knowledge. This course teaches you the language to describe it. Verilog is the bridge between the logic you know and the real hardware you're about to program.</aside>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- EMBEDDED PRE-CLASS QUIZ (Enhancement #9)               -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <p style="font-size:0.75em;color:#888;">Pause the video and try each question before revealing the answer.</p>
+    <div style="font-size:0.85em;margin-top:0.5em;">
+        <p><strong>Q1:</strong> Name three fundamental differences between writing software and writing Verilog.</p>
+        <div class="fragment quiz-answer">
+            <strong>①</strong> Execution model: sequential vs. concurrent.
+            <strong>②</strong> Resources: more code = more time (SW) vs. more hardware (HW).
+            <strong>③</strong> No dynamic allocation: hardware is fixed at synthesis time.
+        </div>
+    </div>
+    <aside class="notes">Let's do a quick self-check. Pause and think before you advance. Question 1: three differences. Execution model: sequential versus concurrent. Resource mapping: more code means more time in software, more hardware in Verilog. And no dynamic allocation — no malloc, no recursion, everything fixed at synthesis.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q2:</strong> What happens to <code>#10</code> during synthesis? During simulation?</p>
+        <div class="fragment quiz-answer">
+            <strong>Simulation:</strong> waits 10 time units. <strong>Synthesis:</strong> completely ignored.
+            This is why you never use <code>#delay</code> in synthesizable code.
+        </div>
+        <p style="margin-top:0.8em;"><strong>Q3:</strong> Write a complete Verilog module that connects <code>i_switch</code> to <code>o_led</code>.</p>
+        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.9em;white-space:pre;line-height:1.5;">module led_driver (
+    input  wire i_switch,
+    output wire o_led
+);
+    assign o_led = i_switch;
+endmodule</div>
+    </div>
+    <aside class="notes">Question 2: hash-10 in simulation waits 10 time units. In synthesis, it's completely ignored. That's why you never use it in design code. Question 3: write the module. Module led_driver, input wire i_switch, output wire o_led, semicolon, assign o_led equals i_switch, endmodule. If this felt hard, re-watch Video 3.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q4:</strong> What does <code>assign</code> mean — a one-time computation or something else?</p>
+        <div class="fragment quiz-answer">
+            A <strong>permanent physical wire connection</strong>. Not one-time.
+            The output continuously reflects the input — like a wire soldered between two points.
+        </div>
+        <p style="margin-top:0.8em;"><strong>Q5:</strong> Does the order of these <code>assign</code> statements matter?</p>
+        <pre class="synth" style="font-size:0.85em;"><code class="language-verilog">assign y2 = a | b;
+assign y1 = a & b;</code></pre>
+        <div class="fragment quiz-answer">
+            <strong>No.</strong> Both create hardware that exists simultaneously.
+            Swapping them produces identical hardware. This is different from software.
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.5em;">
+        If Q3 felt hard, <strong>re-watch Video 3</strong>. Getting the module template into muscle memory saves you time in lab.
+    </div>
+    <aside class="notes">Question 4: assign creates a permanent physical connection. Not a one-time computation. It continuously reflects — like a soldered wire. Question 5: order does not matter. Both gates exist simultaneously. Swapping produces identical hardware. That's the whole point of Video 1. If question 3 felt hard, re-watch Video 3 before class. Getting the module template into muscle memory will save you a lot of time in lab. See you in class!</aside>
+</section>
+
+<!-- END CARD -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 1 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">
+            Bring your laptop. Make sure your toolchain is installed.<br>
+            You'll get your Go Board and program it for the first time today.
+        </p>
+    </div>
+    <aside class="notes">That's all four pre-class videos for Day 1. Bring your laptop to class with the toolchain installed — Yosys, nextpnr, Icarus Verilog, GTKWave. You'll get your Go Board and program it for the first time today. See you in class!</aside>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

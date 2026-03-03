@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1.3: Anatomy of a Verilog Module — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 1 · Welcome to Hardware Thinking
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Anatomy of a Verilog Module</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">HDL ≠ Software</span>
+        <span class="seg-label">Synth vs Sim</span>
+        <span class="seg-label active">Module Anatomy</span>
+        <span class="seg-label">Logic Refresher</span>
+    </div>
+    <aside class="notes">Video 3 of 4 for Day 1. About 12 minutes. Now we get to write actual Verilog. Every design is composed of modules — the fundamental building block. Think of a module as a chip on a circuit board with labeled pins.</aside>
+</section>
+
+<!-- MODULE = CHIP -->
+<section>
+    <h2>The Module: Verilog's Building Block</h2>
+    <p style="margin-top:0.5em;">Every Verilog design is composed of <strong>modules</strong>.</p>
+    <div class="callout" style="margin-top:1em;font-size:0.85em;">
+        Think of a module as a <strong>chip on a circuit board</strong> with labeled pins.
+        You define what goes in, what comes out, and what happens inside.
+    </div>
+    <div class="fragment" style="margin-top:1em;">
+        <img src="diagrams/d01_module_anatomy.svg" alt="Module anatomy: inputs on left, outputs on right, behavior inside" style="width:100%;max-width:760px;display:block;margin:0 auto;">
+    </div>
+    <aside class="notes">Every Verilog design is composed of modules. A module is a self-contained hardware block with defined inputs and outputs. Think of it as a chip on a circuit board. You define what goes in — the input pins — what comes out — the output pins — and what happens inside — the behavior. This diagram shows a module called led_driver with inputs on the left, outputs on the right, and the assign statement that defines its behavior in the center.</aside>
+</section>
+
+<!-- THE TEMPLATE -->
+<section>
+    <h2>The Module Template</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape><span class="fragment" data-fragment-index="1">module led_driver (</span>
+<span class="fragment" data-fragment-index="2">    input  wire i_switch,</span>
+<span class="fragment" data-fragment-index="3">    output wire o_led</span>
+<span class="fragment" data-fragment-index="4">);</span>
+<span class="fragment" data-fragment-index="5">
+    assign o_led = i_switch;</span>
+<span class="fragment" data-fragment-index="6">
+endmodule</span></code></pre>
+    <div style="font-size:0.7em;margin-top:0.5em;">
+        <p class="fragment" data-fragment-index="1">① <strong><code>module</code></strong> keyword + name</p>
+        <p class="fragment" data-fragment-index="2">② Input ports — signals coming in</p>
+        <p class="fragment" data-fragment-index="3">③ Output ports — signals going out</p>
+        <p class="fragment" data-fragment-index="4">④ Semicolon after closing paren — <strong>don't forget this!</strong></p>
+        <p class="fragment" data-fragment-index="5">⑤ Behavior — <code>assign</code>, <code>always</code>, or sub-module instances</p>
+        <p class="fragment" data-fragment-index="6">⑥ <strong><code>endmodule</code></strong> — no semicolon here</p>
+    </div>
+    <aside class="notes">Here's the module template. We'll build it line by line. First: the module keyword and a name. Then input ports — signals coming in. Output ports — signals going out. A semicolon after the closing parenthesis — you WILL forget this and the error message will be unhelpful. Inside, the behavior — here it's a simple assign. And finally endmodule. Note: no semicolon after endmodule.</aside>
+</section>
+
+<!-- ANSI-STYLE PORTS -->
+<section>
+    <h2>Port Style: ANSI (Modern) vs. Non-ANSI</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3><span class="check">✓</span> ANSI Style (use this)</h3>
+            <pre class="synth"><code class="language-verilog" data-noescape>module adder (
+    input  wire [3:0] i_a,
+    input  wire [3:0] i_b,
+    output wire [4:0] o_sum
+);
+    assign o_sum = i_a + i_b;
+endmodule</code></pre>
+        </div>
+        <div class="col">
+            <h3><span class="cross">✗</span> Non-ANSI (legacy)</h3>
+            <pre class="mistake"><code class="language-verilog" data-noescape>module adder (i_a, i_b, o_sum);
+    input  [3:0] i_a;
+    input  [3:0] i_b;
+    output [4:0] o_sum;
+
+    assign o_sum = i_a + i_b;
+endmodule</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        ANSI style declares direction and type in one place. Less code, fewer bugs, easier to read.
+        We use ANSI style exclusively in this course.
+    </div>
+    <aside class="notes">There are two port declaration styles. ANSI style, on the left, declares direction and type right in the port list. Non-ANSI, the legacy style, separates them — you list port names at the top, then declare them again below. ANSI style is less code, fewer bugs, easier to read. We use ANSI exclusively in this course. You may see non-ANSI in older textbooks or legacy code.</aside>
+</section>
+
+<!-- NAMING CONVENTIONS -->
+<section>
+    <h2>Naming Conventions</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module my_design (
+    input  wire       i_clk,        // i_ = input
+    input  wire       i_reset,
+    input  wire [7:0] i_data,
+    output wire       o_valid,       // o_ = output
+    output reg  [7:0] o_result
+);
+    wire [7:0] w_intermediate;       // w_ = internal wire
+    reg  [3:0] r_counter;            // r_ = register (sequential)
+    // ...</code></pre>
+    <div class="fragment" style="font-size:0.75em;margin-top:0.5em;">
+        <table>
+            <thead><tr><th>Prefix</th><th>Meaning</th><th>Example</th></tr></thead>
+            <tbody>
+                <tr><td><code>i_</code></td><td>Input port</td><td><code>i_switch</code></td></tr>
+                <tr><td><code>o_</code></td><td>Output port</td><td><code>o_led</code></td></tr>
+                <tr><td><code>w_</code></td><td>Internal wire</td><td><code>w_sum</code></td></tr>
+                <tr><td><code>r_</code></td><td>Register (assigned in <code>always</code>)</td><td><code>r_count</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.3em;">
+        These prefixes are a course convention, not a language requirement.
+        You can always tell at a glance whether a signal is an input, output, register, or wire.
+    </div>
+    <aside class="notes">Naming conventions. We use a prefix system throughout this course. i-underscore for inputs, o-underscore for outputs, w-underscore for internal wires, r-underscore for registers. These are a convention, not a language requirement. But they're incredibly useful — you can tell at a glance what kind of signal you're looking at. Professional Verilog teams use similar conventions.</aside>
+</section>
+
+<!-- ▶ LIVE DEMO CUE -->
+<section class="live-demo" data-background-color="#000000">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Build a Module from Scratch</h2>
+    <p style="margin-top:0.5em;">Starting from an empty file → <code>day01_ex01_led_driver.v</code></p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">
+        <code>module</code> → ports → <code>assign</code> → <code>endmodule</code>
+    </p>
+    <aside class="notes">[SWITCH TO EDITOR] Let's build a module from scratch. I'm going to start with a completely empty file and build day01_ex01_led_driver.v step by step. Module keyword, name, open paren, input port, output port, close paren semicolon, assign statement, endmodule. [TYPE IT OUT LIVE — let them see the muscle memory forming]</aside>
+</section>
+
+<!-- COMMON ERROR: MISSING SEMICOLON -->
+<section>
+    <h2>Common Error #1: The Missing Semicolon</h2>
+    <pre class="mistake"><code class="language-verilog" data-noescape>module my_module (
+    input  wire a,
+    output wire y
+)                         // ← MISSING SEMICOLON
+    assign y = a;
+endmodule</code></pre>
+    <div class="fragment">
+    <pre class="synth"><code class="language-verilog" data-noescape>module my_module (
+    input  wire a,
+    output wire y
+);                        // ← CORRECT
+    assign y = a;
+endmodule</code></pre>
+    </div>
+    <p class="fragment" style="font-size:0.75em;color:#888;">You <em>will</em> make this mistake. The error message won't point to the right line. Now you know what to look for.</p>
+    <aside class="notes">The number one syntax error you'll encounter: forgetting the semicolon after the closing parenthesis of the port list. The error message from iverilog or Yosys won't always point to the right line, which makes it hard to find. You will make this mistake. Now you know what to look for.</aside>
+</section>
+
+<!-- COMMON ERROR: WIDTH MISMATCH PREVIEW -->
+<section>
+    <h2>Common Error #2: Mismatched Widths</h2>
+    <pre class="mistake"><code class="language-verilog" data-noescape>module oops (
+    input  wire [7:0] i_data,    // 8 bits
+    output wire [3:0] o_result   // 4 bits
+);
+    assign o_result = i_data;    // ← truncation! upper 4 bits lost
+endmodule</code></pre>
+    <div class="fragment callout-warning" style="font-size:0.8em;">
+        Verilog silently truncates or zero-extends when widths don't match.
+        No error — just quiet data loss. We'll cover this in detail on Day 2.
+    </div>
+    <aside class="notes">Second common error: mismatched widths. Here, an 8-bit input is assigned to a 4-bit output. Verilog silently truncates — the upper 4 bits just vanish. No error, no warning by default. Just quiet data loss. Width mismatches are a major source of bugs. We'll cover this properly on Day 2.</aside>
+</section>
+
+<!-- ▶ LIVE DEMO CUE 2 -->
+<section class="live-demo" data-background-color="#000000">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>day01_ex02_button_logic.v</h2>
+    <p style="margin-top:0.5em;">Multiple gates — concurrent <code>assign</code> statements</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">
+        Direct → NOT → AND → XOR &nbsp;·&nbsp; all operating simultaneously
+    </p>
+    <aside class="notes">[SWITCH TO EDITOR] Now let's build day01_ex02_button_logic.v — a module with four concurrent assign statements, each implementing a different gate. Direct pass-through, NOT, AND, XOR. The point: all four assignments describe hardware that exists simultaneously. [TYPE IT OUT, emphasize that order doesn't matter]</aside>
+</section>
+
+<!-- KEY TAKEAWAYS -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;
+            Modules are the fundamental building block — inputs, outputs, behavior.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;
+            <code>assign</code> = permanent wire, not a one-time computation.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;
+            Use ANSI-style ports and consistent naming (<code>i_</code>, <code>o_</code>, <code>r_</code>, <code>w_</code>).
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;
+            Don't forget the semicolon after <code>);</code> in the port list.
+        </p>
+    </div>
+    <aside class="notes">Recap. One: modules are the fundamental building block with inputs, outputs, and behavior. Two: assign creates a permanent wire — not a one-time computation. Three: use ANSI-style ports and our naming conventions. Four: don't forget the semicolon after the port list. One more video to go — a quick digital logic refresher.</aside>
+</section>
+
+<!-- BRIDGE -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Digital Logic Refresher</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 1, Video 4 of 4 · ~8 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">
+            Gates → Verilog. The concepts you already know, in a new language.
+        </p>
+    </div>
+    <aside class="notes">Last video for Day 1: a targeted digital logic refresher. We're not re-teaching gates and truth tables — you already know those. We're showing you how those concepts map directly to Verilog. See you in the next video.</aside>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

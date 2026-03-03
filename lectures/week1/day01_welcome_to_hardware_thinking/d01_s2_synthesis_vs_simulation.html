@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1.2: Synthesis vs. Simulation — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- TITLE SLIDE -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 1 · Welcome to Hardware Thinking
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Synthesis vs. Simulation</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">HDL ≠ Software</span>
+        <span class="seg-label active">Synth vs Sim</span>
+        <span class="seg-label">Module Anatomy</span>
+        <span class="seg-label">Logic Refresher</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 1. This one's about 10 minutes. We're going to look at how the same Verilog file gets consumed by two fundamentally different tools — synthesis and simulation — and why understanding the difference is critical.</aside>
+</section>
+
+<!-- ONE SOURCE, TWO CONSUMERS -->
+<section>
+    <h2>One Source File, Two Consumers</h2>
+    <div style="text-align:center;margin-top:1em;">
+        <div style="display:inline-block;padding:0.5em 0.8em;border-radius:6px;font-weight:600;background:#FFF8E1;border:2px solid #FFC904;font-size:1.1em;">
+            <code>module.v</code> — your Verilog source
+        </div>
+    </div>
+    <div class="two-col" style="margin-top:1.5em;">
+        <div class="col panel panel-hw" style="text-align:center;">
+            <h3 style="color:#1565C0;">⚙️ Synthesis</h3>
+            <p style="font-size:0.75em;">"Turn this into <strong>hardware</strong>"</p>
+            <p style="font-size:0.65em;color:#5F6062;">Yosys → netlist of real gates</p>
+        </div>
+        <div class="col panel panel-neutral" style="text-align:center;">
+            <h3 style="color:#E65100;">🔍 Simulation</h3>
+            <p style="font-size:0.75em;">"Show me how it <strong>behaves</strong>"</p>
+            <p style="font-size:0.65em;color:#5F6062;">Icarus Verilog → waveforms</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:0.8em;">
+        Both consume the same <code>.v</code> file. They do completely different things with it.
+    </div>
+    <aside class="notes">Your Verilog source file has two consumers. Synthesis turns it into hardware — actual gates mapped to an FPGA. Simulation shows you how the design behaves without touching hardware. Both consume the exact same dot-v file. They do completely different things with it.</aside>
+</section>
+
+<!-- THE TWO-PATH FLOWCHART (SVG) -->
+<section data-background-color="#FAFAFA">
+    <h2>The Open-Source iCE40 Toolchain</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d01_synth_vs_sim_flow.svg" alt="Two-path toolchain flowchart: synthesis and simulation" style="width:100%;max-width:860px;display:block;margin:0 auto;">
+    </div>
+    <aside class="notes">Here's our complete toolchain. On the left, the synthesis path: Yosys synthesizes your Verilog into a netlist of iCE40 primitives. nextpnr places and routes those primitives onto the physical FPGA. icepack generates the bitstream. iceprog loads it onto the board via USB. On the right, the simulation path: Icarus Verilog compiles your Verilog and testbench, vvp runs the simulation, and GTKWave lets you view the waveforms. Same source file, two completely different pipelines.</aside>
+</section>
+
+<!-- WHAT EACH PATH PRODUCES -->
+<section>
+    <h2>What Each Path Produces</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#1565C0;">Synthesis Output</h3>
+            <div style="font-size:0.75em;">
+                <p class="fragment"><strong>Netlist</strong> — a circuit of real gates (LUTs, FFs)</p>
+                <p class="fragment"><strong>Placement</strong> — which physical location on the chip</p>
+                <p class="fragment"><strong>Routing</strong> — which wires connect them</p>
+                <p class="fragment"><strong>Bitstream</strong> — binary file that configures the FPGA</p>
+            </div>
+        </div>
+        <div class="col">
+            <h3 style="color:#E65100;">Simulation Output</h3>
+            <div style="font-size:0.75em;">
+                <p class="fragment"><strong>Waveforms</strong> — signal values over time</p>
+                <p class="fragment"><strong>Text output</strong> — from <code>$display</code></p>
+                <p class="fragment"><strong>Pass/fail</strong> — from self-checking testbenches</p>
+                <p class="fragment"><strong>VCD file</strong> — for GTKWave viewing</p>
+            </div>
+        </div>
+    </div>
+    <aside class="notes">Synthesis produces physical outputs: a netlist of gates, a placement on the chip, routing between gates, and a bitstream binary. Simulation produces behavioral outputs: waveforms showing signal values over time, text from display statements, pass/fail from self-checking testbenches, and VCD files for waveform viewing.</aside>
+</section>
+
+<!-- THE CRITICAL DISTINCTION -->
+<section>
+    <h2>The Synthesizable Subset</h2>
+    <p style="font-size:0.85em;">Not everything in Verilog can become hardware.</p>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3><span class="check">✓</span> Synthesizable</h3>
+            <pre class="synth"><code class="language-verilog" data-noescape>assign y = a & b;
+always @(posedge clk)
+    q <= d;
+module, endmodule
+wire, reg
+if, case, for (fixed)</code></pre>
+        </div>
+        <div class="col">
+            <h3><span class="cross">✗</span> Simulation Only</h3>
+            <pre class="sim-only"><code class="language-verilog" data-noescape>#10          // delay
+$display()   // print
+$dumpfile()  // waveform dump
+$finish      // end sim
+initial      // no hardware equiv
+$readmemh()  // file I/O*</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.8em;margin-top:0.5em;">
+        <strong>Rule:</strong> Design code uses only the synthesizable subset.
+        Testbench code can use everything.
+    </div>
+    <aside class="notes">Not everything in Verilog becomes hardware. assign, always-posedge, modules — those synthesize into real gates. But delay statements, display, dumpfile, finish, initial blocks — these are simulation-only. The synthesizer ignores them entirely. Rule of thumb: your design code uses only the synthesizable subset. Your testbench code can use everything. We color-code these throughout the course: green border means synthesizable, orange means simulation-only.</aside>
+</section>
+
+<!-- THE #10 TRAP -->
+<section>
+    <h2>The <code>#10</code> Trap</h2>
+    <pre class="mistake"><code class="language-verilog" data-noescape>// DANGER: this "works" in simulation...
+always @(posedge clk) begin
+    a <= 1'b1;
+    #10;           // ← wait 10 time units
+    a <= 1'b0;
+end</code></pre>
+    <div class="fragment" style="margin-top:0.5em;">
+        <div class="callout-danger" style="font-size:0.8em;">
+            <strong>Simulation:</strong> <code>#10</code> pauses for 10 time units. It "works."<br>
+            <strong>Synthesis:</strong> <code>#10</code> is <strong>silently ignored</strong>. The behavior is completely different.<br>
+            <strong>Result:</strong> Simulation passes, hardware fails. The worst kind of bug.
+        </div>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        Never use <code>#delay</code> in synthesizable code. Not even "just for testing."
+    </div>
+    <aside class="notes">Here's a trap that catches people. This code uses hash-10 inside an always-posedge block. In simulation, it pauses for 10 time units and it appears to work correctly. In synthesis, hash-10 is silently ignored. The synthesized hardware behaves completely differently from the simulation. This is the worst kind of bug — one where simulation passes and hardware fails. Rule: never use hash-delay in synthesizable code. Not even "just for testing."</aside>
+</section>
+
+<!-- THE WORKFLOW -->
+<section>
+    <h2>Your Day-to-Day Workflow</h2>
+    <div style="font-size:0.85em;margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.9em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;
+            <strong>Write</strong> your Verilog module
+        </p>
+        <p class="fragment" style="font-size:0.9em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;
+            <strong>Simulate</strong> it — does it behave correctly? (Icarus + GTKWave)
+        </p>
+        <p class="fragment" style="font-size:0.9em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;
+            <strong>Synthesize</strong> it — does it fit? Does timing pass? (Yosys + nextpnr)
+        </p>
+        <p class="fragment" style="font-size:0.9em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;
+            <strong>Program</strong> the FPGA — does it work on real hardware? (iceprog)
+        </p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
+        <strong>Always simulate first.</strong> Fixing bugs in simulation takes minutes.
+        Debugging on hardware takes hours.
+    </div>
+    <aside class="notes">Here's your daily workflow for this course. Step 1: write your module. Step 2: simulate it — does it behave correctly? Step 3: synthesize it — does it fit on the FPGA? Step 4: program and test on hardware. Always simulate first. Fixing bugs in simulation takes minutes. Debugging on hardware takes hours. This workflow becomes second nature by the end of Week 1.</aside>
+</section>
+
+<!-- GO BOARD INTRODUCTION (PLACEHOLDER) -->
+<section data-background-color="#FAFAFA">
+    <h2>Your Hardware Platform</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d01_go_board_placeholder.svg" alt="Nandland Go Board with labeled I/O" style="width:100%;max-width:660px;display:block;margin:0 auto;">
+    </div>
+    <p class="fragment" style="font-size:0.75em;text-align:center;margin-top:0.3em;color:#5F6062;">
+        Everything you need: 4 LEDs, 4 buttons, dual 7-seg, VGA, UART via USB.<br>
+        You'll get your board in class today.
+    </p>
+    <aside class="notes">This is the Nandland Go Board. It has a Lattice iCE40 HX1K FPGA with 1,280 LUTs and 16 block RAMs. Four LEDs, four pushbutton switches, a dual seven-segment display, VGA output, and USB which handles both programming and UART serial communication. Everything you need for this course fits on this little board. You'll get yours in class today.</aside>
+</section>
+
+<!-- KEY TAKEAWAYS -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;
+            Same source file → two paths: synthesis (hardware) and simulation (behavior).
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;
+            Not all Verilog synthesizes. <code>#delay</code>, <code>$display</code>, <code>initial</code> are sim-only.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;
+            <strong>Always simulate first</strong>, then synthesize to hardware.
+        </p>
+    </div>
+    <aside class="notes">Recap. One: same source, two paths — synthesis makes hardware, simulation tests behavior. Two: not all Verilog synthesizes. Hash-delay, dollar-display, initial are simulation only. Three: always simulate first, then synthesize. In the next video, we'll look at the anatomy of a Verilog module — the fundamental building block of every design.</aside>
+</section>
+
+<!-- BRIDGE -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Anatomy of a Verilog Module</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 1, Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">
+            The building block of every Verilog design — inputs, outputs, behavior.
+        </p>
+    </div>
+    <aside class="notes">Next up: the anatomy of a Verilog module. Every design starts with module and endmodule. We'll build one from scratch. See you in the next video.</aside>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>
