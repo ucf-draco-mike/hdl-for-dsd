@@ -1,0 +1,15 @@
+// =============================================================================
+// Exercise 2 SOLUTION, Part A: 2:1 Multiplexer
+// Day 2 · Combinational Building Blocks
+// =============================================================================
+
+module mux2to1 (
+    input  wire i_a,
+    input  wire i_b,
+    input  wire i_sel,
+    output wire o_y
+);
+
+    assign o_y = i_sel ? i_b : i_a;
+
+endmodule
