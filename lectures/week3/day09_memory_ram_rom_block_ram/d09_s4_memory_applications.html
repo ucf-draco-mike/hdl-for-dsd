@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 9.4: Practical Memory Applications — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Memory Applications</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">ROM</span>
+        <span class="seg-label ">RAM</span>
+        <span class="seg-label ">iCE40 Memory</span>
+        <span class="seg-label active">Applications</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 9.</aside>
+</section>
+
+<section>
+    <h2>Pattern Sequencer</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module pattern_sequencer #(
+    parameter DEPTH = 16,
+    parameter WIDTH = 8,
+    parameter MEM_FILE = "pattern.mem"
+)(
+    input  wire             i_clk, i_reset, i_next,
+    output wire [WIDTH-1:0] o_pattern
+);
+<span class="fragment">    reg [WIDTH-1:0] r_mem [0:DEPTH-1];
+    initial $readmemb(MEM_FILE, r_mem);
+
+    reg [$clog2(DEPTH)-1:0] r_addr;
+    always @(posedge i_clk)
+        if (i_reset)     r_addr &lt;= 0;
+        else if (i_next) r_addr &lt;= (r_addr == DEPTH-1) ? 0 : r_addr + 1;</span>
+<span class="fragment">
+    assign o_pattern = r_mem[r_addr];</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Counter + ROM = sequencer. Change the <code>.mem</code> file to change the animation. Classic pattern for LED shows, waveforms, character displays.
+    </div>
+    <aside class="notes">Pattern sequencer: counter steps through ROM addresses. Change the mem file to change the animation. Classic pattern for LED displays, sine waves, character generators.</aside>
+</section>
+<section>
+    <h2>More Applications</h2>
+    <div style="font-size:0.8em;">
+        <div class="fragment">
+            <p><strong>Sine Wave Lookup Table</strong> — 256-entry quarter-sine ROM. Mirror for full wave. Feed to PWM for audio.</p>
+        </div>
+        <div class="fragment">
+            <p><strong>Character ROM</strong> — 8×8 font bitmaps. Address = {char_code, row}. Data = pixel pattern. Essential for VGA text.</p>
+        </div>
+        <div class="fragment">
+            <p><strong>Instruction Memory</strong> — ROM holding a program for a simple processor. Address = PC. (Final project option!)</p>
+        </div>
+    </div>
+    <aside class="notes">Beyond LED patterns: sine tables for audio, character ROMs for VGA text, instruction memory for simple processors. All use the same ROM pattern.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Async read vs. sync read — which infers block RAM?</p>
+        <div class="fragment quiz-answer">Synchronous read (<code>always @(posedge clk) o_data &lt;= r_mem[addr]</code>) infers block RAM. Async read (<code>assign</code>) uses LUTs. Trade-off: 1 cycle read latency.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> How much total block RAM on the iCE40 HX1K?</p>
+        <div class="fragment quiz-answer">16 EBR blocks × 4 Kbit each = 64 Kbit (8 KB) total.</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What system task loads a hex file into a memory array?</p>
+        <div class="fragment quiz-answer"><code>$readmemh("file.hex", r_mem)</code> for hex, <code>$readmemb</code> for binary. Works in both simulation and synthesis.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> Write the always block for single-port sync RAM with read-before-write.</p>
+        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.85em;white-space:pre;line-height:1.4;">always @(posedge i_clk) begin
+  if (i_write_en)
+    r_mem[i_addr] &lt;= i_write_data;
+  o_read_data &lt;= r_mem[i_addr];
+end</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 9 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

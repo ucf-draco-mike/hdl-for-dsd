@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#333">iCE40 PLL Block Diagram (SB_PLL40_CORE)</text>
+
+  <!-- Reference input -->
+  <text x="15" y="92" font-size="10" fill="#1565C0" font-weight="600">25 MHz</text>
+  <text x="15" y="106" font-size="8" fill="#888">REFERENCECLK</text>
+  <line x1="85" y1="95" x2="120" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- DIVR -->
+  <rect x="125" y="72" width="70" height="46" rx="5" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="160" y="92" text-anchor="middle" font-size="9" font-weight="600" fill="#1565C0">÷(DIVR+1)</text>
+  <text x="160" y="106" text-anchor="middle" font-size="7" fill="#888">Ref Div</text>
+  <line x1="195" y1="95" x2="225" y2="95" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- PFD -->
+  <rect x="230" y="72" width="60" height="46" rx="5" fill="#FFF8E1" stroke="#F9A825" stroke-width="1.5"/>
+  <text x="260" y="95" text-anchor="middle" font-size="9" font-weight="600" fill="#333">PFD</text>
+  <text x="260" y="107" text-anchor="middle" font-size="7" fill="#888">Phase Det</text>
+  <line x1="290" y1="95" x2="320" y2="95" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Loop filter + VCO -->
+  <rect x="325" y="72" width="110" height="46" rx="5" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.5"/>
+  <text x="380" y="92" text-anchor="middle" font-size="9" font-weight="600" fill="#9C27B0">Loop Filter</text>
+  <text x="380" y="106" text-anchor="middle" font-size="9" font-weight="600" fill="#9C27B0">+ VCO</text>
+  <line x1="435" y1="95" x2="465" y2="95" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- DIVQ -->
+  <rect x="470" y="72" width="70" height="46" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="505" y="92" text-anchor="middle" font-size="9" font-weight="600" fill="#2E7D32">÷2^DIVQ</text>
+  <text x="505" y="106" text-anchor="middle" font-size="7" fill="#888">Out Div</text>
+  <line x1="540" y1="95" x2="580" y2="95" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Output -->
+  <text x="590" y="92" font-size="10" fill="#2E7D32" font-weight="600">PLLOUT</text>
+  <text x="590" y="106" font-size="8" fill="#888">Derived clk</text>
+
+  <!-- Feedback path -->
+  <rect x="325" y="140" width="110" height="30" rx="5" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="380" y="160" text-anchor="middle" font-size="8" font-weight="600" fill="#333">÷(DIVF+1) Feedback</text>
+  <line x1="380" y1="118" x2="380" y2="135" stroke="#F9A825" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="270" y1="155" x2="320" y2="155" stroke="#F9A825" stroke-width="1.5"/>
+  <line x1="270" y1="118" x2="270" y2="155" stroke="#F9A825" stroke-width="1.5"/>
+
+  <!-- LOCK signal -->
+  <line x1="505" y1="118" x2="505" y2="150" stroke="#C62828" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="505" y="166" text-anchor="middle" font-size="9" fill="#C62828" font-weight="600">LOCK</text>
+  <text x="505" y="178" text-anchor="middle" font-size="7" fill="#888">Wait for HIGH</text>
+
+  <!-- Formula -->
+  <rect x="560" y="130" width="150" height="38" rx="5" fill="#F5F5F5" stroke="#999" stroke-width="1"/>
+  <text x="635" y="148" text-anchor="middle" font-size="8" fill="#333" font-weight="600">Fout = Fin × (DIVF+1)</text>
+  <text x="635" y="162" text-anchor="middle" font-size="8" fill="#333">÷ ((DIVR+1) × 2^DIVQ)</text>
+</svg>

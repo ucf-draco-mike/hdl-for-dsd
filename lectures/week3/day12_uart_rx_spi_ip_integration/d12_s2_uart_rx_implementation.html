@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12.2: RX Implementation — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART RX Implementation</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">RX Oversampling</span>
+        <span class="seg-label active">RX Build</span>
+        <span class="seg-label ">SPI Protocol</span>
+        <span class="seg-label ">IP Integration</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 12.</aside>
+</section>
+
+<section>
+    <h2>RX FSM States</h2>
+    <pre style="font-family:monospace;font-size:0.55em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+    ┌──────┐ falling   ┌────────┐ verified   ┌──────┐
+    │ IDLE │──────────►│ START  │───────────►│ DATA │
+    │ rx=1 │  edge     │ verify │  center    │ ×8   │
+    └──────┘           └────────┘            └──┬───┘
+       ▲                  │ glitch               │ 8 bits
+       │                  │ (rx=1)               ▼
+       │                  ▼                  ┌──────┐
+       │               (IDLE)                │ STOP │
+       └─────────────────────────────────────┘      │
+                                             └──────┘</pre>
+    <div style="font-size:0.8em;margin-top:0.3em;">
+        <p class="fragment"><strong>Bit counter:</strong> oversample ticks (0-15), resets per bit</p>
+        <p class="fragment"><strong>Data index:</strong> which of 8 bits we&rsquo;re sampling (0-7)</p>
+    </div>
+    <aside class="notes">RX FSM: IDLE watches for falling edge, START verifies at center, DATA samples 8 bits, STOP verifies and outputs valid. Two counters: oversample ticks and bit index.</aside>
+</section>
+<section>
+    <h2>Key RX Code Pattern</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Built-in synchronizer (always synchronize external input!)
+reg r_rx_sync0, r_rx_sync1;
+always @(posedge i_clk) begin
+    r_rx_sync0 &lt;= i_rx;
+    r_rx_sync1 &lt;= r_rx_sync0;
+end
+<span class="fragment">
+// Sample at center of each bit (oversample tick == 7)
+S_DATA: begin
+    if (w_os_tick) begin
+        if (r_os_cnt == 7) begin
+            r_data[r_bit_idx] &lt;= r_rx_sync1;  // capture bit
+            if (r_bit_idx == 7)
+                r_next_state = S_STOP;
+        end
+    end
+end</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Always synchronize <code>i_rx</code></strong> — it&rsquo;s an external asynchronous signal. The 2-FF sync from Day 5 is built right in.
+    </div>
+    <aside class="notes">Always synchronize i_rx with 2-FF synchronizer. Sample data at oversample tick 7 (center of bit). Build into the shift register bit by bit.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>UART RX + Loopback Test</h2>
+    <p style="margin-top:0.5em;">Build RX with oversampling, connect RX→TX, type on terminal and see echo</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day12_ex01_uart_rx.v + day12_ex02_uart_loopback.v</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: UART RX + Loopback Test</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Built-in 2-FF synchronizer on <code>i_rx</code> — it&rsquo;s external and async.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Oversample counter (0-15) per bit. Sample at tick 7 (center).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Start-bit: verify at center. Glitch? → IDLE. Confirmed? → DATA.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Loopback test: type in terminal, see echo = both TX and RX work.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">SPI Protocol</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">A second serial protocol — synchronous this time.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

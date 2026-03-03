@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12.3: SPI Protocol — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">SPI Protocol</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">RX Oversampling</span>
+        <span class="seg-label ">RX Build</span>
+        <span class="seg-label active">SPI Protocol</span>
+        <span class="seg-label ">IP Integration</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 12.</aside>
+</section>
+
+<section>
+    <h2>SPI: Synchronous Serial</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>4 wires:</strong> SCLK (clock), MOSI (master out), MISO (master in), CS_N (chip select)</p>
+        <p class="fragment"><strong>Master provides clock</strong> — no baud rate negotiation needed.</p>
+        <p class="fragment">Data clocked in and out simultaneously — <strong>full duplex</strong>.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        SPI is essentially two shift registers connected by a clock wire. You already have all the building blocks.
+    </div>
+    <aside class="notes">SPI: 4 wires, master provides clock. Full duplex — data flows both directions simultaneously. It's really just two connected shift registers.</aside>
+</section>
+<section>
+    <h2>SPI Transaction</h2>
+    <pre style="font-family:monospace;font-size:0.5em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+  CS_N:  ────┐                               ┌──────
+             └───────────────────────────────┘
+
+  SCLK:  ────┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──
+             └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──
+
+  MOSI:  ────|D7|D6|D5|D4|D3|D2|D1|D0|──── (master → slave)
+
+  MISO:  ────|D7|D6|D5|D4|D3|D2|D1|D0|──── (slave → master)</pre>
+    <div style="font-size:0.8em;margin-top:0.3em;">
+        <p class="fragment"><strong>Assert CS_N low</strong> → clock 8 bits → <strong>deassert CS_N</strong></p>
+        <p class="fragment">After 8 clocks, master and slave have <strong>exchanged bytes</strong>.</p>
+    </div>
+    <aside class="notes">SPI transaction: assert chip select, clock 8 bits in both directions simultaneously, deassert. After 8 clocks, bytes are exchanged.</aside>
+</section>
+<section>
+    <h2>UART vs. SPI vs. I²C</h2>
+    <table style="margin-top:0.5em;font-size:0.65em;">
+        <thead><tr><th></th><th>UART</th><th>SPI</th><th>I²C</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Wires</strong></td><td>2 (TX, RX)</td><td>4 (SCLK, MOSI, MISO, CS)</td><td>2 (SDA, SCL)</td></tr>
+            <tr><td><strong>Clock</strong></td><td>Async (agreed baud)</td><td>Sync (master provides)</td><td>Sync (master provides)</td></tr>
+            <tr><td><strong>Duplex</strong></td><td>Full</td><td>Full</td><td>Half</td></tr>
+            <tr><td><strong>Devices</strong></td><td>Point-to-point</td><td>1 master, N slaves (N CS lines)</td><td>Multi-master, N slaves (addr)</td></tr>
+            <tr><td><strong>Speed</strong></td><td>~1 Mbps</td><td>10+ Mbps</td><td>100/400 Kbps</td></tr>
+            <tr><td><strong>Use</strong></td><td>Debug, GPS, BT</td><td>Flash, ADC, display</td><td>Sensors, EEPROM</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">UART: simple point-to-point. SPI: fast, full duplex, multiple slaves. I2C: fewest wires, addressed multi-device, slower. Each has its niche.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;SPI: 4 wires. Master provides clock — no baud negotiation.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Full duplex: data flows both ways simultaneously.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Four modes (CPOL/CPHA) — check the device datasheet.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;SPI = connected shift registers. Same building blocks as UART.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">IP Integration Philosophy</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~8 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Working with third-party modules — wrapping, testing, trusting.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

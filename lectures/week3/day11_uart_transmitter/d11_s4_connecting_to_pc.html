@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11.4: Connecting to a PC — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Connecting to a PC</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">UART Protocol</span>
+        <span class="seg-label ">TX Architecture</span>
+        <span class="seg-label ">TX Build</span>
+        <span class="seg-label active">PC Connect</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 11.</aside>
+</section>
+
+<section>
+    <h2>Go Board → PC Connection</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Go Board has FTDI chip</strong> — converts FPGA TX/RX pins to USB.</p>
+        <p class="fragment"><strong>Settings:</strong> 115200 baud, 8 data bits, no parity, 1 stop bit (8N1).</p>
+        <p class="fragment"><strong>Terminal emulators:</strong></p>
+        <p class="fragment" style="margin-left:1em;font-size:0.9em;">Linux/Mac: <code>screen /dev/ttyUSB0 115200</code></p>
+        <p class="fragment" style="margin-left:1em;font-size:0.9em;">Windows: PuTTY → Serial → COM port → 115200</p>
+    </div>
+    <aside class="notes">Go Board has FTDI chip for USB-serial. Settings: 115200/8N1. Use screen on Linux/Mac, PuTTY on Windows. This is where students see their first character appear.</aside>
+</section>
+<section>
+    <h2>Transmitting &ldquo;HELLO&rdquo;</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Simple message sender: transmit H-E-L-L-O
+reg [2:0] r_char_idx;
+reg [7:0] r_message [0:4];
+initial begin
+    r_message[0] = "H";  r_message[1] = "E";
+    r_message[2] = "L";  r_message[3] = "L";
+    r_message[4] = "O";
+end
+<span class="fragment">
+always @(posedge i_clk)
+    if (!uart_busy &amp;&amp; r_char_idx &lt; 5) begin
+        uart_valid &lt;= 1;
+        uart_data  &lt;= r_message[r_char_idx];
+        r_char_idx &lt;= r_char_idx + 1;
+    end else
+        uart_valid &lt;= 0;</span></code></pre>
+    <aside class="notes">Simple message sender: a small ROM of characters, a counter stepping through them, and the valid/busy handshake feeding the UART TX. Students see HELLO appear on their terminal.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Draw a UART frame for byte 0x48 (&lsquo;H&rsquo;) at 115200, 8N1. What&rsquo;s the bit order on the wire?</p>
+        <div class="fragment quiz-answer">Idle(1)→Start(0)→0,0,0,1,0,0,1,0→Stop(1). 0x48=01001000, sent LSB first. 10 bit periods ≈ 86.8 µs.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> How many clock cycles per bit at 25 MHz / 115200?</p>
+        <div class="fragment quiz-answer">25,000,000 / 115,200 ≈ <strong>217</strong> clock cycles per bit.</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What three building blocks does the UART TX decompose into?</p>
+        <div class="fragment quiz-answer">1. FSM (IDLE→START→DATA→STOP), 2. PISO shift register (holds byte, shifts LSB first), 3. Modulo-N counter (baud tick every 217 clocks).</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> What is the valid/busy handshake protocol?</p>
+        <div class="fragment quiz-answer">Producer asserts <code>i_valid</code> for 1 cycle when <code>o_busy==0</code>. TX latches data, asserts <code>o_busy</code>, transmits. Producer waits for <code>!o_busy</code> before next byte.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p><h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 11 · Hands-On Lab</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

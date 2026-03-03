@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 12.1: RX Oversampling — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART RX — Oversampling</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">RX Oversampling</span>
+        <span class="seg-label ">RX Build</span>
+        <span class="seg-label ">SPI Protocol</span>
+        <span class="seg-label ">IP Integration</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 12.</aside>
+</section>
+
+<section>
+    <h2>Why RX Is Harder Than TX</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>TX controls timing</strong> — it generates the baud clock. Easy.</p>
+        <p class="fragment"><strong>RX must discover timing</strong> — data arrives asynchronously. When do you sample?</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Solution: 16× oversampling.</strong> Sample at 16× the baud rate to find the center of each bit period.
+    </div>
+    <aside class="notes">TX has it easy — it controls timing. RX must figure out when to sample without a shared clock. Solution: sample at 16x the baud rate.</aside>
+</section>
+<section>
+    <h2>16× Oversampling</h2>
+    <pre style="font-family:monospace;font-size:0.5em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+          1 bit period (217 clocks at 25 MHz / 115200 baud)
+    ◄────────────────────────────────────────────────────►
+    ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
+    │ 0│ 1│ 2│ 3│ 4│ 5│ 6│ 7│ 8│ 9│10│11│12│13│14│15│
+    └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
+                            ↑
+                     sample point 7 or 8
+                     (center of bit period)</pre>
+    <div style="font-size:0.8em;margin-top:0.3em;">
+        <p class="fragment">Oversample clock: 25M / (115200 × 16) ≈ <strong>13-14 clocks per sample</strong></p>
+        <p class="fragment">Sample at the center → maximum tolerance for baud rate mismatch and noise.</p>
+    </div>
+    <aside class="notes">16 samples per bit. Sample at position 7 or 8 for the center. Oversample counter runs at ~14 clocks per tick. Center sampling maximizes noise immunity.</aside>
+</section>
+<section>
+    <h2>Start-Bit Detection</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>1.</strong> IDLE: RX line is high. Continuously oversample.</p>
+        <p class="fragment"><strong>2.</strong> Falling edge detected: RX goes low — possible start bit.</p>
+        <p class="fragment"><strong>3.</strong> Wait 7-8 oversample ticks → center of start bit. Sample again.</p>
+        <p class="fragment"><strong>4.</strong> Still low? <span style="color:#2E7D32;font-weight:600;">Confirmed start bit!</span> High? <span style="color:#C62828;font-weight:600;">Glitch — return to IDLE.</span></p>
+        <p class="fragment"><strong>5.</strong> From start center, count 16 ticks → center of D0. Sample. Repeat for D1–D7.</p>
+        <p class="fragment"><strong>6.</strong> Count 16 ticks → center of stop bit. Verify high. Assert <code>o_valid</code>.</p>
+    </div>
+    <aside class="notes">Start bit detection: falling edge triggers, wait to center, verify still low, then sample 8 data bits at 16-tick intervals. Verify stop bit.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;RX must discover timing. TX controls it — RX recovers it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;16× oversampling: 16 samples per bit, sample at center (position 7-8).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Start-bit verification: wait to center, re-check — eliminates glitches.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Oversample counter: ~14 system clocks per sample tick.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">UART RX Implementation</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Building the receiver with oversampling FSM.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 9.3: iCE40 Memory Resources — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">iCE40 Memory Resources</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">ROM</span>
+        <span class="seg-label ">RAM</span>
+        <span class="seg-label active">iCE40 Memory</span>
+        <span class="seg-label ">Applications</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 9.</aside>
+</section>
+
+<section>
+    <h2>iCE40 HX1K Memory Resources</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Resource</th><th>Amount</th><th>Use For</th></tr></thead>
+        <tbody>
+            <tr><td><strong>LUTs</strong></td><td>1,280</td><td>Small ROMs, distributed RAM (&lt;64 bits)</td></tr>
+            <tr class="fragment"><td><strong>EBR Blocks</strong></td><td>16 × 4 Kbit</td><td>Larger memories (RAM, ROM, FIFO buffers)</td></tr>
+            <tr class="fragment"><td><strong>Total Block RAM</strong></td><td>64 Kbit (8 KB)</td><td>Combined across all EBR blocks</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Each EBR is configurable: 256×16, 512×8, 1024×4, or 2048×2.
+    </div>
+    <aside class="notes">iCE40 HX1K: 1280 LUTs for logic/distributed RAM, 16 EBR blocks at 4 Kbit each = 64 Kbit total block RAM. Each EBR configurable in multiple aspect ratios.</aside>
+</section>
+<section>
+    <h2>Memory Budget for Common Designs</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Design</th><th>Memory Need</th><th>EBR Blocks</th></tr></thead>
+        <tbody>
+            <tr><td>UART TX/RX buffer</td><td>256×8 = 2 Kbit</td><td>1</td></tr>
+            <tr><td>Character ROM (ASCII font)</td><td>1024×8 = 8 Kbit</td><td>2</td></tr>
+            <tr><td>VGA frame buffer (40×30)</td><td>1200×8 ≈ 10 Kbit</td><td>3</td></tr>
+            <tr><td>Sine lookup table</td><td>256×8 = 2 Kbit</td><td>1</td></tr>
+            <tr><td>Instruction ROM (simple CPU)</td><td>256×16 = 4 Kbit</td><td>1</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        You have 16 EBR blocks — plenty for any of the final project options.
+    </div>
+    <aside class="notes">Memory budget: UART buffer 1 EBR, character ROM 2, VGA buffer 3, sine table 1. 16 available — plenty for any project.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;iCE40 HX1K: 1,280 LUTs + 16 EBR × 4 Kbit = 64 Kbit block RAM.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Sync read → EBR inference (saves LUTs). Async read → distributed (LUTs).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Each EBR configurable: 256×16, 512×8, 1024×4, 2048×2.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Budget your EBRs for the final project — 16 blocks is generous.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Practical Memory Applications</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">ROM-driven sequencers, sine tables, and character ROMs.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

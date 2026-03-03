@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" font-family="Inter, sans-serif">
+  <text x="360" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Async Read vs. Sync Read — Implementation Impact</text>
+
+  <!-- Async side -->
+  <rect x="20" y="45" width="320" height="170" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="1.5"/>
+  <text x="180" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#C62828">Async Read → LUT-Based</text>
+  <text x="40" y="100" font-size="9" fill="#333" font-family="JetBrains Mono, monospace">assign o_data = r_mem[i_addr];</text>
+  <text x="40" y="126" font-size="9" fill="#555">✓ No read latency (combinational)</text>
+  <text x="40" y="144" font-size="9" fill="#C62828" font-weight="600">✗ Uses LUTs — steals from logic</text>
+  <text x="40" y="162" font-size="9" fill="#C62828" font-weight="600">✗ Cannot scale beyond ~64 entries</text>
+  <text x="180" y="200" text-anchor="middle" font-size="9" fill="#888" font-style="italic">Good for: tiny ROMs, hex_to_7seg</text>
+
+  <!-- Sync side -->
+  <rect x="380" y="45" width="320" height="170" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="540" y="68" text-anchor="middle" font-size="12" font-weight="700" fill="#2E7D32">Sync Read → Block RAM (EBR)</text>
+  <text x="400" y="100" font-size="9" fill="#333" font-family="JetBrains Mono, monospace">always @(posedge clk)</text>
+  <text x="400" y="114" font-size="9" fill="#333" font-family="JetBrains Mono, monospace">  o_data &lt;= r_mem[i_addr];</text>
+  <text x="400" y="140" font-size="9" fill="#555">✗ 1-cycle read latency</text>
+  <text x="400" y="158" font-size="9" fill="#2E7D32" font-weight="600">✓ Uses dedicated EBR — free LUTs</text>
+  <text x="400" y="176" font-size="9" fill="#2E7D32" font-weight="600">✓ Scales to 4 Kbit per block</text>
+  <text x="540" y="200" text-anchor="middle" font-size="9" fill="#888" font-style="italic">Good for: UART buffers, fonts, RAM</text>
+</svg>

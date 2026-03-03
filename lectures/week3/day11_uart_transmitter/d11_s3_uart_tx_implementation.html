@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11.3: TX Implementation — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Implementation Walk-Through</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">UART Protocol</span>
+        <span class="seg-label ">TX Architecture</span>
+        <span class="seg-label active">TX Build</span>
+        <span class="seg-label ">PC Connect</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 11.</aside>
+</section>
+
+<section>
+    <h2>UART TX — Key Code Sections</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE; // 217
+
+// ---- Baud counter ----
+always @(posedge i_clk)
+    if (r_state == S_IDLE || w_baud_tick)
+        r_baud_cnt &lt;= 0;
+    else
+        r_baud_cnt &lt;= r_baud_cnt + 1;
+
+<span class="fragment">assign w_baud_tick = (r_baud_cnt == CLKS_PER_BIT - 1);</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Reset the counter in IDLE (not running) and on every tick (reload). Single-cycle pulse drives the FSM.
+    </div>
+    <aside class="notes">Baud counter: counts to 216, pulses w_baud_tick, resets. Reset in IDLE so it doesn't free-run. This single-cycle tick drives the FSM state transitions.</aside>
+</section>
+<section>
+    <h2>Shift Register + TX Output</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Load frame: {stop, data[7:0], start}
+always @(posedge i_clk)
+    if (r_state == S_IDLE &amp;&amp; i_valid)
+        r_shift &lt;= {1'b1, i_data, 1'b0};  // stop + data + start
+<span class="fragment">    else if (w_baud_tick)
+        r_shift &lt;= {1'b1, r_shift[9:1]};  // shift right, fill with idle</span>
+
+<span class="fragment">assign o_tx = (r_state == S_IDLE) ? 1'b1 : r_shift[0];</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Frame = <code>{stop, D7, D6, D5, D4, D3, D2, D1, D0, start}</code>. Shift right = LSB first out the bottom. Idle drives high explicitly.
+    </div>
+    <aside class="notes">Load the full frame into a 10-bit shift register: stop, 8 data bits, start. Shift right on each baud tick — LSB comes out first. Idle state forces TX high.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Build UART TX from Scratch</h2>
+    <p style="margin-top:0.5em;">Baud generator → FSM → shift register → integrate → simulate in Icarus</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day11_ex01_uart_tx.v — complete implementation</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Build UART TX from Scratch</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Baud counter: modulo-217, single-cycle tick.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;10-bit shift reg: <code>{stop, data[7:0], start}</code>. Shift right = LSB first.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;FSM counts 8 data bits with <code>r_bit_idx</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Idle drives TX=1 explicitly. The shift register handles the rest.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Connecting to a PC</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~8 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">USB-serial, terminal emulators, and seeing your first 'H'.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

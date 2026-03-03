@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11.1: The UART Protocol — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The UART Protocol</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">UART Protocol</span>
+        <span class="seg-label ">TX Architecture</span>
+        <span class="seg-label ">TX Build</span>
+        <span class="seg-label ">PC Connect</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 11.</aside>
+</section>
+
+<section>
+    <h2>What Is UART?</h2>
+    <p style="font-size:0.85em;"><strong>Universal Asynchronous Receiver/Transmitter</strong> — the simplest serial protocol.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Two wires:</strong> TX (transmit) and RX (receive). No shared clock.</p>
+        <p class="fragment"><strong>Both sides agree on baud rate</strong> (bits/sec) in advance.</p>
+        <p class="fragment">Everywhere: USB-serial, microcontroller debug, GPS, Bluetooth modules.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Starting today, your Go Board can talk to your PC.
+    </div>
+    <aside class="notes">UART: simplest serial protocol. Two wires, no shared clock. Both sides agree on baud rate. This is how your Go Board will talk to your PC.</aside>
+</section>
+<section>
+    <h2>UART Frame Format (8N1)</h2>
+    <img src="diagrams/d11_uart_frame.svg" alt="UART frame" style="width:100%;max-width:680px;display:block;margin:0.5em auto;">
+    <div style="font-size:0.8em;margin-top:0.3em;">
+        <p class="fragment"><strong>Idle:</strong> line held HIGH (1)</p>
+        <p class="fragment"><strong>Start bit:</strong> one period LOW (0) — falling edge triggers receiver</p>
+        <p class="fragment"><strong>Data:</strong> 8 bits, <strong>LSB first</strong> (catches people!)</p>
+        <p class="fragment"><strong>Stop bit:</strong> one period HIGH (1) — return to idle</p>
+    </div>
+    <aside class="notes">UART frame: idle high, start bit low, 8 data bits LSB first, stop bit high. 10 total bit periods per byte. The LSB-first order catches many students.</aside>
+</section>
+<section>
+    <h2>Baud Rate Math</h2>
+    <div style="font-size:0.8em;">
+        <p>We use <strong>115200 baud</strong>. Each bit lasts 1/115200 ≈ 8.68 µs.</p>
+        <p class="fragment" style="margin-top:0.5em;font-family:'JetBrains Mono',monospace;font-size:0.9em;">Clocks per bit = 25,000,000 / 115,200 = <strong style="color:#C62828;">217</strong></p>
+        <p class="fragment">Actual baud = 25M / 217 ≈ 115,207 (0.006% error — well within ±3% tolerance)</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        The baud rate generator is just a <strong>modulo-217 counter</strong>. You already know how to build this.
+    </div>
+    <div class="fragment" style="font-size:0.75em;">
+        <p>Frame time: 10 × 8.68 µs = 86.8 µs → max ~11,520 bytes/sec (11.5 KB/s)</p>
+    </div>
+    <aside class="notes">At 115200 baud with 25 MHz clock: 217 clocks per bit. The baud rate generator is just a modulo-217 counter — you built this on Day 5.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;UART: 2 wires, no shared clock. Both sides agree on baud rate.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Frame: idle (high) → start (low) → 8 data LSB first → stop (high).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;115200 baud @ 25 MHz = 217 clocks per bit.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Baud rate generator = modulo-N counter (Day 5).</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">UART TX Architecture</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Decomposing the transmitter into FSM + datapath.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

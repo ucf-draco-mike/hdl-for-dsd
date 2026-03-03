@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 11.2: UART TX Architecture — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">TX Architecture</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">UART Protocol</span>
+        <span class="seg-label active">TX Architecture</span>
+        <span class="seg-label ">TX Build</span>
+        <span class="seg-label ">PC Connect</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 11.</aside>
+</section>
+
+<section>
+    <h2>FSM + Datapath Decomposition</h2>
+    <img src="diagrams/d11_uart_tx_block.svg" alt="UART TX block diagram" style="width:100%;max-width:640px;display:block;margin:0.3em auto;">
+    <p class="fragment" style="font-size:0.8em;text-align:center;">Three parts you already know: <strong>FSM</strong> (Day 7) + <strong>PISO shift register</strong> (Day 5) + <strong>modulo-N counter</strong> (Day 5).</p>
+    <aside class="notes">UART TX decomposes into three parts you already know: FSM for control, PISO shift register for data, modulo-N counter for baud rate.</aside>
+</section>
+<section>
+    <h2>FSM States</h2>
+    <pre style="font-family:monospace;font-size:0.55em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+    ┌──────┐  i_valid   ┌───────┐  baud_tick   ┌──────┐
+    │ IDLE │───────────►│ START │──────────────►│ DATA │
+    │      │            │       │               │      │
+    └──────┘            └───────┘               └──┬───┘
+       ▲                                           │
+       │              ┌──────┐   baud_tick         │ 8 bits
+       └──────────────│ STOP │◄────────────────────┘
+                      │      │
+                      └──────┘</pre>
+    <div style="font-size:0.8em;margin-top:0.3em;">
+        <p class="fragment"><strong>IDLE:</strong> TX=1. Wait for <code>i_valid</code>. Latch data.</p>
+        <p class="fragment"><strong>START:</strong> TX=0 for 217 clocks (one bit period).</p>
+        <p class="fragment"><strong>DATA:</strong> Shift out 8 bits LSB first, one per baud tick.</p>
+        <p class="fragment"><strong>STOP:</strong> TX=1 for 217 clocks. Return to IDLE.</p>
+    </div>
+    <aside class="notes">Four states: IDLE waits, START drives low, DATA shifts 8 bits, STOP drives high. Each state waits for a baud tick before advancing.</aside>
+</section>
+<section>
+    <h2>Valid / Busy Handshake</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Producer</strong> checks <code>o_busy == 0</code>, then asserts <code>i_valid</code> for one cycle with <code>i_data</code>.</p>
+        <p class="fragment"><strong>UART TX</strong> latches data, asserts <code>o_busy</code>, transmits.</p>
+        <p class="fragment">Producer must wait for <code>!o_busy</code> before sending next byte.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Why latch?</strong> The producer may change <code>i_data</code> after the first cycle. The shift register decouples the TX from the producer's timing.
+    </div>
+    <aside class="notes">Valid/busy handshake: producer asserts valid when not busy, TX latches data and asserts busy. Data is latched into the shift register to decouple from the producer.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Decompose: FSM (control) + PISO (data) + counter (baud).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Four states: IDLE → START → DATA (×8) → STOP.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Valid/busy handshake decouples producer from TX timing.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Everything here reuses Day 5 + Day 7 building blocks.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Implementation Walk-Through</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Building the complete UART TX from scratch.</p></div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body></html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.2: Timing Constraints &amp; Reports — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Timing, Clocking &amp; Constraints</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Constraints &amp; Reports</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Physics of Timing</span>
+        <span class="seg-label active">Constraints</span>
+        <span class="seg-label ">iCE40 PLL</span>
+        <span class="seg-label ">Clock Domains</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 10.</aside>
+</section>
+
+<section>
+    <h2>Adding Timing Constraints</h2>
+    <pre class="synth"><code class="language-bash"># Tell nextpnr about your clock
+nextpnr-ice40 --hx1k --package vq100 \
+    --pcf go_board.pcf \
+    --json top.json --asc top.asc \
+    --freq 25</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <code>--freq 25</code> tells nextpnr: &ldquo;My clock is 25 MHz. Ensure all paths meet timing.&rdquo; Without it, no timing check happens.
+    </div>
+    <aside class="notes">The --freq flag tells nextpnr your target frequency. Without it, no timing analysis. Always specify it.</aside>
+</section>
+<section>
+    <h2>Reading the Timing Report</h2>
+    <pre class="synth"><code class="language-bash" data-noescape><span class="fragment"># PASS — Fmax exceeds target
+Info: Max frequency for clock 'i_clk': 48.23 MHz
+#  Target: 25 MHz → PASS (23 MHz of margin)</span>
+
+<span class="fragment"># FAIL — Fmax below target
+Info: Max frequency for clock 'i_clk': 22.10 MHz
+#  Target: 25 MHz → FAIL! Timing violated.
+#  Slack: -2.9 ns</span></code></pre>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        Timing violations cause <strong>intermittent failures</strong> — the design works sometimes, fails randomly. The worst kind of bug.
+    </div>
+    <aside class="notes">Check max frequency against your target. Above = pass. Below = timing violation. These cause intermittent failures — the worst bugs.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Timing Analysis Walk-Through</h2>
+    <p style="margin-top:0.5em;">Synthesize a real design, read the nextpnr timing report line-by-line</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">Create intentional timing violation → fix by pipelining</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Timing Analysis Walk-Through</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>--freq 25</code> enables timing analysis. Always include it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Max frequency &gt; target → pass. Below → violation.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Options when timing fails: pipeline, restructure logic, slow clock.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Timing violations cause intermittent bugs — never ignore them.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The iCE40 PLL</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Generating new clock frequencies from your 25 MHz crystal.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

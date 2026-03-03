@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 9.1: ROM in Verilog — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">ROM in Verilog</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">ROM</span>
+        <span class="seg-label ">RAM</span>
+        <span class="seg-label ">iCE40 Memory</span>
+        <span class="seg-label ">Applications</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 9.</aside>
+</section>
+
+<section>
+    <h2>ROM in an FPGA</h2>
+    <p style="font-size:0.85em;">No physical ROM chip — ROM is implemented as:</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>LUT-based:</strong> Small ROMs packed into lookup tables (same ones used for logic)</p>
+        <p class="fragment"><strong>Block RAM-based:</strong> Larger ROMs mapped to dedicated EBR blocks, initialized at config</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        You write the same Verilog regardless. The synthesis tool decides placement based on size and access pattern.
+    </div>
+    <aside class="notes">FPGA ROM is implemented in LUTs or block RAM. You write one style of Verilog; the tools choose the resource.</aside>
+</section>
+<section>
+    <h2>Approach 1: <code>case</code>-Based ROM</h2>
+    <pre class="synth"><code class="language-verilog">module rom_case (
+    input  wire [3:0] i_addr,
+    output reg  [7:0] o_data
+);
+    always @(*) begin
+        case (i_addr)
+            4'h0: o_data = 8'h3E;
+            4'h1: o_data = 8'h41;
+            4'h2: o_data = 8'h49;
+            // ... 16 entries total ...
+            default: o_data = 8'h00;
+        endcase
+    end
+endmodule</code></pre>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        <strong>Doesn&rsquo;t scale.</strong> 256 entries = 256 case items. Use for tiny hand-crafted tables only.
+    </div>
+    <aside class="notes">Case-based ROM is readable for small tables but doesn't scale. 256 entries becomes unmanageable.</aside>
+</section>
+<section>
+    <h2>Approach 2: Array + <code>$readmemh</code></h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module rom_array #(
+    parameter ADDR_W = 8,
+    parameter DATA_W = 8,
+    parameter MEM_FILE = "rom_data.hex"
+)(
+    input  wire [ADDR_W-1:0] i_addr,
+    output wire [DATA_W-1:0] o_data
+);
+<span class="fragment">    reg [DATA_W-1:0] r_mem [0:(1&lt;&lt;ADDR_W)-1];
+
+    initial $readmemh(MEM_FILE, r_mem);</span>
+<span class="fragment">
+    assign o_data = r_mem[i_addr];  // async read → LUT-based</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <code>$readmemh</code> works in <strong>both</strong> simulation (Icarus) and synthesis (Yosys). Change the file, change the ROM — no recompilation.
+    </div>
+    <aside class="notes">Array-based ROM with readmemh scales to any size. Works in both simulation and synthesis. Change the hex file, change the behavior.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>case</code>-ROM: small, hand-crafted. Array-ROM: scalable, file-driven.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>$readmemh</code> works in simulation <strong>and</strong> synthesis.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Async read (<code>assign</code>) → LUT-based. Sync read → block RAM.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Change the <code>.hex</code> file to change behavior — no recompile needed.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">RAM in Verilog</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Adding a write port — same array, new capability.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

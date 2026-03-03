@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.4: Clock Domain Crossing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Timing, Clocking &amp; Constraints</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Clock Domain Crossing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Physics of Timing</span>
+        <span class="seg-label ">Constraints</span>
+        <span class="seg-label ">iCE40 PLL</span>
+        <span class="seg-label active">Clock Domains</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 10.</aside>
+</section>
+
+<section>
+    <h2>The CDC Problem</h2>
+    <p style="font-size:0.85em;">When two parts of a design run on <strong>different clocks</strong>, passing data between them violates setup/hold timing.</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Single-bit CDC:</strong> 2-FF synchronizer (Day 5 revisited)</p>
+        <p class="fragment"><strong>Multi-bit CDC:</strong> Gray code for counters/pointers, async FIFO for data</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        If you have one clock, you have <strong>zero</strong> CDC problems. Every additional clock multiplies complexity.
+    </div>
+    <aside class="notes">Clock domain crossing: different clocks can violate setup/hold. Single-bit: 2-FF sync. Multi-bit: Gray code or async FIFO. One clock = zero problems.</aside>
+</section>
+<section>
+    <h2>Single-Bit CDC: 2-FF Synchronizer</h2>
+    <pre class="synth"><code class="language-verilog">module cdc_single_bit (
+    input  wire i_clk_dst,      // destination clock
+    input  wire i_signal_src,   // from source clock domain
+    output wire o_signal_dst    // synchronized to destination
+);
+    reg r_meta, r_sync;
+
+    always @(posedge i_clk_dst) begin
+        r_meta &lt;= i_signal_src;
+        r_sync &lt;= r_meta;
+    end
+
+    assign o_signal_dst = r_sync;
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Same synchronizer from Day 5, now applied to clock domain crossing. Cost: 2 cycles of latency in the <strong>destination</strong> domain.
+    </div>
+    <aside class="notes">Same 2-FF synchronizer from Day 5, applied to CDC. The first FF resolves metastability; the second ensures a clean value. 2 cycles latency in destination domain.</aside>
+</section>
+<section>
+    <h2>Multi-Bit CDC: Gray Code</h2>
+    <pre class="synth"><code class="language-verilog">// Binary to Gray (only 1 bit changes per increment)
+assign gray = binary ^ (binary >> 1);
+
+// Gray to Binary
+assign binary[N-1] = gray[N-1];
+generate
+    for (g = N-2; g >= 0; g = g - 1)
+        assign binary[g] = binary[g+1] ^ gray[g];
+endgenerate</code></pre>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Safe for counters/pointers</strong> — only 1 bit changes per increment, so the receiver never sees a corrupted intermediate value.</p>
+        <p class="fragment"><strong>Arbitrary data</strong> needs an async FIFO (dual-clock FIFO with Gray-coded pointers).</p>
+    </div>
+    <aside class="notes">Gray code: only one bit changes per increment. Safe for counters crossing domains. Arbitrary multi-bit data needs an async FIFO — a standard but complex design pattern.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Your critical path is 35 ns at 25 MHz (40 ns period). What&rsquo;s the slack? Is timing met? Fmax?</p>
+        <div class="fragment quiz-answer">Slack = 40 − 35 = 5 ns (positive → timing met). Fmax ≈ 1/35 ns ≈ 28.6 MHz.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> What <code>nextpnr</code> flag enables timing analysis?</p>
+        <div class="fragment quiz-answer"><code>--freq 25</code> (specifies target clock in MHz). Without it, no timing check occurs.</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What tool calculates iCE40 PLL parameters? What signal must you wait for?</p>
+        <div class="fragment quiz-answer"><code>icepll -i 25 -o 50</code> calculates DIVR/DIVF/DIVQ. Wait for the <code>LOCK</code> signal to go high before using the PLL clock.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> How do you safely pass a multi-bit counter across clock domains?</p>
+        <div class="fragment quiz-answer">Convert to Gray code (only 1 bit changes per increment), synchronize with 2-FF, then convert back. Prevents corrupted intermediate values.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 10 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>
