@@ -1,6 +1,6 @@
 # Toolchain Setup Guide
 
-## Accelerated HDL for Digital System Design — UCF ECE
+## Accelerated HDL for Digital System Design
 
 This guide walks you through installing the open-source FPGA toolchain and simulation tools for the Nandland Go Board (Lattice iCE40 HX1K).
 
@@ -131,7 +131,7 @@ cd ~ && rm -rf ~/hdl_test
 
 ## Go Board Connection
 
-1. Connect the Go Board to your computer via USB
+1. Connect the Go Board to your computer via USB.
 2. Verify the FTDI device is recognized:
    - **Linux:** `lsusb | grep -i ftdi`
    - **macOS:** `ls /dev/cu.usbserial*`
@@ -142,7 +142,7 @@ cd ~ && rm -rf ~/hdl_test
 
 ## Text Editor Recommendations
 
-Any editor works. Recommended setups for Verilog:
+Any editor works. Recommended setups for Verilog and SystemVerilog:
 
 | Editor | Verilog Plugin |
 |--------|---------------|
@@ -153,7 +153,7 @@ Any editor works. Recommended setups for Verilog:
 
 ---
 
-## Terminal Emulator (for UART in Week 3)
+## Terminal Emulator (for UART — Week 3)
 
 You'll need a serial terminal for UART communication starting Day 11:
 
@@ -162,6 +162,50 @@ You'll need a serial terminal for UART communication starting Day 11:
 | Linux | `screen` or `minicom` | `screen /dev/ttyUSB0 115200` |
 | macOS | `screen` | `screen /dev/cu.usbserial-* 115200` |
 | Windows | PuTTY or Tera Term | Configure: COMx, 115200, 8N1 |
+
+Settings: **115200 baud, 8 data bits, No parity, 1 stop bit (8N1), no flow control.**
+
+---
+
+## AI Tools for Verification (Week 2+)
+
+Starting on Day 6, students use AI tools to assist with testbench generation. No special installation is required — use any of the following through their web interfaces:
+
+- **Claude** (claude.ai)
+- **ChatGPT** (chat.openai.com)
+- **GitHub Copilot** (VS Code extension, if available)
+
+Students submit AI prompts and corrected outputs as part of lab deliverables. The emphasis is on **reviewing and debugging** AI-generated Verilog, not on which tool is used.
+
+---
+
+## Toolchain Quick Reference
+
+```bash
+# Simulation (Icarus Verilog + GTKWave)
+iverilog -o sim.vvp -g2012 tb_module.v module.v
+vvp sim.vvp
+gtkwave dump.vcd
+
+# Synthesis & Programming (iCE40 open-source flow)
+yosys -p "synth_ice40 -top top_module -json top.json" top.v sub1.v sub2.v
+nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
+icepack top.asc top.bin
+iceprog top.bin
+
+# PPA analysis
+yosys -p "read_verilog module.v; synth_ice40 -top module; stat"
+
+# Schematic visualization
+yosys -p "read_verilog module.v; synth_ice40 -top module; show"
+
+# Timing analysis
+nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf \
+  --json top.json --asc top.asc --report timing_report.json
+
+# SystemVerilog simulation (use -g2012 flag)
+iverilog -g2012 -o sim.vvp tb_module.sv module.sv
+```
 
 ---
 
@@ -175,3 +219,7 @@ You'll need a serial terminal for UART communication starting Day 11:
 | GTKWave won't open on macOS | Allow in System Preferences → Security & Privacy |
 | `iverilog: No such file or directory` | Check PATH; on macOS try `brew link icarus-verilog` |
 | WSL2 can't see USB device | Install and configure [usbipd-win](https://github.com/dorssel/usbipd-win) |
+| `yosys: read_verilog -sv` fails | Update Yosys to ≥ 0.30 for SystemVerilog support |
+| iverilog rejects SV syntax | Ensure you pass the `-g2012` flag |
+| Serial terminal shows garbled text | Check baud rate (115200) and settings (8N1, no flow control) |
+| `screen` won't release serial port | Detach with `Ctrl-A` then `K`, confirm with `Y` |
