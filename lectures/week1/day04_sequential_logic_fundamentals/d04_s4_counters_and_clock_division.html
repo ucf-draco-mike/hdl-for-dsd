@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4.4: Counters and Clock Division — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 4 · Sequential Logic Fundamentals
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Counters &amp; Clock Division</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~13 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Clocks & Edges</span>
+        <span class="seg-label ">Nonblocking</span>
+        <span class="seg-label ">FF Variants</span>
+        <span class="seg-label active">Counters</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 4.</aside>
+</section>
+
+<section>
+    <h2>The Free-Running Counter</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>reg [7:0] r_count;
+
+always @(posedge i_clk)
+    r_count <= r_count + 1;
+<span class="fragment">
+// Cycle 0:   r_count = 8'h00
+// Cycle 1:   r_count = 8'h01
+// ...
+// Cycle 255: r_count = 8'hFF
+// Cycle 256: r_count = 8'h00  ← rollover!</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        8-bit counter rolls over every 256 cycles. N-bit counter: every 2<sup>N</sup> cycles.
+    </div>
+    <aside class="notes">Free-running counter increments each clock and rolls over at maximum. 8-bit = 256 cycles. N-bit = 2^N cycles.</aside>
+</section>
+<section>
+    <h2>Clock Division: 25 MHz → 1 Hz</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// 25 MHz → 1 Hz blink: count 25,000,000 per half-period
+// log₂(25000000) ≈ 25 bits
+<span class="fragment">reg [24:0] r_counter;
+reg        r_led;
+
+always @(posedge i_clk) begin
+    if (r_counter == 25_000_000 - 1) begin
+        r_counter <= 0;
+        r_led     <= ~r_led;    // toggle
+    end else begin
+        r_counter <= r_counter + 1;
+    end
+end</span>
+<span class="fragment">assign o_led1 = r_led;</span></code></pre>
+    <aside class="notes">Count to 25 million, toggle LED, reset counter. 25-bit counter needed. This is your first real sequential design — build it in lab today.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>LED Blinker</h2>
+    <p style="margin-top:0.5em;">Build the clock divider from scratch → program Go Board</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day04_ex02_led_blinker.v → see it blink!</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: LED Blinker</aside>
+</section>
+<section>
+    <h2>Quick Trick: Counter Bit Taps</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Counter Bit</th><th>Approx. Frequency</th><th>Use Case</th></tr></thead>
+        <tbody>
+            <tr><td>r_counter[23]</td><td>~1.5 Hz</td><td>Visible blink</td></tr>
+            <tr><td>r_counter[22]</td><td>~3 Hz</td><td>Fast blink</td></tr>
+            <tr><td>r_counter[20]</td><td>~12 Hz</td><td>Activity indicator</td></tr>
+            <tr><td>r_counter[16]</td><td>~190 Hz</td><td>Display refresh</td></tr>
+        </tbody>
+    </table>
+    <div class="callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Quick trick:</strong> Use MSBs of a free-running counter for approximate division. No target value needed!
+    </div>
+    <aside class="notes">Quick trick: use counter MSBs. Bit 23 at 25 MHz gives about 1.5 Hz. Not exact, but great for LEDs.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Counters are the fundamental sequential building block.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;N-bit counter rolls over every 2<sup>N</sup> cycles.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Clock divider: count to target, toggle, reset.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Quick trick: counter MSBs for approximate clock division.</p>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> What happens if you use <code>=</code> instead of <code>&lt;=</code> in a sequential <code>always @(posedge clk)</code> block with two registers?</p>
+        <div class="fragment quiz-answer">Both registers get the same value in one cycle because blocking assignment updates immediately. The pipeline behavior is destroyed.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> Write a D flip-flop with synchronous reset from memory.</p>
+        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.9em;white-space:pre;line-height:1.5;">always @(posedge i_clk)
+    if (i_reset) r_q <= 1'b0;
+    else         r_q <= r_d;</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> Is a missing <code>else</code> in <code>always @(posedge clk)</code> a latch?</p>
+        <div class="fragment quiz-answer"><strong>No!</strong> Flip-flops inherently hold their value. Latch inference only occurs in <code>always @(*)</code>.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> You want ~2 Hz blink from 25 MHz. What do you count to?</p>
+        <div class="fragment quiz-answer">2 Hz = toggle every 0.25s = 6,250,000 cycles per half-period. Count to 6,249,999, then toggle and reset.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 4 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3.3: The Latch Problem — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 3 · Procedural Combinational Logic
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The Latch Problem</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">always @(*)</span>
+        <span class="seg-label ">if/else & case</span>
+        <span class="seg-label active">Latch Problem</span>
+        <span class="seg-label ">Block vs Nonblock</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 3.</aside>
+</section>
+
+<section>
+    <h2>What Is an Unintentional Latch?</h2>
+    <p style="font-size:0.85em;">If a signal in <code>always @(*)</code> is <strong>not assigned in every path</strong>, the synthesizer must preserve its old value.</p>
+    <p class="fragment" style="font-size:0.85em;">The only combinational element that &ldquo;remembers&rdquo; is a <strong>latch</strong>.</p>
+    <div class="fragment callout-danger" style="font-size:0.8em;">
+        Latches are almost never what you want. They cause timing hazards, are hard to test, and FPGA tools handle them poorly.
+    </div>
+    <aside class="notes">If a signal isn't assigned in every path, synthesizer infers a latch. Latches cause timing hazards and are almost never what you want.</aside>
+</section>
+<section>
+    <h2>How Latches Are Inferred</h2>
+    <pre class="mistake"><code class="language-verilog">always @(*) begin
+    if (sel)
+        y = a;
+    // NO else! When sel=0, y must keep old value → LATCH
+end</code></pre>
+    <pre class="mistake fragment"><code class="language-verilog">always @(*) begin
+    case (opcode)
+        2'b00: result = a + b;
+        2'b01: result = a - b;
+        // 2'b10, 2'b11 missing → LATCH on result
+    endcase
+end</code></pre>
+    <aside class="notes">Two classic patterns: if without else, and incomplete case. Both cause latch inference.</aside>
+</section>
+<section>
+    <h2>Three Prevention Techniques</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>① Default assignment</strong> (recommended):</p>
+        <pre class="synth fragment"><code class="language-verilog">always @(*) begin
+    y = 4'b0000;         // assign FIRST, override later
+    if (enable) y = data;  // no latch — default covers else
+end</code></pre>
+        <p class="fragment"><strong>② Complete if/else:</strong></p>
+        <pre class="synth fragment"><code class="language-verilog">always @(*) begin
+    if (enable) y = data; else y = 4'b0000;
+end</code></pre>
+        <p class="fragment"><strong>③ default in case:</strong></p>
+        <pre class="synth fragment"><code class="language-verilog">    case (sel) ... default: y = 4'b0; endcase</code></pre>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;">Best practice: use ① AND ③. Belt and suspenders.</div>
+    <aside class="notes">Three techniques: default assignment at top, complete if/else, default in case. Best practice: use technique 1 AND 3 together.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Latch Hunting</h2>
+    <p style="margin-top:0.5em;">Write buggy code → synthesize → see Yosys latch warning → fix it</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">The most important debugging skill in combinational Verilog</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Latch Hunting</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Incomplete paths in <code>always @(*)</code> → unintentional latch.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Default assignment at the top of every block = best prevention.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Always include <code>default</code> in <code>case</code>, even when enumeration is complete.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Yosys warns about latches — <strong>read the warnings</strong>.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Blocking vs. Nonblocking</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~6 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The two assignment operators — and when to use each.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

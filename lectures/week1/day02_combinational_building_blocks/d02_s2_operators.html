@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2.2: Operators — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 2 · Combinational Building Blocks
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Operators</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Data Types</span>
+        <span class="seg-label active">Operators</span>
+        <span class="seg-label ">Sized Literals</span>
+        <span class="seg-label ">7-Seg Display</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 2.</aside>
+</section>
+
+<section>
+    <h2>Operator Reference</h2>
+    <table style="font-size:0.65em;">
+        <thead><tr><th>Category</th><th>Operators</th><th>Hardware Cost</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td>Bitwise</td><td><code>&amp;</code> <code>|</code> <code>^</code> <code>~</code> <code>~^</code></td><td>1 LUT per bit</td></tr>
+            <tr class="fragment"><td>Logical</td><td><code>&amp;&amp;</code> <code>||</code> <code>!</code></td><td>Reduction + 1 LUT</td></tr>
+            <tr class="fragment"><td>Arithmetic</td><td><code>+</code> <code>-</code> <code>*</code></td><td>Adder/multiplier chains</td></tr>
+            <tr class="fragment"><td>Relational</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>Comparator logic</td></tr>
+            <tr class="fragment"><td>Shift</td><td><code>&lt;&lt;</code> <code>&gt;&gt;</code></td><td>Free if constant shift</td></tr>
+            <tr class="fragment"><td>Conditional</td><td><code>? :</code></td><td>Multiplexer</td></tr>
+            <tr class="fragment"><td>Reduction</td><td><code>&amp;</code> <code>|</code> <code>^</code> (unary)</td><td>Tree of gates</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">Complete operator table with hardware cost. Bitwise: one LUT per bit. Arithmetic: adder chains. Constant shifts are free — just rewiring. Conditional builds a mux.</aside>
+</section>
+<section>
+    <h2>Bitwise vs. Logical — Critical Distinction</h2>
+    <pre class="synth"><code class="language-verilog">wire [3:0] a = 4'b1010;
+wire [3:0] b = 4'b0101;
+
+wire [3:0] w_bitwise = a &amp; b;    // = 4'b0000 (bit-by-bit)
+wire       w_logical = a &amp;&amp; b;   // = 1'b1    (both nonzero → true)</code></pre>
+    <div class="fragment callout-danger" style="font-size:0.8em;">
+        <code>&amp;</code> produces a result the <strong>same width</strong> as operands.<br>
+        <code>&amp;&amp;</code> always produces <strong>1 bit</strong> (true/false).
+    </div>
+    <aside class="notes">Bitwise ampersand: operates on each bit, result same width. Logical double-ampersand: treats entire value as true/false, always 1-bit result.</aside>
+</section>
+<section>
+    <h2>The Conditional Operator: Your Multiplexer</h2>
+    <pre class="synth"><code class="language-verilog">// 2:1 mux
+assign y = sel ? a : b;
+
+// 4:1 mux (nested)
+assign y = sel[1] ? (sel[0] ? d : c)
+                  : (sel[0] ? b : a);</code></pre>
+    <p class="fragment" style="font-size:0.8em;">This is the hardware mux — your most-used combinational construct.</p>
+    <aside class="notes">The conditional operator IS the multiplexer in Verilog. Nested conditionals build larger muxes. This is your most-used combinational construct.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Building a 4:1 Mux</h2>
+    <p style="margin-top:0.5em;">Conditional operator chain → synthesis → Yosys <code>show</code></p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">Nested ternary → see the mux tree in Yosys</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Building a 4:1 Mux</aside>
+</section>
+<section>
+    <h2>Reduction Operators</h2>
+    <pre class="synth"><code class="language-verilog">wire [7:0] w_data = 8'b10110100;
+
+wire w_any  = |w_data;   // OR  all bits → 1 (any bit set?)
+wire w_all  = &amp;w_data;   // AND all bits → 0 (all bits set?)
+wire w_par  = ^w_data;   // XOR all bits → 0 (even parity)</code></pre>
+    <div class="fragment callout" style="font-size:0.8em;">
+        Unary operators collapse a vector to a single bit. Parity check (<code>^</code>) is a common use case.
+    </div>
+    <aside class="notes">Reduction operators collapse a vector to one bit. Unary OR: any bit set. Unary AND: all bits set. Unary XOR: parity. XOR parity is used in error detection.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Bitwise (<code>&amp;</code>) = per-bit, same width. Logical (<code>&amp;&amp;</code>) = 1-bit result.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>? :</code> is the mux operator — your primary combinational tool.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Constant shifts are free (rewiring). Multiplication is expensive.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Reduction operators collapse vectors to 1 bit.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Sized Literals &amp; Width Matching</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~8 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Why unsized literals cause bugs — and how to prevent them.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

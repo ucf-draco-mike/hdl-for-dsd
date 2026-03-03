@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4.1: Clocks and Edge-Triggered Behavior — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 4 · Sequential Logic Fundamentals
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Clocks &amp; Edges</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Clocks & Edges</span>
+        <span class="seg-label ">Nonblocking</span>
+        <span class="seg-label ">FF Variants</span>
+        <span class="seg-label ">Counters</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 4.</aside>
+</section>
+
+<section>
+    <h2>The Clock: Heartbeat of Sequential Logic</h2>
+    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+         ┌───┐   ┌───┐   ┌───┐   ┌───┐
+clk  ────┘   └───┘   └───┘   └───┘   └───
+         ↑       ↑       ↑       ↑
+     posedge  posedge  posedge  posedge
+    </pre>
+    <p style="font-size:0.8em;">On each <strong>positive edge</strong>, every flip-flop captures its input. Between edges, combinational logic computes next values.</p>
+    <p class="fragment" style="font-size:0.8em;">This is <strong>Register Transfer Level (RTL)</strong> — the fundamental abstraction.</p>
+    <aside class="notes">Sequential logic adds time. On each positive edge, every flip-flop simultaneously captures its input. Between edges, combinational logic computes next values. This is RTL design.</aside>
+</section>
+<section>
+    <h2>The Go Board&rsquo;s Clock</h2>
+    <div style="font-size:0.85em;">
+        <p class="fragment"><strong>Frequency:</strong> 25 MHz crystal oscillator (pin 15)</p>
+        <p class="fragment"><strong>Period:</strong> 1 / 25,000,000 = <strong>40 ns</strong></p>
+        <p class="fragment"><strong>Problem:</strong> 25 MHz is far too fast for human eyes</p>
+        <p class="fragment"><strong>Solution:</strong> Clock divider — our first sequential design!</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;">
+        To blink an LED at 1 Hz, count <strong>25,000,000</strong> clock cycles. That requires a flip-flop — which requires <code>always @(posedge clk)</code>.
+    </div>
+    <aside class="notes">Go Board has 25 MHz clock. 40 ns period. Way too fast to see. To blink at 1 Hz we count 25 million cycles.</aside>
+</section>
+<section>
+    <h2>The Fundamental Sequential Pattern</h2>
+    <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
+    r_q <= r_d;    // D flip-flop: capture on rising edge
+end</code></pre>
+    <div class="fragment" style="margin-top:0.5em;">
+        <div class="two-col">
+            <div class="col panel panel-good">
+                <h3>What it does</h3>
+                <p style="font-size:0.7em;">On <strong>every rising edge</strong>, <code>r_q</code> captures <code>r_d</code>. Between edges, <code>r_q</code> holds its value.</p>
+            </div>
+            <div class="col panel panel-neutral">
+                <h3>What it creates</h3>
+                <p style="font-size:0.7em;">A D flip-flop — the basic 1-bit memory element of synchronous design.</p>
+            </div>
+        </div>
+    </div>
+    <aside class="notes">The fundamental pattern. Always at posedge clk, reg gets value with nonblocking. This is a D flip-flop — 1-bit memory, the building block of all sequential logic.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Clock edges define when state changes — <code>always @(posedge clk)</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Between edges, combinational logic computes next values.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Go Board: 25 MHz. To make visible events, divide the clock.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;This is <strong>RTL</strong> — the design abstraction used everywhere.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Nonblocking Assignment</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Why <= matters — and what goes wrong without it.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

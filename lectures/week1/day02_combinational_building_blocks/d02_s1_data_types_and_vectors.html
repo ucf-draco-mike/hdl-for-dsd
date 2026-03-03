@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2.1: Data Types and Vectors — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 2 · Combinational Building Blocks
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Data Types &amp; Vectors</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Data Types</span>
+        <span class="seg-label ">Operators</span>
+        <span class="seg-label ">Sized Literals</span>
+        <span class="seg-label ">7-Seg Display</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 2.</aside>
+</section>
+
+<section>
+    <h2><code>wire</code> vs. <code>reg</code> — Misleading Names</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3><code>wire</code></h3>
+            <p style="font-size:0.75em;">Combinational connection. Must be <strong>continuously driven</strong> by <code>assign</code> or module output.</p>
+        </div>
+        <div class="col">
+            <h3><code>reg</code></h3>
+            <p style="font-size:0.75em;">Can be assigned inside <code>always</code> blocks. <strong>Does NOT always mean register!</strong></p>
+        </div>
+    </div>
+    <pre class="synth fragment"><code class="language-verilog">// This reg → flip-flop (clock edge)
+reg [7:0] r_counter;
+always @(posedge clk) r_counter <= r_counter + 1;
+
+// This reg → combinational logic (no clock!)
+reg [3:0] r_mux_out;
+always @(*) r_mux_out = sel ? a : b;</code></pre>
+    <aside class="notes">wire must be driven by assign or module output. reg can be assigned inside always blocks but does NOT always become a register — it depends on whether there's a clock edge.</aside>
+</section>
+<section>
+    <h2>The Decision Flowchart</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d02_wire_vs_reg.svg" alt="wire vs reg decision flowchart" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        SystemVerilog fixes this confusion with the <code>logic</code> type — Week 4.
+    </div>
+    <aside class="notes">Follow this decision flowchart. Driven by assign or module port? Use wire. Assigned inside always? Use reg. Whether reg becomes a flip-flop depends on posedge clk. SystemVerilog simplifies this with logic.</aside>
+</section>
+<section>
+    <h2>Vectors (Buses)</h2>
+    <pre class="synth"><code class="language-verilog">wire [7:0] w_data;    // 8-bit bus: bit 7 = MSB, bit 0 = LSB
+wire [3:0] w_nibble;  // 4-bit bus
+
+w_data[7]      // single bit — the MSB
+w_data[3:0]    // lower nibble — bits 3 down to 0
+w_data[7:4]    // upper nibble — bits 7 down to 4</code></pre>
+    <div class="fragment callout" style="font-size:0.8em;">
+        <strong>Convention:</strong> Always use <code>[MSB:LSB]</code> with LSB = 0.
+        You <em>can</em> use ascending <code>[0:7]</code>, but don&rsquo;t.
+    </div>
+    <aside class="notes">Vectors are multi-bit signals. MSB:LSB notation. Bit indexing and slicing. Convention: always descending with LSB = 0.</aside>
+</section>
+<section>
+    <h2>Concatenation &amp; Replication</h2>
+    <pre class="synth"><code class="language-verilog">// Concatenation: join signals
+wire [7:0] w_byte = {w_nibble_hi, w_nibble_lo};  // 4+4 = 8 ✓
+
+// Replication: repeat a pattern
+wire [7:0] w_all_ones = {8{1'b1}};    // 8'b11111111
+
+// Sign extension: replicate MSB to fill upper bits
+wire [7:0] w_sign_ext = {{4{w_nibble[3]}}, w_nibble}; // 4→8</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Sign extension is a pattern you'll use constantly. Double braces <code>{{N{bit}}, signal}</code>
+        — it's just concatenation of a replication with a signal.
+    </div>
+    <aside class="notes">Concatenation joins signals with curly braces. Replication repeats a pattern. Sign extension replicates the MSB. The double curly braces are just concatenation of a replication.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Vector Operations</h2>
+    <p style="margin-top:0.5em;">Concatenation, slicing, replication in iverilog — predict then run</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">code/day02_ex01_vector_ops.v</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Vector Operations</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>wire</code> = driven by <code>assign</code>. <code>reg</code> = assigned in <code>always</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>reg</code> does NOT always mean register — it depends on context.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Vectors: <code>[7:0]</code> is 8 bits. Slice with <code>[3:0]</code>. Join with <code>{a, b}</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always use <code>[MSB:LSB]</code> with LSB = 0.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Operators</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Bitwise, arithmetic, relational, conditional — and their hardware cost.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

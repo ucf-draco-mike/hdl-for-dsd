@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2.4: The 7-Segment Display — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 2 · Combinational Building Blocks
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The 7-Segment Display</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Data Types</span>
+        <span class="seg-label ">Operators</span>
+        <span class="seg-label ">Sized Literals</span>
+        <span class="seg-label active">7-Seg Display</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 2.</aside>
+</section>
+
+<section>
+    <h2>7-Segment Display Basics</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d02_seven_segment.svg" alt="7-segment display with labeled segments a-g" style="width:100%;max-width:500px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.75em;">
+        <strong>Go Board:</strong> segments are <strong>active low</strong>. <code>0</code> = segment ON, <code>1</code> = segment OFF.
+    </div>
+    <aside class="notes">A 7-segment display has segments labeled a through g. On the Go Board, segments are active low — 0 means ON.</aside>
+</section>
+<section>
+    <h2>Hex-to-7-Segment Mapping</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module hex_to_7seg (
+    input  wire [3:0] i_hex,
+    output reg  [6:0] o_seg    // {a,b,c,d,e,f,g}
+);
+always @(*) begin
+    case (i_hex)         //     abcdefg
+        4'h0: o_seg = 7'b0000001;  // 0
+        4'h1: o_seg = 7'b1001111;  // 1
+        4'h2: o_seg = 7'b0010010;  // 2
+        4'h3: o_seg = 7'b0000110;  // 3
+<span class="fragment">        4'h4: o_seg = 7'b1001100;  // 4-7
+        4'h5: o_seg = 7'b0100100;
+        4'h6: o_seg = 7'b0100000;
+        4'h7: o_seg = 7'b0001111;</span>
+<span class="fragment">        4'h8: o_seg = 7'b0000000;  // 8-F
+        4'h9: o_seg = 7'b0000100;
+        4'hA: o_seg = 7'b0001000;
+        4'hB: o_seg = 7'b1100000;
+        4'hC: o_seg = 7'b0110001;
+        4'hD: o_seg = 7'b1000010;
+        4'hE: o_seg = 7'b0110000;
+        4'hF: o_seg = 7'b0111000;</span>
+        default: o_seg = 7'b1111111; // all off
+    endcase
+end
+endmodule</code></pre>
+    <aside class="notes">Complete hex to 7-segment decoder. This uses a case statement inside always-star — we cover that syntax in detail tomorrow.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Build hex_to_7seg</h2>
+    <p style="margin-top:0.5em;">From empty file → working decoder on the Go Board</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">case statement + segment mapping → test all 16 digits</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Build hex_to_7seg</aside>
+</section>
+<section>
+    <h2>Sneak Preview: Hierarchy</h2>
+    <pre class="synth"><code class="language-verilog">// In your top module, INSTANTIATE the decoder:
+hex_to_7seg display1 (
+    .i_hex  (w_some_value),     // named port connection
+    .o_seg  (w_segments)
+);</code></pre>
+    <div class="callout" style="font-size:0.8em;margin-top:1em;">
+        Modules instantiate other modules — like chips on a circuit board.
+        Always use <strong>named port connections</strong>.
+    </div>
+    <aside class="notes">Hierarchy preview: instantiate modules with named port connections. Never positional. We cover this properly on Day 8.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;7-segment displays map 4-bit hex to 7 segment enables.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Go Board segments are <strong>active low</strong> (0 = ON).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The <code>case</code> statement (tomorrow) is the natural way to express this.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Modules instantiate other modules — hierarchy is key.</p>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <p style="font-size:0.75em;color:#888;">Pause and try each question before revealing the answer.</p>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Does <code>reg</code> always synthesize to a register?</p>
+        <div class="fragment quiz-answer">No. <code>reg</code> in <code>always @(*)</code> = combinational. Only <code>reg</code> in <code>always @(posedge clk)</code> becomes a flip-flop.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> What is <code>4'hF</code> in binary?</p>
+        <div class="fragment quiz-answer">4-bit binary <code>1111</code> (decimal 15). The <code>4'</code> specifies 4 bits, <code>h</code> = hex.</div>
+    </div>
+    <aside class="notes">Pause and think before advancing.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What does <code>assign y = sel ? a : b;</code> synthesize to?</p>
+        <div class="fragment quiz-answer">A 2-to-1 multiplexer. <code>sel=1</code> → <code>a</code>, <code>sel=0</code> → <code>b</code>.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> What&rsquo;s the difference between <code>&amp;</code> and <code>&amp;&amp;</code>?</p>
+        <div class="fragment quiz-answer"><code>&amp;</code> is bitwise (per-bit, same width result). <code>&amp;&amp;</code> is logical (1-bit true/false). <code>4'b1010 &amp; 4'b0101 = 4'b0000</code> but <code>4'b1010 &amp;&amp; 4'b0101 = 1'b1</code>.</div>
+    </div>
+    <aside class="notes">Questions 3 and 4.</aside>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 2 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

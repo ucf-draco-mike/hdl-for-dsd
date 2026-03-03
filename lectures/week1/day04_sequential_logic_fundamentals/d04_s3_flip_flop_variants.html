@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4.3: Flip-Flop Variants — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 4 · Sequential Logic Fundamentals
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Flip-Flop Variants</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Clocks & Edges</span>
+        <span class="seg-label ">Nonblocking</span>
+        <span class="seg-label active">FF Variants</span>
+        <span class="seg-label ">Counters</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 4.</aside>
+</section>
+
+<section>
+    <h2>D Flip-Flop with Synchronous Reset</h2>
+    <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
+    if (i_reset)
+        r_q <= 1'b0;       // reset on next clock edge
+    else
+        r_q <= i_d;         // normal capture
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.8em;">
+        <strong>Synchronous reset:</strong> checked only on the clock edge. Keeps timing predictable. Preferred for iCE40.
+    </div>
+    <aside class="notes">Synchronous reset: checked on the clock edge. Reset takes effect on the next rising edge, not immediately. Preferred for iCE40 and most modern FPGA flows.</aside>
+</section>
+<section>
+    <h2>With Clock Enable</h2>
+    <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
+    if (i_reset)
+        r_q <= 1'b0;
+    else if (i_enable)      // only update when enabled
+        r_q <= i_d;
+    // else: r_q holds — no latch! (this is sequential)
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        The missing <code>else</code> is <strong>NOT a latch</strong> in sequential logic. Flip-flops inherently hold their value. Only <code>always @(*)</code> has the latch problem.
+    </div>
+    <aside class="notes">Add enable as another condition. The missing else is NOT a latch in sequential — flip-flops inherently hold. Only always-star has the latch problem.</aside>
+</section>
+<section>
+    <h2>Sync vs. Async Reset</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-good">
+            <h3>Synchronous (preferred)</h3>
+            <pre class="synth"><code class="language-verilog">always @(posedge clk)
+  if (reset) q <= 0;
+  else       q <= d;</code></pre>
+            <p style="font-size:0.65em;">Clean timing. Works well with iCE40.</p>
+        </div>
+        <div class="col panel panel-neutral">
+            <h3>Asynchronous</h3>
+            <pre class="synth"><code class="language-verilog">always @(posedge clk
+         or posedge reset)
+  if (reset) q <= 0;
+  else       q <= d;</code></pre>
+            <p style="font-size:0.65em;">Resets immediately. Used in some ASIC flows.</p>
+        </div>
+    </div>
+    <aside class="notes">Synchronous: cleaner, preferred for this course and most FPGA work. Asynchronous: resets immediately, used in some ASIC flows.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Basic D-FF: <code>always @(posedge clk) r_q &lt;= r_d;</code></p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Sync reset: <code>if (reset) r_q &lt;= 0; else r_q &lt;= r_d;</code></p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Enable: adds another condition — <code>else if (en)</code></p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Prefer synchronous, active-high reset on iCE40.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Counters &amp; Clock Division</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~13 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">From 25 MHz to a visible blink — your first real sequential design.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

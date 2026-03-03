@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 320" font-family="Inter, Arial, sans-serif">
+  <rect width="750" height="320" rx="12" fill="#FAFAFA" stroke="#DDD"/>
+  <text x="375" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#333">Blocking vs. Nonblocking in a Pipeline</text>
+  <!-- LEFT: Blocking (wrong) -->
+  <g transform="translate(20,48)">
+    <rect x="0" y="0" width="340" height="250" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="1.5"/>
+    <text x="170" y="24" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">✗ Blocking (=) — WRONG</text>
+    <text x="15" y="50" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">always @(posedge clk) begin</text>
+    <text x="15" y="66" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">  b = a;  // b ← a NOW</text>
+    <text x="15" y="82" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">  c = b;  // c ← b(new) = a!</text>
+    <text x="15" y="98" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">end</text>
+    <!-- Timing -->
+    <text x="15" y="125" font-size="10" font-weight="600" fill="#C62828">After posedge:</text>
+    <text x="15" y="142" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">a=5  b=<tspan fill="#C62828" font-weight="700">5</tspan>  c=<tspan fill="#C62828" font-weight="700">5</tspan></text>
+    <text x="15" y="160" font-size="10" fill="#C62828">Both get same value!</text>
+    <!-- Block diagram -->
+    <rect x="30" y="180" width="50" height="30" rx="3" fill="#FFF" stroke="#C62828"/>
+    <text x="55" y="200" text-anchor="middle" font-size="10" fill="#C62828">FF</text>
+    <text x="55" y="225" text-anchor="middle" font-size="9" fill="#888">b</text>
+    <line x1="80" y1="195" x2="120" y2="195" stroke="#C62828" stroke-width="1.5"/>
+    <rect x="120" y="180" width="50" height="30" rx="3" fill="#FFF" stroke="#C62828"/>
+    <text x="145" y="200" text-anchor="middle" font-size="10" fill="#C62828">FF</text>
+    <text x="145" y="225" text-anchor="middle" font-size="9" fill="#888">c</text>
+    <text x="200" y="200" font-size="10" fill="#C62828">← collapsed!</text>
+  </g>
+  <!-- RIGHT: Nonblocking (correct) -->
+  <g transform="translate(390,48)">
+    <rect x="0" y="0" width="340" height="250" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+    <text x="170" y="24" text-anchor="middle" font-size="13" font-weight="700" fill="#2E7D32">✓ Nonblocking (<=) — CORRECT</text>
+    <text x="15" y="50" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">always @(posedge clk) begin</text>
+    <text x="15" y="66" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">  b &lt;= a; // schedule b ← a</text>
+    <text x="15" y="82" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">  c &lt;= b; // schedule c ← b(old)</text>
+    <text x="15" y="98" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">end</text>
+    <!-- Timing -->
+    <text x="15" y="125" font-size="10" font-weight="600" fill="#2E7D32">After posedge (a was 5, b was 3):</text>
+    <text x="15" y="142" font-size="10" font-family="JetBrains Mono, monospace" fill="#333">a=5  b=<tspan fill="#2E7D32" font-weight="700">5</tspan>  c=<tspan fill="#2E7D32" font-weight="700">3</tspan></text>
+    <text x="15" y="160" font-size="10" fill="#2E7D32">Data shifts through properly!</text>
+    <!-- Block diagram -->
+    <rect x="30" y="180" width="50" height="30" rx="3" fill="#FFF" stroke="#2E7D32"/>
+    <text x="55" y="200" text-anchor="middle" font-size="10" fill="#2E7D32">FF</text>
+    <text x="55" y="225" text-anchor="middle" font-size="9" fill="#888">b</text>
+    <line x1="80" y1="195" x2="140" y2="195" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="3"/>
+    <text x="110" y="190" text-anchor="middle" font-size="8" fill="#2E7D32">old b</text>
+    <rect x="140" y="180" width="50" height="30" rx="3" fill="#FFF" stroke="#2E7D32"/>
+    <text x="165" y="200" text-anchor="middle" font-size="10" fill="#2E7D32">FF</text>
+    <text x="165" y="225" text-anchor="middle" font-size="9" fill="#888">c</text>
+    <text x="215" y="200" font-size="10" fill="#2E7D32">← pipeline ✓</text>
+  </g>
+</svg>

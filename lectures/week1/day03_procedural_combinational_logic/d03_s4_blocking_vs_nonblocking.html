@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3.4: Blocking vs. Nonblocking — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 3 · Procedural Combinational Logic
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Blocking vs. Nonblocking</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~6 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">always @(*)</span>
+        <span class="seg-label ">if/else & case</span>
+        <span class="seg-label ">Latch Problem</span>
+        <span class="seg-label active">Block vs Nonblock</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 3.</aside>
+</section>
+
+<section>
+    <h2>Two Assignment Operators</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-good">
+            <h3><code>=</code> Blocking</h3>
+            <p style="font-size:0.75em;">Evaluate and assign <strong>immediately</strong>.</p>
+            <p style="font-size:0.75em;">Use in: <code>always @(*)</code></p>
+        </div>
+        <div class="col panel panel-hw">
+            <h3><code>&lt;=</code> Nonblocking</h3>
+            <p style="font-size:0.75em;">Evaluate all RHS <strong>first</strong>, then update all LHS <strong>simultaneously</strong>.</p>
+            <p style="font-size:0.75em;">Use in: <code>always @(posedge clk)</code></p>
+        </div>
+    </div>
+    <div class="fragment golden-rule" style="font-size:1em;margin-top:1em;">
+        <code>=</code> in <code>always @(*)</code>. &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code>.<br>
+        Never mix them in the same block.
+    </div>
+    <aside class="notes">Blocking equals for combinational. Nonblocking less-than-equals for sequential. Never mix. We prove why on Day 4 with timing diagrams.</aside>
+</section>
+<section>
+    <h2>Why It Matters (Preview)</h2>
+    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in sequential block
+always @(posedge clk) begin
+    b = a;    // b gets a's value NOW
+    c = b;    // c gets b's NEW value (= a!) — WRONG
+end</code></pre>
+    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in sequential block
+always @(posedge clk) begin
+    b <= a;   // scheduled: b will get a's current value
+    c <= b;   // scheduled: c will get b's current value
+end          // both update simultaneously at end of timestep</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        With <code>&lt;=</code>, both stages see <strong>pre-update</strong> values. This models real flip-flop behavior where all FFs capture simultaneously on the clock edge.
+    </div>
+    <aside class="notes">Blocking in sequential: b gets a immediately, then c gets the new b — both get the same value. Nonblocking: both see pre-update values, modeling real flip-flop behavior.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>=</code> (blocking) for combinational <code>always @(*)</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>&lt;=</code> (nonblocking) for sequential <code>always @(posedge clk)</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing them causes race conditions — Day 4 will prove it.</p>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Why must you use <code>@(*)</code> instead of a manual sensitivity list?</p>
+        <div class="fragment quiz-answer">Manual lists risk sim/synth mismatch. <code>@(*)</code> automatically includes all signals read inside the block.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> What causes an unintentional latch?</p>
+        <div class="fragment quiz-answer">Not assigning a signal in every possible path through <code>always @(*)</code>. Example: <code>if (sel) y = a;</code> with no <code>else</code>.</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> Name three techniques to prevent latch inference.</p>
+        <div class="fragment quiz-answer">1. Default assignment at top. 2. Complete if/else chains. 3. <code>default</code> in case statements.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> When do you use <code>=</code> vs <code>&lt;=</code>?</p>
+        <div class="fragment quiz-answer"><code>=</code> in combinational <code>always @(*)</code>. <code>&lt;=</code> in sequential <code>always @(posedge clk)</code>. Never mix.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 3 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

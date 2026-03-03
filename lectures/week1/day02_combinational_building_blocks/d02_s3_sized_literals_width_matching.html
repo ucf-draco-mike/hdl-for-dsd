@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 2.3: Sized Literals &amp; Width Matching — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 2 · Combinational Building Blocks
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Sized Literals &amp; Width Matching</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Data Types</span>
+        <span class="seg-label ">Operators</span>
+        <span class="seg-label active">Sized Literals</span>
+        <span class="seg-label ">7-Seg Display</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 2.</aside>
+</section>
+
+<section>
+    <h2>Sized Literals</h2>
+    <pre class="synth"><code class="language-verilog">// Format: &lt;width&gt;'&lt;base&gt;&lt;value&gt;
+4'b1010     // 4-bit binary
+8'hFF       // 8-bit hex (= 8'd255 = 8'b11111111)
+4'd9        // 4-bit decimal
+1'b0        // single bit zero — USE THIS, not just 0
+32'd0       // 32-bit zero</code></pre>
+    <div class="fragment callout-danger" style="font-size:0.8em;">
+        Unsized literals like <code>0</code>, <code>1</code>, <code>42</code> default to <strong>32 bits</strong>.
+        This causes silent width mismatches.
+    </div>
+    <aside class="notes">Sized literals specify width and base explicitly. Unsized literals default to 32 bits — this causes width mismatch bugs.</aside>
+</section>
+<section>
+    <h2>Width Mismatch Bugs</h2>
+    <pre class="mistake"><code class="language-verilog">wire [3:0] w_a = 4'b1010;
+wire [3:0] w_b = 4'b0101;
+wire [3:0] w_sum = w_a + w_b;  // 10 + 5 = 15 → 4'b1111 ✓
+
+// But what about overflow?
+wire [3:0] w_c = 4'b1111;  // 15
+wire [3:0] w_d = 4'b0001;  //  1
+wire [3:0] w_bad = w_c + w_d; // 16 → 4'b0000 — OVERFLOW!</code></pre>
+    <div class="fragment">
+    <pre class="synth"><code class="language-verilog">// Fix: make the result one bit wider
+wire [4:0] w_good = w_c + w_d; // = 5'b10000 ✓</code></pre>
+    </div>
+    <aside class="notes">Width mismatches cause silent data loss. 4-bit + 4-bit can overflow. The fix: make the result one bit wider to capture the carry.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Width Mismatch Warnings</h2>
+    <p style="margin-top:0.5em;">Yosys synthesis warnings from real width bugs</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">iverilog -Wall → see the warnings your code produces</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Width Mismatch Warnings</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<strong>Always size your literals:</strong> <code>4'd1</code>, not <code>1</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;N-bit + N-bit can produce N+1 bits — size outputs accordingly.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Use <code>iverilog -Wall</code> and read Yosys warnings.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The 7-Segment Display</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~10 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">From hex digit to glowing segments — your first real peripheral.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

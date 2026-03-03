@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 3.2: if/else and case — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 3 · Procedural Combinational Logic
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">if/else and case</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">always @(*)</span>
+        <span class="seg-label active">if/else & case</span>
+        <span class="seg-label ">Latch Problem</span>
+        <span class="seg-label ">Block vs Nonblock</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 3.</aside>
+</section>
+
+<section>
+    <h2><code>if/else</code> → Priority Chain</h2>
+    <pre class="synth"><code class="language-verilog">always @(*) begin
+    if (a)       y = 4'd1;
+    else if (b)  y = 4'd2;
+    else if (c)  y = 4'd3;
+    else         y = 4'd0;  // always have a final else!
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.8em;">
+        <code>if/else</code> implies <strong>priority</strong>: first match wins. Synthesizes to a chain of muxes. Earlier conditions get faster paths.
+    </div>
+    <aside class="notes">if/else creates a priority chain. First condition that matches wins. This synthesizes to a chain of muxes where earlier conditions get shorter paths.</aside>
+</section>
+<section>
+    <h2><code>case</code> → Parallel Mux</h2>
+    <pre class="synth"><code class="language-verilog">always @(*) begin
+    case (opcode)
+        2'b00: result = a + b;
+        2'b01: result = a - b;
+        2'b10: result = a &amp; b;
+        2'b11: result = a | b;
+        default: result = 4'b0;  // always include default!
+    endcase
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.8em;">
+        <code>case</code> implies <strong>parallel</strong> comparison: all alternatives are equal priority. Synthesizes to a wide mux.
+    </div>
+    <aside class="notes">Case creates a parallel multiplexer — all alternatives have equal priority. Always include a default clause.</aside>
+</section>
+<section>
+    <h2><code>casez</code> — Don&rsquo;t-Care Matching</h2>
+    <pre class="synth"><code class="language-verilog">// Priority encoder using casez
+always @(*) begin
+    casez (i_req)
+        4'b1???: o_grant = 3'd4;  // MSB has highest priority
+        4'b01??: o_grant = 3'd3;
+        4'b001?: o_grant = 3'd2;
+        4'b0001: o_grant = 3'd1;
+        default: o_grant = 3'd0;
+    endcase
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <code>?</code> means &ldquo;don&rsquo;t care&rdquo; in <code>casez</code>. Perfect for priority encoders and address decoders.
+        Use <code>casez</code>, never <code>casex</code> (which hides X-propagation bugs).
+    </div>
+    <aside class="notes">casez allows don't-care matching with question mark. Great for priority encoders. Use casez, never casex.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>ALU with case Statement</h2>
+    <p style="margin-top:0.5em;">Build a 4-operation ALU: ADD, SUB, AND, OR</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day03_ex03_alu_4bit.v — case-based opcode decode</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: ALU with case Statement</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>if/else</code> = priority chain. <code>case</code> = parallel mux.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Use <code>case</code> when alternatives are equal; <code>if/else</code> when priority matters.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>casez</code> allows don&rsquo;t-care matching with <code>?</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;<strong>Always include <code>default</code></strong> in <code>case</code> statements.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The Latch Problem</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The most dangerous bug in combinational Verilog — and three ways to prevent it.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

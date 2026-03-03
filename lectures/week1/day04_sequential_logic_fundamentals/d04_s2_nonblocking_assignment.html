@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 4.2: Nonblocking Assignment — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 4 · Sequential Logic Fundamentals
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Nonblocking Assignment</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Clocks & Edges</span>
+        <span class="seg-label active">Nonblocking</span>
+        <span class="seg-label ">FF Variants</span>
+        <span class="seg-label ">Counters</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 4.</aside>
+</section>
+
+<section>
+    <h2>The Problem: A Two-Stage Pipeline</h2>
+    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in sequential
+always @(posedge clk) begin
+    b = a;    // b gets a's value NOW
+    c = b;    // c gets b's NEW value (= a!) — both same!
+end</code></pre>
+    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in sequential
+always @(posedge clk) begin
+    b <= a;   // scheduled: b ← a(current)
+    c <= b;   // scheduled: c ← b(current)
+end           // at end: b=a(old), c=b(old) — proper pipeline!</code></pre>
+    <aside class="notes">With blocking: c gets the new value of b, which is already a. Both end up the same — pipeline is destroyed. With nonblocking: both see pre-update values, proper pipeline behavior.</aside>
+</section>
+<section>
+    <h2>Nonblocking: How It Works</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Step 1:</strong> Evaluate ALL right-hand sides using <strong>current</strong> values</p>
+        <p class="fragment"><strong>Step 2:</strong> <strong>Schedule</strong> all updates (don&rsquo;t apply yet)</p>
+        <p class="fragment"><strong>Step 3:</strong> Apply all updates <strong>simultaneously</strong> at end of timestep</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
+        This models real hardware: all flip-flops capture their D inputs simultaneously on the clock edge. No flip-flop &ldquo;sees&rdquo; another&rsquo;s new value.
+    </div>
+    <aside class="notes">Three steps: evaluate all RHS, schedule all updates, apply simultaneously. This models real hardware where all FFs capture simultaneously.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Blocking vs Nonblocking Side-by-Side</h2>
+    <p style="margin-top:0.5em;">Two shift registers: one with =, one with &lt;= — compare waveforms</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day04_ex03_shift_register_demo.v → GTKWave comparison</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Blocking vs Nonblocking Side-by-Side</aside>
+</section>
+<section>
+    <h2>The Golden Rules</h2>
+    <div class="golden-rule" style="font-size:1em;">
+        <code>=</code> &ensp;in&ensp; <code>always @(*)</code> &ensp;— combinational<br><br>
+        <code>&lt;=</code> &ensp;in&ensp; <code>always @(posedge clk)</code> &ensp;— sequential<br><br>
+        <strong>Never mix. Never break this rule.</strong>
+    </div>
+    <aside class="notes">Memorize this. Blocking for combinational. Nonblocking for sequential. Never mix. This rule will serve you for your entire hardware design career.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>&lt;=</code> evaluates all RHS first, then updates simultaneously.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;This models real flip-flop behavior — simultaneous capture.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>=</code> in sequential blocks destroys pipeline behavior.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;The rule is absolute: <code>=</code> for <code>@(*)</code>, <code>&lt;=</code> for <code>@(posedge)</code>.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Flip-Flop Variants</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~10 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Reset, enable, and the patterns you'll use in every design.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>
