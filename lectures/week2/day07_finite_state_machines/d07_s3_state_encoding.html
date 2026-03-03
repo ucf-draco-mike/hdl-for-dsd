@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7.3: State Encoding — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 7 · Finite State Machines
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">State Encoding</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~8 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">FSM Theory</span>
+        <span class="seg-label ">3-Block Template</span>
+        <span class="seg-label active">State Encoding</span>
+        <span class="seg-label ">Design Method</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 7.</aside>
+</section>
+
+<section>
+    <h2>Encoding Options</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Encoding</th><th>4 States</th><th>Bits</th><th>Pros</th><th>Cons</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td><strong>Binary</strong></td><td>00,01,10,11</td><td>2</td><td>Fewest bits</td><td>More decode logic</td></tr>
+            <tr class="fragment"><td><strong>One-Hot</strong></td><td>0001,0010,0100,1000</td><td>4</td><td>Fast decode (1 LUT), FPGA favorite</td><td>More FFs</td></tr>
+            <tr class="fragment"><td><strong>Gray</strong></td><td>00,01,11,10</td><td>2</td><td>1-bit change per transition (CDC safe)</td><td>Limited use</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        For this course: use <strong>binary</strong> with <code>localparam</code>. Yosys/nextpnr will re-encode to one-hot if beneficial. You write readable code; the tools optimize.
+    </div>
+    <aside class="notes">Binary: fewest bits. One-hot: fast decode, FPGA-friendly. Gray: safe for clock domain crossing. We use binary with localparam — tools re-encode as needed.</aside>
+</section>
+<section>
+    <h2>State Definitions</h2>
+    <pre class="synth"><code class="language-verilog">// Use localparam for state names — readable and safe
+localparam S_IDLE   = 2'd0;
+localparam S_GREEN  = 2'd1;
+localparam S_YELLOW = 2'd2;
+localparam S_RED    = 2'd3;
+
+reg [1:0] r_state, r_next_state;</code></pre>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        <strong>Never use magic numbers</strong> in case statements. <code>2'd1</code> means nothing; <code>S_GREEN</code> is instantly clear.
+    </div>
+    <aside class="notes">localparam for state names. Never use magic numbers. S_GREEN is instantly clear; 2'd1 means nothing to anyone reading your code.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Binary encoding is our default — tools re-encode if beneficial.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>localparam</code> for state names — never magic numbers.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;One-hot is FPGA-friendly (one LUT per transition check).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Gray encoding matters for clock domain crossing (Week 3+).</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">FSM Design Methodology</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Paper first, then code — the systematic way to build any FSM.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

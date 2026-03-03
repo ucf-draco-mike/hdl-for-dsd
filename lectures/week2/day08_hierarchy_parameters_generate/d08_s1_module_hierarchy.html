@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8.1: Module Hierarchy Deep Dive — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 8 · Hierarchy, Parameters &amp; Generate
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Module Hierarchy</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Hierarchy</span>
+        <span class="seg-label ">Parameters</span>
+        <span class="seg-label ">Generate</span>
+        <span class="seg-label ">Design for Reuse</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 8.</aside>
+</section>
+
+<section>
+    <h2>Hierarchy Manages Complexity</h2>
+    <pre style="font-family:monospace;font-size:0.55em;background:none;border:none;box-shadow:none;color:#333;">
+    top_button_counter
+    ├── debounce (switch 1 — reset)
+    ├── debounce (switch 2 — count)
+    ├── edge_detector (count press)
+    ├── counter_mod_n (4-bit hex counter)
+    ├── hex_to_7seg (display decoder)
+    └── heartbeat_blinker (LED1)
+    </pre>
+    <p style="font-size:0.8em;">Already 6+ modules in a simple design. A UART controller will have twice as many.</p>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Good hierarchy: each module is small enough to <strong>understand, test, and reuse independently</strong>.
+    </div>
+    <aside class="notes">By Day 8, designs are complex. Good hierarchy makes each piece small enough to understand, test, and reuse independently.</aside>
+</section>
+<section>
+    <h2>Naming Conventions for Hierarchy</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Descriptive instance names (not u1, u2!)
+debounce #(.CLKS_TO_STABLE(250_000)) debounce_sw1 (
+    .i_clk    (i_clk),
+    .i_bouncy (i_switch1),
+    .o_clean  (w_sw1_clean)
+);
+<span class="fragment">
+// Internal wires named by purpose
+wire w_sw1_clean;    // ✓ describes what it carries
+wire w_count_pulse;  // ✓ describes its role
+wire w_data;         // ✗ too vague</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Rules:</strong> Descriptive instance names. Always named port connections. Internal wires describe purpose.
+    </div>
+    <aside class="notes">Descriptive instance names, named port connections, descriptive wire names. Never u1/u2, never positional ports, never w_data.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Hierarchy = each module independently understandable and testable.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Descriptive instance names: <code>debounce_sw1</code>, not <code>u1</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Always named port connections — never positional.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Design top-down (architecture), implement bottom-up (test small first).</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Parameters &amp; Parameterization</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Write once, configure many — the key to reusable modules.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

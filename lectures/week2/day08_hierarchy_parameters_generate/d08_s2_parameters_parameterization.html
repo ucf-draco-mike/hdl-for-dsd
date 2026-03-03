@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8.2: Parameters &amp; Parameterization — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 8 · Hierarchy, Parameters &amp; Generate
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Parameters</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Hierarchy</span>
+        <span class="seg-label active">Parameters</span>
+        <span class="seg-label ">Generate</span>
+        <span class="seg-label ">Design for Reuse</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 8.</aside>
+</section>
+
+<section>
+    <h2><code>parameter</code> — Configurable at Instantiation</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module counter #(
+    parameter WIDTH     = 8,
+    parameter MAX_COUNT = 255
+)(
+    input  wire                i_clk, i_reset, i_enable,
+    output reg  [WIDTH-1:0]   o_count,
+    output wire                o_done
+);
+<span class="fragment">    always @(posedge i_clk) begin
+        if (i_reset)                  o_count &lt;= 0;
+        else if (i_enable) begin
+            if (o_count == MAX_COUNT) o_count &lt;= 0;
+            else                      o_count &lt;= o_count + 1;
+        end
+    end
+    assign o_done = (o_count == MAX_COUNT);</span>
+endmodule</code></pre>
+    <pre class="synth fragment"><code class="language-verilog">// Override at instantiation
+counter #(.WIDTH(16), .MAX_COUNT(49_999)) baud_counter ( ... );</code></pre>
+    <aside class="notes">Parameters make modules configurable. Define defaults, override at instantiation with hash-dot syntax. One counter module serves many roles.</aside>
+</section>
+<section>
+    <h2><code>localparam</code> and <code>$clog2</code></h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// localparam — internal, cannot be overridden
+localparam MAX = (1 &lt;&lt; WIDTH) - 1;   // derived from parameter
+<span class="fragment">
+// $clog2 — automatic width calculation
+module timer #(parameter TICKS = 1_000_000)(
+    input wire i_clk, i_start, output reg o_done
+);
+    localparam W = $clog2(TICKS);     // auto-sized!
+    reg [W-1:0] r_count;
+    // Change TICKS → width adjusts automatically</span></code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <code>parameter</code> = configurable from outside. <code>localparam</code> = derived/internal constant.<br>
+        <code>$clog2</code> = automatic width — eliminates manual bit-counting bugs.
+    </div>
+    <aside class="notes">localparam for derived constants — can't be overridden from outside. Dollar-clog2 auto-computes bit widths. Eliminates a whole class of manual calculation bugs.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Parameterized Counter</h2>
+    <p style="margin-top:0.5em;">One counter at WIDTH=8, 16, 24 — same code, different instances</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">Show Yosys resource usage at different widths</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Parameterized Counter</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>parameter</code> = configurable externally. <code>localparam</code> = internal/derived.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>$clog2(N)</code> auto-sizes widths — no manual bit counting.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Override with <code>#(.PARAM(value))</code> at instantiation.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Test at multiple configurations — WIDTH=8 might work but WIDTH=1 might not.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Generate Blocks</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Hardware replication at compile time — not a runtime loop!</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7.4: FSM Design Methodology — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 7 · Finite State Machines
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">FSM Design Methodology</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">FSM Theory</span>
+        <span class="seg-label ">3-Block Template</span>
+        <span class="seg-label ">State Encoding</span>
+        <span class="seg-label active">Design Method</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 7.</aside>
+</section>
+
+<section>
+    <h2>The Methodology</h2>
+    <div style="font-size:0.85em;">
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">1.</span> <strong>Identify states</strong> — what distinct modes does the system have?</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">2.</span> <strong>Define transitions</strong> — what input conditions cause state changes?</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">3.</span> <strong>Assign outputs</strong> — what does each state produce?</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">4.</span> <strong>Draw the state diagram</strong> — on paper, always!</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">5.</span> <strong>Code it</strong> — translate diagram to 3-block template</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">6.</span> <strong>Test it</strong> — verify every transition in simulation</p>
+    </div>
+    <aside class="notes">The systematic approach: identify states, define transitions, assign outputs, draw the diagram ON PAPER, code it using the template, test every transition.</aside>
+</section>
+<section>
+    <h2>FSM Coding Checklist</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 1: Only <code>r_state &lt;= r_next_state</code> (no logic!)</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 2: Default <code>r_next_state = r_state</code> (first line)</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 2: <code>default</code> case → safe state</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 3: Default outputs (first lines)</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 3: <code>default</code> case → safe outputs</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> <code>=</code> in Blocks 2 &amp; 3, <code>&lt;=</code> in Block 1</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> Testbench covers every transition + reset</p>
+    </div>
+    <aside class="notes">The FSM checklist. Go through this every time you write an FSM. Block 1: trivial. Block 2: default first, default case. Block 3: output defaults, default case. Correct assignment types. Test everything.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Pattern Detector FSM</h2>
+    <p style="margin-top:0.5em;">Draw state diagram on paper → translate to Verilog → simulate</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">Full walkthrough: paper → code → testbench → verify all transitions</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Pattern Detector FSM</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> What are the three blocks in the 3-always-block style?</p>
+        <div class="fragment quiz-answer">1. State Register (sequential, just a FF). 2. Next-State Logic (combinational). 3. Output Logic (combinational — Moore: f(state) only).</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> What is the critical first line in Block 2 and why?</p>
+        <div class="fragment quiz-answer"><code>r_next_state = r_state;</code> — prevents latch inference and means "stay in current state by default."</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> Moore vs. Mealy — which do we default to and why?</p>
+        <div class="fragment quiz-answer">Moore — outputs depend only on state. Safer, easier to debug, cleaner timing. Mealy only for same-cycle reaction.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> Name three common FSM coding mistakes.</p>
+        <div class="fragment quiz-answer">1. No default in Block 2 → latch. 2. No output defaults in Block 3 → latches. 3. No default case → stuck in illegal state. 4. Using = in Block 1 (should be &lt;=).</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 7 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 310" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C62828"/>
+    </marker>
+  </defs>
+
+  <text x="310" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Traffic Light FSM — Moore Machine</text>
+
+  <!-- Reset arrow -->
+  <line x1="90" y1="50" x2="90" y2="90" stroke="#C62828" stroke-width="2" marker-end="url(#arr-r)"/>
+  <text x="90" y="44" text-anchor="middle" font-size="10" fill="#C62828" font-weight="600">RESET</text>
+
+  <!-- GREEN state -->
+  <circle cx="90" cy="155" r="60" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="90" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#2E7D32">S_GREEN</text>
+  <text x="90" y="165" text-anchor="middle" font-size="10" fill="#555">o_green = 1</text>
+  <text x="90" y="180" text-anchor="middle" font-size="9" fill="#888" font-style="italic">5 sec</text>
+
+  <!-- GREEN → YELLOW -->
+  <path d="M 148,130 Q 220,80 278,118" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="213" y="90" text-anchor="middle" font-size="9" fill="#555" font-weight="600">timer_done</text>
+
+  <!-- YELLOW state -->
+  <circle cx="310" cy="155" r="60" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="310" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#F9A825">S_YELLOW</text>
+  <text x="310" y="165" text-anchor="middle" font-size="10" fill="#555">o_yellow = 1</text>
+  <text x="310" y="180" text-anchor="middle" font-size="9" fill="#888" font-style="italic">1 sec</text>
+
+  <!-- YELLOW → RED -->
+  <path d="M 368,130 Q 440,80 498,118" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="433" y="90" text-anchor="middle" font-size="9" fill="#555" font-weight="600">timer_done</text>
+
+  <!-- RED state -->
+  <circle cx="530" cy="155" r="60" fill="#FFEBEE" stroke="#C62828" stroke-width="2.5"/>
+  <text x="530" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">S_RED</text>
+  <text x="530" y="165" text-anchor="middle" font-size="10" fill="#555">o_red = 1</text>
+  <text x="530" y="180" text-anchor="middle" font-size="9" fill="#888" font-style="italic">5 sec</text>
+
+  <!-- RED → GREEN (loop back under) -->
+  <path d="M 480,195 Q 310,290 140,195" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="310" y="270" text-anchor="middle" font-size="9" fill="#555" font-weight="600">timer_done</text>
+
+  <!-- Self-loops (stay in state) -->
+  <path d="M 50,110 Q 20,70 50,100" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/>
+  <path d="M 270,110 Q 240,70 270,100" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/>
+  <path d="M 490,110 Q 460,70 490,100" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="30" y="75" font-size="8" fill="#999">!done</text>
+  <text x="250" y="75" font-size="8" fill="#999">!done</text>
+  <text x="470" y="75" font-size="8" fill="#999">!done</text>
+</svg>

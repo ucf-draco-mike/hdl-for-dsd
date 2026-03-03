@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8.4: Design for Reuse — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 8 · Hierarchy, Parameters &amp; Generate
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Design for Reuse</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~6 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Hierarchy</span>
+        <span class="seg-label ">Parameters</span>
+        <span class="seg-label ">Generate</span>
+        <span class="seg-label active">Design for Reuse</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 8.</aside>
+</section>
+
+<section>
+    <h2>Your Growing Module Library</h2>
+    <table style="margin-top:0.5em;font-size:0.65em;">
+        <thead><tr><th>Module</th><th>Built</th><th>Parameterized?</th><th>Tested?</th></tr></thead>
+        <tbody>
+            <tr><td><code>hex_to_7seg</code></td><td>Day 2</td><td>—</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>debounce</code></td><td>Day 5</td><td>✓ CLKS_TO_STABLE</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>counter_mod_n</code></td><td>Day 5</td><td>✓ N</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>edge_detector</code></td><td>Day 5</td><td>—</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>synchronizer</code></td><td>Day 5</td><td>—</td><td>✓</td></tr>
+            <tr><td><code>shift_reg_piso</code></td><td>Day 5</td><td>✓ WIDTH</td><td>Day 6 ✓</td></tr>
+            <tr><td><code>fsm_template</code></td><td>Day 7</td><td>—</td><td>Day 7 ✓</td></tr>
+        </tbody>
+    </table>
+    <p class="fragment" style="font-size:0.8em;">These modules get reused in Week 3 for UART and SPI.</p>
+    <aside class="notes">Your module library now has about 10 tested, reusable modules. These are the building blocks for UART in Week 3. This is real design reuse.</aside>
+</section>
+<section>
+    <h2>Reuse Checklist</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Parameterized</strong> — widths, thresholds, counts are parameters</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Self-contained</strong> — no dependency on external magic numbers</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Tested</strong> — self-checking testbench at multiple configurations</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Documented</strong> — header comment with description, ports, parameters</p>
+        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Named</strong> — clear, descriptive file and module names</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        A module you can&rsquo;t reuse without reading its source is not reusable.
+    </div>
+    <aside class="notes">Reuse checklist: parameterized, self-contained, tested, documented, named. If you have to read the source to use it, it's not truly reusable.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> What is the difference between <code>parameter</code> and <code>localparam</code>?</p>
+        <div class="fragment quiz-answer"><code>parameter</code> can be overridden at instantiation. <code>localparam</code> is internal/derived and cannot be overridden — use for computed constants.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> Is <code>generate for</code> a runtime loop?</p>
+        <div class="fragment quiz-answer">No! It runs at elaboration (compile time) and creates N physical copies of the hardware. It is NOT a sequential loop.</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What does <code>$clog2(1000)</code> return?</p>
+        <div class="fragment quiz-answer">10 — because ceil(log₂(1000)) = 10. You need 10 bits to represent values 0 through 999.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> Why name generate blocks (<code>begin : gen_name</code>)?</p>
+        <div class="fragment quiz-answer">Named blocks create hierarchical paths visible in simulation and synthesis reports. Debugging <code>gen_debounce[2].db</code> is much easier than anonymous generated instances.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 8 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 7.1: FSM Theory &amp; Architecture — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 7 · Finite State Machines
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">FSM Theory &amp; Architecture</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">FSM Theory</span>
+        <span class="seg-label ">3-Block Template</span>
+        <span class="seg-label ">State Encoding</span>
+        <span class="seg-label ">Design Method</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 7.</aside>
+</section>
+
+<section>
+    <h2>What Is a Finite State Machine?</h2>
+    <p style="font-size:0.85em;">An FSM is a sequential circuit defined by:</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment">A finite set of <strong>states</strong> (always in exactly one)</p>
+        <p class="fragment"><strong>Transitions</strong> governed by input conditions</p>
+        <p class="fragment"><strong>Outputs</strong> that depend on state (and possibly inputs)</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Every digital controller is an FSM: traffic lights, protocol engines, vending machines, CPU control units. This is arguably the most important design pattern in digital systems.
+    </div>
+    <aside class="notes">An FSM has states, transitions, and outputs. Every digital controller is fundamentally an FSM. This is the most important design pattern.</aside>
+</section>
+<section>
+    <h2>Moore vs. Mealy</h2>
+    <table style="margin-top:0.5em;font-size:0.75em;">
+        <thead><tr><th></th><th>Moore</th><th>Mealy</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Outputs depend on</strong></td><td>State only</td><td>State + inputs</td></tr>
+            <tr><td><strong>Output changes</strong></td><td>On clock edge (with state)</td><td>Can change mid-state</td></tr>
+            <tr><td><strong>Timing</strong></td><td>Clean, stable</td><td>Faster reaction, possible glitches</td></tr>
+            <tr><td><strong>States needed</strong></td><td>Typically more</td><td>Typically fewer</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Our default: Moore.</strong> Safer, easier to debug, cleaner timing. Mealy only when you need same-cycle reaction.
+    </div>
+    <aside class="notes">Moore outputs depend only on state — clean and stable. Mealy adds input dependence — faster but can glitch. We default to Moore.</aside>
+</section>
+<section>
+    <h2>FSM Block Diagram</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d07_fsm_block_diagram.svg" alt="FSM block diagram showing state register, next-state logic, output logic" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+    </div>
+    <aside class="notes">The three blocks: state register (sequential), next-state logic (combinational), output logic (combinational). This maps directly to the 3-always-block coding style.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;FSM = states + transitions + outputs. Every controller is an FSM.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Moore (outputs = f(state)) is our default — safe, clean timing.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mealy (outputs = f(state, inputs)) — faster but can glitch.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Three blocks: state register, next-state logic, output logic.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The 3-Always-Block Template</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The coding pattern you'll use for every FSM in your career.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

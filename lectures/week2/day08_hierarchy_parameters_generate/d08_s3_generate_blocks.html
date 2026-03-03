@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 8.3: Generate Blocks — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 8 · Hierarchy, Parameters &amp; Generate
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Generate Blocks</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Hierarchy</span>
+        <span class="seg-label ">Parameters</span>
+        <span class="seg-label active">Generate</span>
+        <span class="seg-label ">Design for Reuse</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 8.</aside>
+</section>
+
+<section>
+    <h2><code>generate for</code> — Hardware Replication</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>// Debounce ALL N buttons with one generate block
+module input_pipeline #(parameter N = 4)(
+    input  wire         i_clk,
+    input  wire [N-1:0] i_buttons,
+    output wire [N-1:0] o_clean,
+    output wire [N-1:0] o_press_edge
+);
+<span class="fragment">    genvar g;
+    generate
+        for (g = 0; g &lt; N; g = g + 1) begin : gen_debounce
+            debounce #(.CLKS_TO_STABLE(250_000)) db (
+                .i_clk    (i_clk),
+                .i_bouncy (i_buttons[g]),
+                .o_clean  (o_clean[g])
+            );
+        end
+    endgenerate</span>
+endmodule</code></pre>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        <code>generate for</code> runs at <strong>elaboration time</strong> (compile time). It creates N copies of the hardware. It is NOT a runtime loop.
+    </div>
+    <aside class="notes">Generate-for replicates hardware at compile time. Creates N independent debouncer instances. This is NOT a runtime loop — it physically duplicates the circuit N times.</aside>
+</section>
+<section>
+    <h2><code>generate if</code> — Conditional Hardware</h2>
+    <pre class="synth"><code class="language-verilog">generate
+    if (USE_SYNC == 1) begin : gen_sync
+        synchronizer sync_inst (
+            .i_clk(i_clk),
+            .i_async_in(i_raw),
+            .o_sync_out(w_synced)
+        );
+    end else begin : gen_passthrough
+        assign w_synced = i_raw;  // skip sync for internal signals
+    end
+endgenerate</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <code>generate if</code> conditionally includes hardware based on a parameter. The other branch is <strong>not synthesized</strong> — zero cost.
+    </div>
+    <aside class="notes">Generate-if conditionally includes hardware based on parameters. The unused branch is not synthesized at all. Great for optional features like synchronizers for internal vs external signals.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>generate for</code>: replicate hardware N times at compile time.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>generate if</code>: conditionally include/exclude hardware.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Both run at <strong>elaboration</strong>, not runtime — they create physical circuits.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always name generate blocks (<code>begin : gen_name</code>) for debug clarity.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Design for Reuse</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~6 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Your module library — building blocks for Week 3 and beyond.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>
