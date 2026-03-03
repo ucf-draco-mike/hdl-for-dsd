@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 200" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C62828"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Simulate-First Workflow</text>
+
+  <!-- Step 1: Write TB -->
+  <rect x="20" y="50" width="120" height="55" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="80" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">Write</text>
+  <text x="80" y="88" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">Testbench</text>
+  <text x="80" y="118" text-anchor="middle" font-size="9" fill="#888">design + tb</text>
+
+  <line x1="140" y1="77" x2="170" y2="77" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Step 2: Simulate -->
+  <rect x="175" y="50" width="120" height="55" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="235" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">Simulate</text>
+  <text x="235" y="88" text-anchor="middle" font-size="10" fill="#555">iverilog + vvp</text>
+  <text x="235" y="118" text-anchor="middle" font-size="9" fill="#888">GTKWave</text>
+
+  <line x1="295" y1="77" x2="325" y2="77" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Step 3: Pass? -->
+  <polygon points="380,40 440,77 380,114 320,77" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <text x="380" y="80" text-anchor="middle" font-size="11" font-weight="600" fill="#333">Pass?</text>
+
+  <!-- Fail loop -->
+  <line x1="380" y1="114" x2="380" y2="150" stroke="#C62828" stroke-width="2"/>
+  <text x="388" y="136" font-size="10" fill="#C62828" font-weight="600">No</text>
+  <line x1="380" y1="150" x2="80" y2="150" stroke="#C62828" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="80" y1="150" x2="80" y2="110" stroke="#C62828" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-r)"/>
+  <text x="230" y="166" text-anchor="middle" font-size="9" fill="#C62828">Fix bugs, re-simulate</text>
+
+  <!-- Pass forward -->
+  <line x1="440" y1="77" x2="475" y2="77" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr-g)"/>
+  <text x="457" y="68" font-size="10" fill="#2E7D32" font-weight="600">Yes</text>
+
+  <!-- Step 4: Synthesize -->
+  <rect x="480" y="50" width="120" height="55" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="540" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Synthesize</text>
+  <text x="540" y="88" text-anchor="middle" font-size="10" fill="#555">yosys + nextpnr</text>
+
+  <line x1="600" y1="77" x2="630" y2="77" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr-g)"/>
+
+  <!-- Step 5: Program -->
+  <rect x="635" y="50" width="110" height="55" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="690" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Program</text>
+  <text x="690" y="88" text-anchor="middle" font-size="10" fill="#555">Go Board</text>
+</svg>

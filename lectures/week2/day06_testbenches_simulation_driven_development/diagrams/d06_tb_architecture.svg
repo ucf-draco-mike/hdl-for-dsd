@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="320" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Testbench Architecture</text>
+
+  <!-- Outer box: testbench (no ports) -->
+  <rect x="30" y="40" width="580" height="230" rx="10" fill="#FAFAFA" stroke="#1565C0" stroke-width="2.5" stroke-dasharray="8,4"/>
+  <text x="50" y="62" font-size="12" font-weight="700" fill="#1565C0">tb_my_design (no ports!)</text>
+
+  <!-- Stimulus generation -->
+  <rect x="55" y="85" width="160" height="90" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="135" y="108" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">Stimulus Gen</text>
+  <text x="135" y="124" text-anchor="middle" font-size="9" fill="#555">initial block</text>
+  <text x="135" y="138" text-anchor="middle" font-size="9" fill="#555">clock generator</text>
+  <text x="135" y="152" text-anchor="middle" font-size="9" fill="#555">reg inputs</text>
+
+  <!-- Arrow to DUT -->
+  <line x1="215" y1="130" x2="260" y2="130" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="237" y="122" text-anchor="middle" font-size="8" fill="#666">drive</text>
+
+  <!-- DUT box -->
+  <rect x="265" y="80" width="160" height="100" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <text x="345" y="108" text-anchor="middle" font-size="12" font-weight="700" fill="#333">DUT</text>
+  <text x="345" y="126" text-anchor="middle" font-size="10" fill="#555">my_design uut</text>
+  <text x="345" y="142" text-anchor="middle" font-size="9" fill="#888">(.i_clk(clk), ...)</text>
+  <text x="345" y="158" text-anchor="middle" font-size="9" fill="#888">wire outputs</text>
+
+  <!-- Arrow from DUT to checker -->
+  <line x1="425" y1="130" x2="470" y2="130" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="447" y="122" text-anchor="middle" font-size="8" fill="#666">observe</text>
+
+  <!-- Checker -->
+  <rect x="475" y="85" width="120" height="90" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="535" y="108" text-anchor="middle" font-size="11" font-weight="600" fill="#2E7D32">Self-Check</text>
+  <text x="535" y="126" text-anchor="middle" font-size="9" fill="#555">if (actual !==</text>
+  <text x="535" y="140" text-anchor="middle" font-size="9" fill="#555">  expected)</text>
+  <text x="535" y="156" text-anchor="middle" font-size="9" fill="#555">PASS / FAIL</text>
+
+  <!-- Waveform dump -->
+  <rect x="200" y="200" width="240" height="45" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.5"/>
+  <text x="320" y="220" text-anchor="middle" font-size="10" font-weight="600" fill="#9C27B0">$dumpfile / $dumpvars</text>
+  <text x="320" y="236" text-anchor="middle" font-size="9" fill="#666">→ design.vcd → GTKWave</text>
+
+  <!-- Arrow down from DUT to dump -->
+  <line x1="345" y1="180" x2="345" y2="195" stroke="#9C27B0" stroke-width="1.5" marker-end="url(#arr)"/>
+</svg>

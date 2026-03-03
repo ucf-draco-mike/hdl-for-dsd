@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5.1: Counter Variations — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 5 · Counters, Shift Registers &amp; Debouncing
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Counter Variations</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Counter Variations</span>
+        <span class="seg-label ">Shift Registers</span>
+        <span class="seg-label ">Metastability</span>
+        <span class="seg-label ">Debouncing</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 5.</aside>
+</section>
+
+<section>
+    <h2>Beyond the Free-Running Counter</h2>
+    <p style="font-size:0.85em;">Day 4 gave you a simple incrementing counter. Real designs need:</p>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><strong>Modulo-N:</strong> counts 0 to N−1, then wraps (any period)</p>
+        <p class="fragment"><strong>Up/Down:</strong> direction-controlled counting</p>
+        <p class="fragment"><strong>Loadable:</strong> preset starting value (timers, address generators)</p>
+    </div>
+    <aside class="notes">Day 4 gave you simple counters. Now we build the variations you'll actually use: modulo-N, up/down, loadable.</aside>
+</section>
+<section>
+    <h2>Modulo-N Counter</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module counter_mod_n #(
+    parameter N = 10
+)(
+    input  wire                  i_clk,
+    input  wire                  i_reset,
+    output reg  [$clog2(N)-1:0]  o_count,
+    output wire                  o_wrap
+);
+<span class="fragment">    always @(posedge i_clk) begin
+        if (i_reset)             o_count &lt;= 0;
+        else if (o_count == N-1) o_count &lt;= 0;
+        else                     o_count &lt;= o_count + 1;
+    end</span>
+<span class="fragment">    assign o_wrap = (o_count == N - 1);</span>
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <code>$clog2(N)</code> = ceil(log₂(N)) — automatic width sizing. Change N and the bit width adjusts. No manual math.
+    </div>
+    <aside class="notes">Modulo-N wraps at any value. Dollar-clog2 auto-sizes the width. The wrap output pulses for one cycle at rollover — useful for cascading counters.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Modulo-N Counter</h2>
+    <p style="margin-top:0.5em;">Parameterized counter with wrap output — instantiate at multiple N values</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day05_ex01_counter_mod_n.v</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Modulo-N Counter</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Modulo-N: counts 0 to N−1, wraps. <code>$clog2</code> auto-sizes width.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Up/down: direction input controls increment/decrement.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Loadable: preset starting value via load enable.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Wrap/done output enables cascading and timing.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Shift Registers</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Moving data one bit per clock — the building blocks of serial I/O.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

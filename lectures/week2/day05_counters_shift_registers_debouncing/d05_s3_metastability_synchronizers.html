@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5.3: Metastability &amp; Synchronizers — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 5 · Counters, Shift Registers &amp; Debouncing
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Metastability &amp; Synchronizers</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Counter Variations</span>
+        <span class="seg-label ">Shift Registers</span>
+        <span class="seg-label active">Metastability</span>
+        <span class="seg-label ">Debouncing</span>
+    </div>
+    <aside class="notes">Welcome to Video 3 of 4 for Day 5.</aside>
+</section>
+
+<section>
+    <h2>The Metastability Problem</h2>
+    <p style="font-size:0.8em;">Every flip-flop has <strong>setup time</strong> and <strong>hold time</strong>. Violate either and the output enters a <strong>metastable state</strong> — neither 0 nor 1.</p>
+    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+Normal:       ____|‾‾‾‾     Clean transition
+
+Metastable:   ____/‾‾‾‾     Output hovers at ~Vdd/2
+                   ↑
+             undefined — may resolve to 0 or 1
+    </pre>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        Metastability can <strong>propagate</strong>, causing different flip-flops to see different values for the same signal.
+    </div>
+    <aside class="notes">Setup/hold violations cause metastability — output hovers undefined. It can propagate, causing cascading failures. A real hardware failure mode.</aside>
+</section>
+<section>
+    <h2>The 2-FF Synchronizer</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d05_synchronizer.svg" alt="2-FF synchronizer schematic" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        First FF may go metastable — but has a full clock period to resolve. Probability of the second FF also being metastable is <strong>astronomically low</strong>.
+        Cost: <strong>2 clock cycles of latency</strong>.
+    </div>
+    <aside class="notes">Two flip-flops in series. First may go metastable but has a full clock period to resolve before the second samples it. MTBF is centuries at 25 MHz. Cost: 2 cycles latency.</aside>
+</section>
+<section>
+    <h2>When To Synchronize</h2>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><span style="color:#C62828;">Must sync:</span> Button/switch inputs, external serial data, signals from other clock domains</p>
+        <p class="fragment"><span style="color:#2E7D32;">Don&rsquo;t sync:</span> Signals already in your clock domain (outputs of registers driven by the same clock)</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:1em;">
+        Every signal entering your clock domain from the outside world must pass through a 2-FF synchronizer. No exceptions.
+    </div>
+    <aside class="notes">Every external signal needs synchronization: buttons, serial data, other clock domains. Internal signals don't. This is an absolute rule.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Metastability: setup/hold violation → undefined output.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;2-FF synchronizer: standard mitigation. Cost = 2 cycles latency.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Synchronize <strong>every</strong> signal entering your clock domain.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;MTBF at 25 MHz with 2-FF sync is measured in <strong>centuries</strong>.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Button Debouncing</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Mechanical switches bounce — here's how to clean them up.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

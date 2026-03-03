@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6.4: File-Driven &amp; Sequential Testing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 6 · Testbenches &amp; Simulation-Driven Development
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">File-Driven Testing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~13 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">TB Anatomy</span>
+        <span class="seg-label ">Self-Checking</span>
+        <span class="seg-label ">Tasks</span>
+        <span class="seg-label active">File-Driven</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 6.</aside>
+</section>
+
+<section>
+    <h2>Loading Vectors from Files</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape><span class="fragment">// test_vectors.txt (hex values)
+// Each line: {a, b, op, expected}
+// 3508, 7314, AC28, ...</span>
+<span class="fragment">
+reg [15:0] test_mem [0:255];
+initial $readmemh("test_vectors.txt", test_mem);</span>
+<span class="fragment">
+integer i;
+initial begin
+    // ... setup ...
+    for (i = 0; i &lt; 256; i = i + 1) begin
+        a      = test_mem[i][15:12];
+        b      = test_mem[i][11:8];
+        opcode = test_mem[i][7:4];
+        #100;
+        check_result(test_mem[i][3:0], result, i);
+    end
+end</span></code></pre>
+    <aside class="notes">readmemh loads hex values from a file. You can store hundreds of test vectors in a file and loop through them. Separates test data from testbench logic.</aside>
+</section>
+<section>
+    <h2>Sequential Testbench Pattern</h2>
+    <pre class="sim-only"><code class="language-verilog">// Clock-synchronized stimulus
+task wait_cycles;
+    input integer n;
+    integer i;
+    for (i = 0; i &lt; n; i = i + 1)
+        @(posedge clk);
+endtask
+
+initial begin
+    clk = 0; reset = 1;
+    wait_cycles(5);       // hold reset for 5 clocks
+    reset = 0;
+    wait_cycles(2);
+    enable = 1;
+    wait_cycles(100);     // let counter run
+    // ... check counter value ...
+    $finish;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        For sequential DUTs: synchronize stimulus to clock edges with <code>@(posedge clk)</code>. Use <code>wait_cycles</code> for timing.
+    </div>
+    <aside class="notes">Sequential testbenches: synchronize to clock edges. Use wait_cycles for delays. Apply inputs at clock edges, sample outputs after.</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> Why are DUT inputs declared as <code>reg</code> in the testbench?</p>
+        <div class="fragment quiz-answer">You drive DUT inputs from initial/always blocks, which require <code>reg</code>. DUT outputs are driven by the module, so they&rsquo;re <code>wire</code>.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> Why <code>!==</code> instead of <code>!=</code> in testbenches?</p>
+        <div class="fragment quiz-answer"><code>!==</code> handles x/z correctly. <code>x != 0</code> → x (unknown, if-statement won&rsquo;t trigger). <code>x !== 0</code> → 1 (definite mismatch, caught!).</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What do <code>$dumpfile</code> and <code>$dumpvars</code> do?</p>
+        <div class="fragment quiz-answer"><code>$dumpfile</code> sets the VCD output filename. <code>$dumpvars(0, tb)</code> records all signal changes at all hierarchy levels for GTKWave.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> Write a <code>task</code> that applies two inputs, waits one clock, and checks the result.</p>
+        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.85em;white-space:pre;line-height:1.4;">task apply_and_check;
+  input [3:0] in_a, in_b, expected;
+begin
+  a = in_a; b = in_b;
+  @(posedge clk); @(posedge clk);
+  if (result !== expected) fail_count++;
+end
+endtask</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 6 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

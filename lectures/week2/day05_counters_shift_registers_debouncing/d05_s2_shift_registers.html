@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5.2: Shift Registers — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 5 · Counters, Shift Registers &amp; Debouncing
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Shift Registers</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Counter Variations</span>
+        <span class="seg-label active">Shift Registers</span>
+        <span class="seg-label ">Metastability</span>
+        <span class="seg-label ">Debouncing</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 5.</aside>
+</section>
+
+<section>
+    <h2>Shift Register Types</h2>
+    <table style="margin-top:0.5em;font-size:0.7em;">
+        <thead><tr><th>Type</th><th>In</th><th>Out</th><th>Use Case</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td><strong>SISO</strong></td><td>Serial</td><td>Serial</td><td>Delay line</td></tr>
+            <tr class="fragment"><td><strong>SIPO</strong></td><td>Serial</td><td>Parallel</td><td>UART RX, SPI RX</td></tr>
+            <tr class="fragment"><td><strong>PISO</strong></td><td>Parallel</td><td>Parallel</td><td>UART TX, SPI TX</td></tr>
+            <tr class="fragment"><td><strong>PIPO</strong></td><td>Parallel</td><td>Parallel</td><td>Pipeline register</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        SIPO + PISO are the core of UART and SPI — you&rsquo;ll build them in Week 3.
+    </div>
+    <aside class="notes">Four shift register types. SIPO is the receiver core, PISO is the transmitter core. These are the exact building blocks for UART in Week 3.</aside>
+</section>
+<section>
+    <h2>SIPO Shift Register</h2>
+    <pre class="synth"><code class="language-verilog">module shift_reg_sipo #(parameter WIDTH = 8)(
+    input  wire             i_clk, i_reset, i_shift_en,
+    input  wire             i_serial_in,
+    output wire [WIDTH-1:0] o_parallel_out
+);
+    reg [WIDTH-1:0] r_shift;
+
+    always @(posedge i_clk)
+        if (i_reset)        r_shift &lt;= 0;
+        else if (i_shift_en) r_shift &lt;= {r_shift[WIDTH-2:0], i_serial_in};
+
+    assign o_parallel_out = r_shift;
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        The concatenation <code>{r_shift[WIDTH-2:0], i_serial_in}</code> shifts left: old bits move up, new bit enters at LSB.
+    </div>
+    <aside class="notes">SIPO: concatenation shifts left. Old bits move toward MSB, new serial bit enters at LSB. This is the UART receiver pattern.</aside>
+</section>
+<section>
+    <h2>PISO Shift Register</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module shift_reg_piso #(parameter WIDTH = 8)(
+    input  wire             i_clk, i_reset,
+    input  wire             i_load, i_shift_en,
+    input  wire [WIDTH-1:0] i_parallel_in,
+    output wire             o_serial_out
+);
+    reg [WIDTH-1:0] r_shift;
+<span class="fragment">
+    always @(posedge i_clk)
+        if (i_reset)         r_shift &lt;= 0;
+        else if (i_load)     r_shift &lt;= i_parallel_in;   // load wins
+        else if (i_shift_en) r_shift &lt;= {1'b0, r_shift[WIDTH-1:1]};
+</span><span class="fragment">
+    assign o_serial_out = r_shift[0];  // LSB first (UART convention)</span>
+endmodule</code></pre>
+    <aside class="notes">PISO: load a parallel byte, shift out one bit at a time. Load has priority over shift. LSB comes out first — matching UART convention. This IS the UART transmitter core.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Shift registers move data one bit per clock via concatenation.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;SIPO = serial receiver (UART RX). PISO = serial transmitter (UART TX).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Load has priority over shift — <code>if/else</code> chain enforces this.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;These are the exact building blocks for Week 3 serial protocols.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Metastability &amp; Synchronizers</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">When the physical world meets your clock — and how to handle it safely.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

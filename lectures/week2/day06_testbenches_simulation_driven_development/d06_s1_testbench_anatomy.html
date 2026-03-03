@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6.1: Testbench Anatomy — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 6 · Testbenches &amp; Simulation-Driven Development
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Testbench Anatomy</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">TB Anatomy</span>
+        <span class="seg-label ">Self-Checking</span>
+        <span class="seg-label ">Tasks</span>
+        <span class="seg-label ">File-Driven</span>
+    </div>
+    <aside class="notes">Welcome to Video 1 of 4 for Day 6.</aside>
+</section>
+
+<section>
+    <h2>Why Testbenches?</h2>
+    <div class="golden-rule" style="font-size:1em;">
+        If you haven&rsquo;t simulated it, it doesn&rsquo;t work.
+    </div>
+    <div style="font-size:0.8em;margin-top:1em;">
+        <p class="fragment"><strong>Simulate first</strong> → Synthesize second → Program last</p>
+        <p class="fragment">Debugging on hardware is 10× slower than in simulation</p>
+        <p class="fragment">A testbench is a module with <strong>no ports</strong> that drives your DUT</p>
+    </div>
+    <aside class="notes">If you haven't simulated it, it doesn't work. Debugging on hardware is 10x slower. A testbench is a portless module that exercises your design under test.</aside>
+</section>
+<section>
+    <h2>Testbench Anatomy</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape>`timescale 1ns / 1ps
+module tb_my_design;
+<span class="fragment">    reg        clk, reset;          // YOU drive DUT inputs → reg
+    reg  [3:0] a, b;
+    wire [3:0] result;              // DUT drives outputs → wire</span>
+<span class="fragment">
+    my_design uut (                 // Unit Under Test
+        .i_clk(clk), .i_reset(reset),
+        .i_a(a), .i_b(b), .o_result(result)
+    );</span>
+<span class="fragment">
+    always #20 clk = ~clk;         // 25 MHz clock (40ns period)</span>
+<span class="fragment">
+    initial begin
+        $dumpfile("tb_my_design.vcd");
+        $dumpvars(0, tb_my_design);
+        clk = 0; reset = 1; a = 0; b = 0;
+        #100; reset = 0;
+        // ... stimulus ...
+        #1000; $finish;
+    end</span>
+endmodule</code></pre>
+    <aside class="notes">Testbench template: timescale, reg for DUT inputs, wire for outputs, instantiate DUT, clock generator, dumpfile/dumpvars, initial block with stimulus, finish.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Testbench from Scratch</h2>
+    <p style="margin-top:0.5em;">Build a complete mux testbench step by step</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">Template → DUT instance → clock → stimulus → $finish</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Testbench from Scratch</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Testbench = no-port module. <code>reg</code> for DUT inputs, <code>wire</code> for outputs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>`timescale</code>, clock gen, <code>$dumpfile/$dumpvars</code>, <code>$finish</code> — memorize the template.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Every design gets a testbench from today forward.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Simulate first. Synthesize second. Program last.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Self-Checking Testbenches</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Automated pass/fail — because eyeballing waveforms doesn't scale.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

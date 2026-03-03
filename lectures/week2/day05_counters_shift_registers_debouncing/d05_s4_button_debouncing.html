@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 5.4: Button Debouncing — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 5 · Counters, Shift Registers &amp; Debouncing
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Button Debouncing</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">Counter Variations</span>
+        <span class="seg-label ">Shift Registers</span>
+        <span class="seg-label ">Metastability</span>
+        <span class="seg-label active">Debouncing</span>
+    </div>
+    <aside class="notes">Welcome to Video 4 of 4 for Day 5.</aside>
+</section>
+
+<section>
+    <h2>The Bounce Problem</h2>
+    <p style="font-size:0.8em;">Mechanical switches don&rsquo;t make clean transitions — they <strong>bounce</strong> for 1–20 ms.</p>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d05_bounce_waveform.svg" alt="Button bounce waveform" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        At 25 MHz, a 5 ms bounce window = <strong>125,000 false edges</strong>. Your counter increments 125,000 times per press!
+    </div>
+    <aside class="notes">Mechanical switches bounce for 1-20 ms. At 25 MHz, that's up to 500,000 false edges. Your counter goes haywire.</aside>
+</section>
+<section>
+    <h2>Counter-Based Debouncer</h2>
+    <pre class="synth"><code class="language-verilog" data-noescape>module debounce #(
+    parameter CLKS_TO_STABLE = 250_000  // 10ms at 25MHz
+)(
+    input  wire i_clk, i_bouncy,
+    output reg  o_clean
+);
+    reg [$clog2(CLKS_TO_STABLE)-1:0] r_count;
+    reg r_sync_0, r_sync_1;  // 2-FF synchronizer
+<span class="fragment">
+    always @(posedge i_clk) begin
+        r_sync_0 &lt;= i_bouncy;
+        r_sync_1 &lt;= r_sync_0;  // synchronized input
+    end</span>
+<span class="fragment">
+    always @(posedge i_clk) begin
+        if (r_sync_1 != o_clean) begin
+            r_count &lt;= r_count + 1;
+            if (r_count == CLKS_TO_STABLE - 1)
+                o_clean &lt;= r_sync_1;
+        end else
+            r_count &lt;= 0;
+    end</span>
+endmodule</code></pre>
+    <aside class="notes">Counter-based debounce: synchronize first, then count how long the input stays different from the output. If it persists for CLKS_TO_STABLE cycles, accept the new value. Bounces reset the counter.</aside>
+</section>
+<section>
+    <h2>The Input Pipeline</h2>
+    <pre style="font-family:monospace;font-size:0.65em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+Button (async) → [2-FF Sync] → [Debounce Counter] → [Edge Detect] → Clean pulse
+                  ↑ solves          ↑ solves            ↑ creates
+              metastability      bounce noise        one-cycle pulse
+    </pre>
+    <pre class="synth fragment"><code class="language-verilog">// Edge detector: one-clock-cycle pulse on rising edge
+reg r_clean_prev;
+always @(posedge i_clk) r_clean_prev &lt;= o_clean;
+wire w_press_edge = o_clean &amp; ~r_clean_prev;</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        This pipeline — <strong>sync → debounce → edge detect</strong> — is the standard pattern for all button inputs. Build it once, reuse everywhere.
+    </div>
+    <aside class="notes">The full input pipeline: sync, debounce, edge detect. This is the standard pattern you'll reuse in every design with buttons. Build it once, reuse everywhere.</aside>
+</section>
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Build the Debouncer</h2>
+    <p style="margin-top:0.5em;">From empty file → debounced button on Go Board</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">day05_ex04_debounce.v — test with noisy simulation input</p>
+    <aside class="notes">[SWITCH TO EDITOR] Live demo: Build the Debouncer</aside>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q1:</strong> What does <code>$clog2(N)</code> return and why is it useful?</p>
+        <div class="fragment quiz-answer">ceil(log₂(N)) — the number of bits needed for values 0 to N−1. Auto-sizes counter widths when N changes.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> What type of shift register is the core of a UART TX? RX?</p>
+        <div class="fragment quiz-answer">TX = PISO (load byte, shift out). RX = SIPO (shift bits in, present byte).</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.85em;">
+        <p><strong>Q3:</strong> What causes metastability and what&rsquo;s the standard fix?</p>
+        <div class="fragment quiz-answer">Async signal violates setup/hold timing. Fix: 2-FF synchronizer — first FF may go metastable but has a full period to resolve before the second samples it.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> Why synchronize <em>before</em> debouncing?</p>
+        <div class="fragment quiz-answer">The debounce counter is clocked logic. If its input is async, its own FFs can go metastable. Synchronize first to make the signal safe for all downstream logic.</div>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 5 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

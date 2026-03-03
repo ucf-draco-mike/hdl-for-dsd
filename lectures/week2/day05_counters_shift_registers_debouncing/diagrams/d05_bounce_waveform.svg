@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 320" font-family="Inter, sans-serif">
+  <!-- Title -->
+  <text x="375" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Button Bounce → Debounced Output</text>
+
+  <!-- Raw button signal -->
+  <text x="20" y="75" font-size="11" font-weight="600" fill="#C62828">Raw Button</text>
+  <text x="20" y="89" font-size="9" fill="#888">(active low)</text>
+
+  <!-- Bounce waveform: idle high, bouncing, then stable low -->
+  <polyline points="100,66 180,66 180,106 186,106 186,66 192,66 192,106 196,106 196,66 201,66 201,106 208,106 208,66 213,66 213,106 222,106 222,66 228,66 228,106 550,106 550,66 556,66 556,106 560,106 560,66 564,66 564,106 570,106 570,66 580,66 580,106 590,106 590,66 700,66"
+    fill="none" stroke="#C62828" stroke-width="2.5"/>
+
+  <!-- Bounce zone bracket -->
+  <line x1="178" y1="118" x2="232" y2="118" stroke="#C62828" stroke-width="1.5"/>
+  <line x1="178" y1="114" x2="178" y2="122" stroke="#C62828" stroke-width="1.5"/>
+  <line x1="232" y1="114" x2="232" y2="122" stroke="#C62828" stroke-width="1.5"/>
+  <text x="205" y="133" text-anchor="middle" font-size="9" fill="#C62828" font-weight="600">~5 ms bounce</text>
+
+  <!-- Synchronized signal -->
+  <text x="20" y="180" font-size="11" font-weight="600" fill="#1565C0">After Sync</text>
+  <text x="20" y="194" font-size="9" fill="#888">(2-cycle delay)</text>
+
+  <polyline points="100,172 184,172 184,212 190,212 190,172 196,172 196,212 202,212 202,172 207,172 207,212 214,212 214,172 220,172 220,212 228,212 228,172 234,172 234,212 554,212 554,172 560,172 560,212 566,212 566,172 572,172 572,212 582,212 582,172 594,172 594,212 700,212"
+    fill="none" stroke="#1565C0" stroke-width="2"/>
+
+  <!-- Debounced signal -->
+  <text x="20" y="275" font-size="11" font-weight="600" fill="#2E7D32">Debounced</text>
+  <text x="20" y="289" font-size="9" fill="#888">(clean output)</text>
+
+  <polyline points="100,268 240,268 240,300 586,300 586,268 700,268"
+    fill="none" stroke="#2E7D32" stroke-width="2.5"/>
+
+  <!-- Debounce delay annotation -->
+  <line x1="180" y1="252" x2="240" y2="252" stroke="#2E7D32" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="180" y1="248" x2="180" y2="256" stroke="#2E7D32" stroke-width="1"/>
+  <line x1="240" y1="248" x2="240" y2="256" stroke="#2E7D32" stroke-width="1"/>
+  <text x="210" y="247" text-anchor="middle" font-size="8" fill="#2E7D32">10 ms threshold</text>
+
+  <!-- Annotation box -->
+  <rect x="540" y="244" width="170" height="40" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
+  <text x="625" y="260" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="600">One clean transition</text>
+  <text x="625" y="274" text-anchor="middle" font-size="8" fill="#666">per press &amp; release</text>
+</svg>

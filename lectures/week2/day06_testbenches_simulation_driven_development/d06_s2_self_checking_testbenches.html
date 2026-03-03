@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 6.2: Self-Checking Testbenches — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
+            Day 6 · Testbenches &amp; Simulation-Driven Development
+        </span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Self-Checking Testbenches</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot "></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot "></div>
+        <div class="seg-dot "></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label ">TB Anatomy</span>
+        <span class="seg-label active">Self-Checking</span>
+        <span class="seg-label ">Tasks</span>
+        <span class="seg-label ">File-Driven</span>
+    </div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 6.</aside>
+</section>
+
+<section>
+    <h2>The Problem With Manual Inspection</h2>
+    <div style="font-size:0.8em;margin-top:0.5em;">
+        <p class="fragment"><span style="color:#C62828;">✗</span> Miss subtle bugs (off-by-one, wrong bit, glitch)</p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> Doesn&rsquo;t scale — can&rsquo;t visually verify 1000 test vectors</p>
+        <p class="fragment"><span style="color:#C62828;">✗</span> Not repeatable or automatable</p>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:1em;">
+        The testbench must check itself. If it doesn&rsquo;t print PASS or FAIL, you&rsquo;re doing it wrong.
+    </div>
+    <aside class="notes">Looking at waveforms doesn't scale. You miss bugs, it's not repeatable, can't automate. The testbench must check itself.</aside>
+</section>
+<section>
+    <h2>Automated Checking Pattern</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape>integer test_count = 0, fail_count = 0;
+<span class="fragment">
+    // Test: ADD 3 + 5 = 8
+    a = 4'd3; b = 4'd5; opcode = 2'b00;
+    #100;</span>
+<span class="fragment">
+    test_count = test_count + 1;
+    if (result !== 4'd8) begin
+        $display("FAIL: ADD 3+5: expected 8, got %d", result);
+        fail_count = fail_count + 1;
+    end else
+        $display("PASS: ADD 3+5 = %d", result);</span></code></pre>
+    <div class="fragment callout-warning" style="font-size:0.75em;">
+        <strong><code>!==</code> not <code>!=</code></strong> — case inequality handles <code>x</code>/<code>z</code> correctly.
+        <code>x != 0</code> → <code>x</code> (unknown!). <code>x !== 0</code> → <code>1</code> (definite mismatch).
+    </div>
+    <aside class="notes">Track test and fail counts. Use case inequality — three-equals handles x and z. Regular inequality returns unknown when either side is x.</aside>
+</section>
+<section>
+    <h2>Summary Report</h2>
+    <pre class="sim-only"><code class="language-verilog">// At end of simulation
+$display("\n=== TEST SUMMARY ===");
+$display("Tests run:    %0d", test_count);
+$display("Tests passed: %0d", test_count - fail_count);
+$display("Tests failed: %0d", fail_count);
+if (fail_count == 0)
+    $display("*** ALL TESTS PASSED ***");
+else
+    $display("*** %0d FAILURES ***", fail_count);
+$finish;</code></pre>
+    <div class="fragment callout" style="font-size:0.8em;">
+        This is your standard from now on. Every testbench prints a summary.
+    </div>
+    <aside class="notes">Every testbench ends with a summary. Tests run, passed, failed. This is your standard going forward.</aside>
+</section>
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Self-checking: <code>if (actual !== expected)</code> — automate it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Use <code>===</code>/<code>!==</code> (case equality) — handles x/z correctly.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Track <code>test_count</code> and <code>fail_count</code>. Print a summary.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;This pattern applies to every testbench going forward.</p>
+    </div>
+</section>
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Tasks for Organization</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~10 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Reusable testbench procedures — apply stimulus, check results, keep it DRY.</p>
+    </div>
+</section>
+
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>
