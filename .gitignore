@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Build artifacts (iCE40 flow)
+*.vvp
+*.vcd
+*.json
+*.asc
+*.bin
+*.blif
+*.log
+
+# Editor / IDE
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Nix
+result
+.direnv/
+
+# Python
+__pycache__/
+*.pyc

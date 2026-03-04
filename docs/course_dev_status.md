@@ -1,6 +1,6 @@
 # Development Status
 
-Last updated: 2026-02-26
+Last updated: 2026-03-04
 
 ## Content Inventory
 
@@ -9,57 +9,76 @@ Last updated: 2026-02-26
 |---|---|---|
 | `README.md` | ✅ Complete | Course overview, structure, quick start |
 | `docs/course_curriculum.md` | ✅ Complete | 16-session map, video guide, grading |
-| `docs/course_syllabus.md` | ✅ Complete | Student-facing course_syllabus |
+| `docs/course_syllabus.md` | ✅ Complete | Student-facing syllabus |
 | `docs/course_setup_guide.md` | ✅ Complete | Multi-platform install (Linux/macOS/WSL2) |
 | `docs/course_video_scaffold.md` | ✅ Complete | 56-segment production guide |
 | `docs/course_dev_status.md` | ✅ Complete | This file |
 
 ### Daily Plans (All 16 Complete)
-| Day | File | Lines | Status |
-|---|---|---|---|
-| 1 | `week1_day01.md` | 676 | ✅ Full |
-| 2 | `week1_day02.md` | 674 | ✅ Full |
-| 3 | `week1_day03.md` | 787 | ✅ Full |
-| 4 | `week1_day04.md` | 752 | ✅ Full |
-| 5 | `day05_counters_shift_registers_debouncing.md` | 840 | ✅ Full |
-| 6 | `day06_testbenches_simulation_driven_development.md` | 757 | ✅ Full |
-| 7 | `day07_finite_state_machines.md` | 750 | ✅ Full |
-| 8 | `day08_hierarchy_parameters_generate.md` | 832 | ✅ Full |
-| 9 | `day09_memory_ram_rom_block_ram.md` | 853 | ✅ Full |
-| 10 | `day10_timing_clocking_constraints.md` | 679 | ✅ Full |
-| 11 | `day11_uart_transmitter.md` | 785 | ✅ Full |
-| 12 | `day12_uart_rx_spi_ip_integration.md` | 791 | ✅ Full |
-| 13 | `day13_systemverilog_for_design.md` | 800 | ✅ Full |
-| 14 | `day14_systemverilog_for_verification.md` | 790 | ✅ Full |
-| 15 | `day15_final_project_build_day.md` | 305 | ✅ Full |
-| 16 | `day16_demos_reflection_next_steps.md` | 330 | ✅ Full |
+| Day | File | Status |
+|---|---|---|
+| 1 | `docs/day01.md` | ✅ Full |
+| 2 | `docs/day02.md` | ✅ Full |
+| 3 | `docs/day03.md` | ✅ Full |
+| 4 | `docs/day04.md` | ✅ Full |
+| 5 | `docs/day05.md` | ✅ Full |
+| 6 | `docs/day06.md` | ✅ Full |
+| 7 | `docs/day07.md` | ✅ Full |
+| 8 | `docs/day08.md` | ✅ Full |
+| 9 | `docs/day09.md` | ✅ Full |
+| 10 | `docs/day10.md` | ✅ Full |
+| 11 | `docs/day11.md` | ✅ Full |
+| 12 | `docs/day12.md` | ✅ Full |
+| 13 | `docs/day13.md` | ✅ Full |
+| 14 | `docs/day14.md` | ✅ Full |
+| 15 | `docs/day15.md` | ✅ Full |
+| 16 | `docs/day16.md` | ✅ Full |
 
-**Total daily plan content: 11,401 lines**
+**Note:** Filenames assume Fix #12 (normalize daily plan names) has been applied.
+
+### Lecture Slides (Days 1-14: reveal.js HTML)
+| Day | Dir | Segments | Readme | Quiz |
+|---|---|---|---|---|
+| 1 | `lectures/week1_day01/` | 4 slides | ✅ | ✅ |
+| 2 | `lectures/week1_day02/` | 4 slides | ✅ | ✅ |
+| 3 | `lectures/week1_day03/` | 4 slides | ✅ | ✅ |
+| 4 | `lectures/week1_day04/` | 4 slides | ✅ | ✅ |
+| 5 | `lectures/week2_day05/` | 4 slides | ✅ | ✅ |
+| 6 | `lectures/week2_day06/` | 4 slides | ✅ | ✅ |
+| 7 | `lectures/week2_day07/` | 4 slides | ✅ | ✅ |
+| 8 | `lectures/week2_day08/` | 4 slides | ✅ | ✅ |
+| 9 | `lectures/week3_day09/` | 4 slides | ✅ | ✅ |
+| 10 | `lectures/week3_day10/` | 4 slides | ✅ | ✅ |
+| 11 | `lectures/week3_day11/` | 4 slides | ✅ | ✅ |
+| 12 | `lectures/week3_day12/` | 4 slides | ✅ | ✅ |
+| 13 | `lectures/week4_day13/` | 4 slides | ✅ | ✅ |
+| 14 | `lectures/week4_day14/` | 4 slides | ✅ | ✅ |
+| 15 | `lectures/week4_day15/` | briefing only | ✅ | - |
+| 16 | `lectures/week4_day16/` | retro only | ✅ | - |
 
 ### Lab Scaffolding
 | Week | Days | Status |
 |---|---|---|
-| Week 1 | Days 1–4 | ✅ Starter Verilog, Makefiles, READMEs |
-| Week 2 | Days 5–8 | ✅ Starter Verilog, Makefiles, READMEs |
-| Week 3 | Days 9–12 | ✅ Starter Verilog, Makefiles, READMEs |
-| Week 4 | Days 13–16 | ✅ Stubs (project/SV days) |
+| Week 1 | Days 1-4 | ✅ Starter + solution Verilog, Makefiles, lab guides |
+| Week 2 | Days 5-8 | ✅ Starter + solution Verilog, Makefiles, READMEs |
+| Week 3 | Days 9-12 | ✅ Starter + solution Verilog, per-exercise Makefiles, READMEs |
+| Week 4 | Days 13-16 | ✅ SV exercises, project templates, demo materials |
 
 ### Shared Resources
 | Resource | Status |
 |---|---|
 | `shared/pcf/go_board.pcf` | ✅ Complete pin constraint file |
-| `shared/lib/*.v` | ✅ 7 verified reusable modules |
-| `shared/scripts/Makefile.template` | ✅ Universal build template |
+| `shared/lib/` | ✅ 5 design modules + 5 testbenches |
+| `shared/.gtkwaverc` | ✅ GTKWave display defaults |
 
 ### Projects
 | Resource | Status |
 |---|---|
-| `projects/README.md` | ✅ 9 options, rubric, requirements |
+| `projects/README.md` | ✅ Project options, rubric, requirements |
 
 ### Remaining Work
-| Item | Status | Notes |
+| Item | Priority | Notes |
 |---|---|---|
-| Slide generators | 🔶 In project knowledge | 4 Python scripts (week1–week4) |
-| Lecture theme CSS | 🔶 In project knowledge | `ucf-hdl.css` for reveal.js |
-| Generated HTML slides | 🔶 Not yet generated | Run generators after sync |
-| Per-day lecture READMEs | 🔲 Not started | Segment guides for each day |
+| Day 10 content alignment | 🔴 High | Doc plan vs. lecture/lab topic mismatch (see audit) |
+| Video recording | 🔶 Medium | 56 segments scripted, not yet recorded |
+| Lab structure normalization | 🔶 Medium | Three different org patterns across weeks |

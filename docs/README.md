@@ -37,68 +37,46 @@ A 4-week, 16-session accelerated course in Verilog and digital system design usi
 ## Repository Structure
 
 ```
-hdl-course/
-├── README.md                    ← you are here
+hdl-for-dsd/
+├── README.md                    ← top-level overview & quick start
+├── flake.nix                    ← Nix dev environment (all tools, all platforms)
+├── .envrc                       ← optional direnv auto-activation
 ├── docs/
-│   ├── curriculum_v2_1.md       ← full 16-day course_curriculum & session map (instructor reference)
-│   ├── course_syllabus.md              ← student-facing course_syllabus
-│   ├── course_setup_guide.md           ← toolchain installation instructions
-│   ├── week1_day01.md
-│   ├── week1_day02.md
-│   ├── week1_day03.md
-│   ├── week1_day04_plan.md
-│   ├── day05_counters_shift_registers_debouncing.md
-│   ├── week2_day06_plan.md
-│   ├── day07_finite_state_machines.md
-│   ├── day08_hierarchy_parameters_generate.md
-│   ├── week3_day09_plan.md
-│   ├── day10_numerical_architectures_design_tradeoffs.md
-│   ├── week3_day11_plan.md
-│   ├── day12_uart_rx_spi_protocol_tbs.md
-│   ├── day13_systemverilog_for_design.md
-│   ├── week4_day14_plan.md
-│   ├── day15_final_project_build_day.md
-│   └── day16_demos_reflection_next_steps.md
+│   ├── README.md                ← you are here
+│   ├── course_curriculum.md     ← full 16-day curriculum & session map
+│   ├── course_syllabus.md       ← student-facing syllabus
+│   ├── course_setup_guide.md    ← toolchain installation instructions
+│   ├── course_video_scaffold.md ← lecture production guide
+│   ├── course_dev_status.md     ← development status tracker
+│   └── day01.md … day16.md      ← daily session plans (instructor guides)
 │
 ├── lectures/                    ← pre-class video lecture materials
-│   ├── theme/                   ← UCF-branded reveal.js theme
-│   │   └── ucf-hdl.css
-│   ├── week1/
-│   │   ├── week1_day01/
-│   │   │   ├── seg1_hdl_not_software.html
-│   │   │   ├── seg2_synthesis_vs_simulation.html
-│   │   │   ├── seg3_anatomy_of_a_module.html
-│   │   │   ├── seg4_digital_logic_refresher.html
-│   │   │   ├── quiz.md
-│   │   │   ├── code/
-│   │   │   ├── diagrams/
-│   │   │   └── README.md
-│   │   ├── day02_.../
-│   │   ...
-│   ├── week2/
-│   ├── week3/
-│   └── week4/
+│   ├── theme/ucf-hdl.css        ← UCF-branded reveal.js theme
+│   └── week1_day01/ … week4_day16/
+│       ├── d##_s#_topic.html    ← reveal.js slide decks
+│       ├── day##_quiz.md        ← pre-class quiz
+│       ├── day##_readme.md      ← segment guide
+│       ├── code/                ← live-code examples
+│       └── diagrams/            ← SVGs & Mermaid sources
 │
 ├── labs/                        ← in-class lab materials & starter code
-│   ├── week1/
-│   │   ├── week1_day01/
-│   │   ├── week1_day02/
-│   │   ...
-│   ├── week2/
-│   ├── week3/
-│   └── week4/
+│   └── week1_day01/ … week4_day16/
+│       ├── README.md            ← lab guide
+│       ├── Makefile             ← build targets (sim, synth, prog)
+│       ├── go_board.pcf         ← pin constraints
+│       ├── starter/             ← student starting point
+│       └── solutions/           ← reference solutions
 │
-├── projects/                    ← final project specifications & rubrics
+├── projects/                    ← final project specs & rubric
 │
-├── shared/                      ← common resources used across the course
-│   ├── pcf/                     ← Go Board pin constraint files
-│   │   └── go_board.pcf
-│   ├── lib/                     ← reusable module library (builds across weeks)
-│   └── scripts/                 ← build helpers, Makefiles
-│       └── Makefile.template
+├── shared/
+│   ├── pcf/go_board.pcf         ← canonical pin constraint file
+│   ├── lib/                     ← reusable module library
+│   └── .gtkwaverc               ← GTKWave display defaults
 │
-└── assets/
-    └── img/                     ← logos, board photos, etc.
+├── scripts/                     ← maintenance & migration utilities
+│
+└── assets/img/                  ← logos, board photos, etc.
 ```
 
 ## Lecture Format
@@ -157,7 +135,7 @@ yosys -p "read_verilog module.v; synth_ice40 -top module; show"
 
 1. **Install the toolchain** — see [`docs/course_setup_guide.md`](docs/course_setup_guide.md)
 2. **Get the Go Board** — [nandland.com](https://nandland.com/the-go-board/)
-3. **Watch the Day 1 videos** — `lectures/week1_day01_welcome_to_hardware_thinking/`
+3. **Watch the Day 1 videos** — `lectures/week1_day01/`
 4. **Come to class ready to build**
 
 ## License

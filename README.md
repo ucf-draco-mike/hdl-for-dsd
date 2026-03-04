@@ -23,14 +23,14 @@ A 4-week, 16-session accelerated course in Verilog and digital system design usi
 | Week | Theme | Culmination |
 |------|-------|-------------|
 | **1** | Verilog Foundations & Combinational Design | First LED blink from HDL |
-| **2** | Sequential Design & Verification | Verified module library |
-| **3** | Interfaces, Memory & Communication | "HELLO" on the PC terminal |
-| **4** | SystemVerilog Primer & Final Project | Complete demonstrated system |
+| **2** | Sequential Design, Verification & AI-Assisted Testing | Verified module library + first AI-generated TB |
+| **3** | Memory, Communication & Numerical Architectures | "HELLO" on the PC terminal + numerical module on FPGA |
+| **4** | Advanced Design, Verification & Final Project | Complete demonstrated system with PPA report |
 
 ## Repository Structure
 
 ```
-hdl-course/
+hdl-for-dsd/
 ├── README.md                    ← you are here
 ├── flake.nix                    ← Nix dev environment (all tools, all platforms)
 ├── .envrc                       ← optional direnv auto-activation
@@ -39,24 +39,25 @@ hdl-course/
 │   ├── course_syllabus.md              ← student-facing course_syllabus
 │   ├── course_setup_guide.md           ← toolchain installation instructions
 │   ├── course_video_scaffold.md ← lecture production guide
-│   └── day*_*.md                ← detailed daily session plans (instructor guides)
+│   └── course_dev_status.md     ← development status tracker
+│   └── day01.md … day16.md      ← daily session plans (instructor guides)
 │
 ├── lectures/                    ← pre-class video lecture materials
 │   ├── theme/ucf-hdl.css        ← UCF-branded reveal.js theme
-│   ├── week1/ through week4/   ← slide decks (reveal.js HTML)
+│   ├── week1_day01/ … week4_day16/ ← slide decks (reveal.js HTML)
 │
 ├── labs/                        ← in-class lab materials & starter code
-│   ├── week1/day01/ through week1_day04/
-│   ├── week2/day05/ through week2_day08/
-│   ├── week3/day09/ through week3_day12/
-│   └── week4/day13/ through week4_day16/
+│   ├── week1_day01/ through week1_day04/
+│   ├── week2_day05/ through week2_day08/
+│   ├── week3_day09/ through week3_day12/
+│   └── week4_day13/ through week4_day16/
 │
 ├── projects/                    ← spec & rubrics
 │
 ├── shared/
 │   ├── pcf/go_board.pcf         ← pin constraint file
 │   ├── lib/                     ← reusable module library
-│   └── scripts/Makefile.template ← build automation template
+│   └── .gtkwaverc              ← GTKWave display defaults
 │
 └── assets/img/                  ← logos, board photos, etc.
 ```
@@ -84,8 +85,8 @@ Open a **new terminal** after installation completes.
 ### 3. Clone & Enter the Course Environment
 
 ```bash
-git clone https://github.com/<org>/hdl-course.git
-cd hdl-course
+git clone https://github.com/ucf-draco-mike/hdl-for-dsd.git
+cd hdl-for-dsd
 nix develop
 ```
 
@@ -100,7 +101,7 @@ yosys --version && nextpnr-ice40 --version && iverilog -V
 ### 5. First Build (Day 1)
 
 ```bash
-cd labs/week1/day01
+cd labs/week1_day01
 make prog    # synthesize + program the Go Board
 ```
 
@@ -110,7 +111,7 @@ make prog    # synthesize + program the Go Board
 
 ```bash
 # Enter the course environment (every session)
-cd hdl-course && nix develop
+cd hdl-for-dsd && nix develop
 
 # Simulation (Icarus Verilog + GTKWave)
 iverilog -o sim.vvp -g2012 tb_module.v module.v
@@ -126,4 +127,4 @@ iceprog top.bin
 
 ## License
 
-Course materials © UCF ECE. Verilog source code released under MIT License for educational use.
+All materials released under the MIT License. See [LICENSE](LICENSE) for details.

@@ -154,7 +154,7 @@ AI-assisted verification is an **explicit learning objective** of this course, i
 ## Final Project
 
 The final project is an individual capstone spanning Days 13–16.
-The Day 13 session requires a project design document (block diagram + module list) before full build time begins on Days 14–15. Students design, verify, and demonstrate a complete FPGA-based system on the Go Board.
+The Day 13 session requires a project design document (block diagram + module list) before full build time begins on Day 15. Students design, verify, and demonstrate a complete FPGA-based system on the Go Board.
 
 ### Requirements (all projects)
 1. At least one manually-written self-checking testbench for a core module
