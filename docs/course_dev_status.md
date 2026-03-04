@@ -79,6 +79,6 @@ Last updated: 2026-03-04
 ### Remaining Work
 | Item | Priority | Notes |
 |---|---|---|
-| Day 10 content alignment | 🔴 High | Doc plan vs. lecture/lab topic mismatch (see audit) |
+| Day 10 content alignment | ✅ Fixed | Lectures & labs realigned to numerical architectures + PPA (2026-03-04) |
 | Video recording | 🔶 Medium | 56 segments scripted, not yet recorded |
 | Lab structure normalization | 🔶 Medium | Three different org patterns across weeks |

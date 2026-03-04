@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.2: Numerical Architecture Trade-offs — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ─── TITLE ─── -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Numerical Architectures &amp; Design Trade-offs</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:1.9em;">Numerical Architecture Trade-offs</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~20 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">Timing Essentials</span>
+        <span class="seg-label active">Numerical Architectures</span>
+        <span class="seg-label">PPA Introduction</span>
+        <span class="seg-label">ASIC PPA Context</span>
+    </div>
+    <aside class="notes">This is the core of Day 10. We're going to look at what the synthesis tool actually builds when you write arithmetic in Verilog, and why understanding that matters for design decisions.</aside>
+</section>
+
+<!-- ─── THE PLUS OPERATOR ─── -->
+<section>
+    <h2>What Does <code>+</code> Actually Build?</h2>
+    <pre class="synth"><code class="language-verilog">// You write this:
+assign sum = a + b;
+
+// Yosys builds... what?</code></pre>
+    <div class="fragment" style="font-size:0.82em;margin-top:0.5em;">
+        <p><strong>Key insight:</strong> Writing <code>assign sum = a + b;</code> lets the synthesis tool <em>choose</em> the adder architecture.</p>
+    </div>
+    <div class="fragment" style="font-size:0.82em;">
+        <p>Understanding what it chooses — and <em>why</em> — is the designer's job.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Today we'll synthesize <code>a + b</code> at 4, 8, 16, and 32 bits — and inspect the results with <code>yosys stat</code> and <code>yosys show</code>.
+    </div>
+    <aside class="notes">When you write a+b, you're delegating the architecture choice to the tool. That's fine — but you need to understand what it builds so you can evaluate whether it's appropriate for your application.</aside>
+</section>
+
+<!-- ─── ADDER ARCHITECTURES ─── -->
+<section>
+    <h2>Adder Architectures</h2>
+    <div style="font-size:0.78em;">
+        <p class="fragment"><strong>Ripple-carry</strong> (Day 2): carry propagates bit-by-bit. Simple. Slow for wide operands.<br>
+        <span style="color:#888;">Delay: O(N). Area: O(N). You built this from full-adder chains.</span></p>
+        <p class="fragment"><strong>Carry-lookahead</strong> (concept): precompute carries in parallel. Faster. More logic.<br>
+        <span style="color:#888;">Delay: O(log N). Area: O(N log N). Used in high-performance designs.</span></p>
+        <p class="fragment"><strong>The <code>+</code> operator</strong>: Yosys picks the best architecture for the target FPGA.<br>
+        <span style="color:#888;">On iCE40: typically a carry-chain structure using dedicated routing.</span></p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Lab exercise:</strong> You'll synthesize your Day 2 ripple-carry adder and <code>assign sum = a + b;</code> at 8-bit and 16-bit, then compare LUT counts and Fmax.
+    </div>
+    <aside class="notes">Three architectures at increasing sophistication. The key learning: the behavioral + operator often matches or beats your manual implementation, because the tool knows the FPGA's carry chain resources. But understanding WHY is the point.</aside>
+</section>
+
+<!-- ─── MULTIPLICATION: THE LUT EXPLOSION ─── -->
+<section>
+    <h2>Multiplication: The LUT Explosion</h2>
+    <pre class="synth"><code class="language-verilog">// Combinational multiplication
+assign product = a * b;  // 4-bit: manageable. 8-bit: large. 16-bit: enormous.</code></pre>
+    <div class="fragment" style="font-size:0.82em;">
+        <p><strong>Why it explodes:</strong> Multiplication is O(N²) in gate count. Each partial product needs a row of AND gates, then all rows are summed.</p>
+    </div>
+    <div class="fragment" style="font-size:0.82em;">
+        <p><strong>iCE40 has NO DSP blocks.</strong> Every <code>*</code> is pure LUT logic. A 32-bit multiplier can consume ~30% of the HX1K.</p>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.75em;">
+        On FPGAs with DSP slices (Xilinx, larger Lattice), <code>*</code> maps to dedicated silicon — nearly free. On iCE40, it's expensive.
+    </div>
+    <aside class="notes">This is the biggest resource trap on iCE40. No DSP blocks means every multiply is built from LUTs. At 8-bit you'll see quadratic growth. In lab you'll measure this directly.</aside>
+</section>
+
+<!-- ─── SEQUENTIAL MULTIPLICATION ─── -->
+<section>
+    <h2>Sequential Multiplication: Shift-and-Add</h2>
+    <div class="columns">
+        <div class="col" style="font-size:0.78em;">
+            <p><strong>Algorithm:</strong></p>
+            <p class="fragment">1. Initialize accumulator = 0</p>
+            <p class="fragment">2. For each bit of the multiplier:</p>
+            <p class="fragment" style="padding-left:1em;">If bit is 1: add multiplicand to accumulator</p>
+            <p class="fragment" style="padding-left:1em;">Shift multiplicand left (or shift accumulator right)</p>
+            <p class="fragment">3. After N iterations: accumulator = product</p>
+        </div>
+        <div class="col fragment" style="font-size:0.78em;">
+            <p><strong>Architecture:</strong></p>
+            <p>FSM + shift register + accumulator</p>
+            <p style="margin-top:0.5em;"><strong>Trade-off:</strong></p>
+            <table style="font-size:0.85em;">
+                <tr><th></th><th>Comb <code>*</code></th><th>Shift-Add</th></tr>
+                <tr><td><strong>Latency</strong></td><td>1 cycle</td><td>N cycles</td></tr>
+                <tr><td><strong>Area</strong></td><td>O(N²) LUTs</td><td>O(N) LUTs</td></tr>
+                <tr><td><strong>Fmax</strong></td><td>Lower</td><td>Higher</td></tr>
+            </table>
+        </div>
+    </div>
+    <aside class="notes">The shift-and-add multiplier trades latency for area. Instead of building all partial products simultaneously, it does one per clock cycle. Uses an FSM, a shift register, and an accumulator — all things you built in Weeks 1 and 2. This is your lab Exercise 2.</aside>
+</section>
+
+<!-- ─── FIXED-POINT ARITHMETIC ─── -->
+<section>
+    <h2>Fixed-Point Arithmetic: Q-Format</h2>
+    <pre class="synth"><code class="language-verilog">// Q4.4 format: 4 integer bits, 4 fractional bits = 8 bits total
+// Value = binary_integer_interpretation / 2^(fractional_bits)
+// Example: 8'b0010_1000 = 0x28 = 40 → 40/16 = 2.5
+
+wire [7:0] a = 8'b0010_1000;  // 2.5 in Q4.4
+wire [7:0] b = 8'b0011_0000;  // 3.0 in Q4.4</code></pre>
+    <div class="fragment" style="font-size:0.82em;">
+        <p><strong>Addition:</strong> Just works — <code>assign sum = a + b;</code> (same format, watch for overflow)</p>
+    </div>
+    <div class="fragment" style="font-size:0.82em;">
+        <p><strong>Multiplication — the bit growth problem:</strong></p>
+        <pre class="synth"><code class="language-verilog">// Q4.4 × Q4.4 = Q8.8 (16 bits!)
+wire [15:0] full_product = a * b;       // Q8.8
+wire [7:0]  q44_result = full_product[11:4]; // Extract Q4.4 from Q8.8</code></pre>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Key challenge:</strong> Know where the decimal point is after each operation. The hardware doesn't track it — you do.
+    </div>
+    <aside class="notes">Fixed-point is everywhere in DSP and control systems. The hardware is just integer arithmetic — YOU track the decimal point. The biggest gotcha: multiplying two Q4.4 numbers gives Q8.8. You need to extract the right bits.</aside>
+</section>
+
+<!-- ─── SIGNED ARITHMETIC ─── -->
+<section>
+    <h2>Signed Arithmetic Gotchas</h2>
+    <pre class="synth"><code class="language-verilog">// Verilog defaults to UNSIGNED arithmetic!
+wire [7:0] a = 8'hFF;  // Unsigned: 255.  Signed: -1.
+
+// To get signed behavior:
+wire signed [7:0] a_signed = 8'hFF;  // Now it's -1
+
+// Or use $signed() cast:
+wire [15:0] product = $signed(a) * $signed(b);
+
+// Sign extension matters for mixed-width operations:
+wire [15:0] extended = {{8{a[7]}}, a};  // Manual sign-extend
+wire [15:0] extended = $signed(a);       // Automatic sign-extend</code></pre>
+    <div class="fragment callout-warning" style="font-size:0.75em;">
+        <strong>Common bug:</strong> Mixing signed and unsigned in one expression. Verilog silently treats the whole expression as unsigned if <em>any</em> operand is unsigned.
+    </div>
+    <aside class="notes">Verilog defaults to unsigned. If you need signed arithmetic, use the signed keyword or $signed() cast. The sneaky bug: mixing signed and unsigned makes the whole expression unsigned. Be explicit.</aside>
+</section>
+
+<!-- ─── LIVE DEMO CUE ─── -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2>Adder &amp; Multiplier Synthesis Comparison</h2>
+    <p style="margin-top:0.5em;">Synthesize <code>a + b</code> at 4/8/16/32-bit widths — plot LUT scaling</p>
+    <p style="margin-top:0.3em;">Synthesize <code>a * b</code> at 4/8-bit — observe LUT explosion</p>
+    <p style="margin-top:0.3em;">Inspect with <code>yosys show</code> — what does the adder look like?</p>
+    <p style="font-size:0.65em;color:#888;margin-top:2em;">code/day10_adder_widths.v · code/day10_mult_widths.v</p>
+    <aside class="notes">[SWITCH TO EDITOR] Synthesize at multiple widths. Run yosys stat for each. Show the LUT count growth. For adders: roughly linear. For multipliers: quadratic. Then yosys show to see the actual circuits.</aside>
+</section>
+
+<!-- ─── KEY TAKEAWAYS ─── -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>+</code> lets the tool choose the adder architecture. Understand what it builds.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>*</code> on iCE40 = pure LUT logic (no DSP). Area grows O(N²). Budget carefully.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Shift-and-add: trades N cycles of latency for O(N) area. Use when area-constrained.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Fixed-point: hardware is just integer arithmetic — <em>you</em> track the decimal point.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">⑤</span>&ensp;<code>$signed()</code> for signed operations. Don't mix signed/unsigned.</p>
+    </div>
+</section>
+
+<!-- ─── TRANSITION ─── -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">PPA — Performance, Power, Area</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~15 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">The three axes of digital design optimization — and why you can't win all three.</p>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

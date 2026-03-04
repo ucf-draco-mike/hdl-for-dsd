@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.1: Timing &amp; Constraints Essentials — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ─── TITLE ─── -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Numerical Architectures &amp; Design Trade-offs</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">Timing &amp; Constraints Essentials</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot active"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label active">Timing Essentials</span>
+        <span class="seg-label">Numerical Architectures</span>
+        <span class="seg-label">PPA Introduction</span>
+        <span class="seg-label">ASIC PPA Context</span>
+    </div>
+    <aside class="notes">Welcome to Day 10 Video 1 of 4. Today is a big day — we bring together timing, numerical architecture trade-offs, and PPA analysis. This first segment gives you the timing vocabulary you need for the rest of the day.</aside>
+</section>
+
+<!-- ─── WHY TIMING MATTERS ─── -->
+<section>
+    <h2>Why Timing Matters</h2>
+    <p style="font-size:0.85em;">Every gate and wire has <strong>propagation delay</strong>. Signals take time to travel through combinational logic between flip-flops.</p>
+    <div class="fragment" style="margin-top:0.5em;">
+        <img src="diagrams/d10_critical_path.svg" alt="Critical path between two flip-flops" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
+        The critical path determines the maximum clock frequency of your design.
+    </div>
+    <aside class="notes">Every gate and wire has delay. The longest path between any two flip-flops is the critical path — it sets your maximum frequency.</aside>
+</section>
+
+<!-- ─── SETUP & HOLD ─── -->
+<section>
+    <h2>Setup &amp; Hold Time</h2>
+    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+               Tsetup      Thold
+              ◄──────►    ◄──────►
+              │        │          │
+   data: ─────────────STABLE───────────────
+              │        │          │
+   clk:  ────────────┐ │
+                      └───────────────
+                      ↑
+                  clock edge
+    </pre>
+    <div style="font-size:0.8em;">
+        <p class="fragment"><strong>Setup violation:</strong> data changes too close <em>before</em> the edge → wrong value captured</p>
+        <p class="fragment"><strong>Hold violation:</strong> data changes too soon <em>after</em> the edge → wrong value captured</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Slack</strong> = clock_period − (Tclk-to-q + Tcomb + Trouting + Tsetup). Positive = timing met. Negative = violation.
+    </div>
+    <aside class="notes">Setup: data stable before edge. Hold: data stable after. Slack is your margin. At 25 MHz with 40 ns period, most simple designs pass easily. Problems appear with deep combinational chains or higher clocks.</aside>
+</section>
+
+<!-- ─── NEXTPNR TIMING ─── -->
+<section>
+    <h2>Reading the nextpnr Timing Report</h2>
+    <pre class="synth"><code class="language-bash" data-noescape><span class="fragment"># Tell nextpnr about your clock:
+nextpnr-ice40 --hx1k --package vq100 \
+    --pcf go_board.pcf --json top.json --asc top.asc \
+    --freq 25</span>
+
+<span class="fragment"># PASS — Fmax exceeds target
+Info: Max frequency for clock 'i_clk': 48.23 MHz
+#  Target: 25 MHz → PASS (23 MHz of margin)</span>
+
+<span class="fragment"># FAIL — Fmax below target
+Info: Max frequency for clock 'i_clk': 22.10 MHz
+#  Target: 25 MHz → FAIL! Design may work intermittently.</span></code></pre>
+    <div class="fragment callout-danger" style="font-size:0.75em;">
+        Timing violations cause <strong>intermittent failures</strong> — the worst kind of bug. The design works sometimes, fails randomly.
+    </div>
+    <aside class="notes">Always add --freq to nextpnr. Without it, no timing analysis happens. Above target = pass. Below = violation. Violations cause intermittent failures — maddening to debug.</aside>
+</section>
+
+<!-- ─── WHEN TIMING FAILS ─── -->
+<section>
+    <h2>When Timing Fails: Three Fixes</h2>
+    <div style="font-size:0.82em;">
+        <p class="fragment"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<strong>Pipeline:</strong> insert registers to break long combinational chains. Costs latency + FFs.</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<strong>Restructure logic:</strong> rethink the architecture. Sequential multiplier instead of combinational?</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<strong>Relax the clock:</strong> lower the frequency if the application allows it.</p>
+    </div>
+    <div class="fragment" style="margin-top:0.8em;">
+        <img src="diagrams/d10_pipeline_fix.svg" alt="Pipeline fix illustration" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+    </div>
+    <aside class="notes">Three options: pipeline (trade latency for throughput), restructure (change the architecture), or slow the clock. We'll see concrete examples of options 1 and 2 in the next segment when we compare adder and multiplier architectures.</aside>
+</section>
+
+<!-- ─── KEY TAKEAWAYS ─── -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Critical path = longest FF-to-FF delay → limits maximum frequency.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Slack = clock_period − total_delay. Positive = pass. Negative = intermittent failures.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>--freq 25</code> on nextpnr enables timing analysis. Always include it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Fixes: pipeline, restructure, or relax the clock — all have PPA trade-offs.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        PLL and clock domain crossing are covered in the Day 5 metastability discussion and the Day 10 stretch exercises. Today's focus: <strong>numerical architectures and PPA.</strong>
+    </div>
+    <aside class="notes">That's the timing vocabulary you need. The rest of today is about numerical architectures and PPA — where timing trade-offs become concrete design decisions.</aside>
+</section>
+
+<!-- ─── TRANSITION ─── -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Numerical Architecture Trade-offs</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~20 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">Adders, multipliers, fixed-point — and what the synthesis tool actually builds.</p>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

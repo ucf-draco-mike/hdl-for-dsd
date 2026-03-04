@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.4: Open-Source ASIC PPA — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>
+        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
+    </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ─── TITLE ─── -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Numerical Architectures &amp; Design Trade-offs</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">Open-Source ASIC PPA</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~5 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">Timing Essentials</span>
+        <span class="seg-label">Numerical Architectures</span>
+        <span class="seg-label">PPA Introduction</span>
+        <span class="seg-label active">ASIC PPA Context</span>
+    </div>
+    <aside class="notes">A brief aspirational segment. The PPA habits you're building with yosys stat transfer directly to ASIC design. Here's how.</aside>
+</section>
+
+<!-- ─── FPGA vs ASIC PPA ─── -->
+<section>
+    <h2>FPGA vs. ASIC PPA</h2>
+    <div class="columns" style="font-size:0.78em;">
+        <div class="col panel panel-hw">
+            <h3>FPGA (what we do)</h3>
+            <p><strong>Area:</strong> LUT count (fixed-size units)</p>
+            <p><strong>Perf:</strong> Fmax from place-and-route</p>
+            <p><strong>Power:</strong> Estimate from toggle rate</p>
+            <p><strong>Tool:</strong> <code>yosys stat</code> + <code>nextpnr</code></p>
+        </div>
+        <div class="col panel panel-neutral fragment">
+            <h3>ASIC (industry)</h3>
+            <p><strong>Area:</strong> Gate count × cell size (nm²)</p>
+            <p><strong>Perf:</strong> Critical path through std cells</p>
+            <p><strong>Power:</strong> Dynamic + leakage (process node)</p>
+            <p><strong>Tool:</strong> OpenROAD / OpenLane</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        Key difference: On FPGA, all LUTs are the same size. On ASIC, a 2-input gate is <em>physically smaller</em> than a 4-input gate. Area optimization is much richer.
+    </div>
+    <aside class="notes">On FPGA, area is quantized — LUTs are fixed. On ASIC, a simple inverter is tiny, a multiplier is large, and you pay for every transistor. The analysis habits are identical, but the numbers mean different things.</aside>
+</section>
+
+<!-- ─── OPENROAD / OPENLANE ─── -->
+<section>
+    <h2>OpenROAD / OpenLane</h2>
+    <div style="font-size:0.82em;">
+        <p class="fragment"><strong>Same Verilog.</strong> The RTL you write in this course can be synthesized to real standard cells.</p>
+        <p class="fragment"><strong>SKY130:</strong> SkyWater/Google's open-source 130nm process. Real transistor models, real PPA data.</p>
+        <p class="fragment"><strong>The flow:</strong> Verilog → Yosys (synthesis to std cells) → OpenROAD (place &amp; route) → GDSII (chip layout)</p>
+        <p class="fragment"><strong>Google/Efabless shuttle:</strong> Fabricate real chips from open-source designs. This is not hypothetical.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        We won't use OpenROAD in this course (the learning curve is steep), but the PPA analysis habits you build with <code>yosys stat</code> transfer <strong>directly</strong>.
+    </div>
+    <aside class="notes">OpenROAD and OpenLane take the same Verilog and give you real ASIC PPA metrics. The Google/Efabless shuttle actually fabricates chips from open-source designs. Everything you're learning transfers.</aside>
+</section>
+
+<!-- ─── CONCRETE EXAMPLE ─── -->
+<section>
+    <h2>A Concrete Comparison</h2>
+    <table style="font-size:0.72em;">
+        <tr><th>Design</th><th>iCE40 HX1K (FPGA)</th><th>SKY130 (ASIC, conceptual)</th></tr>
+        <tr class="fragment"><td>8-bit adder</td><td>~8 LUTs</td><td>~50 gates, tiny area</td></tr>
+        <tr class="fragment"><td>8×8 multiplier</td><td>~60 LUTs (~5% of chip)</td><td>~400 gates, still small</td></tr>
+        <tr class="fragment"><td>32×32 multiplier</td><td>~400 LUTs (~30% of chip!)</td><td>~5,000 gates, small fraction</td></tr>
+    </table>
+    <div class="fragment" style="font-size:0.82em;margin-top:0.5em;">
+        <p><strong>The insight:</strong> What's "expensive" depends on the platform. A 32-bit multiplier that consumes 30% of the iCE40 is trivial on an ASIC (or on an FPGA with DSP blocks).</p>
+    </div>
+    <aside class="notes">Context matters. A 32-bit multiplier is massive on iCE40 but trivial on an ASIC or a larger FPGA with DSP. The ability to quantify cost and make informed decisions — that's what PPA analysis gives you.</aside>
+</section>
+
+<!-- ─── PRE-CLASS QUIZ ─── -->
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> What does positive slack mean? What about negative slack?</p>
+        <div class="fragment quiz-answer">Positive slack = timing met (signal arrives before the deadline). Negative slack = timing violation (intermittent failures).</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> Why does <code>assign product = a * b;</code> use so many LUTs on iCE40?</p>
+        <div class="fragment quiz-answer">iCE40 has no DSP blocks. Multiplication is implemented entirely in LUT logic, with O(N²) gate count growth. Larger FPGAs use dedicated DSP slices.</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> When would you choose a sequential (shift-and-add) multiplier over a combinational one?</p>
+        <div class="fragment quiz-answer">When area is constrained and latency is acceptable. Sequential uses O(N) LUTs but takes N cycles. Combinational uses O(N²) LUTs but finishes in 1 cycle.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> What are the three FPGA PPA proxies, and which tools measure them?</p>
+        <div class="fragment quiz-answer">Performance → Fmax (nextpnr --freq). Area → LUT/FF/EBR count (yosys stat). Power → toggle rate × capacitance (limited on iCE40, conceptual).</div>
+    </div>
+</section>
+
+<!-- ─── END ─── -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 10 · Hands-On Lab</p>
+        <p style="color:#888;font-size:0.6em;margin-top:1em;">Today's lab: adder comparison, shift-and-add multiplier, fixed-point, PPA tables.</p>
+        <p style="color:#888;font-size:0.6em;margin-top:0.5em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

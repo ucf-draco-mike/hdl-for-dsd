@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 10.3: PPA — Performance, Power, Area — Accelerated HDL for Digital System Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ─── TITLE ─── -->
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;">
+        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Numerical Architectures &amp; Design Trade-offs</span>
+    </div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">PPA: Performance, Power, Area</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~15 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot active"></div>
+        <div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">Timing Essentials</span>
+        <span class="seg-label">Numerical Architectures</span>
+        <span class="seg-label active">PPA Introduction</span>
+        <span class="seg-label">ASIC PPA Context</span>
+    </div>
+    <aside class="notes">PPA — the three axes of digital design optimization. This is the framework you'll use for every design decision from now through the final project.</aside>
+</section>
+
+<!-- ─── WHAT IS PPA ─── -->
+<section>
+    <h2>What Is PPA?</h2>
+    <div class="columns">
+        <div class="col" style="flex:1.2;">
+            <img src="diagrams/d10_ppa_triangle.svg" alt="PPA trade-off triangle" style="width:100%;max-width:350px;display:block;margin:0 auto;">
+        </div>
+        <div class="col fragment" style="font-size:0.78em;">
+            <p><strong>Performance</strong> — how fast?<br><span style="color:#888;">Clock frequency, throughput, latency</span></p>
+            <p style="margin-top:0.5em;"><strong>Power</strong> — how much energy?<br><span style="color:#888;">Dynamic (switching) + static (leakage)</span></p>
+            <p style="margin-top:0.5em;"><strong>Area</strong> — how much silicon?<br><span style="color:#888;">Gate count, LUT utilization, die size</span></p>
+        </div>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        You cannot optimize all three simultaneously. Every design decision is a PPA trade-off.
+    </div>
+    <aside class="notes">PPA: Performance, Power, Area. The fundamental design optimization triangle. You can't win all three. Pipelining improves performance but costs area. Parallelism improves throughput but costs area and power. Clock gating reduces power but adds complexity.</aside>
+</section>
+
+<!-- ─── FPGA PPA PROXIES ─── -->
+<section>
+    <h2>FPGA PPA Proxies</h2>
+    <p style="font-size:0.82em;">We can't measure ASIC-style PPA directly, but we have excellent <strong>proxies</strong>:</p>
+    <table style="font-size:0.75em;margin-top:0.5em;">
+        <tr><th>PPA Axis</th><th>FPGA Proxy</th><th>Tool</th></tr>
+        <tr class="fragment"><td><strong>Performance</strong></td><td>Fmax (max clock frequency)</td><td><code>nextpnr --freq</code></td></tr>
+        <tr class="fragment"><td><strong>Area</strong></td><td>LUT count, FF count, EBR count</td><td><code>yosys stat</code></td></tr>
+        <tr class="fragment"><td><strong>Power</strong></td><td>Toggle rate × capacitance (conceptual)</td><td>Limited on iCE40</td></tr>
+    </table>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>iCE40 HX1K resources:</strong> 1,280 LUTs · 1,280 FFs · 16 EBR blocks (64 Kbit) · 1 PLL<br>
+        Every <code>yosys stat</code> report is a % utilization of these fixed resources.
+    </div>
+    <aside class="notes">On FPGA, area is LUT/FF count, performance is Fmax, and power is harder to measure. The iCE40 HX1K has 1280 LUTs — that's your budget. Every design fits or it doesn't.</aside>
+</section>
+
+<!-- ─── THE TRADE-OFF IN ACTION ─── -->
+<section>
+    <h2>The Trade-off in Action</h2>
+    <div style="font-size:0.78em;">
+        <p class="fragment"><strong>Pipelining</strong> (Segment 1): Improves Fmax, costs FFs. Adds latency.<br>
+        <span style="color:#888;">↑ Performance, ↑ Area (FFs), ≈ Power</span></p>
+        <p class="fragment"><strong>Sequential vs. combinational multiply</strong> (Segment 2): Reduces LUTs, costs cycles.<br>
+        <span style="color:#888;">↓ Performance (latency), ↓ Area (LUTs), ↑ Performance (Fmax)</span></p>
+        <p class="fragment"><strong><code>if/else</code> vs <code>case</code></strong> (Day 3): Priority chain may have longer critical path but similar area.<br>
+        <span style="color:#888;">Different Performance, ≈ Area — depends on context</span></p>
+        <p class="fragment"><strong>Adding features</strong> (Day 12/14 parity): More functionality costs LUTs.<br>
+        <span style="color:#888;">Feature cost: how many LUTs per feature?</span></p>
+    </div>
+    <aside class="notes">Every design decision you've made in this course has PPA implications. Day 3's if/else vs case comparison, Day 8's parameter width scaling, today's multiplier choice — all PPA trade-offs. Now we're making them explicit.</aside>
+</section>
+
+<!-- ─── STRUCTURED PPA REPORTING ─── -->
+<section>
+    <h2>Structured PPA Reporting</h2>
+    <p style="font-size:0.82em;">The format you'll use for labs and the final project:</p>
+    <table style="font-size:0.7em;margin-top:0.5em;">
+        <tr><th>Module</th><th>Configuration</th><th>LUTs</th><th>FFs</th><th>Fmax (MHz)</th><th>Notes</th></tr>
+        <tr><td>Adder</td><td>Ripple-carry, 8-bit</td><td>—</td><td>—</td><td>—</td><td></td></tr>
+        <tr><td>Adder</td><td>Behavioral <code>+</code>, 8-bit</td><td>—</td><td>—</td><td>—</td><td></td></tr>
+        <tr><td>Multiplier</td><td>Combinational <code>*</code>, 8-bit</td><td>—</td><td>—</td><td>—</td><td>1 cycle</td></tr>
+        <tr><td>Multiplier</td><td>Shift-and-add, 8-bit</td><td>—</td><td>—</td><td>—</td><td>8 cycles</td></tr>
+    </table>
+    <div class="fragment" style="font-size:0.78em;margin-top:0.5em;">
+        <p><strong>Plus a brief analysis:</strong> "The sequential multiplier uses X fewer LUTs than the combinational version, at the cost of 8 cycles of latency. For applications where throughput matters more than latency, the combinational version is preferred despite the area cost."</p>
+    </div>
+    <aside class="notes">This is the exact format for your lab deliverable today and for the final project PPA report. Numbers in the table, plus a paragraph of analysis explaining WHY the numbers look the way they do.</aside>
+</section>
+
+<!-- ─── DESIGN-SPACE EXPLORATION ─── -->
+<section>
+    <h2>Design-Space Exploration</h2>
+    <p style="font-size:0.82em;">Synthesize the same module at multiple parameter values. Plot the results.</p>
+    <div class="fragment" style="text-align:center;margin-top:0.5em;">
+        <pre style="font-family:monospace;font-size:0.55em;text-align:left;display:inline-block;background:none;border:none;box-shadow:none;color:#333;">
+  LUTs
+   │
+ 120│                                    *  (32-bit)
+   │
+  60│                        *  (16-bit)
+   │
+  30│            *  (8-bit)
+   │
+  15│    *  (4-bit)
+   │
+   └───────────────────────────────────── Width
+        4        8        16       32
+
+  Adders: roughly linear growth
+  Multipliers: quadratic growth (no DSP!)
+        </pre>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Day 14 and final project:</strong> You'll do this systematically across your own design variants.
+    </div>
+    <aside class="notes">Design-space exploration: synthesize at multiple widths, plot the curve. For adders it's linear. For multipliers it's quadratic. This is the habit you'll apply on Day 14 and in your final project.</aside>
+</section>
+
+<!-- ─── KEY TAKEAWAYS ─── -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;PPA = Performance + Power + Area. You can't optimize all three.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;FPGA proxies: Fmax (perf), LUTs/FFs (area), toggle rate (power, conceptual).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Every design decision has PPA consequences. Make them explicit.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Structured reporting: comparison table + written analysis.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">⑤</span>&ensp;Design-space exploration: sweep parameters, plot the curves.</p>
+    </div>
+</section>
+
+<!-- ─── TRANSITION ─── -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Open-Source ASIC PPA</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~5 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">How the PPA habits you're building transfer to real chip design.</p>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
+    width: 1280, height: 720, margin: 0.04,
+    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
+    plugins: [ RevealHighlight, RevealNotes ],
+});
+</script>
+</body>
+</html>

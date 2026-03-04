@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#888"/>
+    </marker>
+  </defs>
+
+  <text x="200" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">The PPA Trade-off Triangle</text>
+
+  <!-- Triangle -->
+  <polygon points="200,50 50,280 350,280" fill="none" stroke="#333" stroke-width="2"/>
+
+  <!-- Vertices -->
+  <circle cx="200" cy="50" r="28" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="200" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#1565C0">Perf</text>
+  <text x="200" y="58" text-anchor="middle" font-size="7" fill="#1565C0">Fmax</text>
+
+  <circle cx="50" cy="280" r="28" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="50" y="276" text-anchor="middle" font-size="10" font-weight="700" fill="#2E7D32">Area</text>
+  <text x="50" y="288" text-anchor="middle" font-size="7" fill="#2E7D32">LUTs/FFs</text>
+
+  <circle cx="350" cy="280" r="28" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="350" y="276" text-anchor="middle" font-size="10" font-weight="700" fill="#E65100">Power</text>
+  <text x="350" y="288" text-anchor="middle" font-size="7" fill="#E65100">Watts</text>
+
+  <!-- Edge labels -->
+  <text x="108" y="158" text-anchor="middle" font-size="8" fill="#888" transform="rotate(-55,108,158)">Pipeline: ↑Perf ↑Area</text>
+  <text x="292" y="158" text-anchor="middle" font-size="8" fill="#888" transform="rotate(55,292,158)">Clock gate: ↓Power ↓Perf</text>
+  <text x="200" y="300" text-anchor="middle" font-size="8" fill="#888">Parallel: ↑Area ↑Power</text>
+
+  <!-- Center text -->
+  <text x="200" y="200" text-anchor="middle" font-size="9" font-weight="600" fill="#C62828">You can't</text>
+  <text x="200" y="215" text-anchor="middle" font-size="9" font-weight="600" fill="#C62828">optimize all three</text>
+
+  <!-- FPGA note -->
+  <rect x="80" y="318" width="240" height="22" rx="4" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="200" y="333" text-anchor="middle" font-size="8" fill="#333" font-weight="600">iCE40 HX1K: 1,280 LUTs · 1,280 FFs · 16 EBR · 1 PLL</text>
+</svg>
