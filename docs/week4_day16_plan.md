@@ -139,7 +139,7 @@ Each student presents for **5–7 minutes**, followed by brief Q&A:
 
 ## Final Project Submission Checklist
 
-Students should submit (per syllabus requirements):
+Students should submit (per course_syllabus requirements):
 
 | Item | Description | Required? |
 |------|-------------|-----------|

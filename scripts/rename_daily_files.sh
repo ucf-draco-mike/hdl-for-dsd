@@ -111,29 +111,29 @@ echo ""
 echo "--- lectures/ weekly subdirectories ---"
 
 # Week 1
-do_mv "lectures/week1/day01_welcome_to_hardware_thinking"          "lectures/week1/day01"
-do_mv "lectures/week1/day02_combinational_building_blocks"         "lectures/week1/day02"
-do_mv "lectures/week1/day03_procedural_combinational_logic"        "lectures/week1/day03"
-do_mv "lectures/week1/day04_sequential_logic_fundamentals"         "lectures/week1/day04"
+do_mv "lectures/week1_day01_welcome_to_hardware_thinking"          "lectures/week1_day01"
+do_mv "lectures/week1_day02_combinational_building_blocks"         "lectures/week1_day02"
+do_mv "lectures/week1_day03_procedural_combinational_logic"        "lectures/week1_day03"
+do_mv "lectures/week1_day04_sequential_logic_fundamentals"         "lectures/week1_day04"
 
 # Week 2
-do_mv "lectures/week2/day05_counters_shift_registers_debouncing"   "lectures/week2/day05"
-do_mv "lectures/week2/day06_testbenches_simulation_driven_development" \
-                                                                    "lectures/week2/day06"
-do_mv "lectures/week2/day07_finite_state_machines"                 "lectures/week2/day07"
-do_mv "lectures/week2/day08_hierarchy_parameters_generate"         "lectures/week2/day08"
+do_mv "lectures/week2_day05_counters_shift_registers_debouncing"   "lectures/week2_day05"
+do_mv "lectures/week2_day06_testbenches_simulation_driven_development" \
+                                                                    "lectures/week2_day06"
+do_mv "lectures/week2_day07_finite_state_machines"                 "lectures/week2_day07"
+do_mv "lectures/week2_day08_hierarchy_parameters_generate"         "lectures/week2_day08"
 
 # Week 3
-do_mv "lectures/week3/day09_memory_ram_rom_block_ram"              "lectures/week3/day09"
-do_mv "lectures/week3/day10_timing_clocking_constraints"           "lectures/week3/day10"
-do_mv "lectures/week3/day11_uart_transmitter"                      "lectures/week3/day11"
-do_mv "lectures/week3/day12_uart_rx_spi_ip_integration"            "lectures/week3/day12"
+do_mv "lectures/week3_day09_memory_ram_rom_block_ram"              "lectures/week3_day09"
+do_mv "lectures/week3_day10_timing_clocking_constraints"           "lectures/week3_day10"
+do_mv "lectures/week3_day11_uart_transmitter"                      "lectures/week3_day11"
+do_mv "lectures/week3_day12_uart_rx_spi_ip_integration"            "lectures/week3_day12"
 
 # Week 4
-do_mv "lectures/week4/day13_systemverilog_for_design"              "lectures/week4/day13"
-do_mv "lectures/week4/day14_systemverilog_for_verification"        "lectures/week4/day14"
-do_mv "lectures/week4/day15_final_project_build_day"               "lectures/week4/day15"
-do_mv "lectures/week4/day16_demos_reflection_next_steps"           "lectures/week4/day16"
+do_mv "lectures/week4_day13_systemverilog_for_design"              "lectures/week4_day13"
+do_mv "lectures/week4_day14_systemverilog_for_verification"        "lectures/week4_day14"
+do_mv "lectures/week4_day15_final_project_build_day"               "lectures/week4_day15"
+do_mv "lectures/week4_day16_demos_reflection_next_steps"           "lectures/week4_day16"
 
 # -----------------------------------------------------------------------------
 # 3. labs/ — already use dayNN/ format; no renames needed
@@ -156,10 +156,10 @@ else
 fi
 echo ""
 echo "Post-rename checklist:"
-echo "  1. ls docs/day*.md               — should be day01.md through day16.md only"
-echo "  2. ls lectures/week3/day10/      — timing-only slides; flagged for rebuild"
-echo "  3. Commit docs/DEVELOPMENT_STATUS.md (provided separately)"
+echo "  1. ls docs/day*.md               — should be week1_day01.md through week4_day16.md only"
+echo "  2. ls lectures/week3_day10/      — timing-only slides; flagged for rebuild"
+echo "  3. Commit docs/course_dev_status.md (provided separately)"
 echo "  4. Update README.md and docs/README.md directory tree listings"
-echo "  5. When Day 10 rebuild complete: replace lectures/week3/day10/ contents"
+echo "  5. When Day 10 rebuild complete: replace lectures/week3_day10/ contents"
 echo "  6. git commit -m 'refactor: standardize daily filenames to dayNN convention'"
 echo "================================================================="

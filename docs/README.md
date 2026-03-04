@@ -40,23 +40,23 @@ A 4-week, 16-session accelerated course in Verilog and digital system design usi
 hdl-course/
 ├── README.md                    ← you are here
 ├── docs/
-│   ├── curriculum_v2_1.md       ← full 16-day curriculum & session map (instructor reference)
-│   ├── syllabus.md              ← student-facing syllabus
-│   ├── setup_guide.md           ← toolchain installation instructions
-│   ├── day01_welcome_to_hardware_thinking.md
-│   ├── day02_combinational_building_blocks.md
-│   ├── day03_procedural_combinational_logic.md
-│   ├── day04_sequential_logic.md
+│   ├── curriculum_v2_1.md       ← full 16-day course_curriculum & session map (instructor reference)
+│   ├── course_syllabus.md              ← student-facing course_syllabus
+│   ├── course_setup_guide.md           ← toolchain installation instructions
+│   ├── week1_day01.md
+│   ├── week1_day02.md
+│   ├── week1_day03.md
+│   ├── week1_day04_plan.md
 │   ├── day05_counters_shift_registers_debouncing.md
-│   ├── day06_testbenches_simulation_ai_verification.md
+│   ├── week2_day06_plan.md
 │   ├── day07_finite_state_machines.md
 │   ├── day08_hierarchy_parameters_generate.md
-│   ├── day09_memory_ram_rom_blockram.md
+│   ├── week3_day09_plan.md
 │   ├── day10_numerical_architectures_design_tradeoffs.md
-│   ├── day11_uart_tx.md
+│   ├── week3_day11_plan.md
 │   ├── day12_uart_rx_spi_protocol_tbs.md
 │   ├── day13_systemverilog_for_design.md
-│   ├── day14_verification_ai_testing_ppa.md
+│   ├── week4_day14_plan.md
 │   ├── day15_final_project_build_day.md
 │   └── day16_demos_reflection_next_steps.md
 │
@@ -64,7 +64,7 @@ hdl-course/
 │   ├── theme/                   ← UCF-branded reveal.js theme
 │   │   └── ucf-hdl.css
 │   ├── week1/
-│   │   ├── day01_welcome_to_hardware_thinking/
+│   │   ├── week1_day01/
 │   │   │   ├── seg1_hdl_not_software.html
 │   │   │   ├── seg2_synthesis_vs_simulation.html
 │   │   │   ├── seg3_anatomy_of_a_module.html
@@ -81,8 +81,8 @@ hdl-course/
 │
 ├── labs/                        ← in-class lab materials & starter code
 │   ├── week1/
-│   │   ├── day01/
-│   │   ├── day02/
+│   │   ├── week1_day01/
+│   │   ├── week1_day02/
 │   │   ...
 │   ├── week2/
 │   ├── week3/
@@ -155,9 +155,9 @@ yosys -p "read_verilog module.v; synth_ice40 -top module; show"
 
 ## Getting Started
 
-1. **Install the toolchain** — see [`docs/setup_guide.md`](docs/setup_guide.md)
+1. **Install the toolchain** — see [`docs/course_setup_guide.md`](docs/course_setup_guide.md)
 2. **Get the Go Board** — [nandland.com](https://nandland.com/the-go-board/)
-3. **Watch the Day 1 videos** — `lectures/week1/day01_welcome_to_hardware_thinking/`
+3. **Watch the Day 1 videos** — `lectures/week1_day01_welcome_to_hardware_thinking/`
 4. **Come to class ready to build**
 
 ## License

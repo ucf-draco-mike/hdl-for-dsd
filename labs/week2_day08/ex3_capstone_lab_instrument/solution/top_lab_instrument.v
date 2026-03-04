@@ -16,7 +16,7 @@ module top_lab_instrument (
     output wire o_segment2_d, o_segment2_e, o_segment2_f, o_segment2_g
 );
 
-    // --- Input Processing (matches curriculum spec: sw1=MSB, sw4=LSB) ---
+    // --- Input Processing (matches course_curriculum spec: sw1=MSB, sw4=LSB) ---
     wire [3:0] w_buttons, w_press;
 
     go_board_input #(

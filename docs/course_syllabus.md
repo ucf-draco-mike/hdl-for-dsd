@@ -54,7 +54,7 @@ Upon successful completion of this course, students will be able to:
 - **GTKWave** — Waveform viewer
 - **Git** — Version control (all work submitted via repository)
 
-Installation instructions: see `docs/setup_guide.md` in the course repository.
+Installation instructions: see `docs/course_setup_guide.md` in the course repository.
 
 ### AI Tools
 Students will use AI-assisted verification tools (e.g., Claude, ChatGPT, Copilot) beginning in Week 2. No specific tool is required — students may use any AI assistant. The critical skill is evaluating and correcting AI-generated code, not the tool itself.

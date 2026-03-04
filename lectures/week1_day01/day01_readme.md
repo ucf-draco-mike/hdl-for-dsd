@@ -71,7 +71,7 @@ Files follow the course naming scheme:
 ## Directory Structure
 
 ```
-day01_welcome_to_hardware_thinking/
+week1_day01/
 ├── day01_readme.md                         ← this file
 ├── day01_quiz.md                           ← pre-class self-check (5 questions)
 ├── d01_s1_hdl_not_software.html            ← Video 1: concurrency, river analogy

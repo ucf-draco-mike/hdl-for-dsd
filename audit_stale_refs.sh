@@ -72,7 +72,7 @@ report "Old final project span (Days 14–16 or Days 14-16)" \
     'Days 14.16|spanning Days 14' docs README.md
 
 # 9. Old DEVELOPMENT_STATUS filenames
-report "Old verbose daily plan names in DEVELOPMENT_STATUS" \
+report "Old verbose daily plan names in course_dev_status" \
     'day0[0-9]_welcome|day0[0-9]_combinational|day0[0-9]_procedural' docs
 
 echo ""

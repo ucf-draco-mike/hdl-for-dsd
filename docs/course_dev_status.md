@@ -8,19 +8,19 @@ Last updated: 2026-02-26
 | File | Status | Notes |
 |---|---|---|
 | `README.md` | ✅ Complete | Course overview, structure, quick start |
-| `docs/curriculum.md` | ✅ Complete | 16-session map, video guide, grading |
-| `docs/syllabus.md` | ✅ Complete | Student-facing syllabus |
-| `docs/setup_guide.md` | ✅ Complete | Multi-platform install (Linux/macOS/WSL2) |
-| `docs/video_lecture_scaffold.md` | ✅ Complete | 56-segment production guide |
-| `docs/DEVELOPMENT_STATUS.md` | ✅ Complete | This file |
+| `docs/course_curriculum.md` | ✅ Complete | 16-session map, video guide, grading |
+| `docs/course_syllabus.md` | ✅ Complete | Student-facing course_syllabus |
+| `docs/course_setup_guide.md` | ✅ Complete | Multi-platform install (Linux/macOS/WSL2) |
+| `docs/course_video_scaffold.md` | ✅ Complete | 56-segment production guide |
+| `docs/course_dev_status.md` | ✅ Complete | This file |
 
 ### Daily Plans (All 16 Complete)
 | Day | File | Lines | Status |
 |---|---|---|---|
-| 1 | `day01_welcome_to_hardware_thinking.md` | 676 | ✅ Full |
-| 2 | `day02_combinational_building_blocks.md` | 674 | ✅ Full |
-| 3 | `day03_procedural_combinational_logic.md` | 787 | ✅ Full |
-| 4 | `day04_sequential_logic_fundamentals.md` | 752 | ✅ Full |
+| 1 | `week1_day01.md` | 676 | ✅ Full |
+| 2 | `week1_day02.md` | 674 | ✅ Full |
+| 3 | `week1_day03.md` | 787 | ✅ Full |
+| 4 | `week1_day04.md` | 752 | ✅ Full |
 | 5 | `day05_counters_shift_registers_debouncing.md` | 840 | ✅ Full |
 | 6 | `day06_testbenches_simulation_driven_development.md` | 757 | ✅ Full |
 | 7 | `day07_finite_state_machines.md` | 750 | ✅ Full |

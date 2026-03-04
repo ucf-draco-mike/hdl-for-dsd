@@ -30,7 +30,7 @@ See `day04_quiz.md` — 4 questions. Also embedded at end of Segment 4.
 ## Directory Structure
 
 ```
-day04_sequential_logic_fundamentals/
+week1_day04/
 ├── day04_readme.md
 ├── day04_quiz.md
 ├── d04_s1_clocks_and_edges.html

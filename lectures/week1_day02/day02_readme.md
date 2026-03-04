@@ -40,7 +40,7 @@ See `day02_quiz.md` — 4 questions. Also embedded as interactive slides at end 
 ## Directory Structure
 
 ```
-day02_combinational_building_blocks/
+week1_day02/
 ├── day02_readme.md
 ├── day02_quiz.md
 ├── d02_s1_data_types_and_vectors.html

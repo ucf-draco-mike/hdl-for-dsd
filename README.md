@@ -35,10 +35,10 @@ hdl-course/
 ├── flake.nix                    ← Nix dev environment (all tools, all platforms)
 ├── .envrc                       ← optional direnv auto-activation
 ├── docs/
-│   ├── curriculum.md            ← full 16-day curriculum & session map
-│   ├── syllabus.md              ← student-facing syllabus
-│   ├── setup_guide.md           ← toolchain installation instructions
-│   ├── video_lecture_scaffold.md ← lecture production guide
+│   ├── course_curriculum.md            ← full 16-day course_curriculum & session map
+│   ├── course_syllabus.md              ← student-facing course_syllabus
+│   ├── course_setup_guide.md           ← toolchain installation instructions
+│   ├── course_video_scaffold.md ← lecture production guide
 │   └── day*_*.md                ← detailed daily session plans (instructor guides)
 │
 ├── lectures/                    ← pre-class video lecture materials
@@ -46,10 +46,10 @@ hdl-course/
 │   ├── week1/ through week4/   ← slide decks (reveal.js HTML)
 │
 ├── labs/                        ← in-class lab materials & starter code
-│   ├── week1/day01/ through day04/
-│   ├── week2/day05/ through day08/
-│   ├── week3/day09/ through day12/
-│   └── week4/day13/ through day16/
+│   ├── week1/day01/ through week1_day04/
+│   ├── week2/day05/ through week2_day08/
+│   ├── week3/day09/ through week3_day12/
+│   └── week4/day13/ through week4_day16/
 │
 ├── projects/                    ← spec & rubrics
 │
@@ -65,7 +65,7 @@ hdl-course/
 
 ### 1. Complete OS Prerequisites
 
-See [`docs/setup_guide.md`](docs/setup_guide.md) — complete **only** your platform's Step 0:
+See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) — complete **only** your platform's Step 0:
 
 | Platform | What to do |
 |----------|------------|
@@ -104,7 +104,7 @@ cd labs/week1/day01
 make prog    # synthesize + program the Go Board
 ```
 
-> **Full setup details** — including USB verification, GTKWave testing, serial terminal config, and troubleshooting — are in [`docs/setup_guide.md`](docs/setup_guide.md).
+> **Full setup details** — including USB verification, GTKWave testing, serial terminal config, and troubleshooting — are in [`docs/course_setup_guide.md`](docs/course_setup_guide.md).
 
 ## Toolchain Quick Reference
 

@@ -30,7 +30,7 @@ See `day03_quiz.md` — 4 questions. Also embedded at end of Segment 4.
 ## Directory Structure
 
 ```
-day03_procedural_combinational_logic/
+week1_day03/
 ├── day03_readme.md
 ├── day03_quiz.md
 ├── d03_s1_always_star_block.html

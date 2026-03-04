@@ -177,7 +177,7 @@ for week in labs/week1 labs/week2 labs/week3 labs/week4; do
         [[ -d "$src_dir" ]] || continue
         base=$(basename "$src_dir")
         # Extract just dayNN prefix
-        day_prefix="${base%%_*}"   # e.g., day01
+        day_prefix="${base%%_*}"   # e.g., week1_day01
         dst_dir="$week/$day_prefix"
         do_mv "$src_dir" "$dst_dir"
     done
