@@ -1,0 +1,20 @@
+// hex_vectors.hex — Test vectors for hex_to_7seg
+// Format: {input_hex[3:0], expected_seg[6:0]}  (11 bits per vector)
+// Segments: a=bit6, b=bit5, c=bit4, d=bit3, e=bit2, f=bit1, g=bit0
+// Active-low segments (0 = on, 1 = off)
+7E0  // 0: 0111_1110_0 → abcdef on, g off → 0x7E, g=0 → 0x7E0
+330  // 1: 0011_0000_0 → bc on → ...
+6D0  // 2: 0110_1101_0 → abdeg
+790  // 3: 0111_1001_0 → abcdg
+330  // 4: 0011_0011_0 → bcfg  (revisit encoding)
+5B0  // 5: 0101_1011_0 → acdfg
+5F0  // 6: 0101_1111_0 → acdefg
+700  // 7: 0111_0000_0 → abc
+7F0  // 8: 0111_1111_0 → abcdefg
+7B0  // 9: 0111_1011_0 → abcdfg
+770  // A: 0111_0111_0 → abcefg
+1F0  // b: 0001_1111_0 → cdefg
+4E0  // C: 0100_1110_0 → adef
+3D0  // d: 0011_1101_0 → bcdeg
+4F0  // E: 0100_1111_0 → adefg
+470  // F: 0100_0111_0 → aefg
