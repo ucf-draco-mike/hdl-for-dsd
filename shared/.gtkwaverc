@@ -1,0 +1,17 @@
+# GTKWave configuration — Accelerated HDL for Digital System Design
+# Place this file in your lab directory or $HOME to auto-load settings
+[*]
+[*] GTKWave Analyzer shared settings
+[*]
+[size] 1400 800
+[pos] 50 50
+[sst_width] 250
+[signals_width] 200
+[timestart] 0
+[treeopen] 1
+[scale] 2
+[maxtime] 10000000
+# Display settings
+[dividercolor] #308030
+[bkg] #000000
+[vcd_default_time_dimension] ns
