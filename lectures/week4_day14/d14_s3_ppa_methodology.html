@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.3: PPA Analysis Methodology — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Verification, AI-Driven Testing &amp; PPA Analysis</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">PPA Analysis Methodology</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">Assertions</span>
+        <span class="seg-label">AI Verification</span>
+        <span class="seg-label active">PPA Methodology</span>
+        <span class="seg-label">Coverage &amp; Road Ahead</span>
+    </div>
+    <aside class="notes">This segment gives you the exact format for PPA reporting in your final project. We'll build a comparison table live, discuss ASIC context, and walk through design-space exploration.</aside>
+</section>
+
+<section>
+    <h2>FPGA PPA Report Template</h2>
+    <p style="font-size:0.82em;">This is what your final project PPA report should look like:</p>
+    <table style="font-size:0.68em;margin-top:0.3em;">
+        <tr><th>Module</th><th>Configuration</th><th>LUTs</th><th>FFs</th><th>EBR</th><th>Fmax (MHz)</th><th>% HX1K</th></tr>
+        <tr class="fragment"><td>UART TX</td><td>PARITY_EN=0</td><td>48</td><td>22</td><td>0</td><td>62.3</td><td>3.8%</td></tr>
+        <tr class="fragment"><td>UART TX</td><td>PARITY_EN=1</td><td>54</td><td>23</td><td>0</td><td>60.1</td><td>4.2%</td></tr>
+        <tr class="fragment"><td>Counter</td><td>WIDTH=8</td><td>10</td><td>8</td><td>0</td><td>185</td><td>0.8%</td></tr>
+        <tr class="fragment"><td>Counter</td><td>WIDTH=32</td><td>38</td><td>32</td><td>0</td><td>112</td><td>3.0%</td></tr>
+        <tr class="fragment"><td>Multiplier</td><td>Comb 8×8</td><td>62</td><td>0</td><td>0</td><td>38.5</td><td>4.8%</td></tr>
+        <tr class="fragment"><td>Multiplier</td><td>Seq 8×8</td><td>35</td><td>28</td><td>0</td><td>95.2</td><td>2.7%</td></tr>
+    </table>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Numbers are illustrative.</strong> You'll fill in real numbers from <code>yosys stat</code> and <code>nextpnr</code> in today's lab. HX1K has 1,280 LUTs.
+    </div>
+    <aside class="notes">This table format is what we'll build in class and what your final project needs. The numbers here are illustrative — your lab will produce real ones.</aside>
+</section>
+
+<section>
+    <h2>The Analysis Paragraph</h2>
+    <p style="font-size:0.82em;">Numbers alone aren't enough. Each module needs a <strong>brief trade-off discussion</strong>:</p>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <em>"Adding parity to the UART TX costs 6 additional LUTs (+12%) and 1 FF, with a 2.2 MHz reduction in Fmax. For applications requiring error detection on a noisy channel, this is a negligible cost. For designs already tight on the HX1K, the feature can be disabled via PARITY_EN=0 with zero overhead thanks to generate-if elimination."</em>
+    </div>
+    <div class="fragment" style="font-size:0.82em;margin-top:0.5em;">
+        <p><strong>Structure:</strong> What changed → how much it costs → when you'd make this choice</p>
+        <p>This is the paragraph format for your final project.</p>
+    </div>
+    <aside class="notes">This is the analysis quality we're looking for. Not just numbers — interpretation. What changed, how much it costs, and when you'd make this choice. One paragraph per module comparison.</aside>
+</section>
+
+<section>
+    <h2>Design-Space Exploration</h2>
+    <p style="font-size:0.82em;">Sweep a parameter and plot the results:</p>
+    <pre class="synth"><code class="language-bash"># Sweep counter width from 4 to 32
+for W in 4 8 16 32; do
+    echo "WIDTH=$W:"
+    yosys -q -p "read_verilog -DWIDTH=$W counter.v; synth_ice40 -top counter; stat" \
+        2>&1 | grep "cells\|SB_LUT"
+done</code></pre>
+    <div class="fragment" style="font-size:0.82em;">
+        <p><strong>Plot the curve:</strong> Does area scale linearly? Quadratic? Sublinear?</p>
+        <p><strong>Find the knee:</strong> Where does Fmax start to drop? That's your design constraint.</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Recall Day 10:</strong> Adders scale linearly, multipliers scale quadratically. The same analysis applies to every parameterized module in your project.
+    </div>
+    <aside class="notes">This is the same approach from Day 10, now applied systematically. Sweep your project's parameters, record the curves. This goes in the PPA report.</aside>
+</section>
+
+<section>
+    <h2>ASIC Context</h2>
+    <div style="font-size:0.78em;">
+        <p class="fragment"><strong>Gate count vs. LUT count:</strong> ASIC area is measured in gate equivalents or µm². A 2-input gate is physically smaller than a 4-input gate — unlike FPGA LUTs which are all the same size.</p>
+        <p class="fragment"><strong>Wire delay dominance:</strong> In advanced ASIC nodes (28nm and below), wire delay often exceeds gate delay. Place-and-route matters enormously.</p>
+        <p class="fragment"><strong>Liberty files &amp; standard cells:</strong> ASIC synthesis uses technology libraries (.lib) that describe the delay, area, and power of each cell type. Your <code>yosys stat</code> is the FPGA analog.</p>
+        <p class="fragment"><strong>OpenROAD/OpenLane:</strong> Takes the same Verilog, synthesizes to SKY130 standard cells, and gives real ASIC PPA metrics. The habits you're building transfer directly.</p>
+    </div>
+    <aside class="notes">Brief ASIC context. The key message: the PPA analysis skills you're building with yosys stat transfer directly to ASIC design. The tools change, the thinking doesn't.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;PPA report = comparison table + analysis paragraph per module.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Numbers alone aren't enough. Explain <em>what changed, how much, and why it matters.</em></p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Design-space exploration: sweep parameters, find the scaling curve and the knee.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;FPGA PPA habits transfer to ASIC. <code>yosys stat</code> → Liberty-based synthesis.</p>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Coverage &amp; the Road Ahead</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
+        <p style="color:#888;font-size:0.6em;margin-top:2em;">How do you know when testing is done? And where to go from here.</p>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({ hash:true, slideNumber:'c/t', showSlideNumber:'all', width:1280, height:720, margin:0.04, transition:'slide', plugins:[RevealHighlight,RevealNotes] });</script>
+</body></html>

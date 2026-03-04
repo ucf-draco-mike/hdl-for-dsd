@@ -1,48 +1,56 @@
-# Day 14: SystemVerilog for Verification
+# Day 14: Verification Techniques, AI-Driven Testing & PPA Analysis
 
-## Pre-Class Videos (~50 minutes total)
+## Pre-Class Videos (~55 minutes total)
 
 | # | Segment | Duration | File |
 |---|---------|----------|------|
-| 1 | Assertions — Executable Specifications | ~15 min | `d14_s1_assertions.html` |
-| 2 | Concurrent Assertions | ~12 min | `d14_s2_concurrent_assertions.html` |
-| 3 | Functional Coverage | ~12 min | `d14_s3_functional_coverage.html` |
-| 4 | Interfaces & the Road to UVM | ~11 min | `d14_s4_interfaces_road_to_uvm.html` |
+| 1 | Assertions — Executable Specifications | ~12 min | `d14_s1_assertions.html` |
+| 2 | AI-Driven Verification Workflows | ~15 min | `d14_s2_ai_verification_workflows.html` |
+| 3 | PPA Analysis Methodology | ~12 min | `d14_s3_ppa_methodology.html` |
+| 4 | Coverage & the Road Ahead | ~11 min | `d14_s4_coverage_road_ahead.html` |
 
 ## Code Examples
 
 | File | Description |
 |------|-------------|
-| `code/day14_ex01_uart_tx_assertions.sv` | UART TX with 5 immediate assertions + concurrent assertion templates |
+| `code/day14_ex01_uart_tx_assertions.sv` | UART TX with immediate assertions (retained from v1) |
 
 ## Diagrams
 
 | File | Description |
 |------|-------------|
-| `diagrams/d14_verification_pyramid.svg` | Verification maturity scale: waveforms → assertions → UVM → formal |
+| `diagrams/d14_verification_pyramid.svg` | Verification maturity scale (retained from v1) |
 
 ## Key Concepts
-- Immediate assertions: checked at a point in procedural code
-- Concurrent assertions: multi-cycle sequence checking (`assert property`)
-- `|->` overlapping, `|=>` non-overlapping implication
-- `disable iff (reset)` to skip checks during reset
-- `covergroup` / `coverpoint` / `bins` for functional coverage
-- `interface` with `modport`: bundled connections, different views
-- Verification maturity: waveforms → self-checking → assertions → coverage → UVM → formal
-- Tool notes: immediate assertions in iverilog -g2012; concurrent/coverage need commercial tools
+- Immediate assertions: `assert (condition) else $error(...)` — inline design checks
+- Concurrent assertions (brief): `assert property`, `|->`, `|=>` implication operators
+- Verification productivity stack: manual → self-checking → AI-scaffolded → assertion-enhanced → coverage-driven
+- Constraint-based stimulus: `$urandom_range()`, bounded random, constraint specs for AI
+- PPA report template: resource table + Fmax + analysis paragraph per comparison
+- Design-space exploration: sweep parameters, plot area/timing curves
+- ASIC PPA context: gate count, Liberty files, OpenROAD/OpenLane
+- Functional coverage: covergroup, coverpoint, bins (conceptual — not supported in iverilog)
+- Industry verification landscape: UVM, formal, AI-assisted workflows
+
+## Changes from Previous Version
+
+Segments 2 and 3 replaced. Previously covered concurrent assertions and functional
+coverage as full segments. Now covers AI-driven verification workflows and PPA
+analysis methodology, matching the curriculum doc plan. Concurrent assertion details
+merged into Segment 1; coverage concepts merged into Segment 4.
 
 ## Directory Structure
 
 ```
-day14_systemverilog_for_verification/
-├── d14_s1_assertions.html
-├── d14_s2_concurrent_assertions.html
-├── d14_s3_functional_coverage.html
-├── d14_s4_interfaces_road_to_uvm.html
+lectures/week4_day14/
+├── d14_s1_assertions.html                  (retained, breadcrumbs updated)
+├── d14_s2_ai_verification_workflows.html   (NEW)
+├── d14_s3_ppa_methodology.html             (NEW)
+├── d14_s4_coverage_road_ahead.html         (NEW)
 ├── code/
-│   └── day14_ex01_uart_tx_assertions.sv
+│   └── day14_ex01_uart_tx_assertions.sv    (retained)
 ├── diagrams/
-│   └── d14_verification_pyramid.svg
-├── day14_quiz.md
-└── day14_readme.md
+│   └── d14_verification_pyramid.svg        (retained)
+├── day14_quiz.md                           (updated)
+└── day14_readme.md                         (this file)
 ```

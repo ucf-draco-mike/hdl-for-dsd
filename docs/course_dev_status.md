@@ -80,5 +80,6 @@ Last updated: 2026-03-04
 | Item | Priority | Notes |
 |---|---|---|
 | Day 10 content alignment | ✅ Fixed | Lectures & labs realigned to numerical architectures + PPA (2026-03-04) |
+| Day 14 content alignment | ✅ Fixed | Lectures & labs realigned: AI verification + PPA methodology + parity exercise (2026-03-04) |
 | Video recording | 🔶 Medium | 56 segments scripted, not yet recorded |
 | Lab structure normalization | 🔶 Medium | Three different org patterns across weeks |

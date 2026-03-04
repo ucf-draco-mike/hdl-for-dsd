@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 14.4: Coverage &amp; the Road Ahead — Accelerated HDL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../theme/ucf-hdl.css">
+    <style>.quiz-answer{background:#E8F5E9;border:1px solid #2E7D32;border-radius:6px;padding:0.6em 0.8em;margin-top:0.4em;font-size:0.7em;}</style>
+</head><body><div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Verification, AI-Driven Testing &amp; PPA Analysis</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">Coverage &amp; the Road Ahead</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <p class="course-info" style="color:#888;">UCF · Department of ECE</p>
+    <div class="seg-breadcrumb">
+        <div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div>
+    </div>
+    <div class="seg-breadcrumb-labels">
+        <span class="seg-label">Assertions</span>
+        <span class="seg-label">AI Verification</span>
+        <span class="seg-label">PPA Methodology</span>
+        <span class="seg-label active">Coverage &amp; Road Ahead</span>
+    </div>
+    <aside class="notes">The final pre-class video. Coverage concepts, then a roadmap of where the skills you've built lead next.</aside>
+</section>
+
+<section>
+    <h2>Functional Coverage: Are You Done Testing?</h2>
+    <p style="font-size:0.82em;">Simulation can show bugs exist. It can never prove they don't. <strong>Coverage</strong> measures how much of the design space you've exercised.</p>
+    <pre class="synth"><code class="language-systemverilog">// SystemVerilog coverage constructs (conceptual — not supported in iverilog)
+covergroup alu_cov @(posedge clk);
+    cp_opcode: coverpoint opcode {
+        bins add = {3'b000}; bins sub = {3'b001};
+        bins bw_and = {3'b010}; bins bw_or = {3'b011};
+    }
+    cp_a_range: coverpoint a {
+        bins zero = {0}; bins mid = {[1:254]}; bins max = {255};
+    }
+    cx_full: cross cp_opcode, cp_a_range;  // 4 × 3 = 12 bins
+endgroup</code></pre>
+    <div class="fragment callout" style="font-size:0.75em;">
+        <strong>Tool note:</strong> Icarus Verilog doesn't support <code>covergroup</code>. In today's lab, you'll analyze coverage <em>manually</em> — which is the harder and more valuable skill.
+    </div>
+    <aside class="notes">Coverage is how you answer "am I done testing?" Iverilog can't do automatic coverage, so you'll do it manually — which actually teaches you to think about the design space, not just collect numbers.</aside>
+</section>
+
+<section>
+    <h2>Verification Maturity: Where You Are Now</h2>
+    <div style="font-size:0.75em;">
+        <table>
+            <tr><th>Level</th><th>Technique</th><th>You?</th></tr>
+            <tr><td>1</td><td>Waveform inspection</td><td style="color:#2E7D32;">✓ Day 4</td></tr>
+            <tr><td>2</td><td>Self-checking directed tests</td><td style="color:#2E7D32;">✓ Day 6</td></tr>
+            <tr><td>3</td><td>AI-scaffolded testbenches</td><td style="color:#2E7D32;">✓ Days 6, 8, 12</td></tr>
+            <tr><td>4</td><td>Assertion-enhanced</td><td style="color:#2E7D32;">✓ Today (Seg 1)</td></tr>
+            <tr class="fragment"><td>5</td><td>Constrained random + coverage analysis</td><td style="color:var(--ucf-gold);">→ Today's lab</td></tr>
+            <tr class="fragment"><td>6</td><td>UVM methodology</td><td style="color:#888;">Next course</td></tr>
+            <tr class="fragment"><td>7</td><td>Formal verification</td><td style="color:#888;">Advanced topic</td></tr>
+        </table>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;">
+        Levels 1–5 are what you'll use in the final project. Levels 6–7 are where the department's Verification &amp; Validation course picks up.
+    </div>
+    <aside class="notes">You've gone from waveform staring to assertion-enhanced constrained-random testing in two weeks. That's Level 5 of a 7-level maturity scale. Levels 6-7 are career-level skills that build directly on what you've learned here.</aside>
+</section>
+
+<section>
+    <h2>Where These Skills Lead</h2>
+    <div style="font-size:0.78em;">
+        <p class="fragment"><strong>UVM (Universal Verification Methodology):</strong> Your constraint specs → UVM sequences. Your AI-generated TBs → UVM test library. Your assertions → SVA property specifications.</p>
+        <p class="fragment"><strong>Formal verification:</strong> Mathematically prove properties hold for <em>all</em> possible inputs. Tools: SymbiYosys (open-source), JasperGold, VC Formal (commercial).</p>
+        <p class="fragment"><strong>AI in professional V&amp;V:</strong> Industry uses AI for TB scaffolding, regression debugging, coverage analysis, and assertion generation — the same workflow you've practiced, at scale.</p>
+        <p class="fragment"><strong>Interfaces &amp; modport</strong> (brief): SV <code>interface</code> bundles signals; <code>modport</code> defines views. Reduces port-map boilerplate. Stretch exercise in today's lab.</p>
+    </div>
+    <aside class="notes">Quick tour of where the skills you've built go next. UVM, formal, AI-assisted V&V, interfaces — all build directly on the foundation from this course. The department's V&V course covers UVM and formal in depth.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> What does <code>assert (o_tx == 1'b1) else $error("TX not idle");</code> do that <code>if (!o_tx) $display("Error")</code> doesn't?</p>
+        <div class="fragment quiz-answer">Assertions are standardized (tools count/filter/report uniformly), have severity levels, can be globally enabled/disabled, and are recognized by formal verification tools. <code>if</code>-statements provide none of these benefits.</div>
+        <p style="margin-top:0.8em;"><strong>Q2:</strong> Write a constraint spec (2–3 lines) for testing a UART TX module with AI.</p>
+        <div class="fragment quiz-answer">"Test UART TX at 115200 baud with $urandom_range for data bytes. Send at least 20 frames including 0x00, 0xFF, and alternating 0xAA/0x55. Verify each frame has correct start bit (0), 8 data bits LSB-first, and stop bit (1). Self-checking: compare TX output timing against CLKS_PER_BIT."</div>
+    </div>
+</section>
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> Your PPA table shows adding parity costs 6 LUTs. Is this "expensive"? How do you decide?</p>
+        <div class="fragment quiz-answer">6 LUTs = 0.5% of the iCE40 HX1K (1,280 total). On this FPGA, it's negligible. But "expensive" depends on context: if you're already at 90% utilization, every LUT matters. The analysis paragraph should state the absolute cost AND the relative cost.</div>
+        <p style="margin-top:0.8em;"><strong>Q4:</strong> Name the three FPGA PPA proxies and their measurement tools.</p>
+        <div class="fragment quiz-answer">Performance → Fmax (<code>nextpnr --freq</code>). Area → LUTs/FFs/EBR (<code>yosys stat</code>). Power → toggle rate × capacitance (conceptual on iCE40). These proxy the ASIC metrics: critical path delay, gate count/die area, and dynamic+static power.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 14 · The Capstone Verification Session</p>
+        <p style="color:#888;font-size:0.6em;margin-top:1em;">Today: assertions + parity extension + AI constraint TB + PPA analysis.<br>All four cross-cutting threads converge.</p>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>Reveal.initialize({ hash:true, slideNumber:'c/t', showSlideNumber:'all', width:1280, height:720, margin:0.04, transition:'slide', plugins:[RevealHighlight,RevealNotes] });</script>
+</body></html>
