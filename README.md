@@ -1,6 +1,6 @@
 # Accelerated HDL for Digital System Design
 
-> **UCF · College of Engineering & Computer Science · Department of Electrical & Computer Engineering**
+> **Dr. Mike Borowczak · UCF · College of Engineering & Computer Science · Department of Electrical & Computer Engineering**
 
 A 4-week, 16-session accelerated course in Verilog and digital system design using the Nandland Go Board (Lattice iCE40 HX1K) and a fully open-source toolchain.
 
@@ -48,16 +48,12 @@ hdl-course/
 │   ├── week3/day09/ through day12/
 │   └── week4/day13/ through day16/
 │
-├── projects/                    ← final project specifications & rubrics
+├── projects/                    ← spec & rubrics
 │
 ├── shared/
-│   ├── pcf/go_board.pcf         ← Go Board pin constraint file
-│   ├── lib/                     ← reusable verified module library
+│   ├── pcf/go_board.pcf         ← pin constraint file
+│   ├── lib/                     ← reusable module library
 │   └── scripts/Makefile.template ← build automation template
-│
-├── scripts/                     ← slide generators & build tools
-│   ├── generate_week1.py through generate_week4.py
-│   └── build_repo.py           ← repository scaffolding generator
 │
 └── assets/img/                  ← logos, board photos, etc.
 ```
