@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 10: Numerical Architectures &amp; Design Trade-offs — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-10-numerical-architectures-design-trade-offs">Day 10: Numerical Architectures &amp; Design Trade-offs</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-3-session-10-of-16">Week 3, Session 10 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 10.1:</strong> Compare adder architectures (ripple-carry, behavioral <code>+</code>, carry-lookahead concept) and explain their PPA trade-offs.</li>
+<li><strong>SLO 10.2:</strong> Implement a sequential shift-and-add multiplier and explain when sequential multiplication is preferable to combinational.</li>
+<li><strong>SLO 10.3:</strong> Implement fixed-point (Q-format) arithmetic and handle bit growth in multiplication.</li>
+<li><strong>SLO 10.4:</strong> Perform structured PPA analysis: measure LUTs, FFs, and Fmax across design variants using <code>yosys stat</code> and <code>nextpnr</code>.</li>
+<li><strong>SLO 10.5:</strong> Read a nextpnr timing report and identify whether timing constraints are met.</li>
+<li><strong>SLO 10.6:</strong> Articulate the PPA trade-off triangle: performance vs. power vs. area, and why optimizing all three simultaneously is impossible.</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-55-min-revised-lecture">Pre-Class Video (~55 min) ★ Revised lecture</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Timing &amp; constraints essentials: setup/hold, critical path, nextpnr reports</td>
+<td>15 min</td>
+<td><code>video/day10_seg1_timing_essentials.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Numerical architecture trade-offs: adders, multipliers, <code>+</code> and <code>*</code> operators</td>
+<td>20 min</td>
+<td><code>video/day10_seg2_numerical_architectures.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>PPA — Performance, Power, Area: the three axes of digital design</td>
+<td>15 min</td>
+<td><code>video/day10_seg3_ppa_intro.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>OpenROAD/OpenLane: open-source ASIC PPA (aspirational context)</td>
+<td>5 min</td>
+<td><code>video/day10_seg4_asic_ppa_context.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Segment 2 key points:</strong>
+- Ripple-carry (Day 2 review) → carry-lookahead (concept) → the <code>+</code> operator (what does the tool build?)
+- Writing <code>assign sum = a + b;</code> lets the tool choose the architecture — understanding the choice is the designer's job
+- Multiplication: shift-and-add → why <code>*</code> on iCE40 uses pure LUT logic (no DSP blocks)
+- Fixed-point Q-format: Q4.4 = 4 integer + 4 fractional bits</p>
+<p><strong>Segment 3 key points:</strong>
+- FPGA PPA proxies: Fmax (performance), LUT/FF count (area), toggle rate × capacitance (power, conceptual)
+- ASIC PPA: gate count, standard cells, process node, leakage
+- The trade-off triangle: pipelining helps Fmax but costs FFs; parallelism costs area
+- <code>if/else</code> vs <code>case</code> revisited from PPA perspective</p>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up: pre-class questions, timing concepts check</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: timing, numerical demo, PPA thinking</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:35</td>
+<td>Lab Exercise 1: Adder architecture comparison</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>1:05</td>
+<td>Lab Exercise 2: Shift-and-add multiplier</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>1:35</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:40</td>
+<td>Lab Exercise 3: Fixed-point exercise</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>2:00</td>
+<td>Lab Exercise 4: Timing constraint exercise</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:10</td>
+<td>Lab Exercise 5 (Stretch): PLL / CDC</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:20</td>
+<td>Wrap-up and Day 11 preview</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="quick-timing-check-5-min">Quick Timing Check (5 min)</h3>
+<ul>
+<li>Read a nextpnr timing report together</li>
+<li>Key line: "Max frequency for clock 'clk': XX.XX MHz (PASS at 25.00 MHz)"</li>
+<li>What's the critical path? Where does delay accumulate?</li>
+</ul>
+<h3 id="numerical-architectures-live-demo-15-min">Numerical Architectures Live Demo (15 min)</h3>
+<ul>
+<li>Synthesize <code>assign sum = a + b;</code> at 4-bit, 8-bit, 16-bit, 32-bit widths</li>
+<li>Run <code>yosys stat</code> for each — plot LUT count vs. width (should be roughly linear)</li>
+<li>Synthesize <code>assign product = a * b;</code> at 4-bit, 8-bit — <strong>show the LUT explosion</strong> (quadratic growth, no DSP blocks on iCE40)</li>
+<li>Compare: <code>a + b</code> vs. <code>a + b + c</code> — does the tool chain adders or use something smarter?</li>
+<li>Inspect with <code>yosys show</code>: what does the synthesized adder actually look like?</li>
+</ul>
+<h3 id="ppa-thinking-10-min">PPA Thinking (10 min)</h3>
+<ul>
+<li>Design decision framework: "For this application, do I care more about Fmax, area, or power?"</li>
+<li>FPGA vs. ASIC: on FPGA, LUTs are fixed-size so "area" is really "LUT utilization"; on ASIC, a 2-input gate is physically smaller than a 4-input gate</li>
+<li>Real example: a 32-bit multiplier on iCE40 HX1K uses ~30% of available LUTs; on 28nm ASIC, it's a tiny fraction</li>
+<li><strong>Brief aside:</strong> "The PPA habits you build with <code>yosys stat</code> transfer directly to ASIC flows like OpenROAD/OpenLane."</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-adder-architecture-comparison-30-min">Exercise 1: Adder Architecture Comparison (30 min)</h3>
+<p><strong>Objective (SLO 10.1, 10.4):</strong> Compare manual and behavioral adder implementations using PPA metrics.</p>
+<p><strong>Tasks:</strong>
+1. <strong>Manual ripple-carry adder:</strong> Chain full-adder instances (reuse Day 2 code) at 8-bit and 16-bit widths.
+2. <strong>Behavioral adder:</strong> <code>assign sum = a + b;</code> at the same widths.
+3. For each variant and width, record:
+   - LUT count (<code>yosys stat</code>)
+   - Schematic structure (<code>yosys show</code>)
+   - Fmax (<code>nextpnr</code> timing report)
+4. Fill in a comparison table:</p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>Width</th>
+<th>LUTs</th>
+<th>FFs</th>
+<th>Fmax (MHz)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ripple-carry</td>
+<td>8</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Ripple-carry</td>
+<td>16</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Behavioral <code>+</code></td>
+<td>8</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Behavioral <code>+</code></td>
+<td>16</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>Analysis question:</strong> Does the synthesis tool produce the same circuit for both? When would you manually implement an adder instead of using <code>+</code>?</li>
+</ol>
+<p><strong>Checkpoint:</strong> Comparison table filled in with real data. At least one observation about the results.</p>
+<hr>
+<h3 id="exercise-2-shift-and-add-multiplier-30-min">Exercise 2: Shift-and-Add Multiplier (30 min)</h3>
+<p><strong>Objective (SLO 10.2, 10.4):</strong> Implement a sequential multiplier and compare to combinational.</p>
+<p><strong>Tasks:</strong>
+1. Implement an 8-bit unsigned shift-and-add multiplier:
+   - FSM controls the operation (IDLE → COMPUTE → DONE)
+   - Shift register holds the multiplier, accumulator holds the partial product
+   - Takes up to 8 clock cycles to complete
+2. Write a testbench: verify at least 10 test cases including 0×N, N×0, 1×N, max×max.
+3. Synthesize the sequential multiplier. Record LUTs, FFs, Fmax.
+4. Synthesize <code>assign product = a * b;</code> (8-bit, combinational). Record LUTs, FFs, Fmax.
+5. Compare:</p>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>LUTs</th>
+<th>FFs</th>
+<th>Fmax</th>
+<th>Latency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shift-and-add (sequential)</td>
+<td></td>
+<td></td>
+<td></td>
+<td>8 cycles</td>
+</tr>
+<tr>
+<td>Behavioral <code>*</code> (combinational)</td>
+<td></td>
+<td></td>
+<td></td>
+<td>1 cycle</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>Discussion:</strong> When would you choose sequential over combinational? (High area pressure, relaxed latency requirements.)</li>
+</ol>
+<p><strong>Checkpoint:</strong> Working multiplier. Comparison table with both variants.</p>
+<hr>
+<h3 id="exercise-3-fixed-point-arithmetic-20-min">Exercise 3: Fixed-Point Arithmetic (20 min)</h3>
+<p><strong>Objective (SLO 10.3):</strong> Handle the practical challenges of fixed-point computation.</p>
+<p><strong>Tasks:</strong>
+1. Implement a Q4.4 fixed-point adder: two 8-bit inputs (4 integer, 4 fractional), 9-bit output (with carry).
+2. Implement a Q4.4 fixed-point multiplier: two 8-bit inputs → 16-bit product (Q8.8).
+   - <strong>Key challenge:</strong> The product of two Q4.4 numbers is Q8.8 — you need to extract the right bits for the integer part.
+3. Drive the integer part of the result to the 7-seg display.
+4. Test with known values: e.g., 2.5 × 3.0 = 7.5 → integer part = 7 on display.</p>
+<p><strong>Checkpoint:</strong> Fixed-point multiplication gives correct integer result on 7-seg.</p>
+<hr>
+<h3 id="exercise-4-timing-constraint-exercise-10-min">Exercise 4: Timing Constraint Exercise (10 min)</h3>
+<p><strong>Objective (SLO 10.5):</strong> Practice reading timing reports.</p>
+<p><strong>Tasks:</strong>
+1. Add a timing constraint to an existing design (e.g., the shift-and-add multiplier).
+2. Synthesize with nextpnr. Read the timing report.
+3. Does timing pass at 25 MHz? At 50 MHz? At 100 MHz?
+4. Identify what limits Fmax in your design.</p>
+<p><strong>Checkpoint:</strong> Timing report read and Fmax identified.</p>
+<hr>
+<h3 id="exercise-5-stretch-pll-cdc-10-min">Exercise 5 (Stretch): PLL &amp; CDC (10 min)</h3>
+<p><strong>Objective (SLO 10.5):</strong> Explore clock generation and domain crossing.</p>
+<p><strong>Tasks:</strong>
+1. Instantiate <code>SB_PLL40_CORE</code> to generate a different frequency from 25 MHz.
+2. Build a 2-FF synchronizer to pass a signal between the two clock domains.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<ol>
+<li>Adder/multiplier PPA comparison table with real data (LUTs, FFs, Fmax for each variant).</li>
+<li>Working shift-and-add multiplier on the FPGA.</li>
+</ol>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — Adder comparison</td>
+<td>10.1, 10.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — Shift-and-add multiplier</td>
+<td>10.2, 10.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — Fixed-point</td>
+<td>10.3</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — Timing constraints</td>
+<td>10.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>5 — PLL / CDC</td>
+<td>10.5</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Students expect manual = better:</strong> The ripple-carry adder will often be identical or worse than behavioral <code>+</code> because Yosys optimizes well. This is the point — let the tool work for you, but understand what it does.</li>
+<li><strong>Shift-and-add FSM complexity:</strong> Students may struggle with the FSM + datapath combination. Suggest they draw the block diagram first: FSM, shift register, accumulator, counter, and the connections between them.</li>
+<li><strong>Fixed-point bit indexing:</strong> The most common bug is extracting the wrong bits from the Q8.8 product. Have students draw out the bit positions on paper before coding.</li>
+<li><strong>Timing report confusion:</strong> Students may not know where to look. Point them to the "Max frequency" line and the critical path description. Explain that the path name shows which flip-flops are at the endpoints.</li>
+</ul>
+<h3 id="cross-cutting-thread-ppa-analysis">Cross-Cutting Thread: PPA Analysis</h3>
+<p>This is the anchor day for the PPA thread. Students have seen <code>yosys stat</code> on Days 3 and 8 in brief snapshots. Today they do structured, comparative PPA analysis for the first time. The comparison tables from Exercises 1–2 establish the format they'll use in the final project PPA report (Days 15–16).</p>
+<hr>
+<h2 id="preview-day-11">Preview: Day 11</h2>
+<p>UART TX — your first real communication interface. Everything from Weeks 1–2 comes together: FSMs, counters, shift registers, and testbenches, all combined to send data from the Go Board to your PC.</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 15 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-15-lab-final-project-build-day">Day 15 Lab: Final Project Build Day</h1>
+<h2 id="overview">Overview</h2>
+<p>Today is dedicated build time for your final project. This is NOT a
+traditional exercise day — you'll work on integrating and debugging your
+own project using the scaffolding, module library, and debug utilities
+provided here.</p>
+<h2 id="session-structure">Session Structure</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00–0:15</td>
+<td>Integration strategy briefing</td>
+</tr>
+<tr>
+<td>0:15–0:45</td>
+<td>Individual check-ins (Mike circulates)</td>
+</tr>
+<tr>
+<td>0:45–2:00</td>
+<td>Independent build time with on-call support</td>
+</tr>
+<tr>
+<td>2:00–2:15</td>
+<td>Status round (30 sec per student)</td>
+</tr>
+<tr>
+<td>2:15–2:30</td>
+<td>Buffer / overflow debugging</td>
+</tr>
+</tbody>
+</table>
+<h2 id="whats-in-this-package">What's in This Package</h2>
+<table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>integration_guide/</code></td>
+<td>Step-by-step integration checklist and common pitfalls</td>
+</tr>
+<tr>
+<td><code>module_library/</code></td>
+<td>Proven, tested modules from Weeks 1–3 ready to reuse</td>
+</tr>
+<tr>
+<td><code>debug_utilities/</code></td>
+<td>Heartbeat, UART printf, signal spy helpers</td>
+</tr>
+<tr>
+<td><code>project_templates/</code></td>
+<td>Skeleton top modules for each project option</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-1-rule">The #1 Rule</h2>
+<p><strong>No Big Bang Integration.</strong> Do not connect everything at once and hope it
+works. Follow the incremental integration checklist in <code>integration_guide/</code>.</p>
+<h2 id="integration-order">Integration Order</h2>
+<ol>
+<li>Verify every module individually (re-run testbenches)</li>
+<li>Create skeleton top with heartbeat LED — synthesize &amp; program</li>
+<li>Add ONE module at a time. Synthesize. Verify on hardware. Repeat.</li>
+<li>Use UART printf debugging for hardware-only issues</li>
+</ol>
+<h2 id="deliverables-for-tomorrow">Deliverables (for tomorrow)</h2>
+<ul>
+<li>[ ] Working minimum viable demo on hardware</li>
+<li>[ ] Block diagram (hand-drawn or digital — must be clear)</li>
+<li>[ ] Testbench for at least one custom module (passing)</li>
+<li>[ ] Know your resource usage (<code>make stat</code>) and Fmax</li>
+</ul>
+</article>
+</body>
+</html>

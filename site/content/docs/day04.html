@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 4: Sequential Logic — Flip-Flops, Clocks &amp; Counters — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-4-sequential-logic-flip-flops-clocks-counters">Day 4: Sequential Logic — Flip-Flops, Clocks &amp; Counters</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-1-session-4-of-16">Week 1, Session 4 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 4.1:</strong> Design edge-triggered sequential circuits using <code>always @(posedge clk)</code> and nonblocking assignment (<code>&lt;=</code>).</li>
+<li><strong>SLO 4.2:</strong> Implement D flip-flops with synchronous/asynchronous reset and enable.</li>
+<li><strong>SLO 4.3:</strong> Build counters and clock dividers to generate timing from the 25 MHz Go Board clock.</li>
+<li><strong>SLO 4.4:</strong> Apply RTL thinking: every <code>&lt;=</code> is a flip-flop, every <code>=</code> in <code>always @(*)</code> is combinational.</li>
+<li><strong>SLO 4.5:</strong> Verify sequential designs in simulation (Icarus + GTKWave) before programming hardware.</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-50-min">Pre-Class Video (~50 min)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Clocks &amp; edge-triggered logic: <code>always @(posedge clk)</code></td>
+<td>12 min</td>
+<td><code>video/day04_seg1_clocks_edges.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Nonblocking assignment deep dive: <code>&lt;=</code> vs <code>=</code> in sequential blocks</td>
+<td>15 min</td>
+<td><code>video/day04_seg2_nonblocking_deep_dive.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>FF variants: with enable, with load, with synchronous/asynchronous reset</td>
+<td>10 min</td>
+<td><code>video/day04_seg3_ff_variants.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Counters &amp; clock dividers: counting cycles to generate slower events</td>
+<td>13 min</td>
+<td><code>video/day04_seg4_counters_dividers.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key concepts:</strong>
+- <code>always @(posedge clk)</code> creates edge-triggered flip-flops — this is how hardware gains memory
+- <code>&lt;=</code> (nonblocking) in sequential blocks: all right-hand sides evaluated first, then all left-hand sides updated simultaneously
+- <code>=</code> (blocking) in sequential blocks causes subtle ordering bugs — avoid it
+- RTL mental model: count the <code>&lt;=</code> assignments to know how many flip-flops you're creating</p>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up Q&amp;A: combinational vs sequential, pre-class questions</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: FF variations, counters, clock divider concept, live demo</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:35</td>
+<td>Lab Exercise 1: D flip-flop</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>0:50</td>
+<td>Lab Exercise 2: Loadable register</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>1:05</td>
+<td>Lab Exercise 3: Free-running counters</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>1:20</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:25</td>
+<td>Lab Exercise 4: LED blinker — clock divider</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>1:45</td>
+<td>Lab Exercise 5: Dual-speed blinker</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>1:55</td>
+<td>Lab Exercise 6 (Stretch): Up/down counter on 7-seg</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>2:10</td>
+<td>Debrief: RTL thinking discussion, common bugs</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:20</td>
+<td>Week 1 recap + Preview Day 5</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="ff-variations-10-min">FF Variations (10 min)</h3>
+<ul>
+<li>Basic D-FF: <code>always @(posedge clk) q &lt;= d;</code> — that's it, one line, one flip-flop</li>
+<li>With synchronous reset: <code>if (reset) q &lt;= 0; else q &lt;= d;</code></li>
+<li>With asynchronous reset: <code>always @(posedge clk or posedge reset)</code> — when to use which?</li>
+<li>With enable: <code>if (en) q &lt;= d;</code> — what happens when <code>en</code> is low? (Holds value — implicit feedback)</li>
+<li>With load: separate <code>load</code> and <code>d</code> signals for register-file style behavior</li>
+</ul>
+<h3 id="counter-as-canonical-sequential-block-10-min">Counter as Canonical Sequential Block (10 min)</h3>
+<ul>
+<li>Up counter: <code>count &lt;= count + 1;</code></li>
+<li>Modulo-N: <code>if (count == N-1) count &lt;= 0; else count &lt;= count + 1;</code></li>
+<li>Terminal count output: <code>assign tc = (count == N-1);</code> — useful for chaining</li>
+<li>Rollover: what happens at the maximum value for the declared width?</li>
+</ul>
+<h3 id="clock-divider-concept-5-min">Clock Divider Concept (5 min)</h3>
+<ul>
+<li>25 MHz ÷ 25,000,000 = 1 Hz — counting to a big number to create a slow event</li>
+<li>The toggle pattern: use a counter to generate a slower enable pulse, toggle an output</li>
+<li>The math: <code>HALF_PERIOD = clk_freq / (2 * desired_freq)</code></li>
+</ul>
+<h3 id="live-demo-5-min">Live Demo (5 min)</h3>
+<ul>
+<li>Build a visible LED blinker from the 25 MHz clock — ~10 lines of code</li>
+<li>Simulate first (with small counter values), then synthesize with real values</li>
+<li>"If it doesn't blink in simulation, it won't blink on hardware"</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-d-flip-flop-15-min">Exercise 1: D Flip-Flop (15 min)</h3>
+<p><strong>Objective (SLO 4.1, 4.5):</strong> Implement the fundamental sequential element and verify it in simulation before hardware.</p>
+<p><strong>Tasks:</strong>
+1. Create <code>dff.v</code> with <code>input clk, d, reset</code> and <code>output reg q</code>.
+2. Implement with synchronous reset: on <code>posedge clk</code>, if <code>reset</code> then <code>q &lt;= 0</code>, else <code>q &lt;= d</code>.
+3. Write a basic testbench (<code>dff_tb.v</code>):
+   - Generate a clock: <code>always #5 clk = ~clk;</code> (10 time-unit period)
+   - Apply reset, then toggle <code>d</code> at various times
+   - Dump waveforms with <code>$dumpfile</code> / <code>$dumpvars</code>
+4. Run with Icarus: <code>iverilog -o dff_tb dff.v dff_tb.v &amp;&amp; vvp dff_tb</code>
+5. Open waveform in GTKWave. Verify <code>q</code> changes only on rising clock edges and <code>d</code> is captured correctly.
+6. Synthesize and test on the Go Board: button → D input, LED → Q output. Observe the "sampling" behavior.</p>
+<p><strong>Checkpoint:</strong> Waveform shows correct edge-triggered behavior. LED on hardware reflects button state only at clock edges.</p>
+<hr>
+<h3 id="exercise-2-4-bit-loadable-register-15-min">Exercise 2: 4-Bit Loadable Register (15 min)</h3>
+<p><strong>Objective (SLO 4.2):</strong> Build a register with synchronous reset and parallel load — a workhorse building block.</p>
+<p><strong>Tasks:</strong>
+1. Create <code>register.v</code> with <code>input clk, reset, load, input [3:0] d, output reg [3:0] q</code>.
+2. Priority: reset (highest) → load → hold.
+3. Simulate: load a pattern, verify it holds. Assert reset, verify it clears. Load a new pattern.
+4. Synthesize and test: use buttons for load/data, display <code>q</code> on LEDs or 7-seg.</p>
+<p><strong>Checkpoint:</strong> Register loads, holds, and resets correctly in both simulation and hardware.</p>
+<hr>
+<h3 id="exercise-3-free-running-counters-15-min">Exercise 3: Free-Running Counters (15 min)</h3>
+<p><strong>Objective (SLO 4.3, 4.4):</strong> Build counters of different widths and observe rollover behavior.</p>
+<p><strong>Tasks:</strong>
+1. Create counters at three widths: 8-bit, 16-bit, and 24-bit.
+2. Simulate all three. Observe:
+   - 8-bit: rolls over at 255 → 0 (visible in waveform)
+   - 16-bit and 24-bit: rollover happens, but at much larger values
+3. Connect the upper bits of different counters to LEDs on the Go Board. Which counter's LEDs change visibly? (The 24-bit counter's upper bits change slowly enough to see.)
+4. <strong>RTL thinking exercise:</strong> How many flip-flops does each counter use? (Answer: exactly the width.) Verify with <code>yosys stat</code>.</p>
+<p><strong>Checkpoint:</strong> All three counters simulate correctly. Student can predict flip-flop count before checking <code>yosys stat</code>.</p>
+<hr>
+<h3 id="exercise-4-led-blinker-clock-divider-20-min">Exercise 4: LED Blinker — Clock Divider (20 min)</h3>
+<p><strong>Objective (SLO 4.3, 4.5):</strong> The canonical first sequential project — make an LED blink at a human-visible rate.</p>
+<p><strong>Tasks:</strong>
+1. Create <code>blinker.v</code>: a counter that counts from 0 to a threshold, then toggles an LED output.
+2. <strong>Parameterize the threshold:</strong> <code>parameter HALF_PERIOD = 12_500_000;</code> (0.5 seconds at 25 MHz, giving 1 Hz blink).
+3. <strong>Simulate first</strong> with a small threshold (e.g., <code>HALF_PERIOD = 5</code>) to verify the toggle logic without waiting millions of cycles.
+4. Synthesize with the real threshold. Program the Go Board.
+5. Verify: LED blinks at approximately 1 Hz (one second on, one second off).</p>
+<p><strong>Checkpoint:</strong> LED blinks at visible ~1 Hz rate on hardware. Simulation waveform confirms toggle behavior.</p>
+<hr>
+<h3 id="exercise-5-dual-speed-blinker-10-min">Exercise 5: Dual-Speed Blinker (10 min)</h3>
+<p><strong>Objective (SLO 4.3):</strong> Instantiate multiple independent sequential modules.</p>
+<p><strong>Tasks:</strong>
+1. Create a top module that instantiates two blinker modules with different <code>HALF_PERIOD</code> values.
+2. LED 0: blinks at ~1 Hz. LED 1: blinks at ~4 Hz.
+3. Observe: the two LEDs blink independently — they are separate hardware, running concurrently.</p>
+<p><strong>Checkpoint:</strong> Two LEDs blinking at visibly different rates on the Go Board.</p>
+<hr>
+<h3 id="exercise-6-stretch-updown-counter-on-7-seg-15-min">Exercise 6 (Stretch): Up/Down Counter on 7-Seg (15 min)</h3>
+<p><strong>Objective (SLO 4.2, 4.3):</strong> Integrate sequential logic with the Day 2 hex display.</p>
+<p><strong>Tasks:</strong>
+1. Build a 4-bit counter with a debounced button for up-count and another for down-count. (For now, a simple FF synchronizer is sufficient — full debouncer comes Day 5.)
+2. Display the count on the 7-segment display using the <code>hex_to_7seg</code> module from Day 2.
+3. Counter wraps: 0→F on down, F→0 on up.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<p>LED blinker at visible rate (~1 Hz) + counter value displayed on 7-seg (Exercise 4 required; Exercise 6 if completed).</p>
+<p><strong>Submit:</strong> Blinker source file, testbench with waveform dump, and top module.</p>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — D flip-flop</td>
+<td>4.1, 4.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — Loadable register</td>
+<td>4.2</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — Free-running counters</td>
+<td>4.3, 4.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — LED blinker</td>
+<td>4.3, 4.5</td>
+<td>Core — graded deliverable</td>
+</tr>
+<tr>
+<td>5 — Dual-speed blinker</td>
+<td>4.3</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>6 — Up/down counter on 7-seg</td>
+<td>4.2, 4.3</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Blocking in sequential blocks:</strong> Students will accidentally use <code>=</code> inside <code>always @(posedge clk)</code>. It may "work" for simple cases but causes subtle bugs in multi-register designs. Show a concrete example: two registers passing data where <code>=</code> vs <code>&lt;=</code> gives different results.</li>
+<li><strong>Clock generation in testbench:</strong> The <code>always #5 clk = ~clk;</code> pattern needs <code>initial clk = 0;</code> first — otherwise the simulation hangs or <code>clk</code> stays X. Students forget this regularly.</li>
+<li><strong>Simulation vs. hardware timing:</strong> Students may ask why their blinker simulates in microseconds but takes seconds on hardware. Explain: simulation is event-driven and skips idle time. The real clock runs at 25 MHz — counting to 12.5 million takes 0.5 real seconds.</li>
+<li><strong>Counter overflow surprise:</strong> Some students expect an error when an 8-bit counter reaches 255. Emphasize: hardware just wraps. There's no exception, no crash — just rollover. If you need to detect it, you must build that logic explicitly.</li>
+<li><strong><code>$dumpfile</code> / <code>$dumpvars</code> placement:</strong> Must go inside an <code>initial</code> block. Students sometimes put it at module scope and get syntax errors. Quick fix: always use the pattern <code>initial begin $dumpfile("name.vcd"); $dumpvars(0, testbench_name); end</code>.</li>
+<li><strong>Week 1 cumulative review:</strong> This is the last day of Week 1. Consider spending 5 extra minutes on the wrap-up to check for any lingering confusion about combinational vs. sequential, <code>=</code> vs <code>&lt;=</code>, or the toolchain workflow. These fundamentals must be solid before Week 2.</li>
+</ul>
+<hr>
+<h2 id="preview-day-5">Preview: Day 5</h2>
+<p>Counters, shift registers, and debouncing — the building blocks you'll need for every design going forward. You'll build a reusable debouncer module, learn about metastability (and why it's terrifying), and create an LED chase pattern controlled by buttons. Watch the Day 5 video (~45 min).</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 9: Memory — RAM, ROM &amp; Block RAM — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-9-memory-ram-rom-block-ram">Day 9: Memory — RAM, ROM &amp; Block RAM</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-3-session-9-of-16">Week 3, Session 9 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 9.1:</strong> Model ROM in Verilog using both <code>case</code>-based and array-based approaches, and initialize arrays from files using <code>$readmemh</code>.</li>
+<li><strong>SLO 9.2:</strong> Implement synchronous RAM with correct read/write patterns for synthesis.</li>
+<li><strong>SLO 9.3:</strong> Write Verilog that Yosys infers as iCE40 Block RAM (EBR), and verify inference in synthesis reports.</li>
+<li><strong>SLO 9.4:</strong> Test memory modules with testbenches that verify read-after-write behavior and edge cases.</li>
+<li><strong>SLO 9.5:</strong> Distinguish LUT-based memory from Block RAM and explain when each is appropriate.</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-45-min">Pre-Class Video (~45 min)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Modeling ROM in Verilog: <code>case</code>-based, array-based</td>
+<td>10 min</td>
+<td><code>video/day09_seg1_rom_modeling.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>$readmemh</code> / <code>$readmemb</code>: initializing memory from files</td>
+<td>10 min</td>
+<td><code>video/day09_seg2_readmemh.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>RAM modeling: synchronous read/write patterns</td>
+<td>12 min</td>
+<td><code>video/day09_seg3_ram_modeling.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>iCE40 Block RAM: 16 EBR × 4 Kbit, inference patterns</td>
+<td>13 min</td>
+<td><code>video/day09_seg4_block_ram.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up: memory landscape overview, pre-class questions</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: FPGA memory, EBR inference, live demo</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:35</td>
+<td>Lab Exercise 1: ROM pattern sequencer</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>1:05</td>
+<td>Lab Exercise 2: Block RAM read/write</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>1:35</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:40</td>
+<td>Lab Exercise 3: RAM testbench</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>2:05</td>
+<td>Lab Exercise 4 (Stretch): Dual-port RAM</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>2:20</td>
+<td>Wrap-up and Day 10 preview</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="fpga-memory-landscape-10-min">FPGA Memory Landscape (10 min)</h3>
+<ul>
+<li>Three memory options on FPGA: <strong>LUT-based</strong> (small, fast, distributed), <strong>Block RAM</strong> (larger, dedicated), <strong>External</strong> (off-chip, slow)</li>
+<li>iCE40 HX1K: 16 EBR blocks × 256×16 = 64 Kbit total Block RAM</li>
+<li>When to use which: lookup tables → LUT RAM or ROM; data buffers → Block RAM; large storage → external</li>
+<li><code>SB_RAM256x16</code>: the iCE40 Block RAM primitive (we'll let Yosys infer it rather than instantiate directly)</li>
+</ul>
+<h3 id="ebr-inference-what-yosys-needs-to-see-10-min">EBR Inference — What Yosys Needs to See (10 min)</h3>
+<ul>
+<li>Synchronous read: <code>always @(posedge clk) data_out &lt;= mem[addr];</code></li>
+<li>The key: <strong>reads must be registered</strong> for Yosys to infer EBR</li>
+<li>Common mistake: combinational read (<code>assign data_out = mem[addr];</code>) → LUT RAM instead of EBR</li>
+<li>Check inference: <code>yosys stat</code> will show <code>SB_RAM40_4K</code> if inference succeeds</li>
+</ul>
+<h3 id="live-demo-sine-wave-lookup-table-10-min">Live Demo: Sine Wave Lookup Table (10 min)</h3>
+<ul>
+<li>Create a <code>.hex</code> file with 256 sine values</li>
+<li>Load with <code>$readmemh</code> into an array</li>
+<li>Read with registered output → Yosys infers Block RAM</li>
+<li>Drive a counter into the address → output traces a sine wave (visible in GTKWave)</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-rom-based-pattern-sequencer-30-min">Exercise 1: ROM-Based Pattern Sequencer (30 min)</h3>
+<p><strong>Objective (SLO 9.1):</strong> Use ROM to drive a pre-defined sequence on the Go Board outputs.</p>
+<p><strong>Tasks:</strong>
+1. Create a <code>.hex</code> file containing a sequence of LED/7-seg patterns (at least 16 entries).
+2. Implement a ROM module that loads the patterns using <code>$readmemh</code>.
+3. Build a sequencer: a counter steps through ROM addresses, the ROM output drives LEDs and/or 7-seg.
+4. Counter speed should produce a visible sequence (~2–5 Hz).
+5. Synthesize and program the Go Board. Verify the pattern matches your <code>.hex</code> file.</p>
+<p><strong>Checkpoint:</strong> ROM-driven pattern sequence visible on Go Board LEDs/7-seg.</p>
+<hr>
+<h3 id="exercise-2-inferred-block-ram-30-min">Exercise 2: Inferred Block RAM (30 min)</h3>
+<p><strong>Objective (SLO 9.2, 9.3, 9.5):</strong> Implement RAM that Yosys maps to iCE40 EBR resources.</p>
+<p><strong>Tasks:</strong>
+1. Implement a synchronous RAM module:
+   - Parameters: <code>ADDR_WIDTH = 8</code>, <code>DATA_WIDTH = 8</code> (256×8)
+   - Ports: <code>clk</code>, <code>we</code> (write enable), <code>addr</code>, <code>data_in</code>, <code>data_out</code>
+   - Registered read: <code>always @(posedge clk) if (we) mem[addr] &lt;= data_in; data_out &lt;= mem[addr];</code>
+2. Synthesize and check <code>yosys stat</code> output — verify <code>SB_RAM40_4K</code> appears (Block RAM inferred).
+3. Build a top module for the Go Board:
+   - Buttons control write address/data (simple scheme: counter for address, switches for data)
+   - 7-seg displays the data read from the current address
+4. Program and demonstrate: write values, then read them back.</p>
+<p><strong>Checkpoint:</strong> <code>yosys stat</code> shows Block RAM inference. Read-after-write demonstrated on hardware.</p>
+<hr>
+<h3 id="exercise-3-ram-testbench-25-min">Exercise 3: RAM Testbench (25 min)</h3>
+<p><strong>Objective (SLO 9.4):</strong> Verify memory behavior including the critical read-after-write case.</p>
+<p><strong>Tasks:</strong>
+1. Write a self-checking testbench for the RAM module.
+2. Test cases:
+   - Write to several addresses, read them back, verify data matches
+   - Write to the same address twice, verify second write overwrites first
+   - Read from an unwritten address (should return initial/undefined value)
+   - Simultaneous read and write to the same address — what happens? (Implementation-defined; document the behavior)
+3. Automate pass/fail for all tests.</p>
+<p><strong>Checkpoint:</strong> RAM testbench passes all read-after-write tests.</p>
+<hr>
+<h3 id="exercise-4-stretch-dual-port-ram-15-min">Exercise 4 (Stretch): Dual-Port RAM (15 min)</h3>
+<p><strong>Objective (SLO 9.3, 9.5):</strong> Explore a more advanced memory configuration.</p>
+<p><strong>Tasks:</strong>
+1. Implement a simple dual-port RAM: independent read and write ports with separate addresses.
+2. Synthesize and verify Block RAM inference.
+3. Discuss: what happens if both ports access the same address simultaneously? (Read-during-write behavior.)</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<p>ROM-driven 7-seg pattern sequencer + RAM read/write demo on hardware, with testbench for the RAM module.</p>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — ROM sequencer</td>
+<td>9.1</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — Block RAM</td>
+<td>9.2, 9.3, 9.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — RAM testbench</td>
+<td>9.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — Dual-port RAM</td>
+<td>9.3, 9.5</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Combinational read prevents EBR inference:</strong> This is the most common issue. If <code>yosys stat</code> doesn't show <code>SB_RAM40_4K</code>, the read is probably combinational. Show students the fix: register the output with <code>always @(posedge clk)</code>.</li>
+<li><strong><code>$readmemh</code> file path:</strong> Icarus Verilog resolves paths relative to where <code>vvp</code> is run. Students may get "file not found" errors if the <code>.hex</code> file isn't in the right directory. Recommend placing it alongside the testbench.</li>
+<li><strong><code>$readmemh</code> format:</strong> Students may put <code>0x</code> prefixes or commas in the hex file. The format is one hex value per line, no prefixes, optional comments with <code>//</code>.</li>
+<li><strong>iCE40 EBR limitations:</strong> The HX1K has 16 EBR blocks. A 256×16 RAM uses 1 block. If students try to create very large RAMs, they'll run out. This is a natural PPA discussion point.</li>
+</ul>
+<hr>
+<h2 id="preview-day-10">Preview: Day 10</h2>
+<p>Numerical architectures and PPA analysis — the heart of digital design trade-offs. You'll implement adders and multipliers, compare their resource usage and timing, and learn to think about Performance, Power, and Area as the three axes of design optimization.</p>
+</article>
+</body>
+</html>

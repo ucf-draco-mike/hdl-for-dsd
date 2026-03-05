@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 11 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-11-lab-uart-transmitter">Day 11 Lab: UART Transmitter</h1>
+<h2 id="overview">Overview</h2>
+<p>Build and verify a complete UART TX module, then send "HELLO" from the
+Go Board to your PC terminal.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Pre-class video on UART protocol and TX architecture</li>
+<li>Working debounce module from Day 5</li>
+<li>Working hex_to_7seg from Day 2</li>
+</ul>
+<h2 id="exercises">Exercises</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Exercise</th>
+<th>Time</th>
+<th>Key SLOs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Baud Rate Generator</td>
+<td>15 min</td>
+<td>11.2</td>
+</tr>
+<tr>
+<td>2</td>
+<td>UART TX Module + Testbench</td>
+<td>40 min</td>
+<td>11.3, 11.4</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Hardware Verification</td>
+<td>25 min</td>
+<td>11.5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Multi-Character Sender</td>
+<td>20 min</td>
+<td>11.3, 11.5</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Parity Support (Stretch)</td>
+<td>15 min</td>
+<td>11.3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="deliverables">Deliverables</h2>
+<ol>
+<li>Baud generator verified in simulation</li>
+<li>UART TX with self-checking protocol-aware testbench (all tests pass)</li>
+<li>"HELLO" received on PC terminal emulator</li>
+</ol>
+<h2 id="terminal-setup">Terminal Setup</h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td><code>screen /dev/ttyUSB0 115200</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>screen /dev/cu.usbserial-* 115200</code></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>PuTTY → COMx, 115200, 8N1</td>
+</tr>
+</tbody>
+</table>
+</article>
+</body>
+</html>

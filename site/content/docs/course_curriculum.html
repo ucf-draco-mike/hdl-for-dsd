@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accelerated HDL for Digital System Design — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="accelerated-hdl-for-digital-system-design">Accelerated HDL for Digital System Design</h1>
+<h2 id="course-parameters">Course Parameters</h2>
+<p><strong>Format:</strong> 4 weeks · 4 sessions/week · 2.5 hours/session (16 sessions total)<br>
+<strong>Delivery:</strong> Flipped — recorded lectures pre-class; class = mini-lecture (25–35 min) + hands-on lab (~2 hrs)<br>
+<strong>Platform:</strong> Nandland Go Board (Lattice iCE40 HX1K · 4 LEDs · 4 buttons · dual 7-seg · VGA)<br>
+<strong>Toolchain:</strong> Yosys + nextpnr-ice40 + icepack/iceprog (synthesis/PnR), Icarus Verilog + GTKWave (simulation)<br>
+<strong>Students:</strong> ≤15, primarily CompE with some CS; no prior HDL; varying programming maturity<br>
+<strong>Assessment:</strong> Continuous lab deliverables (Weeks 1–3), final project (Week 4)</p>
+<hr>
+<h2 id="weekly-arc">Weekly Arc</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Theme</th>
+<th>Culmination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Verilog Foundations &amp; Combinational Design</td>
+<td>First designs on hardware</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Sequential Design, Verification &amp; AI-Assisted Testing</td>
+<td>Verified module library + first AI-generated TB</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Memory, Communication &amp; Numerical Architectures</td>
+<td>"HELLO" on the PC terminal + numerical module on FPGA</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Advanced Design, Verification &amp; Final Project</td>
+<td>Complete demonstrated system with PPA report</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="week-1-verilog-foundations-combinational-design">Week 1: Verilog Foundations &amp; Combinational Design</h2>
+<p><em>Goal: Students go from zero HDL to confidently writing and simulating combinational modules and basic sequential logic targeting real hardware.</em></p>
+<h3 id="day-1-welcome-to-hardware-thinking">Day 1 — Welcome to Hardware Thinking</h3>
+<p><strong>Pre-class (flipped recording, ~40 min):</strong>
+- HDL vs. software mental model — concurrency, not sequentiality
+- Synthesis vs. simulation: two very different execution contexts
+- Brief digital logic refresher: gates, truth tables, Boolean simplification (reference, not reteach)
+- Anatomy of a Verilog module: <code>module</code>, ports, <code>endmodule</code>
+<strong>In-class mini-lecture (30 min):</strong>
+- Course roadmap and expectations
+- Toolchain walkthrough — the open-source iCE40 flow: Verilog → Yosys → nextpnr → icepack → iceprog
+- Live demo: from source to blinking LED in under 2 minutes
+- <code>.pcf</code> pin constraint file — mapping HDL signals to physical pins on the Go Board
+<strong>Lab (~2 hrs):</strong>
+1. Environment setup &amp; toolchain verification (Yosys, nextpnr, iceprog, iverilog, gtkwave)
+2. LED on: hardwire an LED high — synthesize, program, verify
+3. Buttons to LEDs: wire each button to its corresponding LED (<code>assign</code>)
+4. Add inversion, AND/OR combinations between buttons and LEDs
+5. <strong>Stretch:</strong> XOR toggle pattern, create a simple Makefile for the build flow
+<strong>Deliverable:</strong> Buttons-to-LEDs with at least one logic modification, programmed on hardware.</p>
+<hr>
+<h3 id="day-2-combinational-building-blocks">Day 2 — Combinational Building Blocks</h3>
+<p><strong>Pre-class (~45 min):</strong>
+- Data types: <code>wire</code>, <code>reg</code> (and why <code>reg</code> doesn't always mean register)
+- Vectors and buses: <code>[MSB:LSB]</code>, bit slicing, concatenation <code>{}</code>, replication <code>{N{...}}</code>
+- Operators: bitwise, arithmetic, relational, logical, conditional (<code>?:</code>)
+- Continuous assignment: <code>assign</code> and its synthesis implications
+<strong>In-class mini-lecture (30 min):</strong>
+- Multiplexer as the fundamental combinational building block
+- Design pattern: <code>assign y = sel ? a : b;</code> and nested conditional
+- Common early mistakes: mismatched widths, undriven wires
+- 7-segment display encoding — mapping 4-bit hex to segment patterns
+<strong>Lab (~2 hrs):</strong>
+1. 2:1 mux → 4:1 mux (both <code>assign</code>-based and nested conditional)
+2. 4-bit ripple-carry adder from full-adder modules (first taste of hierarchy)
+3. Hex-to-7-segment decoder — drive the Go Board's display from button inputs
+4. <strong>Stretch:</strong> 4:1 mux using only 2:1 mux instances (structural composition)
+<strong>Deliverable:</strong> Hex-to-7-seg decoder displaying button-selected values on hardware.</p>
+<hr>
+<h3 id="day-3-procedural-combinational-logic">Day 3 — Procedural Combinational Logic</h3>
+<p><strong>Pre-class (~45 min):</strong>
+- <code>always @(*)</code>: wildcard sensitivity, <code>reg</code> in combinational contexts
+- <code>if/else</code> and <code>case</code>/<code>casez</code> statements
+- Latch inference: why it happens, how to prevent it (default assignments, complete branches)
+- Blocking (<code>=</code>) vs. nonblocking (<code>&lt;=</code>) — rule for combinational: use <code>=</code>
+<strong>In-class mini-lecture (35 min):</strong>
+- Latch detection with Yosys <code>show</code> command (live demo, as before)
+- <code>if/else</code> vs <code>case</code> — synthesis implications deep dive (10 min)
+  - <code>if/else</code> → priority mux chain: each condition evaluated in order, later branches have longer paths
+  - <code>case</code> → parallel mux: all branches evaluated simultaneously, tool selects by opcode
+  - <strong>Live Yosys comparison:</strong> Synthesize priority encoder using <code>if/else</code>, then using <code>case</code>. Run <code>show</code> on both — inspect the generated circuits side by side.
+  - <code>casez</code> for don't-care matching — when priority IS intended, <code>casez</code> is explicit about it
+  - <strong>Design heuristic:</strong> Use <code>case</code> when all conditions are mutually exclusive (ALU opcodes, FSM states). Use <code>if/else</code> when priority matters (interrupt controllers, arbiters). Use <code>casez</code> for pattern matching with explicit don't-cares.
+  - <strong>Timing implication preview:</strong> Priority chains have longer worst-case paths — matters for Fmax.
+- ALU design: 4-bit ALU using <code>case</code> for opcode decode
+<strong>Lab (~2 hrs):</strong>
+1. Latch detection exercise: buggy code → Yosys warnings → fix
+2. Priority encoder using <code>if/else</code> (as before)
+3. Priority encoder using <code>casez</code> — compare Yosys schematics
+4. Implement the same 4-input priority encoder three ways: (a) <code>if/else</code>, (b) <code>case</code> with explicit priorities, (c) <code>casez</code>. Compare <code>yosys stat</code> output (LUT count) and <code>show</code> schematics. <strong>Record the LUT counts.</strong> <em>(5 min, but plants the seed for PPA thinking)</em>
+5. 4-bit ALU with <code>case</code> for opcode decode
+6. <strong>Stretch:</strong> ALU with both <code>case</code> (opcode) and <code>if/else</code> (overflow detection) — mixed usage in one module
+<strong>Deliverable:</strong> ALU on hardware + screenshot comparing <code>yosys show</code> output for <code>if/else</code> vs <code>case</code> priority encoders.</p>
+<hr>
+<h3 id="day-4-sequential-logic-flip-flops-clocks-counters">Day 4 — Sequential Logic: Flip-Flops, Clocks &amp; Counters</h3>
+<p><strong>Pre-class (~50 min):</strong>
+- Edge-triggered logic: <code>always @(posedge clk)</code>
+- Nonblocking assignment: <code>&lt;=</code> and why it matters for sequential logic
+- D flip-flop from first principles; register as N flip-flops
+- Reset strategies: synchronous vs. asynchronous, active-high vs. active-low
+- RTL thinking: every <code>&lt;=</code> is a flip-flop, every <code>=</code> in <code>always @(*)</code> is combinational
+<strong>In-class mini-lecture (30 min):</strong>
+- FF variations: with enable, with load, with clear
+- Counter as the canonical sequential building block
+- Clock divider concept: counting clock cycles to generate slower events
+- Live demo: build a visible blinker from a 25 MHz clock
+<strong>Lab (~2 hrs):</strong>
+1. D flip-flop → verify in simulation (Icarus + GTKWave) first, then on board
+2. 4-bit loadable register
+3. Free-running counter (8-bit, 16-bit, 24-bit)
+4. Clock divider: 25 MHz → ~1 Hz using a counter, blink an LED
+5. Dual-speed blinker: two LEDs at different rates from independent dividers
+6. <strong>Stretch:</strong> Up/down counter controlled by buttons, display count on 7-seg
+<strong>Deliverable:</strong> LED blinker at visible rate (~1 Hz), counter value on 7-seg.</p>
+<hr>
+<h2 id="week-2-sequential-design-verification-ai-assisted-testing">Week 2: Sequential Design, Verification &amp; AI-Assisted Testing</h2>
+<p><em>Goal: Students master FSMs, write proper testbenches, learn to leverage AI for verification scaffolding, and build reusable parameterized modules. Simulation becomes a first-class part of the workflow.</em></p>
+<h3 id="day-5-counters-shift-registers-debouncing">Day 5 — Counters, Shift Registers &amp; Debouncing</h3>
+<p><strong>Pre-class (~45 min):</strong>
+- Counter variations: up, down, up/down, modulo-N, loadable
+- Shift registers: SISO, SIPO, PISO, PIPO — and why they matter (serial I/O, later UART)
+- The button bounce problem: mechanical switches are noisy
+- Synchronizer chains: metastability and the 2-FF synchronizer
+<strong>In-class mini-lecture (30 min):</strong>
+- Metastability: what it is, why it's terrifying, how synchronizers help
+- Debounce strategies: counter-based, shift-register-based
+- Live demo: scope/logic analyzer view of button bounce (or simulation equivalent)
+<strong>Lab (~2 hrs):</strong>
+1. Build a reusable debouncer module (counter-based, parameterized threshold)
+2. 8-bit shift register with serial in, parallel out
+3. LED chase pattern ("Knight Rider" / Cylon): shift register drives LEDs
+4. Debounced button controls direction and speed of chase
+5. <strong>Stretch:</strong> LFSR-based pseudo-random LED pattern
+<strong>Deliverable:</strong> Debounced button-controlled LED chase pattern on the Go Board.</p>
+<hr>
+<h3 id="day-6-testbenches-simulation-ai-assisted-verification">Day 6 — Testbenches, Simulation &amp; AI-Assisted Verification</h3>
+<p><strong>Pre-class (~50 min):</strong>
+- Testbench anatomy: no ports, instantiate DUT, apply stimulus
+- <code>initial</code> blocks, <code>#</code> delay, <code>$finish</code>
+- Waveform dumping: <code>$dumpfile</code>, <code>$dumpvars</code>
+- Display/debug: <code>$display</code>, <code>$monitor</code>, <code>$write</code>, format specifiers
+- Stimulus patterns: exhaustive, directed, corner-case
+- Self-checking testbenches: <code>if</code> checks with <code>$display</code> pass/fail messages
+- <strong>AI for Verification — Philosophy &amp; Ground Rules</strong>
+  - Why AI-assisted testbench generation is a professional skill (industry context)
+  - The "you can't evaluate what you can't write" rule: manual first, AI second
+  - Anatomy of a good AI prompt for TB generation (what to specify: DUT interface, protocol, corner cases, self-checking requirements)
+  - What AI gets right (boilerplate, structure, stimulus patterns) vs. what it gets wrong (subtle timing, protocol edge cases, tool-specific syntax)
+  - The critical skill: <strong>reviewing and debugging AI-generated verification code</strong>
+<strong>In-class mini-lecture (30 min):</strong>
+- Verification mindset: "if you haven't simulated it, it doesn't work"
+- Workflow: simulate first, <strong>then</strong> synthesize to board — always
+- Self-checking testbenches: automating correctness checks vs. staring at waveforms
+- <strong>Live demo: AI testbench generation (10 min)</strong>
+  - Take the Day 3 ALU module interface
+  - Live-prompt an AI to generate a self-checking testbench
+  - <strong>Critically review the output together:</strong> What did the AI get right? What did it miss? What's syntactically wrong for iverilog?
+  - Fix the issues, run it, compare to a hand-written version
+  - <strong>Key lesson:</strong> AI generates the 80% scaffolding; you provide the 20% domain expertise
+<strong>Lab (~2 hrs):</strong>
+1. <strong>Write a testbench for the Day 3 ALU by hand</strong> — directed stimulus for all opcodes <em>(this exercise is mandatory before using AI)</em>
+2. Make it self-checking: expected vs. actual with automated pass/fail
+3. <strong>AI-Assisted Exercise:</strong> Use AI to generate a testbench for the debouncer module. Student task:
+   - Write a prompt specifying: module interface, expected behavior (noisy input → clean output after threshold), corner cases (rapid toggles, glitches shorter than threshold)
+   - Generate the TB, review it, fix any issues, run it
+   - <strong>Deliverable for this exercise:</strong> Submit both the prompt and the corrected testbench, with annotations explaining what was changed and why
+4. Testbench for the counter: check rollover, reset behavior, enable
+5. <strong>Stretch:</strong> Task-based testbench organization, file-based stimulus (<code>$readmemh</code>)
+<strong>Deliverable:</strong> (1) Hand-written self-checking ALU testbench with pass/fail report. (2) AI-generated debouncer testbench with annotated corrections.
+<strong>Assessment note:</strong> Grading distinguishes between "prompt quality" and "review quality." A student who writes a vague prompt and accepts broken output scores lower than one who writes a precise prompt and catches the AI's errors.</p>
+<hr>
+<h3 id="day-7-finite-state-machines">Day 7 — Finite State Machines</h3>
+<p><strong>Pre-class (~50 min):</strong>
+- Moore vs. Mealy: outputs depend on state only vs. state + input
+- State diagrams to HDL: a systematic translation process
+- 3-always-block FSM coding style: state register, next-state logic, output logic
+- State encoding: binary, one-hot, gray — trade-offs
+- <code>localparam</code> or <code>parameter</code> for state names (readability)
+<strong>In-class mini-lecture (30 min):</strong>
+- FSM design methodology: (1) draw the diagram, (2) enumerate states/transitions, (3) code it, (4) simulate it
+- Why three always blocks? Separation of concerns, easier debugging, cleaner synthesis
+- Live design: vending machine or pattern detector, paper to code
+<strong>Lab (~2 hrs):</strong>
+1. Traffic light controller: 3 states (R/Y/G), timed transitions using counters
+2. Write a thorough testbench — verify all state transitions, timing
+3. Pushbutton pattern detector: detect a specific button press sequence
+4. <strong>Stretch:</strong> Mealy version of the pattern detector, compare behavior
+<strong>Deliverable:</strong> Traffic light FSM running on board with waveform-verified testbench.</p>
+<hr>
+<h3 id="day-8-hierarchy-parameters-generate-design-reuse">Day 8 — Hierarchy, Parameters, Generate &amp; Design Reuse</h3>
+<p><strong>Pre-class (~45 min):</strong>
+- Module instantiation: positional vs. named port connections (always use named!)
+- <code>parameter</code> and <code>localparam</code>: making modules reusable
+- <code>#(.PARAM(value))</code> override syntax
+- <code>generate</code> blocks: <code>for</code>-generate, <code>if</code>-generate — hardware replication and conditional instantiation
+- <strong>Recursive Generate Patterns</strong>
+  - <code>generate if</code> for conditional feature inclusion (e.g., optional parity, configurable pipeline depth)
+  - Nested <code>generate for</code> for 2D structures (e.g., array of processing elements)
+  - The "recursive module" pattern: a module that instantiates itself with different parameters (tree adder preview)
+- Design for reuse: building a personal Verilog library
+<strong>In-class mini-lecture (30 min):</strong>
+- Hierarchy as the key to managing complexity — top-down vs. bottom-up
+- Parameterization philosophy: what should be parameterized and what shouldn't
+- <code>generate</code> block: thinking of it as a compile-time loop, not a runtime loop
+- Live demo: parameterized N-bit counter, instantiated at multiple widths
+- <strong>PPA seed (5 min):</strong> After synthesizing the parameterized counter at WIDTH=4, 8, 16, 32, run <code>yosys stat</code> for each. <strong>Show the resource scaling.</strong> "How does LUT count grow with width? Is it linear? What would this look like in an ASIC?" — plant the question, answer it fully on Day 10.
+<strong>Lab (~2 hrs):</strong>
+1. Parameterized N-bit counter module — instantiate as 8-bit, 16-bit, 24-bit
+2. <strong>AI-Assisted TB for parameterized modules:</strong> Use AI to generate a testbench that tests the counter at multiple WIDTH configurations. Student evaluates: Does the AI correctly use <code>parameter</code> overrides? Does it test rollover at the right value for each width?
+3. <code>generate</code>-based LED driver: N instances of a blink module at different rates
+4. Clean hierarchical top module that ties everything together on the Go Board
+5. <strong>Resource comparison:</strong> Run <code>yosys stat</code> on the hierarchical design. Record LUT, FF, and EBR counts. <em>(30-second exercise that builds PPA habits)</em>
+6. <strong>Stretch:</strong> Parameterized LFSR with configurable polynomial via <code>generate</code>
+<strong>Deliverable:</strong> Hierarchical design with 3+ levels + AI-generated parameterized TB with annotations + <code>yosys stat</code> resource snapshot.</p>
+<hr>
+<h2 id="week-3-memory-communication-numerical-architectures">Week 3: Memory, Communication &amp; Numerical Architectures</h2>
+<p><em>Goal: Students design real communication interfaces (UART), work with on-chip memory, build numerical circuits with PPA awareness, and understand timing constraints. Designs become systems, not just modules.</em></p>
+<h3 id="day-9-memory-ram-rom-block-ram">Day 9 — Memory: RAM, ROM &amp; Block RAM</h3>
+<p><strong>Pre-class (~45 min):</strong>
+- Modeling ROM in Verilog: <code>case</code>-based, array-based
+- <code>$readmemh</code> / <code>$readmemb</code>: initializing memory from files
+- RAM modeling: synchronous read/write patterns
+- iCE40 Block RAM (EBR): 16 blocks × 4 Kbit = 64 Kbit total
+- Inference patterns: how to write Verilog that Yosys maps to EBR
+<strong>In-class mini-lecture (30 min):</strong>
+- FPGA memory landscape: LUT RAM vs. Block RAM vs. external memory
+- iCE40 <code>SB_RAM256x16</code> and inference — what Yosys needs to see
+- Practical: use <code>$readmemh</code> to load a lookup table from a <code>.hex</code> file
+- Live demo: sine wave lookup table or character ROM
+<strong>Lab (~2 hrs):</strong>
+1. ROM-based pattern sequencer: step through LED/7-seg patterns stored in ROM
+2. Inferred Block RAM: write data via buttons, read and display on 7-seg
+3. Testbench: verify RAM read-after-write behavior
+4. <strong>Stretch:</strong> Dual-port RAM, simple display buffer concept
+<strong>Deliverable:</strong> ROM-driven 7-seg pattern sequencer + RAM read/write demo, with testbench.</p>
+<hr>
+<h3 id="day-10-numerical-architectures-design-trade-offs">Day 10 — Numerical Architectures &amp; Design Trade-offs</h3>
+<p><strong>Pre-class (~55 min):</strong>
+- <strong>Segment 1: Timing &amp; Constraints Essentials (15 min)</strong>
+  - Setup time, hold time, critical path — the concepts
+  - nextpnr timing analysis: what "timing met" means, reading the summary line
+  - When timing fails: restructure logic, pipeline, relax clock
+  - <code>.pcf</code> deep dive and PLL basics on iCE40 (conceptual — lab is optional stretch)
+- <strong>Segment 2: Numerical Architecture Trade-offs (20 min)</strong>
+  - Adder architectures: ripple-carry (Day 2 review) → carry-lookahead (concept + equations) → the <code>+</code> operator (what does the tool actually build?)
+  - <strong>Key insight:</strong> Writing <code>assign sum = a + b;</code> lets the synthesis tool choose the architecture. Understanding what it chooses and why is the designer's job.
+  - Multiplication: shift-and-add algorithm → why <code>*</code> on an FPGA uses DSP blocks or LUT chains → the iCE40 has NO DSP blocks, so <code>*</code> is pure LUT logic
+  - Fixed-point representation: Q-format notation (e.g., Q4.4 = 4 integer bits, 4 fractional bits), why it matters for DSP and control
+  - Signed vs. unsigned: <code>$signed()</code> cast, sign extension, and arithmetic gotchas
+- <strong>Segment 3: PPA — Performance, Power, Area (15 min)</strong>
+  - What is PPA? The three axes of digital design optimization
+  - <strong>FPGA PPA proxies:</strong>
+    - <strong>Performance</strong> → Fmax from nextpnr timing report
+    - <strong>Area</strong> → LUT/FF/EBR count from <code>yosys stat</code>
+    - <strong>Power</strong> → estimated from toggle rate × capacitance (conceptual; iCE40 power analysis is limited)
+  - <strong>ASIC PPA</strong> (conceptual comparison):
+    - Area = gate count × cell size; standard cell libraries
+    - Power = dynamic (switching) + static (leakage); process node matters
+    - Performance = critical path through placed-and-routed standard cells
+  - <strong>The trade-off triangle:</strong> You can't optimize all three simultaneously. Pipelining improves Fmax but costs FFs. Parallelism improves throughput but costs area. Clock gating reduces power but adds complexity.
+  - <code>if/else</code> vs <code>case</code> revisited from PPA perspective: priority chains may have longer critical paths (lower Fmax) but similar area; parallel muxes may use more LUTs but have shorter critical paths.
+  - <strong>Open-source ASIC PPA (aspirational):</strong> The <a href="https://openroad.readthedocs.io/">OpenROAD</a> project and its user-facing flow <a href="https://openlane.readthedocs.io/">OpenLane</a> provide a fully open-source RTL-to-GDSII flow. You can synthesize Verilog to standard cells (e.g., SKY130 from SkyWater/Google), run place-and-route, and extract real ASIC PPA metrics — all without commercial licenses. We won't use it in this course (the learning curve is steep), but the PPA analysis habits you build with <code>yosys stat</code> transfer directly. This is the same flow used in the Google/Efabless shuttle program that fabricates real chips from open-source designs.
+<strong>In-class mini-lecture (30 min):</strong>
+- <strong>Quick timing check (5 min):</strong> Read a nextpnr timing report together — is timing met? What's the critical path?
+- <strong>Numerical architectures live demo (15 min):</strong>
+  - Synthesize <code>assign sum = a + b;</code> at 4-bit, 8-bit, 16-bit, 32-bit widths
+  - Run <code>yosys stat</code> for each — <strong>plot the LUT count vs. width</strong> (should be roughly linear for ripple-carry)
+  - Synthesize <code>assign product = a * b;</code> at 4-bit, 8-bit — <strong>show the LUT explosion</strong> (quadratic growth, no DSP blocks on iCE40)
+  - Compare: <code>a + b</code> vs. <code>a + b + c</code> (3-input addition — does the tool chain adders or use something smarter?)
+  - <strong>Inspect with <code>yosys show</code>:</strong> What does the synthesized adder actually look like? Can you see the carry chain?
+- <strong>PPA thinking (10 min):</strong>
+  - Design decision framework: "For this application, do I care more about Fmax, area, or power?"
+  - FPGA vs. ASIC: on FPGA, LUTs are fixed-size so "area" is really "LUT utilization." On ASIC, a 2-input gate is physically smaller than a 4-input gate.
+  - Real example: A 32-bit multiplier on iCE40 HX1K uses ~30% of available LUTs. On an ASIC at 28nm, it's a tiny fraction of the die.
+  - <strong>Brief aside:</strong> "Everything we're doing with <code>yosys stat</code> has an ASIC equivalent. The OpenROAD/OpenLane open-source flow takes the same Verilog, synthesizes to real standard cells, and gives you gate count, wire delay, and power estimates. The PPA habits transfer directly."
+<strong>Lab (~2 hrs):</strong>
+1. <strong>Adder architecture comparison (30 min):</strong>
+   - Implement a ripple-carry adder manually (from full-adder chain, reuse Day 2 code)
+   - Implement using <code>assign sum = a + b;</code> (behavioral)
+   - Compare: <code>yosys stat</code> (LUT count), <code>yosys show</code> (schematic), and nextpnr Fmax at 8-bit and 16-bit
+   - <strong>Record results in a comparison table</strong> <em>(builds PPA analysis habits)</em>
+2. <strong>Shift-and-add multiplier (30 min):</strong>
+   - Implement a sequential (multi-cycle) 8-bit unsigned multiplier using shift-and-add
+   - FSM + shift register + accumulator architecture
+   - Compare resource usage to <code>assign product = a * b;</code> (combinational)
+   - <strong>Discussion:</strong> When would you choose sequential over combinational multiplication? (latency vs. area trade-off)
+3. <strong>Fixed-point exercise (20 min):</strong>
+   - Implement a Q4.4 fixed-point adder and multiplier
+   - Key challenge: the product of two Q4.4 numbers is Q8.8 — handling the bit growth
+   - Display the integer part on 7-seg
+4. Timing constraint exercise: add constraints to an existing design, analyze the report
+5. <strong>Stretch:</strong> Instantiate <code>SB_PLL40_CORE</code> for a different frequency; CDC exercise with 2-FF synchronizer
+<strong>Deliverable:</strong> Adder/multiplier PPA comparison table (LUTs, FFs, Fmax for each variant) + working shift-and-add multiplier on FPGA.</p>
+<hr>
+<h3 id="day-11-uart-tx-your-first-communication-interface">Day 11 — UART TX: Your First Communication Interface</h3>
+<p><strong>Pre-class (~50 min):</strong>
+- UART protocol: start bit, 8 data bits, stop bit, baud rate
+- Baud rate generation: deriving precise timing from a fast clock
+- TX architecture: FSM + PISO shift register + baud generator
+- Connecting to a PC: USB-to-serial, terminal emulator settings
+<strong>In-class mini-lecture (30 min):</strong>
+- UART as an FSM + datapath design exercise — everything from Weeks 1–2 comes together
+- Baud rate math: 25 MHz / 115200 = 217 clocks per bit (with rounding considerations)
+- Live build: UART TX from block diagram to code
+- Terminal setup: connecting and configuring the serial monitor
+<strong>Lab (~2 hrs):</strong>
+1. Implement UART TX module from provided architecture diagram
+2. Top module: button press → transmit a character → see it on PC terminal
+3. Transmit "HELLO\r\n" on reset or button press
+4. <strong>Stretch:</strong> Hex-to-ASCII converter, transmit counter value as readable text
+<strong>Deliverable:</strong> "HELLO" appearing on the PC terminal from the Go Board.</p>
+<hr>
+<h3 id="day-12-uart-rx-spi-ai-assisted-protocol-verification">Day 12 — UART RX, SPI &amp; AI-Assisted Protocol Verification</h3>
+<p><strong>Pre-class (~55 min):</strong>
+- <strong>Segment 1: UART RX — The Oversampling Challenge (15 min)</strong>
+  - UART RX design: oversampling (16×), start-bit detection, bit centering
+  - RX FSM: idle → detect start → sample bits at center → stop → valid
+  - Finding the center of each bit
+- <strong>Segment 2: AI for Protocol Verification (8 min)</strong>
+  - Prompting for protocol-aware testbenches: specifying timing constraints, frame structure, error conditions
+  - What AI needs to know: baud rate, clock frequency, protocol (8N1), expected sequences
+  - What to watch for: AI may not handle baud-rate timing accurately, may miss center-sampling verification
+  - <strong>Note on tool comparison:</strong> "Different AI tools have different strengths for HDL. Some handle Verilog syntax better; some reason about timing more carefully. If you have time, try generating the same TB prompt with two different tools and compare the outputs — this kind of comparative evaluation is itself a professional skill."
+- <strong>Segment 3: SPI Protocol (12 min)</strong>
+  - SPI vs. UART vs. I²C: when to use what, trade-offs
+  - SPI signals: SCLK, MOSI, MISO, CS_N — master provides the clock
+  - CPOL/CPHA modes — four configurations
+  - SPI as connected shift registers: "Everything you built in Week 2"
+- <strong>Segment 4: Constraint-Based Design Thinking + IP Integration (10 min)</strong>
+  - Constraint-based design <em>concept</em>: <code>generate if</code> for optional features (parity, configurable stop bits)
+  - "Same RTL, different hardware" — the power of parameterized protocol modules
+  - Brief example: UART TX with <code>parameter PARITY_EN</code> — how <code>generate if</code> conditionally includes parity logic <em>(concept shown; lab implementation on Day 14)</em>
+  - Working with third-party IP: trust but verify, write a wrapper, verify resource usage
+  - IP integration checklist: read docs → wrapper → synchronizers → testbench → resource check
+<strong>In-class mini-lecture (30 min):</strong>
+- UART RX walkthrough (10 min): 16× oversampling implementation, center-sampling strategy
+- SPI master overview (5 min): Block diagram — FSM + shift register + clock divider. Students implement in lab.
+- <strong>AI protocol TB demo (10 min):</strong>
+  - Live-prompt AI to generate a UART loopback testbench (TX drives RX, verify data integrity)
+  - Review together: Does it handle baud timing? Does it check all 8 data bits? Does it verify start/stop framing?
+  - Fix the issues, run it
+  - Key lesson: protocol testbenches require domain expertise that AI approximates but doesn't guarantee
+- IP integration quick note (5 min): For SPI — students choose: implement from scratch (recommended) or integrate open-source IP with a wrapper. Both are valid.
+<strong>Lab (~2 hrs):</strong>
+1. <strong>UART RX implementation (35 min):</strong>
+   - Implement UART RX with 16× oversampling
+   - Test in simulation: TX module drives RX, verify byte-level data integrity
+2. <strong>UART loopback on hardware (15 min):</strong>
+   - RX → TX loopback. Type on PC → see echo
+   - 7-seg displays hex value of last received byte
+3. <strong>AI-generated protocol testbench (20 min):</strong>
+   - Use AI to generate a comprehensive UART loopback testbench
+   - Prompt requirements: test at least 10 byte values including 0x00 and 0xFF, verify frame timing, include timeout detection for hung RX
+   - Student reviews, corrects, runs the TB
+   - <strong>Submit:</strong> Prompt, raw AI output, corrected version with brief annotations on what was changed
+   - <strong>Optional bonus:</strong> Run the same prompt through a second AI tool. In 2–3 sentences, note which produced better Verilog and why.
+4. <strong>SPI master (25 min):</strong>
+   - <strong>Option A (recommended): Implement from scratch</strong> — Mode 0 SPI master, 8-bit, FSM + shift register. Simulate with a simple SPI slave model (provided or student-written loopback).
+   - <strong>Option B: Integrate open-source IP</strong> — Find/use a simple SPI master, write a wrapper with our naming conventions, write a testbench.
+   - Either option: verify one complete SPI transaction in simulation.
+5. <strong>Stretch:</strong> UART-to-SPI bridge — receive a command byte via UART, forward it via SPI, return the SPI response via UART.
+<strong>Deliverable:</strong> (1) UART loopback working on hardware. (2) AI-generated protocol TB with annotated corrections. (3) SPI master simulated with testbench.
+<strong>Instructor note on AI tool comparison:</strong> If time permits during debrief, ask 2–3 students to share their tool comparison findings. Five minutes of peer discussion here is high-value.</p>
+<hr>
+<h2 id="week-4-advanced-design-verification-final-project">Week 4: Advanced Design, Verification &amp; Final Project</h2>
+<p><em>Goal: Introduce SystemVerilog for cleaner design and modern verification. Apply PPA analysis. Students complete a capstone project demonstrating design, verification, and analysis competence.</em></p>
+<h3 id="day-13-systemverilog-for-design">Day 13 — SystemVerilog for Design</h3>
+<p><strong>Pre-class (~45 min):</strong>
+- Why SystemVerilog? Evolution from Verilog-2001, IEEE 1800 standard
+- <code>logic</code> replaces both <code>wire</code> and <code>reg</code> — one type to rule them all
+- <code>always_ff</code>, <code>always_comb</code>, <code>always_latch</code> — intent-based always blocks
+- <code>enum</code>: named states for FSMs — no more <code>localparam</code> state definitions
+- <code>struct</code> and <code>typedef</code>: grouping related signals
+- <code>package</code> and <code>import</code>: sharing definitions across modules
+<strong>In-class mini-lecture (30 min):</strong>
+- Side-by-side comparison: Verilog vs. SystemVerilog for the same module
+- The safety net: <code>always_comb</code> catches missing assignments, <code>always_ff</code> enforces edge-triggered
+- <code>enum</code> FSMs: automatic next-state validation, <code>.name()</code> for debug printing
+- <strong>PPA with SV (5 min):</strong> Synthesize Verilog and SV versions of the same module — compare <code>yosys stat</code>. (Spoiler: identical. SV is about designer productivity and safety, not hardware.)
+- Tool note: Icarus Verilog has partial SV support; Verilator is a good complement
+<strong>Lab (~2 hrs):</strong>
+1. Refactor the traffic light FSM into SystemVerilog: <code>logic</code>, <code>always_ff</code>, <code>always_comb</code>, <code>enum</code> states
+2. Refactor the UART TX: use <code>struct</code> for configuration, <code>enum</code> for states
+3. Simulate both versions (Icarus with <code>-g2012</code> flag), compare waveforms
+4. <strong>PPA comparison:</strong> <code>yosys stat</code> on Verilog vs. SV versions. Document that they produce identical hardware.
+5. <strong>Stretch:</strong> Create a <code>package</code> with shared type definitions, import into multiple modules
+<strong>Deliverable:</strong> SystemVerilog-refactored module(s) with PPA comparison notes.</p>
+<hr>
+<h3 id="day-14-verification-techniques-ai-driven-testing-ppa-analysis">Day 14 — Verification Techniques, AI-Driven Testing &amp; PPA Analysis</h3>
+<p><strong>Pre-class (~55 min):</strong>
+- <strong>Segment 1: Assertions — Executable Specifications (12 min)</strong>
+  - Immediate assertions: <code>assert</code>, <code>$error</code>, <code>$fatal</code> — inline design checks
+  - Concurrent assertions (brief): <code>assert property</code>, sequence syntax, <code>|-&gt;</code> and <code>|=&gt;</code>
+  - Assertions as executable documentation — catching bugs at the source
+- <strong>Segment 2: AI-Driven Verification Workflows (15 min)</strong>
+  - The verification productivity stack: manual -&gt; self-checking -&gt; AI-scaffolded -&gt; assertion-enhanced -&gt; coverage-driven
+  - Prompt engineering for complex testbenches: specifying constraints, corner cases, coverage goals
+  - <strong>Constraint-based stimulus generation</strong> (not UVM, but the concept):
+    - Defining legal input ranges and relationships
+    - Using <code>$urandom_range()</code> for bounded random stimulus
+    - Writing a constraint specification in comments, then having AI generate the stimulus loop
+    - Example: "Generate random UART frames where baud rate is in {9600, 115200}, data in [0x00, 0xFF], inter-frame gap in [1, 100] bit periods"
+  - Reviewing AI-generated TBs for coverage completeness: "Did the AI test the boundaries?"
+  - <strong>Industry context:</strong> "AI-assisted verification is increasingly common for testbench scaffolding, regression debugging, and coverage analysis. The prompt/generate/review/correct workflow you have practiced in this course is the same loop verification engineers use on production chip projects. The difference is scale; the evaluation skill is identical."
+- <strong>Segment 3: PPA Analysis Methodology (12 min)</strong>
+  - Structured PPA reporting: what to measure, how to present it
+  - <strong>FPGA PPA report template:</strong>
+    - Resource table: LUTs, FFs, EBR, PLL from <code>yosys stat</code>
+    - Timing: Fmax from nextpnr, critical path identification
+    - Utilization: % of iCE40 HX1K used
+  - <strong>ASIC context discussion:</strong>
+    - How ASIC PPA differs: gate count, wire delay dominance, process node impact
+    - Why an 8-bit multiplier that takes 64 LUTs on FPGA might take only a few hundred gates on ASIC
+    - Liberty files, standard cell libraries — conceptual awareness
+    - Reminder: OpenROAD/OpenLane provides open-source ASIC PPA analysis for the same Verilog
+  - <strong>Design-space exploration:</strong> Synthesizing the same module at different parameters (WIDTH=4,8,16,32) and plotting area/timing curves
+- <strong>Segment 4: Coverage </strong>Segment 4: Coverage &amp; the Road Ahead (11 min)<strong> ** the Road Ahead (11 min)</strong>
+  - Functional coverage concepts: <code>covergroup</code>, <code>coverpoint</code>, <code>bins</code>
+  - Coverage-driven verification: how do you know when you are <em>done</em> testing?
+  - Interfaces and <code>modport</code> (brief)
+  - Industry context: UVM, formal verification, the department's V&amp;V course
+  - Verification maturity scale: where students are now (Level 2-3)
+<strong>In-class mini-lecture (30 min):</strong>
+- <strong>Assertions quick-start (10 min):</strong> Add immediate assertions to UART TX (live demo)
+- <strong>AI constraint-based TB demo (10 min):</strong>
+  - Prompt AI to generate a constrained-random testbench for the ALU:
+    - "Test all 4 opcodes with random operands in [0, 2^WIDTH-1]. For ADD/SUB, ensure at least 10 cases each of: no overflow, overflow, zero result, max result. Include a self-checking scoreboard. Use <code>$urandom_range()</code>."
+  - Review the output: Does it actually cover the corner cases? Does it count coverage?
+  - Fix and run
+- <strong>PPA analysis walkthrough (10 min):</strong>
+  - Take the shift-and-add multiplier from Day 10 and the behavioral <code>*</code> version
+  - Run <code>yosys stat</code> and nextpnr on both
+  - Build a PPA comparison table on the board together
+  - "This is what your final project PPA report should look like"
+<strong>Lab (~2 hrs):</strong>
+1. <strong>Assertion-enhanced UART TX (25 min):</strong>
+   - Add 5+ immediate assertions (idle=high, busy consistency, bit index bounds, start/stop values)
+   - Intentionally inject bugs, verify assertions catch them
+2. <strong>Constraint-based UART parity extension (20 min):</strong> <em>(moved from Day 12)</em>
+   - Add configurable parity to UART TX using <code>generate if</code>:
+   - <code>parameter PARITY_EN = 0</code> (0 = no parity, 1 = enabled); <code>parameter PARITY_TYPE = 0</code> (0 = even, 1 = odd)
+   - When <code>PARITY_EN=1</code>, TX sends: start + 8 data + parity + stop (11 bits)
+   - Use <code>generate if (PARITY_EN) begin : gen_parity ... end</code> for conditional parity logic
+   - Synthesize both configurations. Compare <code>yosys stat</code>: how many extra LUTs does parity cost?
+   - <strong>This exercise bridges constraint-based design (Day 12 concept) with PPA analysis (today's theme).</strong>
+   - <em>Instructor escape valve:</em> Students behind on their project can skip this exercise and use the time for Exercise 3/4. Parity can be completed at home.
+3. <strong>AI constraint-based testbench for final project module (25 min):</strong>
+   - Each student writes a constraint specification for their final project's core module
+   - Use AI to generate the testbench from the spec
+   - Review, correct, run, document coverage gaps
+   - <strong>Deliverable:</strong> Constraint spec + AI output + corrected TB + coverage analysis
+4. <strong>PPA analysis exercise (25 min):</strong>
+   - Pick 2-3 modules from the course library (e.g., ALU, counter, UART TX, parity-enabled UART TX)
+   - For each, synthesize at 2+ parameter configurations
+   - Record: LUTs, FFs, Fmax
+   - Write a brief PPA comparison (1 paragraph per module)
+   - <strong>Deliverable:</strong> PPA analysis table + 1-page design trade-off discussion
+5. <strong>Project work time (15 min):</strong> Apply assertions + AI TBs to final project modules <em>(Day 15 provides 2.25 hrs of dedicated project time)</em>
+6. <strong>Stretch:</strong> Interface-based testbench refactoring (SV <code>interface</code> + <code>modport</code>)
+<strong>Deliverable:</strong> (1) Assertion-enhanced UART. (2) Parity-parameterized UART with PPA comparison. (3) AI constraint-based TB for project module with annotations. (4) PPA analysis report (table + discussion).</p>
+<hr>
+<h3 id="day-15-final-project-build-day">Day 15 — Final Project: Build Day</h3>
+<p><strong>Mini-lecture (15 min):</strong>
+- Project check-in: quick stand-up, each student states progress and blockers
+- Debugging strategies: divide and conquer, simulation first, use assertions, check pin assignments
+- Integration tips: test each module independently before combining
+- <strong>Reminder:</strong> Final project deliverables now include a brief PPA analysis (LUTs, FFs, Fmax, % utilization) and at least one AI-generated testbench for a core module
+<strong>Lab (~2.25 hrs):</strong>
+- Dedicated project work time
+- Mike circulates for 1-on-1 debugging and design review
+- Peer collaboration encouraged
+<strong>Deliverable:</strong> Working prototype or demonstrable progress. Testbench (manual or AI-assisted) for at least one key module. PPA snapshot (<code>yosys stat</code> output + Fmax).</p>
+<hr>
+<h3 id="day-16-final-project-demos-course-wrap">Day 16 — Final Project Demos &amp; Course Wrap</h3>
+<p><strong>Demos (~1.5 hrs):</strong>
+- Each student presents their project (5–7 min each)
+- Format: 1 min context, live hardware demo, show key testbench/waveforms, lessons learned
+- <strong>Demo elements:</strong>
+  - Show <code>yosys stat</code> resource utilization — "My design uses X% of the iCE40 HX1K"
+  - Briefly discuss one design trade-off made (e.g., "I chose a sequential multiplier over combinational to save LUTs")
+  - Show one AI-assisted testbench and explain what was corrected
+- Class Q&amp;A after each demo
+<strong>Mini-lecture / Discussion (30 min):</strong>
+- Where to go from here:
+  - ASIC vs. FPGA career paths — with PPA context from the course
+  - Advanced SystemVerilog and UVM — how today's constraint-based testing maps to UVM concepts
+  - <strong>AI in professional verification workflows</strong> — how industry uses AI for TB generation, regression analysis, coverage closure
+  - Formal verification
+  - The open-source FPGA ecosystem (SymbiFlow, Amaranth, LiteX)
+  - The department's V&amp;V course — how this course feeds into it
+- Course retrospective: what worked, what to improve
+<strong>Wrap (15 min):</strong>
+- Feedback collection
+- You keep the Go Board — keep building!</p>
+<hr>
+<h2 id="cross-cutting-threads-summary">Cross-Cutting Threads: Summary</h2>
+<h3 id="thread-1-ai-assisted-testbench-generation-progressive">Thread 1: AI-Assisted Testbench Generation (Progressive)</h3>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>AI Integration</th>
+<th>Student Skill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6</td>
+<td>Philosophy + first live demo; manual TB required first</td>
+<td>Understand what AI generates; write prompts</td>
+</tr>
+<tr>
+<td>8</td>
+<td>AI-generated TB for parameterized modules</td>
+<td>Evaluate AI's parameter handling</td>
+</tr>
+<tr>
+<td>12</td>
+<td>AI-generated protocol-level TB (UART loopback) + optional tool comparison</td>
+<td>Prompt for protocol-aware verification; catch timing errors; evaluate AI tools</td>
+</tr>
+<tr>
+<td>14</td>
+<td>AI constraint-based testbench for own project module</td>
+<td>Write constraint specs; review coverage completeness</td>
+</tr>
+<tr>
+<td>15–16</td>
+<td>AI TB as final project deliverable</td>
+<td>Independent AI-assisted verification</td>
+</tr>
+<tr>
+<td><strong>Progression:</strong> Observe → Prompt + Review → Prompt + Correct + Analyze → Independent Application</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="thread-2-ppa-analysis-progressive">Thread 2: PPA Analysis (Progressive)</h3>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>PPA Activity</th>
+<th>Student Skill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>Compare <code>if/else</code> vs <code>case</code> LUT counts</td>
+<td>First <code>yosys stat</code> exposure</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Resource scaling with parameterized width</td>
+<td>Relate parameters to area</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Adder/multiplier PPA comparison table</td>
+<td>Structured PPA analysis</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Parity-enabled vs. disabled UART resource comparison</td>
+<td>Feature cost analysis</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Verilog vs. SV PPA comparison</td>
+<td>Confirm SV has zero hardware cost</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Multi-module PPA analysis exercise + ASIC context</td>
+<td>Design-space exploration; FPGA↔ASIC mapping</td>
+</tr>
+<tr>
+<td>15–16</td>
+<td>Final project PPA report</td>
+<td>Independent PPA reporting</td>
+</tr>
+</tbody>
+</table>
+<h3 id="thread-3-ifelse-vs-case-constraint-based-design">Thread 3: <code>if/else</code> vs <code>case</code> &amp; Constraint-Based Design</h3>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td><code>if/else</code> → priority chain, <code>case</code> → parallel mux; Yosys schematic comparison</td>
+</tr>
+<tr>
+<td>7</td>
+<td>FSM <code>case</code> statements; state encoding trade-offs (binary vs one-hot)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>generate if</code> for conditional hardware; <code>generate for</code> for replication</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Numerical architectures: when <code>case</code> makes sense (ALU opcodes) vs <code>if/else</code> (overflow detection)</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Constraint-based UART: <code>generate if</code> for optional parity, parameterized protocol variants</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Design-space exploration: synthesizing across parameter configurations</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="assessment-weights">Assessment Weights</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Weight</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Daily lab deliverables (12 sessions)</td>
+<td>40%</td>
+<td>Completion + demonstrated understanding</td>
+</tr>
+<tr>
+<td>Testbench quality (manual + AI-assisted)</td>
+<td>15%</td>
+<td>Self-checking, coverage, AI prompt quality, review annotations</td>
+</tr>
+<tr>
+<td><strong>AI verification portfolio</strong></td>
+<td>5%</td>
+<td>Quality of prompts, corrections, and constraint specs across the course</td>
+</tr>
+<tr>
+<td><strong>PPA analysis</strong></td>
+<td>5%</td>
+<td>Resource tables, design trade-off reasoning</td>
+</tr>
+<tr>
+<td>Final project</td>
+<td>25%</td>
+<td>Functionality, design quality, testbench (incl. AI-assisted), PPA report, presentation</td>
+</tr>
+<tr>
+<td>Participation / engagement</td>
+<td>10%</td>
+<td>Questions, helping peers, video prep</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="final-project-requirements">Final Project Requirements</h2>
+<p>All projects require the following:
+<strong>Required for all projects:</strong>
+1. At least one manually-written self-checking testbench for a core module
+2. At least one AI-generated testbench with annotated corrections
+3. A brief PPA report: <code>yosys stat</code> output, Fmax, % iCE40 utilization, one paragraph on a design trade-off
+4. Live hardware demo
+<strong>Additional project option:</strong>
+| Project | Key Concepts Exercised | Difficulty |
+|---|---|---|
+| <strong>Numerical Compute Engine</strong> | Parameterized ALU + sequential multiplier + fixed-point operations + FSM sequencer. Accepts operands via buttons/UART, displays results on 7-seg, reports via UART. Emphasis on PPA optimization. | ★★★ |</p>
+<hr>
+<h2 id="pre-class-video-guide">Pre-Class Video Guide</h2>
+<table>
+<thead>
+<tr>
+<th>Session</th>
+<th>Duration</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Day 1</td>
+<td>40 min</td>
+<td>HDL mindset, synthesis vs. sim, module anatomy</td>
+</tr>
+<tr>
+<td>Day 2</td>
+<td>45 min</td>
+<td>Data types, vectors, operators, assign</td>
+</tr>
+<tr>
+<td>Day 3</td>
+<td>45 min</td>
+<td><code>always @(*)</code>, if/case, latch inference</td>
+</tr>
+<tr>
+<td>Day 4</td>
+<td>50 min</td>
+<td>Clocks, posedge, nonblocking, resets, RTL thinking</td>
+</tr>
+<tr>
+<td>Day 5</td>
+<td>45 min</td>
+<td>Counters, shift registers, bounce/metastability</td>
+</tr>
+<tr>
+<td>Day 6</td>
+<td><strong>55 min</strong></td>
+<td>Testbench anatomy, self-checking, <strong>AI for verification intro</strong></td>
+</tr>
+<tr>
+<td>Day 7</td>
+<td>50 min</td>
+<td>FSM theory, Moore/Mealy, 3-block style</td>
+</tr>
+<tr>
+<td>Day 8</td>
+<td><strong>50 min</strong></td>
+<td>Hierarchy, parameters, generate, <strong>recursive generate</strong></td>
+</tr>
+<tr>
+<td>Day 9</td>
+<td>45 min</td>
+<td>ROM/RAM modeling, readmemh, EBR inference</td>
+</tr>
+<tr>
+<td>Day 10</td>
+<td><strong>55 min</strong></td>
+<td><strong>Timing essentials, numerical architectures, PPA intro</strong></td>
+</tr>
+<tr>
+<td>Day 11</td>
+<td>50 min</td>
+<td>UART protocol, baud rate, TX architecture</td>
+</tr>
+<tr>
+<td>Day 12</td>
+<td><strong>55 min</strong></td>
+<td>UART RX, <strong>AI protocol TBs, SPI protocol, constraint-based design concepts</strong></td>
+</tr>
+<tr>
+<td>Day 13</td>
+<td>45 min</td>
+<td>SV: logic, always_ff/comb, enum, struct, package</td>
+</tr>
+<tr>
+<td>Day 14</td>
+<td><strong>55 min</strong></td>
+<td><strong>Assertions, AI constraint-based TBs, PPA methodology, coverage</strong></td>
+</tr>
+<tr>
+<td><strong>Total recording time: ~685 min (~11.4 hours)</strong></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="toolchain-reference">Toolchain Reference</h2>
+<pre class="codehilite"><code class="language-bash"># PPA analysis
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; stat&quot;
+# Schematic comparison
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; show&quot;
+# Timing analysis
+nextpnr-ice40 ... --report timing_report.json
+# AI testbench generation
+# Students use Claude, ChatGPT, or Copilot — no tool installation
+# Prompts and outputs are submitted as part of lab deliverables
+</code></pre>
+
+<hr>
+</article>
+</body>
+</html>

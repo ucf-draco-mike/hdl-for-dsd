@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module Library — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="shared-module-library">Shared Module Library</h1>
+<p>Canonical, reusable modules used throughout the course. Each module includes
+a matching testbench (<code>tb_&lt;module&gt;.v</code>).</p>
+<h2 id="module-inventory">Module Inventory</h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Description</th>
+<th>Introduced</th>
+<th>Testbench</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hex_to_7seg.v</code></td>
+<td>Hex-to-7-segment decoder (active-low, Go Board)</td>
+<td>Day 2</td>
+<td><code>tb_hex_to_7seg.v</code></td>
+</tr>
+<tr>
+<td><code>debounce.v</code></td>
+<td>Counter-based button debouncer with 2-FF sync</td>
+<td>Day 5</td>
+<td><code>tb_debounce.v</code></td>
+</tr>
+<tr>
+<td><code>counter_mod_n.v</code></td>
+<td>Parameterized modulo-N counter</td>
+<td>Day 5</td>
+<td><code>tb_counter_mod_n.v</code></td>
+</tr>
+<tr>
+<td><code>uart_tx.v</code></td>
+<td>UART transmitter (parameterized baud rate)</td>
+<td>Day 11</td>
+<td><code>tb_uart_tx.v</code></td>
+</tr>
+<tr>
+<td><code>uart_rx.v</code></td>
+<td>UART receiver with 16× oversampling</td>
+<td>Day 12</td>
+<td><code>tb_uart_rx.v</code></td>
+</tr>
+<tr>
+<td><code>baud_gen.v</code></td>
+<td>Standalone baud rate tick generator</td>
+<td>Day 15</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>edge_detect.v</code></td>
+<td>Rising/falling edge detector (1-cycle pulse)</td>
+<td>Day 15</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>heartbeat.v</code></td>
+<td>Parameterized LED heartbeat blinker</td>
+<td>Day 15</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="port-naming-convention">Port Naming Convention</h2>
+<p>These canonical modules use <code>i_</code>/<code>o_</code> prefixed port names. Note that earlier
+lab exercises (Days 5–9) may use slightly different naming for pedagogical
+reasons (e.g., <code>i_bouncy</code>/<code>o_clean</code> instead of <code>i_switch</code>/<code>o_switch</code> for the
+debouncer). The implementations are functionally equivalent.</p>
+<h2 id="usage">Usage</h2>
+<p>Lab exercises include local copies of these modules. For final projects, you
+can reference either the local copy or this shared library:</p>
+<pre class="codehilite"><code class="language-bash"># From a project directory
+iverilog -g2012 -o sim.vvp tb_top.v top.v ../../shared/lib/uart_tx.v
+</code></pre>
+</article>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HDL for Digital System Design — UCF ECE</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables ── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+    --gold:#FFC904;--black:#1a1a1a;--gray-900:#2c2a29;
+    --gray-600:#666;--gray-400:#999;--gray-200:#e5e5e0;
+    --gray-100:#f4f4f2;--bg:#fdfcfa;--border:#e5e5e0;
+    --link:#1565C0;--sidebar-w:264px;--header-h:0px;
+}
+html,body{height:100%;font-family:'Libre Franklin','Segoe UI',sans-serif;background:var(--bg);color:var(--black)}
+button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
+
+/* ── Layout ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar-w);background:#fafaf8;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .2s}
+.sidebar.collapsed{width:48px}
+.sidebar-header{padding:14px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;min-height:52px}
+.sidebar-header .logo{display:flex;align-items:center;gap:8px;overflow:hidden;white-space:nowrap}
+.sidebar-header .logo-icon{width:22px;height:22px;background:var(--gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.sidebar-header .logo-text{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:800;color:var(--black)}
+.sidebar-header .logo-sub{font-size:10px;color:var(--gray-400)}
+.sidebar.collapsed .logo-text,.sidebar.collapsed .logo-sub,.sidebar.collapsed .sidebar-nav{display:none}
+.sidebar-toggle{margin-left:auto;padding:4px;color:var(--gray-400);flex-shrink:0;font-size:16px;line-height:1}
+.sidebar-toggle:hover{color:var(--black)}
+
+.sidebar-nav{flex:1;overflow-y:auto;padding:6px 0}
+.nav-section-label{padding:6px 16px;font-size:10px;font-weight:700;color:var(--gray-400);letter-spacing:.1em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:13px;color:var(--gray-600);cursor:pointer;border-right:2px solid transparent;transition:all .1s}
+.nav-item:hover{background:#efeee8;color:var(--black)}
+.nav-item.active{color:var(--black);font-weight:600;background:#FFC90412;border-right-color:var(--gold)}
+.nav-divider{height:1px;background:var(--border);margin:8px 16px}
+
+.nav-week{display:flex;align-items:center;gap:4px;padding:8px 16px;font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:.05em;text-transform:uppercase;cursor:pointer;user-select:none}
+.nav-week:hover{color:var(--gray-600)}
+.nav-week .arrow{font-size:10px;transition:transform .15s;display:inline-block;width:12px}
+.nav-week .arrow.open{transform:rotate(90deg)}
+
+.nav-day{display:flex;align-items:center;gap:6px;padding:5px 16px 5px 28px;font-size:13px;color:#777;cursor:pointer;border-right:2px solid transparent;transition:all .1s}
+.nav-day:hover{background:#efeee8;color:var(--black)}
+.nav-day.active{color:var(--black);font-weight:600;background:#FFC90412;border-right-color:var(--gold)}
+.nav-day .day-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#bbb;width:18px;flex-shrink:0}
+.nav-day .day-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── Main content area ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.breadcrumb{padding:10px 24px;font-size:12px;color:var(--gray-400);border-bottom:1px solid var(--border);background:#fff;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.breadcrumb span.sep{color:#ddd}
+.breadcrumb a{color:var(--gray-600);text-decoration:none}
+.breadcrumb a:hover{color:var(--black)}
+
+/* ── Day header with sub-tabs ── */
+.day-header{padding:16px 24px 0;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0}
+.day-header h1{font-size:22px;font-weight:300;letter-spacing:-.01em;margin-bottom:2px}
+.day-header .subtitle{font-size:13px;color:var(--gray-400);margin-bottom:14px}
+.day-tabs{display:flex;gap:0}
+.day-tab{display:flex;align-items:center;gap:6px;padding:10px 16px;font-size:13px;color:var(--gray-400);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .1s}
+.day-tab:hover{color:var(--gray-600)}
+.day-tab.active{color:var(--black);font-weight:600;border-bottom-color:var(--gold)}
+
+/* ── Slide list (inside content area) ── */
+.slide-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:20px 24px}
+.slide-card{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s}
+.slide-card:hover{border-color:var(--gold)}
+.slide-card .seg-num{width:30px;height:30px;border-radius:8px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gray-600);font-family:'IBM Plex Mono',monospace;flex-shrink:0}
+.slide-card .seg-title{flex:1;font-size:14px;font-weight:500;color:var(--black)}
+.slide-card .seg-meta{font-size:11px;color:var(--gray-400)}
+.slide-card .open-btn{font-size:11px;color:var(--link);white-space:nowrap;text-decoration:none;padding:4px 8px;border-radius:4px;border:1px solid #1565C030}
+.slide-card .open-btn:hover{background:#1565C010}
+
+/* ── Iframe content ── */
+.content-frame{flex:1;border:none;width:100%;background:#fff}
+
+/* ── Slide preview with toolbar ── */
+.slide-toolbar{display:flex;align-items:center;gap:10px;padding:8px 24px;background:#fff;border-bottom:1px solid var(--border);flex-shrink:0}
+.slide-toolbar .slide-title{flex:1;font-size:13px;font-weight:600;color:var(--black)}
+.slide-toolbar a{font-size:12px;color:var(--link);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid #1565C030}
+.slide-toolbar a:hover{background:#1565C010}
+</style>
+</head>
+<body>
+
+<div class="shell">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <div>
+                    <div class="logo-text">HDL for DSD</div>
+                    <div class="logo-sub">v2.1 · UCF ECE</div>
+                </div>
+            </div>
+            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+        </div>
+        <div class="sidebar-nav" id="sidebarNav">
+            <!-- Populated by JS from manifest -->
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main" id="mainArea">
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="#" onclick="navigateTo('doc','overview');return false">Course</a>
+        </div>
+        <iframe class="content-frame" id="contentFrame" src="content/overview.html"></iframe>
+    </div>
+</div>
+
+<script>
+let manifest = null;
+let currentView = { type: 'doc', id: 'overview' };
+let expandedWeeks = { 1: true, 2: true, 3: true, 4: true };
+
+// Load manifest and build navigation
+fetch('manifest.json')
+    .then(r => r.json())
+    .then(m => { manifest = m; buildNav(); })
+    .catch(() => { document.getElementById('sidebarNav').innerHTML = '<div style="padding:16px;color:#999">manifest.json not found</div>'; });
+
+function buildNav() {
+    const nav = document.getElementById('sidebarNav');
+    let html = '<div class="nav-section-label">Course</div>';
+
+    manifest.docs.forEach(d => {
+        html += `<div class="nav-item${currentView.type==='doc'&&currentView.id===d.id?' active':''}" data-type="doc" data-id="${d.id}" onclick="navigateTo('doc','${d.id}')">${d.label}</div>`;
+    });
+
+    html += '<div class="nav-divider"></div>';
+
+    manifest.weeks.forEach(w => {
+        const open = expandedWeeks[w.num];
+        html += `<div class="nav-week" onclick="toggleWeek(${w.num})"><span class="arrow${open?' open':''}">▶</span>Week ${w.num}: ${w.title}</div>`;
+        if (open) {
+            w.days.forEach(d => {
+                const active = currentView.type==='day' && currentView.id===d.num;
+                html += `<div class="nav-day${active?' active':''}" onclick="navigateTo('day',${d.num})"><span class="day-num">${String(d.num).padStart(2,'0')}</span><span class="day-label">${d.title}</span></div>`;
+            });
+        }
+    });
+
+    nav.innerHTML = html;
+}
+
+function toggleWeek(num) {
+    expandedWeeks[num] = !expandedWeeks[num];
+    buildNav();
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+// ── Navigation ──
+
+function navigateTo(type, id) {
+    currentView = { type, id };
+    buildNav();
+
+    const main = document.getElementById('mainArea');
+    const bc = document.getElementById('breadcrumb');
+
+    if (type === 'doc') {
+        const doc = manifest.docs.find(d => d.id === id);
+        bc.innerHTML = `<a href="#" onclick="navigateTo('doc','overview');return false">Course</a><span class="sep">›</span>${doc ? doc.label : id}`;
+        // Remove day header and slide toolbar if present
+        clearDayUI();
+        loadFrame(doc ? doc.content : '');
+    }
+    else if (type === 'day') {
+        showDay(id);
+    }
+}
+
+// Make navigateTo available to iframed content (for overview day cards)
+window.navigateTo = navigateTo;
+
+function clearDayUI() {
+    const existing = document.querySelectorAll('.day-header, .slide-toolbar, .slide-grid-container');
+    existing.forEach(el => el.remove());
+}
+
+let currentDayTab = 'plan';
+let currentDayNum = null;
+
+function showDay(dayNum) {
+    currentDayNum = dayNum;
+    currentDayTab = 'plan';
+    clearDayUI();
+
+    // Find day data
+    let weekData = null, dayData = null;
+    for (const w of manifest.weeks) {
+        for (const d of w.days) {
+            if (d.num === dayNum) { weekData = w; dayData = d; break; }
+        }
+        if (dayData) break;
+    }
+    if (!dayData) return;
+
+    const bc = document.getElementById('breadcrumb');
+    bc.innerHTML = `<a href="#" onclick="navigateTo('doc','overview');return false">Course</a><span class="sep">›</span><a href="#" onclick="navigateTo('doc','overview');return false">Week ${weekData.num}</a><span class="sep">›</span>Day ${dayNum}: ${dayData.title}`;
+
+    // Insert day header with tabs
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerHTML = `
+        <h1>Day ${dayNum}: ${dayData.title}</h1>
+        <div class="subtitle">Week ${weekData.num} · Session ${dayNum} of 16 · Deliverable: ${dayData.deliverable}</div>
+        <div class="day-tabs" id="dayTabs">
+            <div class="day-tab active" data-tab="plan" onclick="switchDayTab('plan')">📋 Daily Plan</div>
+            <div class="day-tab" data-tab="videos" onclick="switchDayTab('videos')">▶ Videos (${dayData.slides.length})</div>
+            ${dayData.content.quiz ? '<div class="day-tab" data-tab="quiz" onclick="switchDayTab(\'quiz\')">📝 Quiz</div>' : ''}
+            <div class="day-tab" data-tab="lab" onclick="switchDayTab('lab')">🔬 Lab</div>
+        </div>
+    `;
+
+    const frame = document.getElementById('contentFrame');
+    frame.parentNode.insertBefore(header, frame);
+
+    // Load default tab
+    loadDayContent(dayData, 'plan');
+}
+
+function switchDayTab(tab) {
+    currentDayTab = tab;
+    // Update tab UI
+    document.querySelectorAll('.day-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.tab === tab);
+    });
+
+    // Find day data
+    let dayData = null;
+    for (const w of manifest.weeks) {
+        for (const d of w.days) {
+            if (d.num === currentDayNum) { dayData = d; break; }
+        }
+        if (dayData) break;
+    }
+    if (dayData) loadDayContent(dayData, tab);
+}
+
+function loadDayContent(dayData, tab) {
+    // Remove existing slide toolbar/grid
+    document.querySelectorAll('.slide-toolbar, .slide-grid-container').forEach(el => el.remove());
+
+    const frame = document.getElementById('contentFrame');
+
+    if (tab === 'videos') {
+        // Show slide grid instead of iframe
+        frame.style.display = 'none';
+
+        const container = document.createElement('div');
+        container.className = 'slide-grid-container';
+        container.style.cssText = 'flex:1;overflow-y:auto;background:#fdfcfa';
+
+        if (dayData.slides.length === 0) {
+            container.innerHTML = '<div style="padding:40px;text-align:center;color:#999">No video segments for this session.</div>';
+        } else {
+            let html = '<div class="slide-grid">';
+            dayData.slides.forEach(s => {
+                html += `<div class="slide-card" onclick="previewSlide('${s.file}', '${s.title.replace(/'/g,"\\'")}')">
+                    <div class="seg-num">${s.segment}</div>
+                    <div><div class="seg-title">${s.title}</div><div class="seg-meta">reveal.js · ~12-15 min</div></div>
+                    <a class="open-btn" href="${s.file}" target="_blank" onclick="event.stopPropagation()">↗ New tab</a>
+                </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        frame.parentNode.appendChild(container);
+    } else {
+        // Remove slide grid if present
+        frame.style.display = '';
+        const contentUrl = dayData.content[tab];
+        loadFrame(contentUrl);
+    }
+}
+
+function previewSlide(url, title) {
+    // Remove slide grid, show toolbar + iframe
+    document.querySelectorAll('.slide-grid-container').forEach(el => el.remove());
+
+    const frame = document.getElementById('contentFrame');
+    frame.style.display = '';
+
+    // Add toolbar above iframe
+    const toolbar = document.createElement('div');
+    toolbar.className = 'slide-toolbar';
+    toolbar.innerHTML = `<span class="slide-title">📽 ${title}</span><a href="#" onclick="switchDayTab('videos');return false">← Back to segments</a><a href="${url}" target="_blank">↗ Open in new tab</a>`;
+    frame.parentNode.insertBefore(toolbar, frame);
+
+    loadFrame(url);
+}
+
+function loadFrame(url) {
+    const frame = document.getElementById('contentFrame');
+    if (url) {
+        frame.src = url;
+    } else {
+        frame.src = 'about:blank';
+    }
+}
+</script>
+</body>
+</html>

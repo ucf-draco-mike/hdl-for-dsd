@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 4 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-4-lab-sequential-logic-fundamentals">Day 4 Lab: Sequential Logic Fundamentals</h1>
+<blockquote>
+<p><strong>Week 1, Session 4</strong> · Accelerated HDL for Digital System Design · UCF ECE</p>
+</blockquote>
+<h2 id="overview">Overview</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Duration</strong></td>
+<td>~2 hours</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Pre-class video (50 min): clocks, edges, nonblocking assignment, flip-flops, resets, counters</td>
+</tr>
+<tr>
+<td><strong>Deliverable</strong></td>
+<td>LED blinker at ~1 Hz + counter value on 7-segment display</td>
+</tr>
+<tr>
+<td><strong>Tools</strong></td>
+<td>Icarus Verilog + GTKWave (simulation), Yosys + nextpnr (synthesis)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="learning-objectives">Learning Objectives</h2>
+<table>
+<thead>
+<tr>
+<th>SLO</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.1</td>
+<td>Write <code>always @(posedge clk)</code> blocks with synchronous reset</td>
+</tr>
+<tr>
+<td>4.2</td>
+<td>Use nonblocking assignment (<code>&lt;=</code>) correctly in sequential blocks</td>
+</tr>
+<tr>
+<td>4.3</td>
+<td>Implement D flip-flops with enable and reset</td>
+</tr>
+<tr>
+<td>4.4</td>
+<td>Design counter-based clock dividers</td>
+</tr>
+<tr>
+<td>4.5</td>
+<td>Debug sequential logic using Icarus Verilog simulation and GTKWave</td>
+</tr>
+<tr>
+<td>4.6</td>
+<td>Integrate sequential and combinational modules into a working system</td>
+</tr>
+</tbody>
+</table>
+<h2 id="exercises">Exercises</h2>
+<h3 id="exercise-1-d-flip-flop-simulate-first-25-min">Exercise 1: D Flip-Flop — Simulate First! (25 min)</h3>
+<p>Implement in <code>starter/w1d4_ex1_d_ff.v</code>, run testbench with <code>make ex1_sim</code>. Open waveforms in GTKWave. Mark the moment <code>i_d</code> changes vs. when <code>o_q</code> changes.</p>
+<h3 id="exercise-2-loadable-register-20-min">Exercise 2: Loadable Register (20 min)</h3>
+<p>4-bit register with load enable. <code>make ex2_sim</code> to verify load/hold/reset behavior.</p>
+<h3 id="exercise-3-led-blinker-25-min-key-exercise">Exercise 3: LED Blinker (25 min) ★ KEY EXERCISE</h3>
+<p>Free-running counter with multi-speed LED output. <code>make ex3</code> to program. LED1 slowest, LED4 fastest — visually demonstrates binary counting.</p>
+<h3 id="exercise-4-7-segment-counter-week-1-capstone-30-min-capstone">Exercise 4: 7-Segment Counter — Week 1 Capstone (30 min) ★ CAPSTONE</h3>
+<p>Running hex counter on the display. Integrates clock division + counting + combinational decoding. <code>make ex4</code>.</p>
+<h3 id="exercise-5-dual-speed-blinker-15-min">Exercise 5: Dual-Speed Blinker (15 min)</h3>
+<p>Two independent dividers, complementary LED pairs. <code>make ex5</code>.</p>
+<h3 id="exercise-6-stretch-updown-counter-if-time-permits">Exercise 6 — Stretch: Up/Down Counter (if time permits)</h3>
+<p>Button-controlled counter on 7-seg. Will be bouncy without debouncing — this previews Day 5!</p>
+<h2 id="deliverable-checklist">Deliverable Checklist</h2>
+<ul>
+<li>[ ] Exercise 1: Testbench passes, waveforms examined in GTKWave</li>
+<li>[ ] Exercise 2: Testbench passes all 5 test cases</li>
+<li>[ ] Exercise 3: LEDs blink at visible rates on board</li>
+<li>[ ] Exercise 4: 7-seg counts 0→F at readable speed ← <strong>primary deliverable</strong></li>
+<li>[ ] At minimum: Exercise 3 (LED blinker) working on board</li>
+</ul>
+<h2 id="quick-reference">Quick Reference</h2>
+<pre class="codehilite"><code>make ex1_sim      # Simulate D flip-flop
+make ex2_sim      # Simulate register
+make ex3          # Program LED blinker
+make ex4          # Program 7-seg counter (capstone)
+make ex5          # Program dual blinker
+make ex6          # Program up/down counter (stretch)
+make clean
+</code></pre>
+
+<h2 id="end-of-week-1">End of Week 1! 🎉</h2>
+<p>You went from zero HDL to a counter running on a display in 4 days. That's a real accomplishment. Next week: debouncing, testbench methodology, FSMs, and parameterization.</p>
+</article>
+</body>
+</html>

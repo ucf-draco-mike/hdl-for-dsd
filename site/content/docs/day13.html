@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13: SystemVerilog for Design — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-13-systemverilog-for-design">Day 13: SystemVerilog for Design</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-4-session-13-of-16">Week 4, Session 13 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 13.1:</strong> Use <code>logic</code> instead of <code>wire</code>/<code>reg</code> and explain why this eliminates a major class of declaration errors.</li>
+<li><strong>SLO 13.2:</strong> Write sequential logic with <code>always_ff</code> and combinational logic with <code>always_comb</code>, leveraging their built-in safety checks.</li>
+<li><strong>SLO 13.3:</strong> Implement FSMs using <code>enum</code> for named states with automatic width and debug printing (<code>.name()</code>).</li>
+<li><strong>SLO 13.4:</strong> Use <code>typedef</code> and <code>struct</code> to group related signals for cleaner module interfaces.</li>
+<li><strong>SLO 13.5:</strong> Verify that SystemVerilog refactoring produces identical synthesized hardware using PPA comparison.</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-45-min">Pre-Class Video (~45 min)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Why SystemVerilog? Evolution from Verilog-2001, IEEE 1800 standard</td>
+<td>8 min</td>
+<td><code>video/day13_seg1_why_sv.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>logic</code> replaces <code>wire</code> and <code>reg</code> — one type to rule them all</td>
+<td>8 min</td>
+<td><code>video/day13_seg2_logic_type.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>always_ff</code>, <code>always_comb</code>, <code>always_latch</code> — intent-based always blocks</td>
+<td>12 min</td>
+<td><code>video/day13_seg3_always_blocks.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>enum</code> for FSM states: named states, <code>.name()</code> for debug</td>
+<td>10 min</td>
+<td><code>video/day13_seg4_enum_fsm.mp4</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>struct</code>, <code>typedef</code>, <code>package</code>, <code>import</code>: grouping and sharing definitions</td>
+<td>7 min</td>
+<td><code>video/day13_seg5_struct_package.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up: SV motivation, pre-class questions</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: SV side-by-side comparison, PPA note</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:35</td>
+<td>Lab Exercise 1: Refactor traffic light FSM to SV</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>1:05</td>
+<td>Lab Exercise 2: Refactor UART TX to SV</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>1:35</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:40</td>
+<td>Lab Exercise 3: Simulate both versions</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>1:55</td>
+<td>Lab Exercise 4: PPA comparison</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:05</td>
+<td>Lab Exercise 5 (Stretch): Package creation</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>2:20</td>
+<td>Wrap-up and Day 14 preview</td>
+<td>10 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="side-by-side-verilog-vs-systemverilog-15-min">Side-by-Side: Verilog vs. SystemVerilog (15 min)</h3>
+<ul>
+<li>Show the same module in both languages — highlight every difference</li>
+<li><code>logic</code> eliminates the <code>wire</code> vs. <code>reg</code> question entirely</li>
+<li><code>always_comb</code> catches missing assignments at compile time — no more accidental latches</li>
+<li><code>always_ff @(posedge clk)</code> enforces edge-triggered semantics — compiler warns if you try combinational logic inside it</li>
+<li><strong>Key message:</strong> SV is about designer productivity and safety, not different hardware</li>
+</ul>
+<h3 id="enum-fsms-10-min">Enum FSMs (10 min)</h3>
+<ul>
+<li>Verilog way: <code>localparam IDLE = 2'b00, ...</code> — error-prone, no type safety</li>
+<li>SV way: <code>typedef enum logic [1:0] {IDLE, START, DATA, STOP} state_t;</code> — compiler tracks valid states</li>
+<li><code>.name()</code> method: <code>$display("State: %s", state.name())</code> — human-readable debug output</li>
+<li>Automatic width: compiler determines the minimum encoding width</li>
+</ul>
+<h3 id="ppa-with-sv-5-min">PPA with SV (5 min)</h3>
+<ul>
+<li>Synthesize a Verilog module and its SV refactored version</li>
+<li>Compare <code>yosys stat</code> output — <strong>spoiler: identical</strong></li>
+<li>SV adds zero hardware cost. It's purely a designer-productivity and safety improvement.</li>
+<li>Tool note: Icarus Verilog supports SV features with the <code>-g2012</code> flag. Verilator is another option for better SV support.</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-refactor-traffic-light-fsm-30-min">Exercise 1: Refactor Traffic Light FSM (30 min)</h3>
+<p><strong>Objective (SLO 13.1, 13.2, 13.3):</strong> Convert an existing Verilog FSM to SystemVerilog.</p>
+<p><strong>Tasks:</strong>
+1. Take your Day 7 traffic light FSM (Verilog version).
+2. Refactor to SystemVerilog:
+   - Replace all <code>wire</code>/<code>reg</code> declarations with <code>logic</code>
+   - Replace <code>always @(posedge clk)</code> with <code>always_ff @(posedge clk)</code>
+   - Replace <code>always @(*)</code> with <code>always_comb</code>
+   - Replace <code>localparam</code> state definitions with <code>typedef enum logic [N:0] {...} state_t;</code>
+3. Add <code>$display</code> statements using <code>.name()</code> to print state names during simulation.
+4. Compile with <code>iverilog -g2012</code> flag.</p>
+<p><strong>Checkpoint:</strong> SV traffic light compiles and simulates correctly with readable state names in output.</p>
+<hr>
+<h3 id="exercise-2-refactor-uart-tx-30-min">Exercise 2: Refactor UART TX (30 min)</h3>
+<p><strong>Objective (SLO 13.2, 13.3, 13.4):</strong> Apply SV features to a more complex module.</p>
+<p><strong>Tasks:</strong>
+1. Take your Day 11 UART TX module (Verilog version).
+2. Refactor to SystemVerilog:
+   - <code>logic</code> throughout
+   - <code>always_ff</code> / <code>always_comb</code>
+   - <code>enum</code> for FSM states
+3. <strong>Bonus:</strong> Create a <code>typedef struct</code> for UART configuration:
+   <code>systemverilog
+   typedef struct packed {
+       logic [15:0] clks_per_bit;
+       logic        parity_en;   // preview for Day 14
+       logic        parity_type; // preview for Day 14
+   } uart_config_t;</code>
+4. Compile with <code>-g2012</code>.</p>
+<p><strong>Checkpoint:</strong> SV UART TX compiles and simulates, producing identical waveforms to Verilog version.</p>
+<hr>
+<h3 id="exercise-3-simulate-both-versions-15-min">Exercise 3: Simulate Both Versions (15 min)</h3>
+<p><strong>Objective (SLO 13.2):</strong> Confirm behavioral equivalence.</p>
+<p><strong>Tasks:</strong>
+1. Run the same testbench against both the Verilog and SV versions of the traffic light or UART TX.
+2. Compare waveforms side by side in GTKWave.
+3. Verify identical behavior cycle by cycle.</p>
+<p><strong>Checkpoint:</strong> Waveforms match between Verilog and SV versions.</p>
+<hr>
+<h3 id="exercise-4-ppa-comparison-10-min">Exercise 4: PPA Comparison (10 min)</h3>
+<p><strong>Objective (SLO 13.5):</strong> Verify SV has zero hardware cost.</p>
+<p><strong>Tasks:</strong>
+1. Synthesize both the Verilog and SV versions with Yosys.
+2. Run <code>yosys stat</code> on both. Record LUTs and FFs.
+3. Compare: are they identical? (They should be.)
+4. Document: "SV refactoring produced identical hardware. Benefit is designer productivity only."</p>
+<p><strong>Checkpoint:</strong> PPA comparison documented. Numbers match.</p>
+<hr>
+<h3 id="exercise-5-stretch-package-creation-15-min">Exercise 5 (Stretch): Package Creation (15 min)</h3>
+<p><strong>Objective (SLO 13.4):</strong> Share type definitions across modules.</p>
+<p><strong>Tasks:</strong>
+1. Create a SystemVerilog <code>package</code> containing:
+   - The UART configuration struct
+   - The FSM state enum(s)
+   - Any shared constants
+2. <code>import</code> the package into both the UART TX and a test module.
+3. Verify compilation.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<p>SystemVerilog-refactored module(s) with PPA comparison notes documenting identical synthesis results.</p>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — SV traffic light</td>
+<td>13.1, 13.2, 13.3</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — SV UART TX</td>
+<td>13.2, 13.3, 13.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — Behavioral equivalence</td>
+<td>13.2</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — PPA comparison</td>
+<td>13.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>5 — Package</td>
+<td>13.4</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>iverilog <code>-g2012</code> flag:</strong> Students will forget this and get cryptic syntax errors. Put it on the board and in the Makefile.</li>
+<li><strong><code>enum</code> width mismatch:</strong> If students specify <code>logic [1:0]</code> but have more than 4 states, the compiler should warn. Good opportunity to discuss encoding width.</li>
+<li><strong><code>always_comb</code> catches real bugs:</strong> Students may discover that their Verilog code had hidden latches that <code>always_comb</code> now flags. This is a feature, not a bug — help them appreciate the safety net.</li>
+<li><strong>Yosys SV support:</strong> Yosys has growing but incomplete SV support. If students hit unsupported features (e.g., <code>interface</code>, <code>modport</code>), explain that these are verification-side features more commonly supported by Verilator/commercial tools.</li>
+</ul>
+<hr>
+<h2 id="preview-day-14">Preview: Day 14</h2>
+<p>The capstone verification session — assertions, AI-driven constraint-based testing, the constraint-based UART parity extension, and structured PPA analysis. This is where all the cross-cutting threads converge before the final project.</p>
+</article>
+</body>
+</html>

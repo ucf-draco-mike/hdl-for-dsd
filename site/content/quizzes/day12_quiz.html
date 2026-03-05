@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12 Pre-Class Quiz — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-12-pre-class-self-check-quiz">Day 12: Pre-Class Self-Check Quiz</h1>
+<h2 id="uart-rx-spi-ip-integration">UART RX, SPI &amp; IP Integration</h2>
+<p><strong>Q1:</strong> Why does the UART RX use 16× oversampling instead of 1× sampling?</p>
+<details><summary>Answer</summary>
+Without a shared clock, the RX doesn't know exactly when each bit starts. 16× oversampling provides 16 sample points per bit, allowing center-of-bit sampling (tick 7-8) for maximum noise immunity and baud rate mismatch tolerance.
+</details>
+
+<p><strong>Q2:</strong> What is the loopback test and why is it the gold standard?</p>
+<details><summary>Answer</summary>
+RX → TX echo: type characters on PC terminal, see them echoed back. If the echo works, both TX and RX are verified correct with a single test. It validates the complete communication path end-to-end.
+</details>
+
+<p><strong>Q3:</strong> How many wires does SPI use? What advantage does it have over UART?</p>
+<details><summary>Answer</summary>
+4 wires: SCLK, MOSI, MISO, CS_N. The master provides the clock, so there's no baud rate negotiation and no oversampling needed. SPI is synchronous and can run at much higher speeds (10+ Mbps vs. ~1 Mbps for UART).
+</details>
+
+<p><strong>Q4:</strong> What's the first step on the IP integration checklist?</p>
+<details><summary>Answer</summary>
+**Read the interface specification.** Understand the ports, protocols, timing requirements, and configuration options before writing any wrapper or testbench code.
+</details>
+</article>
+</body>
+</html>

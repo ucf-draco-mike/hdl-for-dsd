@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accelerated HDL for Digital System Design — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="accelerated-hdl-for-digital-system-design">Accelerated HDL for Digital System Design</h1>
+<blockquote>
+<p><strong>UCF · College of Engineering &amp; Computer Science · Department of Electrical &amp; Computer Engineering</strong></p>
+</blockquote>
+<p>A 4-week, 16-session accelerated course in Verilog and digital system design using the Nandland Go Board (Lattice iCE40 HX1K) and a fully open-source toolchain. Integrates AI-assisted verification, PPA analysis, and constraint-based design.</p>
+<hr>
+<h2 id="course-overview">Course Overview</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Format</strong></td>
+<td>4 weeks · 4 sessions/week · 2.5 hours/session</td>
+</tr>
+<tr>
+<td><strong>Delivery</strong></td>
+<td>Flipped — recorded video lectures pre-class; class = mini-lecture + hands-on lab</td>
+</tr>
+<tr>
+<td><strong>Platform</strong></td>
+<td><a href="https://nandland.com/the-go-board/">Nandland Go Board</a> (Lattice iCE40 HX1K)</td>
+</tr>
+<tr>
+<td><strong>Toolchain</strong></td>
+<td>Yosys + nextpnr-ice40 + icepack/iceprog (synthesis/PnR) · Icarus Verilog + GTKWave (simulation)</td>
+</tr>
+<tr>
+<td><strong>Students</strong></td>
+<td>≤15 · primarily CompE with some CS · no prior HDL</td>
+</tr>
+<tr>
+<td><strong>Assessment</strong></td>
+<td>Continuous lab deliverables (Weeks 1–3) · Final project (Week 4)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="weekly-arc">Weekly Arc</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Theme</th>
+<th>Culmination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>Verilog Foundations &amp; Combinational Design</td>
+<td>First designs on hardware</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Sequential Design, Verification &amp; AI-Assisted Testing</td>
+<td>Verified module library + first AI-generated TB</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Memory, Communication &amp; Numerical Architectures</td>
+<td>"HELLO" on the PC terminal + numerical module on FPGA</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Advanced Design, Verification &amp; Final Project</td>
+<td>Complete demonstrated system with PPA report</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-makes-this-course-different">What Makes This Course Different</h2>
+<ul>
+<li><strong>Hands-on from Day 1</strong> — real hardware, real toolchain, every session</li>
+<li><strong>AI-assisted verification</strong> — students learn to prompt, evaluate, and correct AI-generated testbenches (Days 6–16)</li>
+<li><strong>PPA awareness</strong> — resource analysis via <code>yosys stat</code> becomes a habit, not a one-off exercise</li>
+<li><strong>Open-source everything</strong> — no license servers, no vendor lock-in, students keep the board and tools forever</li>
+<li><strong>Flipped for depth</strong> — 12+ hours of video content frees class time for building, debugging, and design thinking</li>
+</ul>
+<h2 id="repository-structure">Repository Structure</h2>
+<pre class="codehilite"><code>hdl-for-dsd/
+├── README.md                    ← top-level overview &amp; quick start
+├── flake.nix                    ← Nix dev environment (all tools, all platforms)
+├── .envrc                       ← optional direnv auto-activation
+├── docs/
+│   ├── README.md                ← you are here
+│   ├── course_curriculum.md     ← full 16-day curriculum &amp; session map
+│   ├── course_syllabus.md       ← student-facing syllabus
+│   ├── course_setup_guide.md    ← toolchain installation instructions
+│   ├── course_video_scaffold.md ← lecture production guide
+│   ├── course_dev_status.md     ← development status tracker
+│   └── day01.md … day16.md      ← daily session plans (instructor guides)
+│
+├── lectures/                    ← pre-class video lecture materials
+│   ├── theme/ucf-hdl.css        ← UCF-branded reveal.js theme
+│   └── week1_day01/ … week4_day16/
+│       ├── d##_s#_topic.html    ← reveal.js slide decks
+│       ├── day##_quiz.md        ← pre-class quiz
+│       ├── day##_readme.md      ← segment guide
+│       ├── code/                ← live-code examples
+│       └── diagrams/            ← SVGs &amp; Mermaid sources
+│
+├── labs/                        ← in-class lab materials &amp; starter code
+│   └── week1_day01/ … week4_day16/
+│       ├── README.md            ← lab guide
+│       ├── Makefile             ← build targets (sim, synth, prog)
+│       ├── go_board.pcf         ← pin constraints
+│       ├── starter/             ← student starting point
+│       └── solutions/           ← reference solutions
+│
+├── projects/                    ← final project specs &amp; rubric
+│
+├── shared/
+│   ├── pcf/go_board.pcf         ← canonical pin constraint file
+│   ├── lib/                     ← reusable module library
+│   └── .gtkwaverc               ← GTKWave display defaults
+│
+├── scripts/                     ← maintenance &amp; migration utilities
+│
+└── assets/img/                  ← logos, board photos, etc.
+</code></pre>
+
+<h2 id="lecture-format">Lecture Format</h2>
+<p>Each day's pre-class material is split into <strong>3–4 short video segments</strong> (8–20 min each), totaling ~40–55 min per day. Slides are built with <a href="https://revealjs.com/">reveal.js</a> — HTML-based, git-friendly, with syntax-highlighted code and progressive builds.</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Total</th>
+<th>Topics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>40 min</td>
+<td>HDL ≠ Software, Synthesis vs. Sim, Module Anatomy, Logic Refresher</td>
+</tr>
+<tr>
+<td>2</td>
+<td>45 min</td>
+<td>Data Types &amp; Vectors, Operators, Sized Literals, 7-Segment Display</td>
+</tr>
+<tr>
+<td>3</td>
+<td>45 min</td>
+<td><code>always @(*)</code>, <code>if/else</code> &amp; <code>case</code>, Latch Problem, Blocking vs. Nonblocking</td>
+</tr>
+<tr>
+<td>4</td>
+<td>50 min</td>
+<td>Clocks &amp; Edges, Nonblocking Deep Dive, FF Variants, Counters &amp; Dividers</td>
+</tr>
+<tr>
+<td>5</td>
+<td>45 min</td>
+<td>Counter Variations, Shift Registers, Metastability, Debouncing</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>55 min</strong> ★</td>
+<td>Testbench Anatomy, Self-Checking TBs, Tasks, <strong>AI for Verification</strong></td>
+</tr>
+<tr>
+<td>7</td>
+<td>50 min</td>
+<td>FSM Theory, 3-Block Style, State Encoding, FSM Methodology</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>50 min</strong> ★</td>
+<td>Hierarchy, Parameters, Generate Blocks, <strong>Recursive Generate</strong></td>
+</tr>
+<tr>
+<td>9</td>
+<td>45 min</td>
+<td>ROM, RAM, iCE40 Memory, Memory Applications</td>
+</tr>
+<tr>
+<td>10</td>
+<td><strong>55 min</strong> ★</td>
+<td><strong>Timing Essentials, Numerical Architectures, PPA Introduction</strong></td>
+</tr>
+<tr>
+<td>11</td>
+<td>50 min</td>
+<td>UART Protocol, TX Architecture, Implementation, PC Connection</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>55 min</strong> ★</td>
+<td><strong>UART RX, AI Protocol TBs, SPI Protocol, Constraint-Based Design</strong></td>
+</tr>
+<tr>
+<td>13</td>
+<td>45 min</td>
+<td>Why SystemVerilog?, <code>logic</code> Type, Intent Blocks, enum/struct/package</td>
+</tr>
+<tr>
+<td>14</td>
+<td><strong>55 min</strong> ★</td>
+<td><strong>Assertions, AI Constraint-Based TBs, PPA Methodology, Coverage</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total pre-class video: ~730 min (~12.2 hours)</strong> · ★ = revised/new in v2.1</p>
+<h2 id="cross-cutting-threads">Cross-Cutting Threads</h2>
+<p><strong>Thread 1 — AI-Assisted Verification:</strong> Observe (Day 6) → Prompt + Review (Day 8) → Protocol-Level + Tool Comparison (Day 12) → Constraint-Based (Day 14) → Independent (Days 15–16)</p>
+<p><strong>Thread 2 — PPA Analysis:</strong> First <code>yosys stat</code> (Day 3) → Resource Scaling (Day 8) → Structured Comparison (Day 10) → Feature Cost (Day 12) → SV Equivalence (Day 13) → Design-Space Exploration (Day 14) → Project Report (Days 15–16)</p>
+<p><strong>Thread 3 — Constraint-Based Design:</strong> if/else vs case (Day 3) → FSM Encoding (Day 7) → generate (Day 8) → Numerical Trade-offs (Day 10) → Parameterized Protocols (Day 12) → Design-Space Exploration (Day 14)</p>
+<p><strong>Thread 4 — AI Tool Literacy:</strong> Instructor demo (Day 6) → Optional tool comparison (Day 12) → Tool choice + peer discussion (Day 14) → Professional context (Day 16)</p>
+<h2 id="toolchain-quick-reference">Toolchain Quick Reference</h2>
+<pre class="codehilite"><code class="language-bash"># Simulation (Icarus Verilog + GTKWave)
+iverilog -o sim.vvp -g2012 tb_module.v module.v
+vvp sim.vvp
+gtkwave dump.vcd
+
+# Synthesis &amp; Programming (iCE40 open-source flow)
+yosys -p &quot;synth_ice40 -top top_module -json top.json&quot; top.v sub1.v sub2.v
+nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
+icepack top.asc top.bin
+iceprog top.bin
+
+# PPA Analysis
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; stat&quot;
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; show&quot;
+</code></pre>
+
+<h2 id="getting-started">Getting Started</h2>
+<ol>
+<li><strong>Install the toolchain</strong> — see <a href="docs/course_setup_guide.md"><code>docs/course_setup_guide.md</code></a></li>
+<li><strong>Get the Go Board</strong> — <a href="https://nandland.com/the-go-board/">nandland.com</a></li>
+<li><strong>Watch the Day 1 videos</strong> — <code>lectures/week1_day01/</code></li>
+<li><strong>Come to class ready to build</strong></li>
+</ol>
+<h2 id="license">License</h2>
+<p>Course materials are provided for educational use. See <a href="LICENSE">LICENSE</a> for details.</p>
+<hr>
+<p><em>Course version: v2.1 · March 2026</em></p>
+</article>
+</body>
+</html>

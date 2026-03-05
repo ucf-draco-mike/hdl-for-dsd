@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Project — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="final-project-week-4">Final Project — Week 4</h1>
+<p>Choose one project (or propose your own with instructor approval by Day 13).
+All projects must include verification, PPA analysis, and a live demo.</p>
+<h2 id="project-options">Project Options</h2>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Key Concepts</th>
+<th>Difficulty</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reaction Timer</strong></td>
+<td>FSM, counters, RNG (LFSR), 7-seg display, UART reporting</td>
+<td>★★☆</td>
+</tr>
+<tr>
+<td><strong>Digital Lock</strong></td>
+<td>FSM-based combination lock, button input, 7-seg feedback, lockout timer</td>
+<td>★★☆</td>
+</tr>
+<tr>
+<td><strong>Digital Clock</strong></td>
+<td>Counters, 7-seg multiplexing, UART time-set</td>
+<td>★★☆</td>
+</tr>
+<tr>
+<td><strong>Music / Tone Generator</strong></td>
+<td>Counters, frequency dividers, PWM, ROM sequencer</td>
+<td>★★☆</td>
+</tr>
+<tr>
+<td><strong>Stopwatch / Lap Timer</strong></td>
+<td>Precision counters, debounce, 7-seg, UART log</td>
+<td>★★☆</td>
+</tr>
+<tr>
+<td><strong>Serial Calculator</strong></td>
+<td>UART RX/TX, FSM, expression parsing, ALU</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>VGA Pattern Generator</strong></td>
+<td>VGA timing, counters, ROM, pixel addressing, button control</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>UART Command Parser</strong></td>
+<td>UART RX/TX, FSM, string matching, LED/7-seg control</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>SPI Sensor Interface</strong></td>
+<td>SPI master, data formatting, 7-seg/UART display</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>Numerical Compute Engine</strong></td>
+<td>Parameterized ALU + sequential multiplier + fixed-point + UART I/O</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>Simple 4-bit Processor</strong></td>
+<td>ALU + register file + sequencer + ROM program</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>Conway's Game of Life</strong></td>
+<td>Block RAM grid, FSM update logic, LED or VGA output</td>
+<td>★★★</td>
+</tr>
+<tr>
+<td><strong>Custom Proposal</strong></td>
+<td>Student-designed project, approved by instructor by Day 13</td>
+<td>Varies</td>
+</tr>
+</tbody>
+</table>
+<h2 id="requirements">Requirements</h2>
+<p>All projects must include:</p>
+<ol>
+<li><strong>Functional demonstration</strong> on the Go Board (live demo on Day 16)</li>
+<li><strong>Clean module hierarchy</strong> — no monolithic designs; parameterized where appropriate</li>
+<li><strong>Self-checking testbench</strong> — at least one manually written TB for a core module</li>
+<li><strong>AI-assisted testbench</strong> — at least one AI-generated TB with prompt + annotated corrections</li>
+<li><strong>PPA report</strong> — <code>yosys stat</code> resource summary, Fmax from <code>nextpnr</code>, % iCE40 HX1K utilization, and a brief design trade-off discussion (1 paragraph per module comparison)</li>
+<li><strong>5–7 minute presentation</strong>: live demo + block diagram + design trade-off + lessons learned</li>
+</ol>
+<h2 id="grading-rubric">Grading Rubric</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Weight</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Working demo</td>
+<td>30%</td>
+<td>Does the project run on hardware as specified?</td>
+</tr>
+<tr>
+<td>Code quality</td>
+<td>15%</td>
+<td>Clean hierarchy, consistent style, comments, reusable modules</td>
+</tr>
+<tr>
+<td>Testbenches</td>
+<td>20%</td>
+<td>Manual + AI-assisted TBs, self-checking, coverage</td>
+</tr>
+<tr>
+<td>PPA analysis</td>
+<td>15%</td>
+<td>Resource table, Fmax, utilization, trade-off discussion</td>
+</tr>
+<tr>
+<td>Presentation</td>
+<td>10%</td>
+<td>Clear, concise, within time, addresses all demo elements</td>
+</tr>
+<tr>
+<td>AI workflow</td>
+<td>10%</td>
+<td>Quality of AI prompts, annotated corrections, coverage analysis</td>
+</tr>
+</tbody>
+</table>
+<h2 id="timeline">Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Milestone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Day 13</td>
+<td>Project design document due (block diagram + module list)</td>
+</tr>
+<tr>
+<td>Day 14</td>
+<td>Assertions + AI TB + PPA analysis applied to project modules</td>
+</tr>
+<tr>
+<td>Day 15</td>
+<td>Build day — working prototype or demonstrable progress</td>
+</tr>
+<tr>
+<td>Day 16</td>
+<td>Final demo and presentation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="project-templates">Project Templates</h2>
+<p>Starter templates with Makefiles and module stubs are available in:
+<code>labs/week4_day15/project_templates/</code></p>
+</article>
+</body>
+</html>

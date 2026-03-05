@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 1 Pre-Class Quiz — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-1-pre-class-self-check-quiz">Day 1: Pre-Class Self-Check Quiz</h1>
+<h2 id="welcome-to-hardware-thinking">Welcome to Hardware Thinking</h2>
+<p><strong>Q1:</strong> Name three fundamental differences between writing software (C/Python) and writing Verilog.</p>
+<details><summary>Answer</summary>
+
+1. **Execution model:** Software executes sequentially (line by line). Verilog describes hardware that operates in parallel (all at once).
+2. **Resource mapping:** More software = more time. More Verilog = more physical hardware (gates, wires, area).
+3. **No dynamic allocation:** Hardware is fixed at synthesis time. No malloc, no recursion, no variable-length anything.
+</details>
+
+<p><strong>Q2:</strong> What happens to <code>#10</code> (a delay statement) during synthesis? During simulation?</p>
+<details><summary>Answer</summary>
+
+- **Simulation:** The simulator waits 10 time units before continuing.
+- **Synthesis:** Completely ignored. The synthesizer cannot create physical delays from `#` statements. This is why you should never use `#delay` in synthesizable design code — it causes a simulation/synthesis mismatch.
+</details>
+
+<p><strong>Q3:</strong> Write a complete Verilog module (from <code>module</code> to <code>endmodule</code>) that connects an input <code>i_switch</code> to an output <code>o_led</code>.</p>
+<details><summary>Answer</summary>
+
+
+<pre class="codehilite"><code class="language-verilog">module led_driver (
+    input  wire i_switch,
+    output wire o_led
+);
+    assign o_led = i_switch;
+endmodule
+</code></pre>
+
+
+</details>
+
+<p><strong>Q4:</strong> What does <code>assign</code> mean in Verilog — is it a one-time computation or something else?</p>
+<details><summary>Answer</summary>
+
+`assign` creates a **permanent physical wire connection**. It is NOT a one-time computation. The output continuously reflects the input — whenever the right-hand side changes, the left-hand side updates instantly. It exists for the entire lifetime of the hardware.
+</details>
+
+<p><strong>Q5:</strong> In the module below, does the order of the two <code>assign</code> statements matter? Why or why not?</p>
+<pre class="codehilite"><code class="language-verilog">module example (input wire a, b, output wire y1, y2);
+    assign y2 = a | b;
+    assign y1 = a &amp; b;
+endmodule
+</code></pre>
+
+<details><summary>Answer</summary>
+
+**No, the order does not matter.** Both `assign` statements create hardware that exists simultaneously. The AND gate and OR gate operate in parallel. Swapping the lines produces identical hardware. This is fundamentally different from software, where line order determines execution order.
+</details>
+</article>
+</body>
+</html>

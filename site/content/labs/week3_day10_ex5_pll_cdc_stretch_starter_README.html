@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLL &amp; Clock Domain Crossing — Day 10, Exercise 5 (Stretch) — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="pll-clock-domain-crossing-day-10-exercise-5-stretch">PLL &amp; Clock Domain Crossing — Day 10, Exercise 5 (Stretch)</h1>
+<h2 id="objective-slo-105">Objective (SLO 10.5)</h2>
+<p>Explore clock generation with <code>SB_PLL40_CORE</code> and safe clock domain crossing.</p>
+<blockquote>
+<p><strong>This is stretch content.</strong> Complete Exercises 1-4 first. If you finish early,
+this exercise gives hands-on experience with PLLs and CDC — concepts covered
+briefly in the pre-class video and essential for advanced FPGA work.</p>
+</blockquote>
+<h2 id="part-a-pll-clock-generation-10-min">Part A: PLL Clock Generation (~10 min)</h2>
+<ol>
+<li>Use <code>icepll -i 25 -o 50</code> to calculate PLL parameters for 50 MHz output.</li>
+<li>Instantiate <code>SB_PLL40_CORE</code> with those parameters.</li>
+<li>Create blinkers in both clock domains — 25 MHz on LED1, 50 MHz on LED2.</li>
+<li>Display <code>LOCK</code> status on LED3.</li>
+<li>Synthesize and verify the blink rates differ as expected.</li>
+</ol>
+<pre class="codehilite"><code class="language-bash"># Calculate PLL parameters
+icepll -i 25 -o 50
+</code></pre>
+
+<h2 id="part-b-clock-domain-crossing-10-min">Part B: Clock Domain Crossing (~10 min)</h2>
+<ol>
+<li>Debounce a button in the 25 MHz domain.</li>
+<li>Synchronize the debounced signal into the 50 MHz PLL domain using a 2-FF chain.</li>
+<li>Detect rising edges in the PLL domain and increment a 4-bit counter.</li>
+<li>Synchronize the counter back to 25 MHz for display on 7-seg.</li>
+</ol>
+<p><strong>Key concept:</strong> Any signal crossing clock domains must pass through a synchronizer.
+For single bits, a 2-FF synchronizer is sufficient. For multi-bit values, consider
+Gray code encoding.</p>
+<h2 id="starter-files">Starter files</h2>
+<p>See <code>top_pll_demo.v</code> (PLL blinker) and <code>top_cdc_demo.v</code> (CDC counter).
+These are the same designs covered in the extended timing lectures.</p>
+<h2 id="time-estimate-15-minutes-stretch">Time estimate: ~15 minutes (stretch)</h2>
+</article>
+</body>
+</html>

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 3: Procedural Combinational Logic — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-3-procedural-combinational-logic">Day 3: Procedural Combinational Logic</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-1-session-3-of-16">Week 1, Session 3 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 3.1:</strong> Write combinational logic using <code>always @(*)</code> blocks with correct use of blocking assignment (<code>=</code>).</li>
+<li><strong>SLO 3.2:</strong> Identify and prevent unintentional latch inference through default assignments and complete branches.</li>
+<li><strong>SLO 3.3:</strong> Explain the synthesis implications of <code>if/else</code> (priority mux chain) vs <code>case</code> (parallel mux) and choose appropriately.</li>
+<li><strong>SLO 3.4:</strong> Design a multi-operation ALU using <code>case</code> statement for opcode decoding.</li>
+<li><strong>SLO 3.5:</strong> Use <code>yosys show</code> and <code>yosys stat</code> to compare synthesized circuits (first PPA exposure).</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-45-min">Pre-Class Video (~45 min)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>The <code>always @(*)</code> block: wildcard sensitivity, <code>reg</code> in combinational contexts</td>
+<td>12 min</td>
+<td><code>video/day03_seg1_always_star.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>if/else</code> and <code>case</code>/<code>casez</code> statements</td>
+<td>15 min</td>
+<td><code>video/day03_seg2_if_else_case.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>The latch problem: why it happens, how to prevent it</td>
+<td>12 min</td>
+<td><code>video/day03_seg3_latch_problem.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Blocking (<code>=</code>) vs. nonblocking (<code>&lt;=</code>) — rule for combinational: use <code>=</code></td>
+<td>6 min</td>
+<td><code>video/day03_seg4_blocking_vs_nonblocking.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key concepts:</strong>
+- <code>always @(*)</code> + <code>=</code> = combinational logic — synthesis produces gates, not flip-flops
+- Incomplete branches or missing defaults → Yosys infers latches (synthesis warning!)
+- <code>if/else</code> creates a priority chain; <code>case</code> creates a parallel mux structure
+- <code>casez</code> provides explicit don't-care matching for priority encoding</p>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up Q&amp;A: Day 2 follow-up, pre-class questions</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: latch detection, if/else vs case deep dive, ALU walkthrough</td>
+<td>35 min</td>
+</tr>
+<tr>
+<td>0:40</td>
+<td>Lab Exercise 1: Latch detection</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>0:55</td>
+<td>Lab Exercise 2: Priority encoder — if/else</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>1:10</td>
+<td>Lab Exercise 3: Priority encoder — casez</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>1:20</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:25</td>
+<td>Lab Exercise 4: Three-way synthesis comparison (PPA seed)</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>1:35</td>
+<td>Lab Exercise 5: 4-bit ALU</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>2:00</td>
+<td>Lab Exercise 6 (Stretch): Mixed ALU</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td>2:15</td>
+<td>Debrief: synthesis comparison discussion</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:25</td>
+<td>Preview Day 4</td>
+<td>5 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-35-min-expanded">In-Class Mini-Lecture (35 min) — expanded</h2>
+<h3 id="latch-detection-with-yosys-10-min">Latch Detection with Yosys (10 min)</h3>
+<ul>
+<li>Live demo: synthesize buggy code with an incomplete <code>if</code> (no <code>else</code>) — observe the Yosys latch warning</li>
+<li>Use <code>yosys show</code> to visualize the inferred latch in the netlist — "this is not what you intended"</li>
+<li>Fix: default assignments at the top of <code>always</code> blocks, or ensure every branch is complete</li>
+<li>Rule: if Yosys says "latch," you have a bug. Always.</li>
+</ul>
+<h3 id="ifelse-vs-case-synthesis-deep-dive-15-min"><code>if/else</code> vs <code>case</code> — Synthesis Deep Dive (15 min)</h3>
+<ul>
+<li><code>if/else</code> → priority mux chain: each condition evaluated in order, later branches have longer combinational paths</li>
+<li><code>case</code> → parallel mux: all branches evaluated simultaneously, tool selects by index</li>
+<li><strong>Live Yosys comparison:</strong> Synthesize a priority encoder using <code>if/else</code>, then using <code>case</code>. Run <code>show</code> on both — inspect the generated circuits side by side on the projector.</li>
+<li><code>casez</code> for don't-care matching — when priority IS intended, <code>casez</code> is explicit about it</li>
+<li><strong>Design heuristic:</strong> Use <code>case</code> when all conditions are mutually exclusive (ALU opcodes, FSM states). Use <code>if/else</code> when priority matters (interrupt controllers, arbiters). Use <code>casez</code> for pattern matching with explicit don't-cares.</li>
+<li><strong>Timing implication preview:</strong> Priority chains have longer worst-case paths — matters for Fmax. "We'll quantify this on Day 10."</li>
+</ul>
+<h3 id="alu-design-walkthrough-10-min">ALU Design Walkthrough (10 min)</h3>
+<ul>
+<li>4-bit ALU using <code>case</code> for opcode decode: ADD, SUB, AND, OR, XOR</li>
+<li>Walk through the code structure, discuss why <code>case</code> is natural for opcode decoding</li>
+<li>Mention <code>default</code> handling — what should the ALU output for undefined opcodes?</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-latch-detection-15-min">Exercise 1: Latch Detection (15 min)</h3>
+<p><strong>Objective (SLO 3.2):</strong> Identify and fix latch inference in provided buggy code.</p>
+<p><strong>Tasks:</strong>
+1. Download the provided <code>buggy_comb.v</code> file (or type in the buggy code from the handout).
+2. Synthesize with Yosys. Find the latch warning in the output.
+3. Use <code>yosys show</code> to visualize the latch in the netlist diagram.
+4. Fix the code by adding a default assignment. Re-synthesize and confirm the latch warning is gone.
+5. Try a second bug: <code>case</code> statement with a missing branch (no <code>default</code>). Observe, fix, and verify.</p>
+<p><strong>Checkpoint:</strong> Both buggy files synthesize latch-free after fixes. Student can explain why each fix works.</p>
+<hr>
+<h3 id="exercise-2-priority-encoder-ifelse-15-min">Exercise 2: Priority Encoder — if/else (15 min)</h3>
+<p><strong>Objective (SLO 3.1, 3.3):</strong> Implement a 4-input priority encoder using <code>if/else</code> chains.</p>
+<p><strong>Tasks:</strong>
+1. Create <code>priority_enc.v</code> with <code>input [3:0] req</code> and <code>output reg [1:0] grant</code>.
+2. Implement using <code>always @(*) begin ... end</code> with <code>if/else</code> chain: highest-numbered request wins.
+3. Include a <code>valid</code> output that indicates whether any request is active.
+4. Synthesize with Yosys and inspect the circuit using <code>show</code> — observe the priority mux chain.</p>
+<p><strong>Checkpoint:</strong> Priority encoder synthesizes cleanly (no latch warnings), produces correct output.</p>
+<hr>
+<h3 id="exercise-3-priority-encoder-casez-10-min">Exercise 3: Priority Encoder — casez (10 min)</h3>
+<p><strong>Objective (SLO 3.3):</strong> Re-implement the priority encoder using <code>casez</code> and compare the synthesis result.</p>
+<p><strong>Tasks:</strong>
+1. Create <code>priority_enc_casez.v</code> using <code>casez(req)</code> with don't-care patterns: <code>4'b1???</code>, <code>4'b01??</code>, <code>4'b001?</code>, <code>4'b0001</code>.
+2. Synthesize with Yosys and run <code>show</code>.
+3. Compare visually: does the <code>casez</code> version look different from the <code>if/else</code> version? (They should be similar — both express priority.)</p>
+<p><strong>Checkpoint:</strong> <code>casez</code> version synthesizes and matches behavior of <code>if/else</code> version.</p>
+<hr>
+<h3 id="exercise-4-three-way-synthesis-comparison-10-min-ppa-seed">Exercise 4: Three-Way Synthesis Comparison (10 min) — PPA seed</h3>
+<p><strong>Objective (SLO 3.5):</strong> First hands-on PPA exposure — compare LUT counts across implementations.</p>
+<p><strong>Tasks:</strong>
+1. You now have three versions of the same logic: <code>if/else</code>, <code>case</code> (non-priority), and <code>casez</code>.
+2. Run <code>yosys stat</code> on each version. Record the LUT count for each in a simple table:</p>
+<table>
+<thead>
+<tr>
+<th>Implementation</th>
+<th>LUTs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>if/else</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>case</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>casez</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Are they the same? Different? Why? (Brief discussion — full analysis comes on Day 10.)</li>
+</ol>
+<p><strong>Checkpoint:</strong> LUT counts recorded. Student can articulate at least one observation about the differences (or lack thereof).</p>
+<blockquote>
+<p><strong>Cross-cutting thread note:</strong> This 10-minute exercise plants the seed for PPA analysis that becomes a major thread from Day 10 onward. Students will reference these numbers later.</p>
+</blockquote>
+<hr>
+<h3 id="exercise-5-4-bit-alu-25-min">Exercise 5: 4-Bit ALU (25 min)</h3>
+<p><strong>Objective (SLO 3.1, 3.4):</strong> Implement a multi-operation ALU — the first "real" design.</p>
+<p><strong>Tasks:</strong>
+1. Create <code>alu.v</code> with inputs <code>a[3:0]</code>, <code>b[3:0]</code>, <code>opcode[2:0]</code> and output <code>result[3:0]</code>.
+2. Implement at minimum: ADD (000), SUB (001), AND (010), OR (011), XOR (100).
+3. Include a <code>default</code> case for undefined opcodes (output zero or hold — discuss the trade-off).
+4. Create a top module wiring buttons to inputs and displaying the result on the 7-seg decoder from Day 2.
+5. Program the Go Board and verify: manually test at least ADD, SUB, and AND.</p>
+<p><strong>Checkpoint:</strong> ALU on hardware. Multiple opcodes verified by changing button inputs and observing 7-seg output.</p>
+<hr>
+<h3 id="exercise-6-stretch-mixed-alu-with-overflow-15-min">Exercise 6 (Stretch): Mixed ALU with Overflow (15 min)</h3>
+<p><strong>Objective (SLO 3.3, 3.4):</strong> Demonstrate appropriate mixed use of <code>case</code> and <code>if/else</code> in one module.</p>
+<p><strong>Tasks:</strong>
+1. Extend the ALU with an <code>overflow</code> output flag.
+2. Use <code>case</code> for opcode decoding (parallel — opcodes are mutually exclusive).
+3. Use <code>if/else</code> within the ADD/SUB branches for overflow detection (priority — check sign bits in order).
+4. Synthesize and compare with the base ALU using <code>yosys stat</code>.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<p>ALU running on hardware + screenshot comparing <code>yosys show</code> output for <code>if/else</code> vs <code>case</code> priority encoders.</p>
+<p><strong>Submit:</strong> ALU source file, top module, and synthesis comparison screenshot.</p>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — Latch detection</td>
+<td>3.2</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — Priority encoder (if/else)</td>
+<td>3.1, 3.3</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — Priority encoder (casez)</td>
+<td>3.3</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — Synthesis comparison</td>
+<td>3.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>5 — 4-bit ALU</td>
+<td>3.1, 3.4</td>
+<td>Core — graded deliverable</td>
+</tr>
+<tr>
+<td>6 — Mixed ALU</td>
+<td>3.3, 3.4</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Latch inference not understood:</strong> Students may fix the warning without understanding why. Ask them: "What was the hardware trying to do? Why does a missing <code>else</code> create memory?" Connect it to the concept that hardware must always drive something — if you don't specify, it holds the old value.</li>
+<li><strong><code>=</code> vs <code>&lt;=</code> confusion:</strong> This comes up again even though the pre-class video covers it. Reinforce: <code>always @(*)</code> + <code>=</code> = combinational. <code>always @(posedge clk)</code> + <code>&lt;=</code> = sequential. Day 4 goes deep on this.</li>
+<li><strong>Priority encoder all-zero input:</strong> Students often forget to handle the case where no request is active. The <code>valid</code> output addresses this — good time to discuss "what should hardware do with invalid inputs?"</li>
+<li><strong><code>case</code> vs <code>casez</code> nuance:</strong> Some students will think <code>casez</code> is always better. Clarify: <code>casez</code> treats <code>z</code> and <code>?</code> in the case items as don't-cares, which is powerful but can mask bugs if used carelessly. <code>case</code> is safer when inputs are fully determined.</li>
+<li><strong>ALU <code>default</code> debate:</strong> Students will ask what the ALU should output for unused opcodes. Good discussion: zero? Previous value (latch!)? A specific error pattern? There's no single right answer, but "whatever you choose, be intentional about it."</li>
+<li><strong>Yosys <code>show</code> on larger designs:</strong> The <code>show</code> command can produce overwhelming diagrams. Teach students to synthesize small modules in isolation for clear comparison — don't try to <code>show</code> the entire top module.</li>
+</ul>
+<h3 id="cross-cutting-thread-ppa-analysis">Cross-Cutting Thread: PPA Analysis</h3>
+<p><strong>First exposure.</strong> Exercise 4 is brief but intentional — students record LUT counts for three synthesis variants. This data point is referenced on Day 8 (resource scaling with parameterization) and becomes a structured exercise on Day 10.</p>
+<hr>
+<h2 id="preview-day-4">Preview: Day 4</h2>
+<p>Sequential logic — flip-flops, clocks, counters, and the crucial <code>&lt;=</code> nonblocking assignment. Everything so far has been combinational (outputs depend only on current inputs). Tomorrow, your circuits gain memory. Watch the Day 4 video (~50 min).</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Lecture Production Scaffold — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="video-lecture-production-scaffold">Video Lecture Production Scaffold</h1>
+<h2 id="accelerated-hdl-for-digital-system-design-pre-class-videos">Accelerated HDL for Digital System Design — Pre-Class Videos</h2>
+<p><strong>Production scope:</strong> 14 pre-class video lectures (Days 1–14)
+<strong>Target format:</strong> reveal.js slides + narration script + live-coding segments
+<strong>Recording style:</strong> Mix of slides and live coding (OBS or similar)
+<strong>Total target duration:</strong> ~685 minutes (~11.4 hours of recording)</p>
+<hr>
+<h2 id="key-finding-were-closer-than-you-think">Key Finding: We're Closer Than You Think</h2>
+<p>After analyzing all 14 daily plan files, here's the critical insight: <strong>the daily plans already contain ~80% of the narration content</strong>. Each day's "Pre-Class Material" section reads like a detailed lecture script — complete with code examples, analogies, and explanations written in an instructor voice.</p>
+<p>What we actually need to produce for each lecture:</p>
+<table>
+<thead>
+<tr>
+<th>Deliverable</th>
+<th>Status</th>
+<th>Work Remaining</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Narration content</td>
+<td>~80% done</td>
+<td>Polish, add transitions, timing marks, live-coding cues</td>
+</tr>
+<tr>
+<td>Slide decks</td>
+<td>0%</td>
+<td>Transform content into reveal.js slides</td>
+</tr>
+<tr>
+<td>Standalone code files</td>
+<td>~60% (embedded in markdown)</td>
+<td>Extract, add comments, make buildable</td>
+</tr>
+<tr>
+<td>Timing/block diagrams</td>
+<td>~20% (ASCII art exists)</td>
+<td>Convert to WaveDrom/Mermaid/SVG</td>
+</tr>
+<tr>
+<td>Pre-class quiz</td>
+<td>~90% done</td>
+<td>Already at bottom of each day file</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Bottom line:</strong> This is a <em>transformation</em> task, not a <em>creation</em> task. The intellectual content exists. We're packaging it for video delivery.</p>
+<hr>
+<h2 id="production-architecture">Production Architecture</h2>
+<h3 id="per-lecture-deliverable-set">Per-Lecture Deliverable Set</h3>
+<pre class="codehilite"><code>lectures/weekN/dayNN_topic/
+├── slides.html              # reveal.js deck (what's on screen)
+├── script.md                # Narration script with timing marks and cues
+├── code/
+│   ├── example_01.v         # Progressive examples shown during video
+│   ├── example_02.v
+│   └── ...
+├── diagrams/
+│   ├── block_diagram.mermaid
+│   ├── timing.wavedrom.json
+│   └── *.svg                # Any custom diagrams
+└── quiz.md                  # Pre-class comprehension check (3-5 questions)
+</code></pre>
+
+<h3 id="revealjs-slide-design-principles">reveal.js Slide Design Principles</h3>
+<p>Since you're doing <strong>slides + live coding</strong>, the slides need to support clean transitions to terminal/editor:</p>
+<ol>
+<li><strong>Code slides use syntax-highlighted <code>&lt;pre&gt;&lt;code&gt;</code></strong> — not screenshots</li>
+<li><strong>Progressive builds</strong> via reveal.js fragments — code appears line-by-line</li>
+<li><strong>"Switch to editor" cue slides</strong> — a simple slide that says "▶ Live Demo: [description]" so viewers know you're transitioning</li>
+<li><strong>Minimal text per slide</strong> — the narration carries the explanation, slides show visuals + code</li>
+<li><strong>Consistent visual language:</strong></li>
+<li>Dark theme (code-friendly, reduces eye strain for video)</li>
+<li>Left-aligned code, centered diagrams</li>
+<li>Color coding: green = synthesizable, orange = simulation-only, red = common mistake</li>
+</ol>
+<h3 id="script-format">Script Format</h3>
+<pre class="codehilite"><code class="language-markdown">## Slide 3: The River Analogy [01:45–02:30]
+
+**[SLIDE: Side-by-side — recipe steps vs. river diagram]**
+
+&gt; Software is like following a recipe: do step 1, then step 2, then step 3.
+&gt; Hardware is like a river system. Water flows through ALL tributaries simultaneously.
+&gt; Adding a dam here affects the flow there. Everything is happening at once.
+&gt; You're not writing instructions — you're describing the geography of the river.
+
+**[PAUSE — let this sink in]**
+
+&gt; This analogy will carry us through the entire first week. When you're confused
+&gt; about why Verilog behaves a certain way, come back to the river.
+
+---
+</code></pre>
+
+<p>Key script conventions:
+- <strong>Timestamp ranges</strong> in square brackets
+- <strong>Stage directions</strong> in bold brackets: <code>[SLIDE: ...]</code>, <code>[SWITCH TO EDITOR]</code>, <code>[PAUSE]</code>, <code>[DRAW ON SCREEN]</code>
+- <strong>Narration</strong> in blockquotes (what you actually say)
+- <strong>Notes</strong> in italics (reminders to yourself, not spoken)</p>
+<hr>
+<h2 id="the-14-lectures-segment-level-scaffold">The 14 Lectures: Segment-Level Scaffold</h2>
+<h3 id="lecture-01-welcome-to-hardware-thinking-40-min">Lecture 01: Welcome to Hardware Thinking (~40 min)</h3>
+<p><strong>Theme:</strong> Unlearn software thinking. Everything is concurrent.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>HDL ≠ Software</td>
+<td>12</td>
+<td>90% slides, 10% code</td>
+<td>Side-by-side C vs. Verilog; river analogy diagram</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Synthesis vs. Simulation</td>
+<td>10</td>
+<td>80% slides, 20% code</td>
+<td>Two-path flowchart: same source → synthesis path / sim path</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Anatomy of a Verilog Module</td>
+<td>12</td>
+<td>40% slides, 60% live code</td>
+<td>Module template with labeled parts; first <code>assign</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Digital Logic Refresher</td>
+<td>8</td>
+<td>70% slides, 30% code</td>
+<td>Gate symbols → Verilog equivalents table</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 3: Build a module from scratch — <code>module</code>, ports, <code>assign</code>, <code>endmodule</code>
+- Seg 4: Gate-level Verilog → <code>assign</code> equivalents</p>
+<p><strong>Diagrams needed:</strong>
+- [MERMAID] Two-path flow: Verilog source → Yosys → nextpnr → FPGA / Verilog source → iverilog → GTKWave
+- [SVG] River analogy (software recipe vs. hardware river)
+- [SVG] Module anatomy diagram with labeled ports</p>
+<p><strong>Pre-class quiz:</strong>
+- Q1: Three differences between HDL and software
+- Q2: Which tool (synthesis or simulation) processes <code>$display</code>?
+- Q3: Write a 2-input AND module from memory</p>
+<hr>
+<h3 id="lecture-02-combinational-building-blocks-45-min">Lecture 02: Combinational Building Blocks (~45 min)</h3>
+<p><strong>Theme:</strong> Data types, operators, and your first real building blocks (mux, adder, 7-seg decoder).</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Data Types &amp; Vectors</td>
+<td>12</td>
+<td>60% slides, 40% code</td>
+<td><code>wire</code> vs. <code>reg</code> comparison table; vector diagram</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Operators</td>
+<td>10</td>
+<td>40% slides, 60% live code</td>
+<td>Operator precedence table; bitwise vs. logical</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Multiplexers &amp; Conditional Assignment</td>
+<td>12</td>
+<td>30% slides, 70% live code</td>
+<td>2:1 → 4:1 mux progressive build</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Your First Building Blocks</td>
+<td>11</td>
+<td>20% slides, 80% live code</td>
+<td>Full-adder, ripple-carry, 7-seg decoder</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 2: Concatenation, replication, bit slicing demos
+- Seg 3: Build 2:1 mux → nest into 4:1 → show alternative <code>?:</code> chains
+- Seg 4: Full-adder → chain into ripple-carry → hex-to-7-seg decoder</p>
+<p><strong>Diagrams needed:</strong>
+- [SVG] Vector bit numbering diagram (MSB:LSB)
+- [SVG] 2:1 mux schematic → 4:1 mux from 2:1 components
+- [SVG] 7-segment display segment labeling (a–g)</p>
+<hr>
+<h3 id="lecture-03-procedural-combinational-logic-45-min">Lecture 03: Procedural Combinational Logic (~45 min)</h3>
+<p><strong>Theme:</strong> <code>always</code> blocks for combinational logic — power and pitfalls.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>always @(*)</code> and <code>if/else</code></td>
+<td>12</td>
+<td>50% slides, 50% code</td>
+<td>Latch inference warning; priority mux chain diagram</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>case</code> / <code>casez</code></td>
+<td>10</td>
+<td>40% slides, 60% live code</td>
+<td>Parallel mux structure; <code>casez</code> with don't-care bits</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>if/else</code> vs <code>case</code> — Synthesis Deep Dive</td>
+<td>10</td>
+<td>30% slides, 70% live code</td>
+<td>Side-by-side Yosys <code>show</code> output: priority chain vs. parallel mux</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ALU Design</td>
+<td>13</td>
+<td>20% slides, 80% live code</td>
+<td>4-bit ALU architecture; opcode decode</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Write a combinational block with missing <code>else</code>, show Yosys latch warning, fix it
+- Seg 2: Priority encoder in <code>if/else</code> vs. <code>casez</code> — compare behavior
+- Seg 3: <strong>Key demo</strong> — synthesize the same priority encoder with <code>if/else</code> and <code>case</code>, run <code>yosys show</code> on both, compare the circuits. Run <code>yosys stat</code> on both — record LUT counts. First PPA exposure.
+- Seg 4: Build 4-bit ALU with <code>case</code> for opcode decode</p>
+<p><strong>Diagrams needed:</strong>
+- [SVG] Priority mux chain (<code>if/else</code>) vs. parallel mux (<code>case</code>) — architecture comparison
+- [SVG] Latch inference diagram: missing <code>else</code> → transparent latch
+- [SVG] ALU block diagram with opcode decoder</p>
+<hr>
+<h3 id="lecture-04-sequential-logic-flip-flops-clocks-counters-50-min">Lecture 04: Sequential Logic — Flip-Flops, Clocks &amp; Counters (~50 min)</h3>
+<p><strong>Theme:</strong> The <code>posedge</code> revolution — everything changes when there's a clock.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Clocks and Edge-Triggered Behavior</td>
+<td>12</td>
+<td>60% slides, 40% code</td>
+<td>Clock waveform with posedge arrows; RTL diagram</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Nonblocking Assignment — Why It Matters</td>
+<td>15</td>
+<td>40% slides, 60% live code</td>
+<td>Two-register pipeline: blocking (broken) vs. nonblocking (correct)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Flip-Flops With Reset and Enable</td>
+<td>10</td>
+<td>30% slides, 70% live code</td>
+<td>D-FF variants side-by-side</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Counters and Clock Division</td>
+<td>13</td>
+<td>20% slides, 80% live code</td>
+<td>Clock divider math; Go Board 25 MHz → 1 Hz</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 2: <strong>The key demo</strong> — simulate 2-stage shift register with <code>=</code> (broken), then <code>&lt;=</code> (correct), show waveforms
+- Seg 3: Build D-FF variants live: basic → sync reset → async reset → enable
+- Seg 4: Calculate divider value, build counter, simulate, predict LED blink rate</p>
+<p><strong>Diagrams needed:</strong>
+- [WAVEDROM] Clock signal with posedge labels
+- [WAVEDROM] Blocking vs. nonblocking shift register comparison (the "smoking gun" timing diagram)
+- [WAVEDROM] Counter counting up with rollover
+- [SVG] RTL diagram: registers + combinational clouds + clock</p>
+<hr>
+<h3 id="lecture-05-counters-shift-registers-debouncing-45-min">Lecture 05: Counters, Shift Registers &amp; Debouncing (~45 min)</h3>
+<p><strong>Theme:</strong> Practical sequential building blocks and the real-world problem of noisy inputs.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Counter Variations</td>
+<td>10</td>
+<td>40% slides, 60% code</td>
+<td>Counter type comparison table</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Shift Registers</td>
+<td>12</td>
+<td>40% slides, 60% live code</td>
+<td>SISO/SIPO/PISO/PIPO animations (fragment builds)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Metastability and Synchronizers</td>
+<td>12</td>
+<td>70% slides, 30% code</td>
+<td>Metastability probability diagram; 2-FF synchronizer</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Button Debouncing</td>
+<td>11</td>
+<td>30% slides, 70% live code</td>
+<td>Oscilloscope trace of button bounce; debouncer block diagram</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Modulo-N counter with parameterized rollover
+- Seg 2: Build SIPO shift register, simulate serial input
+- Seg 4: Build counter-based debouncer, simulate noisy input, show clean output</p>
+<p><strong>Diagrams needed:</strong>
+- [WAVEDROM] Shift register shifting data in over clock cycles
+- [SVG] 2-FF synchronizer schematic with metastability zone
+- [WAVEDROM] Button bounce waveform → debounced output (with counter threshold annotation)
+- [WAVEDROM] Metastability: setup/hold violation → indeterminate output</p>
+<hr>
+<h3 id="lecture-06-testbenches-simulation-ai-assisted-verification-55-min">Lecture 06: Testbenches, Simulation &amp; AI-Assisted Verification (~55 min)</h3>
+<p><strong>Theme:</strong> Verification isn't optional. Simulate first, always. Then learn to leverage AI as a verification tool.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Testbench Anatomy</td>
+<td>12</td>
+<td>50% slides, 50% code</td>
+<td>TB structure diagram: no ports, DUT instantiation, stimulus, checks</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Self-Checking Testbenches</td>
+<td>12</td>
+<td>30% slides, 70% live code</td>
+<td>Pass/fail reporting pattern; expected vs. actual</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Waveforms and Debug</td>
+<td>10</td>
+<td>40% slides, 60% live code</td>
+<td>GTKWave walkthrough; <code>$dumpfile</code>/<code>$dumpvars</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>AI for Verification — Philosophy &amp; Ground Rules</td>
+<td>8</td>
+<td>70% slides, 30% code</td>
+<td>Verification workflow pyramid; prompt anatomy diagram</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Stimulus Patterns</td>
+<td>13</td>
+<td>30% slides, 70% live code</td>
+<td>Exhaustive, directed, corner-case strategies</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Build a testbench from scratch — instantiate DUT, apply stimulus, observe
+- Seg 2: Add <code>if/else</code> checks to make it self-checking — no more staring at waveforms
+- Seg 3: Add <code>$dumpfile</code>, run, open GTKWave, navigate waveforms
+- Seg 4: Show anatomy of a good AI prompt — what to specify (interface, protocol, corner cases, self-checking)
+- Seg 5: Exhaustive test for small designs, directed tests for larger</p>
+<p><strong>Diagrams needed:</strong>
+- [MERMAID] TB structure: testbench module → DUT instantiation → stimulus block → check block → waveform dump
+- [SVG] Self-checking pattern: stimulus → DUT → actual → comparison → expected
+- [SVG] Verification workflow pyramid: manual directed → self-checking → AI-scaffolded → assertion-enhanced → coverage-driven</p>
+<p><strong>Key message for Seg 4:</strong>
+- "You can't evaluate what you can't write" — manual TB skills come first
+- AI generates the 80% scaffolding; you provide the 20% domain expertise
+- The critical professional skill: reviewing and debugging AI-generated verification code</p>
+<hr>
+<h3 id="lecture-07-finite-state-machines-50-min">Lecture 07: Finite State Machines (~50 min)</h3>
+<p><strong>Theme:</strong> The most important design pattern in digital systems.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Moore vs. Mealy</td>
+<td>12</td>
+<td>70% slides, 30% code</td>
+<td>Side-by-side state diagrams</td>
+</tr>
+<tr>
+<td>2</td>
+<td>State Diagrams to HDL</td>
+<td>15</td>
+<td>40% slides, 60% live code</td>
+<td>Systematic translation: diagram → code</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3-Always-Block Style</td>
+<td>13</td>
+<td>30% slides, 70% live code</td>
+<td>Three blocks with clear responsibilities</td>
+</tr>
+<tr>
+<td>4</td>
+<td>State Encoding Trade-offs</td>
+<td>10</td>
+<td>60% slides, 40% code</td>
+<td>Binary vs. one-hot resource comparison</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 2: Draw a traffic light FSM, then translate to code step-by-step
+- Seg 3: <strong>Key demo</strong> — build the 3-always-block pattern: state register, next-state combo, output combo
+- Seg 4: Synthesize the same FSM with binary and one-hot encoding, compare <code>yosys stat</code></p>
+<p><strong>Diagrams needed:</strong>
+- [MERMAID] Moore FSM state diagram: traffic light with timed transitions
+- [MERMAID] Mealy FSM: outputs on transition arrows
+- [SVG] 3-always-block architecture diagram: three boxes with data flow arrows</p>
+<hr>
+<h3 id="lecture-08-hierarchy-parameters-generate-design-reuse-50-min">Lecture 08: Hierarchy, Parameters, Generate &amp; Design Reuse (~50 min)</h3>
+<p><strong>Theme:</strong> Scaling designs — how to build systems from reusable parts.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Module Hierarchy &amp; Instantiation</td>
+<td>12</td>
+<td>50% slides, 50% code</td>
+<td>Hierarchy tree; named vs. positional ports</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Parameters &amp; Localparam</td>
+<td>12</td>
+<td>30% slides, 70% live code</td>
+<td>Parameterized counter at multiple widths</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Generate Blocks</td>
+<td>13</td>
+<td>30% slides, 70% live code</td>
+<td><code>for</code>-generate, <code>if</code>-generate; replication patterns</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Recursive Generate Patterns</td>
+<td>8</td>
+<td>40% slides, 60% code</td>
+<td>Tree adder; conditional feature inclusion</td>
+</tr>
+<tr>
+<td>5</td>
+<td>PPA Seed: Resource Scaling</td>
+<td>5</td>
+<td>20% slides, 80% live code</td>
+<td><code>yosys stat</code> at WIDTH=4,8,16,32 — LUT scaling plot</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Instantiate modules using named ports — show the common mistakes
+- Seg 2: Build a parameterized N-bit counter, instantiate at 4 widths
+- Seg 3: <code>generate for</code> to create N instances; <code>generate if</code> for conditional hardware
+- Seg 4: Show <code>generate if</code> for optional parity, nested <code>generate for</code> for 2D structures, "recursive module" pattern (preview)
+- Seg 5: Synthesize parameterized counter at 4 widths, run <code>yosys stat</code>, show LUT scaling</p>
+<p><strong>Diagrams needed:</strong>
+- [MERMAID] Hierarchy tree: top → sub1, sub2 → leaf modules
+- [SVG] Generate-for producing N instances (array diagram)
+- [SVG] Generate-if: two hardware variants selected by parameter</p>
+<p><strong>Key message for Seg 5:</strong>
+"How does LUT count grow with width? Is it linear? This is PPA thinking — we'll go deep on Day 10."</p>
+<hr>
+<h3 id="lecture-09-memory-ram-rom-block-ram-45-min">Lecture 09: Memory — RAM, ROM &amp; Block RAM (~45 min)</h3>
+<p><strong>Theme:</strong> On-chip memory and the art of making Yosys infer what you want.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Modeling ROM in Verilog</td>
+<td>10</td>
+<td>40% slides, 60% code</td>
+<td><code>case</code>-based vs. array-based ROM; <code>$readmemh</code> file format</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>$readmemh</code> / <code>$readmemb</code></td>
+<td>10</td>
+<td>30% slides, 70% live code</td>
+<td>Loading hex files; file path gotchas</td>
+</tr>
+<tr>
+<td>3</td>
+<td>RAM Modeling</td>
+<td>12</td>
+<td>30% slides, 70% live code</td>
+<td>Synchronous read/write patterns; registered output</td>
+</tr>
+<tr>
+<td>4</td>
+<td>iCE40 Block RAM &amp; Inference</td>
+<td>13</td>
+<td>50% slides, 50% code</td>
+<td>EBR architecture; inference patterns; <code>SB_RAM40_4K</code> in <code>yosys stat</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Build a ROM, load from file, simulate readout
+- Seg 2: Show the <code>.hex</code> file format, common mistakes (0x prefix, commas)
+- Seg 3: Build synchronous RAM with registered read — show combinational read vs. registered read
+- Seg 4: Synthesize both versions, show <code>yosys stat</code> — only registered read produces <code>SB_RAM40_4K</code></p>
+<p><strong>Diagrams needed:</strong>
+- [SVG] FPGA memory landscape: LUT RAM vs. Block RAM vs. External
+- [SVG] iCE40 EBR block diagram (16 blocks × 256×16)
+- [SVG] Combinational read (→ LUT RAM) vs. registered read (→ Block RAM) comparison</p>
+<hr>
+<h3 id="lecture-10-numerical-architectures-design-trade-offs-55-min">Lecture 10: Numerical Architectures &amp; Design Trade-offs (~55 min)</h3>
+<p><strong>Theme:</strong> The heart of digital design — how to build arithmetic circuits and measure their cost.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Timing &amp; Constraints Essentials</td>
+<td>15</td>
+<td>80% slides, 20% code</td>
+<td>Setup/hold diagram; nextpnr timing report; critical path</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Numerical Architecture Trade-offs</td>
+<td>20</td>
+<td>40% slides, 60% live code</td>
+<td>Adder architectures; multiplier LUT explosion; fixed-point Q-format</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PPA — Performance, Power, Area</td>
+<td>15</td>
+<td>60% slides, 40% code</td>
+<td>Trade-off triangle; FPGA vs. ASIC PPA; OpenROAD/OpenLane context</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Open-Source ASIC PPA (Aspirational)</td>
+<td>5</td>
+<td>90% slides, 10% code</td>
+<td>OpenROAD flow diagram; SKY130 context</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Read a nextpnr timing report together; intentionally create timing violation; fix it
+- Seg 2: Synthesize <code>assign sum = a + b;</code> at 4/8/16/32-bit widths, plot LUT count (linear). Synthesize <code>assign product = a * b;</code> at 4/8-bit — show LUT explosion (quadratic, no DSP on iCE40). Inspect with <code>yosys show</code>.
+- Seg 2: Fixed-point: Q4.4 representation, multiply two Q4.4 numbers → Q8.8 product, extract the right bits
+- Seg 3: Compare <code>if/else</code> vs <code>case</code> from PPA perspective (revisit Day 3). Discuss the trade-off triangle.</p>
+<p><strong>Diagrams needed:</strong>
+- [WAVEDROM] Setup time, hold time, and clock-to-q annotated on timing diagram
+- [SVG] Critical path through combinational logic between registers
+- [SVG] Trade-off triangle: Performance ↔ Power ↔ Area
+- [SVG] Adder architecture comparison: ripple-carry chain vs. carry-lookahead tree
+- [SVG] Q4.4 fixed-point bit layout (integer.fraction)
+- [SVG] PPA: FPGA proxies (LUTs, Fmax, toggle rate) mapped to ASIC equivalents (gates, delay, power)</p>
+<p><strong>Key message for Seg 3:</strong>
+"You can't optimize all three simultaneously. The PPA habits you build with <code>yosys stat</code> transfer directly to ASIC flows like OpenROAD/OpenLane."</p>
+<hr>
+<h3 id="lecture-11-uart-transmitter-50-min">Lecture 11: UART Transmitter (~50 min)</h3>
+<p><strong>Theme:</strong> Your first communication interface — FSM + datapath as a design methodology.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>The UART Protocol</td>
+<td>14</td>
+<td>70% slides, 30% code</td>
+<td>UART frame diagram (idle, start, D0–D7, stop); baud rate math</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Baud Rate Generation</td>
+<td>10</td>
+<td>50% slides, 50% code</td>
+<td>Clock divider for 115200 baud @ 25 MHz</td>
+</tr>
+<tr>
+<td>3</td>
+<td>TX Architecture &amp; Implementation</td>
+<td>16</td>
+<td>10% slides, 90% live code</td>
+<td>Block diagram: FSM + shift register + baud generator</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Connecting to a PC</td>
+<td>10</td>
+<td>60% slides, 40% live code</td>
+<td>USB-serial setup; terminal emulator demo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Calculate baud divider for 115200 baud @ 25 MHz (25M / 115200 ≈ 217)
+- Seg 3: <strong>Full build</strong> — baud generator → FSM → shift register → integrate → simulate
+- Seg 4: Show terminal emulator receiving data (screen recording segment)</p>
+<p><strong>Diagrams needed:</strong>
+- [WAVEDROM] Complete UART frame: idle → start bit → 8 data bits (LSB first) → stop bit
+- [MERMAID] UART TX FSM state diagram (IDLE → START → DATA → STOP)
+- [SVG] UART TX block diagram: baud tick generator + FSM + PISO shift register</p>
+<hr>
+<h3 id="lecture-12-uart-rx-spi-ai-assisted-protocol-verification-55-min">Lecture 12: UART RX, SPI &amp; AI-Assisted Protocol Verification (~55 min)</h3>
+<p><strong>Theme:</strong> Completing the communication loop, a second protocol, and AI for protocol-level testbenches.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>UART RX — The Oversampling Challenge</td>
+<td>15</td>
+<td>50% slides, 50% code</td>
+<td>16× oversampling diagram; center-bit sampling</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AI for Protocol Verification</td>
+<td>8</td>
+<td>70% slides, 30% code</td>
+<td>Prompt anatomy for timing-aware TB; AI error patterns</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SPI Protocol</td>
+<td>12</td>
+<td>60% slides, 40% code</td>
+<td>SPI signals; CPOL/CPHA modes; shift register connection</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Constraint-Based Design Thinking + IP Integration</td>
+<td>10</td>
+<td>50% slides, 50% code</td>
+<td><code>generate if</code> for optional parity; IP integration checklist</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Segment 2 key points:</strong>
+- Prompting for protocol-aware TBs: specifying baud rate, clock frequency, frame format (8N1), expected sequences
+- What AI gets wrong: baud-rate timing accuracy, center-sampling verification
+- Professional skill: "Try the same prompt with two different AI tools — which produces better Verilog?"</p>
+<p><strong>Segment 4 key points:</strong>
+- Constraint-based design concept: <code>generate if</code> for optional features (parity, configurable stop bits)
+- UART TX with <code>parameter PARITY_EN</code> — <code>generate if</code> conditionally includes parity logic
+- Concept introduced here; lab implementation on Day 14
+- IP integration checklist: read docs → wrapper → synchronizers → testbench → resource check</p>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Build UART RX oversampling logic; show start-bit detection and center-sampling
+- Seg 3: SPI Mode 0 timing; connect master and slave as shift registers
+- Seg 4: Show <code>generate if</code> for optional parity — same RTL, different hardware</p>
+<p><strong>Diagrams needed:</strong>
+- [WAVEDROM] UART RX oversampling: 16 samples per bit, arrow at center sample
+- [SVG] UART RX FSM: IDLE → DETECT_START → SAMPLE_BITS → STOP → VALID
+- [SVG] SPI connection diagram: master ↔ slave with SCLK, MOSI, MISO, CS_N
+- [WAVEDROM] SPI Mode 0 timing: data sampled on rising SCLK, shifted on falling
+- [SVG] <code>generate if</code> conditional hardware: parity enabled vs. disabled variants</p>
+<hr>
+<h3 id="lecture-13-systemverilog-for-design-45-min">Lecture 13: SystemVerilog for Design (~45 min)</h3>
+<p><strong>Theme:</strong> Cleaner syntax, stronger safety, same hardware.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Why SystemVerilog?</td>
+<td>8</td>
+<td>80% slides, 20% code</td>
+<td>Verilog-2001 → IEEE 1800 evolution timeline</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>logic</code> — One Type to Rule Them All</td>
+<td>8</td>
+<td>40% slides, 60% live code</td>
+<td><code>wire</code>/<code>reg</code> confusion eliminated; side-by-side comparison</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Intent-Based Always Blocks</td>
+<td>12</td>
+<td>30% slides, 70% live code</td>
+<td><code>always_ff</code>, <code>always_comb</code>, <code>always_latch</code> with safety checks</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Enum FSMs</td>
+<td>10</td>
+<td>30% slides, 70% live code</td>
+<td>Named states, <code>.name()</code> debug printing, automatic width</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Structs, Typedefs &amp; Packages</td>
+<td>7</td>
+<td>40% slides, 60% code</td>
+<td>Grouping signals; sharing definitions across modules</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Live coding moments:</strong>
+- Seg 2: Refactor a module — replace <code>wire</code>/<code>reg</code> with <code>logic</code>, show it compiles identically
+- Seg 3: Deliberately introduce a missing assignment in <code>always_comb</code> — show the compiler catches it. Do the same with <code>always @(*)</code> — silence.
+- Seg 4: Convert <code>localparam</code> FSM states to <code>enum</code>, add <code>$display(state.name())</code>, show readable debug output
+- Seg 5: Create a <code>uart_config_t</code> struct, use it as a port</p>
+<p><strong>Diagrams needed:</strong>
+- [SVG] Verilog vs. SystemVerilog side-by-side: same module, highlighting every difference
+- [SVG] Safety net diagram: <code>always_comb</code> catches incomplete assignments; <code>always_ff</code> enforces edge-triggered</p>
+<hr>
+<h3 id="lecture-14-verification-techniques-ai-driven-testing-ppa-analysis-55-min">Lecture 14: Verification Techniques, AI-Driven Testing &amp; PPA Analysis (~55 min)</h3>
+<p><strong>Theme:</strong> The capstone verification session — where all threads converge.</p>
+<table>
+<thead>
+<tr>
+<th>Seg</th>
+<th>Title</th>
+<th>Min</th>
+<th>Slide/Code Split</th>
+<th>Key Visual</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Assertions — Executable Specifications</td>
+<td>12</td>
+<td>40% slides, 60% live code</td>
+<td>Immediate assertion syntax; inline checks; bug injection demo</td>
+</tr>
+<tr>
+<td>2</td>
+<td>AI-Driven Verification Workflows</td>
+<td>15</td>
+<td>60% slides, 40% code</td>
+<td>Verification productivity stack; constraint-based stimulus; prompt engineering</td>
+</tr>
+<tr>
+<td>3</td>
+<td>PPA Analysis Methodology</td>
+<td>12</td>
+<td>50% slides, 50% code</td>
+<td>FPGA PPA report template; ASIC context; design-space exploration</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Coverage &amp; the Road Ahead</td>
+<td>11</td>
+<td>70% slides, 30% code</td>
+<td>Functional coverage concepts; verification maturity scale; industry landscape</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Segment 1 key points:</strong>
+- Immediate assertions: <code>assert (condition) else $error("message");</code>
+- Concurrent assertions (brief): <code>assert property</code>, sequence syntax, <code>|-&gt;</code> implication
+- Assertions as executable documentation — catching bugs at the source, not in waveforms</p>
+<p><strong>Segment 2 key points:</strong>
+- Verification productivity stack: manual → self-checking → AI-scaffolded → assertion-enhanced → coverage-driven
+- Constraint-based stimulus: <code>$urandom_range()</code>, bounded random testing, constraint specs
+- Writing a constraint spec in comments → having AI generate the stimulus loop
+- Industry context: "The prompt/generate/review/correct workflow is the same loop verification engineers use on production chip projects."</p>
+<p><strong>Segment 3 key points:</strong>
+- FPGA PPA report template: resource table (LUTs, FFs, EBR), Fmax, % utilization
+- ASIC PPA context: gate count, wire delay, process nodes, Liberty files, standard cells
+- Design-space exploration: synthesize at WIDTH=4,8,16,32, plot area/timing curves
+- OpenROAD/OpenLane reminder: open-source ASIC PPA for the same Verilog</p>
+<p><strong>Live coding moments:</strong>
+- Seg 1: Add assertions to UART TX — deliberately inject a bug, show the assertion catch it
+- Seg 2: Show a constraint spec for the ALU → generate TB with AI → review together
+- Seg 3: Build a PPA comparison table live (multiplier variants from Day 10)</p>
+<p><strong>Diagrams needed:</strong>
+- [SVG] Verification productivity stack / maturity pyramid
+- [SVG] Constraint-based stimulus flow: constraint spec → AI → generated TB → review → corrected TB → simulation
+- [SVG] FPGA PPA report template layout
+- [SVG] Design-space exploration: area vs. timing plot with parameter sweep</p>
+<hr>
+<h2 id="diagram-inventory-summary">Diagram Inventory Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Count</th>
+<th>Tool</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WaveDrom timing diagrams</td>
+<td>~14</td>
+<td>WaveDrom JSON → SVG</td>
+</tr>
+<tr>
+<td>Mermaid flowcharts/block diagrams</td>
+<td>~16</td>
+<td>Mermaid → SVG (embedded in reveal.js)</td>
+</tr>
+<tr>
+<td>Custom SVG diagrams</td>
+<td>~18</td>
+<td>Hand-crafted or code-generated</td>
+</tr>
+<tr>
+<td><strong>Total diagrams</strong></td>
+<td><strong>~48</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="production-schedule">Production Schedule</h2>
+<h3 id="recommended-batch-order">Recommended Batch Order</h3>
+<table>
+<thead>
+<tr>
+<th>Batch</th>
+<th>Lectures</th>
+<th>Total Duration</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Batch 1</strong></td>
+<td>Days 1–4 (Week 1)</td>
+<td>~180 min</td>
+<td>Foundation — every subsequent lecture builds on these. Record first, iterate.</td>
+</tr>
+<tr>
+<td><strong>Batch 2</strong></td>
+<td>Days 5–8 (Week 2)</td>
+<td>~200 min</td>
+<td>Sequential + verification + AI intro + FSM — the conceptual peak</td>
+</tr>
+<tr>
+<td><strong>Batch 3</strong></td>
+<td>Days 9–12 (Week 3)</td>
+<td>~205 min</td>
+<td>Memory + numerical + interfaces — most live-coding heavy</td>
+</tr>
+<tr>
+<td><strong>Batch 4</strong></td>
+<td>Days 13–14 (Week 4)</td>
+<td>~100 min</td>
+<td>SystemVerilog + capstone verification — lighter load, can refine earlier batches</td>
+</tr>
+</tbody>
+</table>
+<h3 id="per-batch-workflow">Per-Batch Workflow</h3>
+<pre class="codehilite"><code>1. Generate all slide decks + scripts + code files + diagrams for the batch
+2. Review the batch for:
+   - Technical accuracy
+   - Pacing (too fast? too slow? wrong emphasis?)
+   - Code correctness (test with iverilog; verify on Go Board where applicable)
+   - Voice/tone (does the script sound natural?)
+3. Iterate on any issues
+4. Record the batch
+5. Commit to the repo
+</code></pre>
+
+<h3 id="estimated-production-time">Estimated Production Time</h3>
+<table>
+<thead>
+<tr>
+<th>Per lecture</th>
+<th>Deliverables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>reveal.js slide deck (~30-50 slides)</td>
+<td>Primary deliverable</td>
+</tr>
+<tr>
+<td>Script refinement</td>
+<td>Embedded in slides as speaker notes</td>
+</tr>
+<tr>
+<td>Code file extraction + commenting</td>
+<td>Included in slide build</td>
+</tr>
+<tr>
+<td>Diagram generation</td>
+<td>Included in slide build</td>
+</tr>
+<tr>
+<td>Quiz formatting</td>
+<td>Quick — content already exists</td>
+</tr>
+<tr>
+<td><strong>Per batch (4 lectures)</strong></td>
+<td><strong>One focused working session with iteration</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="open-decisions-before-starting-batch-1">Open Decisions Before Starting Batch 1</h2>
+<h3 id="1-slide-theme-branding">1. Slide Theme / Branding</h3>
+<ul>
+<li>University branding required? (logo, colors, footer)</li>
+<li>Or clean/generic academic theme?</li>
+<li>Dark background preferred for code-heavy content — confirm?</li>
+</ul>
+<h3 id="2-video-segment-granularity">2. Video Segment Granularity</h3>
+<p>Each day has 3–5 segments (e.g., Day 1: 12 + 10 + 12 + 8 = 42 min). Options:
+- <strong>Option A: One continuous video per day</strong> (~40-55 min) with chapter markers
+- <strong>Option B: 3–5 separate short videos per day</strong> (~8-15 min each) — more EdPuzzle/Panopto friendly
+- <strong>Option C: 2 videos per day</strong> — concepts (segs 1-2) + code (segs 3+)</p>
+<h3 id="3-code-presentation-strategy">3. Code Presentation Strategy</h3>
+<p>For the live-coding segments, how do you want to present code in the video?
+- <strong>Slides with progressive reveal</strong> (code appears line-by-line on slides)
+- <strong>Screen-share of actual editor</strong> (VS Code, vim, etc.) — more authentic
+- <strong>Hybrid:</strong> Slides show the final code structure, then you switch to editor for the build-up</p>
+<h3 id="4-starter-lecture">4. Starter Lecture</h3>
+<p>Recommended: <strong>Produce Day 1 as a complete prototype</strong> first. That way you can:
+- Record it as a test
+- Identify what works and what doesn't in the format
+- Give concrete feedback before the other 13 are produced</p>
+<p>This is the standard approach in instructional design — pilot one, refine the template, then batch-produce the rest.</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 5 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-5-lab-counters-shift-registers-debouncing">Day 5 Lab: Counters, Shift Registers &amp; Debouncing</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design-week-2-session-5">Course: Accelerated HDL for Digital System Design — Week 2, Session 5</h2>
+<hr>
+<h2 id="objectives">Objectives</h2>
+<p>By the end of this lab, you will:
+- Build a reusable, parameterized debounce module with built-in 2-FF synchronizer
+- Construct a shift-register-based LED chase pattern on the Go Board
+- Prove that debouncing works by building a reliable button counter
+- (Stretch) Build an LFSR pseudo-random pattern generator</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Completed Week 1 labs (combinational + sequential fundamentals)</li>
+<li>Watched Day 5 pre-class video (~45 min): counters, shift registers, metastability</li>
+<li><code>hex_to_7seg.v</code> from Day 2 (provided in <code>starter/</code>)</li>
+</ul>
+<h2 id="deliverables">Deliverables</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Exercise</th>
+<th>Time</th>
+<th>What to Submit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Debounce Module</td>
+<td>30 min</td>
+<td><code>debounce.v</code> + <code>tb_debounce.v</code> + GTKWave screenshot</td>
+</tr>
+<tr>
+<td>2</td>
+<td>LED Chase</td>
+<td>25 min</td>
+<td><code>led_chase.v</code> working on Go Board</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Button Counter</td>
+<td>25 min</td>
+<td><code>button_counter.v</code> — clean count + erratic count comparison</td>
+</tr>
+<tr>
+<td>4</td>
+<td>LFSR (stretch)</td>
+<td>20 min</td>
+<td><code>lfsr_8bit.v</code> + testbench verifying 255-cycle period</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Shift Debounce (stretch)</td>
+<td>20 min</td>
+<td><code>debounce_shift.v</code> + comparison analysis</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Primary deliverable:</strong> Debounced button-controlled LED chase pattern on the Go Board.</p>
+<hr>
+<h2 id="exercise-1-debounce-module-build-and-simulate-30-min">Exercise 1: Debounce Module — Build and Simulate (30 min)</h2>
+<p><strong>SLOs: 5.3, 5.4</strong></p>
+<h3 id="part-a-build-debouncev">Part A: Build <code>debounce.v</code></h3>
+<p>Create the counter-based debounce module from the pre-class video. Requirements:
+- Built-in 2-FF synchronizer (input can be fully asynchronous)
+- Parameterized <code>CLKS_TO_STABLE</code> (default 250,000 = ~10 ms at 25 MHz)
+- When synchronized input differs from clean output, count up
+- If count reaches threshold, accept the new value
+- If input bounces back before threshold, reset counter</p>
+<p>Use the starter file in <code>starter/debounce.v</code> — fill in the <code>YOUR CODE HERE</code> sections.</p>
+<h3 id="part-b-simulate-with-tb_debouncev">Part B: Simulate with <code>tb_debounce.v</code></h3>
+<p>The testbench simulates bouncy press/release sequences. Run it:</p>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_debounce.v SRCS=&quot;debounce.v&quot;
+</code></pre>
+
+<h3 id="part-c-verify-in-gtkwave">Part C: Verify in GTKWave</h3>
+<ol>
+<li>Count transitions on <code>clean</code> — should be exactly 2 (one press, one release)</li>
+<li>Measure delay from input stabilization to clean output transition</li>
+<li>Change <code>CLKS_TO_STABLE</code> to 5 — does bounce sneak through? Why?</li>
+</ol>
+<hr>
+<h2 id="exercise-2-shift-register-led-chase-25-min">Exercise 2: Shift Register LED Chase (25 min)</h2>
+<p><strong>SLOs: 5.2, 5.5</strong></p>
+<p>Build a "Knight Rider" / Cylon LED pattern using a shift register with direction control.</p>
+<p>Use <code>starter/led_chase.v</code> — the clock divider and debounce instantiations are provided. You implement the bounce-back shift logic.</p>
+<pre class="codehilite"><code class="language-bash">make PROJECT=led_chase TOP=led_chase SRCS=&quot;led_chase.v debounce.v&quot;
+make prog PROJECT=led_chase
+</code></pre>
+
+<p><strong>Tasks:</strong>
+1. Implement the chase logic (shift with direction reversal at walls)
+2. Verify the light sweeps back and forth
+3. Verify debounced switch2 controls direction cleanly
+4. Experiment with tick rate — make it faster, slower</p>
+<p><strong>Extension:</strong> Make the pattern 2 bits wide (two adjacent LEDs lit).</p>
+<hr>
+<h2 id="exercise-3-debounced-button-counter-25-min">Exercise 3: Debounced Button Counter (25 min)</h2>
+<p><strong>SLOs: 5.4, 5.5</strong></p>
+<p>The definitive test: prove debouncing works by building a press counter.</p>
+<p>Use <code>starter/button_counter.v</code> — provided complete (this is the reference integration).</p>
+<h3 id="the-test-protocol">The Test Protocol</h3>
+<ol>
+<li><strong>With debounce:</strong> Press button 16 times slowly. Display should count 0→1→2→...→F→0 cleanly.</li>
+<li><strong>Without debounce:</strong> Modify to bypass debounce (use direct sync only). Repeat. Record the erratic count.</li>
+<li><strong>Record:</strong> "With debounce: 16 presses → count reached 0 (wrapped). Without: 16 presses → count reached [X]."</li>
+</ol>
+<pre class="codehilite"><code class="language-bash">make PROJECT=button_counter TOP=button_counter \
+     SRCS=&quot;button_counter.v debounce.v hex_to_7seg.v&quot;
+make prog PROJECT=button_counter
+</code></pre>
+
+<hr>
+<h2 id="exercise-4-stretch-lfsr-pattern-generator-20-min">Exercise 4 (Stretch): LFSR Pattern Generator (20 min)</h2>
+<p><strong>SLO: 5.6</strong></p>
+<p>Build <code>lfsr_8bit.v</code> — an 8-bit Linear Feedback Shift Register with maximal-length taps.</p>
+<p>Use <code>starter/lfsr_8bit.v</code>. Create a top module that:
+- Clocks the LFSR at ~4 Hz using a tick
+- Displays lower 4 bits on 7-seg, upper 4 on LEDs
+- Uses a button to pause/resume</p>
+<p><strong>Simulation:</strong> Write a testbench verifying 255-cycle period (returns to seed after exactly 255 enables).</p>
+<hr>
+<h2 id="exercise-5-stretch-shift-register-debounce-20-min">Exercise 5 (Stretch): Shift Register Debounce (20 min)</h2>
+<p><strong>SLOs: 5.2, 5.4</strong></p>
+<p>Implement <code>debounce_shift.v</code> — an alternative architecture that samples the input into an N-bit shift register at a slow rate. If all N bits agree, the input is stable.</p>
+<p><strong>Comparison task:</strong> Which approach (counter vs. shift register) uses more resources? Which responds faster? Which is easier to tune?</p>
+<hr>
+<h2 id="build-commands-quick-reference">Build Commands Quick Reference</h2>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_debounce.v SRCS=&quot;debounce.v&quot;         # Simulate
+make wave                                              # Open GTKWave
+make PROJECT=led_chase SRCS=&quot;led_chase.v debounce.v&quot;  # Synthesize
+make prog PROJECT=led_chase                            # Program board
+make stat PROJECT=led_chase SRCS=&quot;led_chase.v debounce.v&quot;  # Resources
+</code></pre>
+</article>
+</body>
+</html>

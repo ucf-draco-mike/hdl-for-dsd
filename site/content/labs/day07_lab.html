@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 7 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-7-lab-finite-state-machines">Day 7 Lab: Finite State Machines</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design-week-2-session-7">Course: Accelerated HDL for Digital System Design — Week 2, Session 7</h2>
+<hr>
+<h2 id="objectives">Objectives</h2>
+<p>By the end of this lab, you will:
+- Implement a timed FSM (traffic light controller) using the 3-always-block style
+- Write a self-checking FSM testbench verifying all state transitions
+- Design a button pattern detector FSM
+- (Stretch) Compare Moore vs. Mealy implementations side by side</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Watched Day 7 pre-class video (~50 min): Moore/Mealy, state diagrams, 3-block template</li>
+<li><code>debounce.v</code> and <code>hex_to_7seg.v</code> from previous labs (provided in <code>starter/</code>)</li>
+</ul>
+<h2 id="critical-habit-draw-the-state-diagram-first">Critical Habit: Draw the State Diagram FIRST</h2>
+<p><strong>Do not start coding until you have drawn the state diagram on paper.</strong> This is non-negotiable. The diagram is your design document.</p>
+<h2 id="deliverables">Deliverables</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Exercise</th>
+<th>Time</th>
+<th>What to Submit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Traffic Light Controller</td>
+<td>40 min</td>
+<td><code>traffic_light.v</code> + <code>tb_traffic_light.v</code> — all transitions verified</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Button Pattern Detector</td>
+<td>35 min</td>
+<td><code>pattern_detector.v</code> + <code>top_pattern.v</code> + testbench</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Testbench Deep Dive</td>
+<td>25 min</td>
+<td>Extended <code>tb_traffic_light.v</code> with negative/stability tests</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Moore vs. Mealy (stretch)</td>
+<td>20 min</td>
+<td>Side-by-side waveform comparison screenshot</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Primary deliverable:</strong> Traffic light FSM running on board with waveform-verified testbench.</p>
+<hr>
+<h2 id="exercise-1-traffic-light-controller-40-min">Exercise 1: Traffic Light Controller (40 min)</h2>
+<p><strong>SLOs: 7.2, 7.3, 7.5</strong></p>
+<h3 id="part-a-implement-traffic_lightv">Part A: Implement <code>traffic_light.v</code></h3>
+<p>Use the starter file — the state encoding and timing parameters are provided. You implement the 3-always-block FSM and the timer.</p>
+<p><strong>States:</strong> GREEN (5s) → YELLOW (1s) → RED (4s) → repeat</p>
+<p><strong>Go Board mapping:</strong> LED1=Red, LED2=Yellow, LED3=Green, LED4=Heartbeat</p>
+<h3 id="part-b-self-checking-testbench">Part B: Self-Checking Testbench</h3>
+<p>Use <code>tb_traffic_light.v</code> starter. Implement the <code>check_state</code> task and verify:
+1. Reset → GREEN
+2. GREEN → YELLOW after GREEN_TIME cycles
+3. YELLOW → RED after YELLOW_TIME cycles
+4. RED → GREEN (full cycle)
+5. Mid-state reset → GREEN</p>
+<h3 id="part-c-hardware-demo">Part C: Hardware Demo</h3>
+<p>Synthesize with real timer values (remove <code>SIMULATION</code> define). Watch the LEDs cycle.</p>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_traffic_light.v SRCS=&quot;traffic_light.v&quot;
+make PROJECT=traffic_light
+make prog PROJECT=traffic_light
+</code></pre>
+
+<hr>
+<h2 id="exercise-2-button-pattern-detector-35-min">Exercise 2: Button Pattern Detector (35 min)</h2>
+<p><strong>SLOs: 7.2, 7.6</strong></p>
+<p>Detect the sequence: Switch1 → Switch2 → Switch3. Light LED4 for 1 second on detection. Wrong button resets to beginning.</p>
+<p><strong>Draw the state diagram first!</strong> States: WAIT_1, WAIT_2, WAIT_3, DETECTED</p>
+<p>Use <code>starter/pattern_detector.v</code> and <code>starter/top_pattern.v</code>.</p>
+<p><strong>Testbench scenarios (required):</strong>
+1. Correct sequence → detection
+2. Wrong sequence → no detection
+3. Partial correct then wrong: btn1→btn2→btn1 → resets to WAIT_2
+4. Double press: btn1→btn1→btn2→btn3 → still detects
+5. Reset mid-sequence</p>
+<hr>
+<h2 id="exercise-3-testbench-deep-dive-25-min">Exercise 3: Testbench Deep Dive (25 min)</h2>
+<p><strong>SLO: 7.4</strong></p>
+<p>Extend the traffic light testbench with:
+1. <strong>Negative test:</strong> Verify GREEN doesn't transition at GREEN_TIME-1
+2. <strong>Stability test:</strong> Sample outputs multiple times during each state
+3. <strong>Full cycle test:</strong> Run 3 complete cycles, verify consistent timing
+4. <strong>State check:</strong> Use hierarchical access (<code>uut.r_state</code>) to verify no illegal states</p>
+<hr>
+<h2 id="exercise-4-stretch-moore-vs-mealy-comparison-20-min">Exercise 4 (Stretch): Moore vs. Mealy Comparison (20 min)</h2>
+<p><strong>SLO: 7.1</strong></p>
+<p>Implement a "10" sequence detector in both Moore and Mealy styles. Show in GTKWave that the Mealy output appears 1 clock cycle earlier.</p>
+</article>
+</body>
+</html>

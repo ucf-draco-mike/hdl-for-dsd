@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolchain Setup Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="toolchain-setup-guide">Toolchain Setup Guide</h1>
+<h2 id="accelerated-hdl-for-digital-system-design">Accelerated HDL for Digital System Design</h2>
+<p>This course uses a <strong>single Nix-based development environment</strong> that provides identical tool versions on Linux, macOS, and Windows (via WSL2). Complete the OS-specific prerequisites below, then install Nix and enter the course shell — all tools will be available automatically.</p>
+<blockquote>
+<p><strong>Time estimate:</strong> 15–30 minutes depending on platform and internet speed.</p>
+</blockquote>
+<hr>
+<h2 id="step-0-os-specific-prerequisites">Step 0: OS-Specific Prerequisites</h2>
+<p>Before installing Nix, your operating system needs a few things in place. Find your platform below and complete <strong>only that section</strong>.</p>
+<hr>
+<h3 id="linux-ubuntu-debian-fedora">Linux (Ubuntu / Debian / Fedora)</h3>
+<p><strong>What you need:</strong> <code>curl</code>, <code>xz-utils</code>, and USB permissions for the Go Board.</p>
+<pre class="codehilite"><code class="language-bash"># 1. Install prerequisites (most systems already have these)
+sudo apt update &amp;&amp; sudo apt install -y curl xz-utils   # Debian/Ubuntu
+# or: sudo dnf install -y curl xz                       # Fedora
+
+# 2. Set up USB permissions for the Go Board FTDI chip
+#    This avoids needing sudo every time you program the board.
+sudo tee /etc/udev/rules.d/99-fpga-boards.rules &gt; /dev/null &lt;&lt; 'EOF'
+# Nandland Go Board / iCEstick / iCE40 — FTDI FT2232H
+ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0403&quot;, ATTR{idProduct}==&quot;6010&quot;, MODE=&quot;0666&quot;
+EOF
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+# 3. Verify FTDI detection (plug in the Go Board first)
+lsusb | grep -i ftdi
+# Expected: &quot;Future Technology Devices International&quot; or similar
+</code></pre>
+
+<p><strong>GTKWave note:</strong> On headless or Wayland-only systems, GTKWave needs an X11 display. If you're using a standard desktop environment (GNOME, KDE, XFCE), this works out of the box.</p>
+<p><strong>Done.</strong> Proceed to <a href="#step-1-install-nix">Step 1: Install Nix</a>.</p>
+<hr>
+<h3 id="macos-intel-or-apple-silicon">macOS (Intel or Apple Silicon)</h3>
+<p><strong>What you need:</strong> Xcode Command Line Tools and a few system settings.</p>
+<pre class="codehilite"><code class="language-bash"># 1. Install Xcode Command Line Tools (provides git, curl, etc.)
+xcode-select --install
+# Follow the dialog that appears. If already installed, you'll see a message saying so.
+
+# 2. Allow apps from &quot;identified developers&quot; (needed for GTKWave)
+#    System Settings → Privacy &amp; Security → Security → Allow
+#    (You may be prompted again the first time you launch GTKWave)
+</code></pre>
+
+<p><strong>USB driver note:</strong> macOS recognizes the Go Board FTDI chip natively via the built-in AppleUSBFTDI driver. No additional drivers are needed. Verify with:</p>
+<pre class="codehilite"><code class="language-bash"># Plug in the Go Board, then:
+ls /dev/cu.usbserial*
+# Expected: /dev/cu.usbserial-&lt;something&gt;
+</code></pre>
+
+<p><strong>Apple Silicon (M1/M2/M3/M4) note:</strong> Nix and all course tools support <code>aarch64-darwin</code> natively. No Rosetta needed.</p>
+<p><strong>Done.</strong> Proceed to <a href="#step-1-install-nix">Step 1: Install Nix</a>.</p>
+<hr>
+<h3 id="windows">Windows</h3>
+<p>Windows support works through <strong>WSL2</strong> (Windows Subsystem for Linux). You'll run an Ubuntu environment inside Windows and use Nix there.</p>
+<pre class="codehilite"><code class="language-powershell"># ── Run these in PowerShell (as Administrator) ──
+
+# 1. Install WSL2 with Ubuntu (reboot if prompted)
+wsl --install
+
+# 2. After reboot, open &quot;Ubuntu&quot; from the Start menu.
+#    Set your UNIX username and password when prompted.
+</code></pre>
+
+<p>Now <strong>inside the Ubuntu/WSL2 terminal</strong>:</p>
+<pre class="codehilite"><code class="language-bash"># 3. Update packages
+sudo apt update &amp;&amp; sudo apt install -y curl xz-utils
+</code></pre>
+
+<p><strong>USB passthrough (required for programming the Go Board):</strong></p>
+<p>WSL2 does not have native USB access. You need <code>usbipd-win</code> to forward the FTDI device.</p>
+<pre class="codehilite"><code class="language-powershell"># ── Back in PowerShell (as Administrator) ──
+
+# 4. Install usbipd-win
+winget install usbipd
+
+# 5. List USB devices (plug in the Go Board first)
+usbipd list
+# Find the line with &quot;FTDI&quot; or &quot;USB Serial Converter&quot; — note its BUSID (e.g., 2-1)
+
+# 6. Bind and attach to WSL (repeat step 6b each time you reconnect the board)
+usbipd bind --busid &lt;BUSID&gt;       # one-time: makes device shareable
+usbipd attach --wsl --busid &lt;BUSID&gt;  # each session: forwards to WSL
+</code></pre>
+
+<p>Then <strong>inside WSL2</strong>:</p>
+<pre class="codehilite"><code class="language-bash"># 7. Verify the device appeared
+ls /dev/ttyUSB*
+# Expected: /dev/ttyUSB0 or /dev/ttyUSB1
+
+# 8. Set up udev rules (same as Linux)
+sudo tee /etc/udev/rules.d/99-fpga-boards.rules &gt; /dev/null &lt;&lt; 'EOF'
+ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0403&quot;, ATTR{idProduct}==&quot;6010&quot;, MODE=&quot;0666&quot;
+EOF
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+</code></pre>
+
+<p><strong>GTKWave on WSL2:</strong> Waveform viewing requires a GUI. Two options:
+- <strong>WSLg (default on Windows 11):</strong> GUI apps work automatically — just run <code>gtkwave</code> from the terminal.
+- <strong>Windows 10 or WSLg disabled:</strong> Install an X server like <a href="https://sourceforge.net/projects/vcxsrv/">VcXsrv</a> and set <code>export DISPLAY=:0</code> in your <code>~/.bashrc</code>.</p>
+<p><strong>Done.</strong> Continue in the WSL2 Ubuntu terminal for all remaining steps.</p>
+<hr>
+<h2 id="step-1-install-nix">Step 1: Install Nix</h2>
+<p>We use the <a href="https://github.com/DeterminateSystems/nix-installer">Determinate Systems Nix Installer</a>, which enables Flakes by default and handles the multi-user daemon setup cleanly on all platforms.</p>
+<pre class="codehilite"><code class="language-bash"># Works on Linux, macOS, and WSL2
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+
+# Follow any prompts (you may need to approve sudo access).
+# When finished, open a NEW terminal (or source the shell config):
+source /etc/profile.d/nix.sh 2&gt;/dev/null || true
+
+# Verify Nix is working
+nix --version
+# Expected: nix (Nix) 2.x.x
+</code></pre>
+
+<blockquote>
+<p><strong>What just happened?</strong> Nix installed a package manager in <code>/nix/store</code> that keeps all course tools completely isolated from your system. It won't interfere with your existing <code>apt</code>, <code>brew</code>, or other package managers.</p>
+</blockquote>
+<hr>
+<h2 id="step-2-clone-the-course-repository">Step 2: Clone the Course Repository</h2>
+<pre class="codehilite"><code class="language-bash"># Clone the repo (replace with the actual URL your instructor provides)
+git clone https://github.com/&lt;org&gt;/hdl-course.git
+cd hdl-course
+</code></pre>
+
+<hr>
+<h2 id="step-3-enter-the-development-shell">Step 3: Enter the Development Shell</h2>
+<pre class="codehilite"><code class="language-bash">nix develop
+</code></pre>
+
+<p>The first time you run this, Nix will download and build the toolchain. This takes <strong>5–15 minutes</strong> depending on your internet connection (subsequent runs are instant — everything is cached).</p>
+<p>You should see:</p>
+<pre class="codehilite"><code>╔══════════════════════════════════════════════════╗
+║  HDL for Digital System Design — Environment    ║
+╚══════════════════════════════════════════════════╝
+
+  yosys      Yosys 0.4x (...)
+  nextpnr    nextpnr-ice40 ...
+  icestorm   installed
+  iverilog   Icarus Verilog version 1x.x
+  gtkwave    installed
+
+  Run 'make sim' in any lab directory to simulate.
+  Run 'make prog' to synthesize and program the Go Board.
+</code></pre>
+
+<p><strong>Every time you work on course material</strong>, <code>cd</code> into the repo and run <code>nix develop</code> to activate the environment. When you're done, just type <code>exit</code> or close the terminal.</p>
+<blockquote>
+<p><strong>Optional: Automatic activation with direnv</strong></p>
+<p>If you'd like the shell to activate automatically whenever you <code>cd</code> into the repo:
+<code>bash
+nix profile install nixpkgs#direnv nixpkgs#nix-direnv
+echo 'eval "$(direnv hook bash)"' &gt;&gt; ~/.bashrc   # or ~/.zshrc
+mkdir -p ~/.config/direnv &amp;&amp; echo 'source $HOME/.nix-profile/share/nix-direnv/direnvrc' &gt;&gt; ~/.config/direnv/direnvrc
+cd hdl-course &amp;&amp; direnv allow</code>
+After this, the tools are available the moment you enter the directory.</p>
+</blockquote>
+<hr>
+<h2 id="step-4-verify-everything-works">Step 4: Verify Everything Works</h2>
+<p>Run the built-in verification script from inside the Nix shell:</p>
+<pre class="codehilite"><code class="language-bash"># Make sure you're in the Nix shell (run 'nix develop' if you haven't)
+
+# ── Test 1: Synthesis ──
+mkdir -p /tmp/hdl-verify &amp;&amp; cd /tmp/hdl-verify
+
+cat &gt; test.v &lt;&lt; 'EOF'
+module test (output wire o_led);
+    assign o_led = 1'b0;
+endmodule
+EOF
+
+yosys -p &quot;synth_ice40 -top test -json test.json&quot; test.v
+echo &quot;✅ Yosys synthesis — OK&quot;
+
+# ── Test 2: Place &amp; Route ──
+nextpnr-ice40 --hx1k --package vq100 --json test.json --asc test.asc 2&gt;&amp;1 || true
+echo &quot;✅ nextpnr place &amp; route — OK&quot;
+
+# ── Test 3: Simulation ──
+cat &gt; tb_test.v &lt;&lt; 'EOF'
+module tb_test;
+    wire w_led;
+    test uut (.o_led(w_led));
+    initial begin
+        #10;
+        if (w_led === 1'b0) $display(&quot;PASS: LED driven low as expected&quot;);
+        else $display(&quot;FAIL: unexpected LED value&quot;);
+        $finish;
+    end
+endmodule
+EOF
+
+iverilog -o sim.vvp tb_test.v test.v &amp;&amp; vvp sim.vvp
+echo &quot;✅ Icarus Verilog simulation — OK&quot;
+
+# ── Test 4: Waveform viewer ──
+echo &quot;Launching GTKWave (close the window to continue)...&quot;
+gtkwave --version &amp;&amp; echo &quot;✅ GTKWave — OK&quot;
+
+# ── Test 5: Bitstream tools ──
+icepack test.asc test.bin &amp;&amp; echo &quot;✅ icepack — OK&quot;
+
+# ── Cleanup ──
+cd ~ &amp;&amp; rm -rf /tmp/hdl-verify
+
+echo &quot;&quot;
+echo &quot;════════════════════════════════════════&quot;
+echo &quot;  All tools verified. You're ready.&quot;
+echo &quot;════════════════════════════════════════&quot;
+</code></pre>
+
+<hr>
+<h2 id="step-5-go-board-connection-test">Step 5: Go Board Connection Test</h2>
+<ol>
+<li>Connect the Go Board to your computer via USB.</li>
+<li>Verify the FTDI device is recognized:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Command</th>
+<th>Expected output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td><code>lsusb \| grep -i ftdi</code></td>
+<td>"Future Technology Devices International"</td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>ls /dev/cu.usbserial*</code></td>
+<td><code>/dev/cu.usbserial-XXXXXXXX</code></td>
+</tr>
+<tr>
+<td>WSL2</td>
+<td><code>ls /dev/ttyUSB*</code></td>
+<td><code>/dev/ttyUSB0</code> (after usbipd attach)</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>First-program test</strong> (after verification above):
+   <code>bash
+   cd /tmp/hdl-verify  # or wherever you built test.bin
+   iceprog test.bin</code>
+   If this completes without errors, your full synthesis → program pipeline is working.</li>
+</ol>
+<hr>
+<h2 id="text-editor-setup">Text Editor Setup</h2>
+<p>Any editor works. Here are recommended setups for Verilog syntax highlighting:</p>
+<table>
+<thead>
+<tr>
+<th>Editor</th>
+<th>Plugin/Mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>VS Code</strong></td>
+<td><a href="https://marketplace.visualstudio.com/items?itemName=mshr-h.VerilogHDL">Verilog-HDL/SystemVerilog</a> extension</td>
+</tr>
+<tr>
+<td><strong>Vim / Neovim</strong></td>
+<td>Built-in syntax highlighting; optionally <a href="https://github.com/vhda/verilog_systemverilog.vim">verilog_systemverilog.vim</a></td>
+</tr>
+<tr>
+<td><strong>Emacs</strong></td>
+<td><code>verilog-mode</code> (built-in)</td>
+</tr>
+<tr>
+<td><strong>Sublime Text</strong></td>
+<td><a href="https://packagecontrol.io/packages/SystemVerilog">SystemVerilog</a> package</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>VS Code + WSL2:</strong> Install the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl">Remote - WSL</a> extension to edit and run everything inside WSL seamlessly.</p>
+</blockquote>
+<hr>
+<h2 id="serial-terminal-uart-week-3">Serial Terminal (UART — Week 3+)</h2>
+<p>Starting Day 11, you'll communicate with the Go Board over UART. The serial tools (<code>screen</code>, <code>minicom</code>) are included in the Nix shell. Settings for all terminals:</p>
+<p><strong>115200 baud · 8 data bits · No parity · 1 stop bit (8N1) · No flow control</strong></p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux</td>
+<td><code>screen /dev/ttyUSB0 115200</code></td>
+</tr>
+<tr>
+<td>macOS</td>
+<td><code>screen /dev/cu.usbserial-* 115200</code></td>
+</tr>
+<tr>
+<td>WSL2</td>
+<td><code>screen /dev/ttyUSB0 115200</code> (after usbipd attach)</td>
+</tr>
+</tbody>
+</table>
+<p>To exit <code>screen</code>: press <code>Ctrl-A</code> then <code>K</code>, confirm with <code>Y</code>.</p>
+<hr>
+<h2 id="ai-tools-for-verification-week-2">AI Tools for Verification (Week 2+)</h2>
+<p>Starting Day 6, you'll use AI tools to assist with testbench generation. No installation required — use any of these through their web interfaces:</p>
+<ul>
+<li><strong>Claude</strong> (claude.ai)</li>
+<li><strong>ChatGPT</strong> (chat.openai.com)</li>
+<li><strong>GitHub Copilot</strong> (VS Code extension, if available)</li>
+</ul>
+<p>You'll submit your AI prompts and corrected outputs as part of lab deliverables. The emphasis is on <strong>reviewing and debugging</strong> AI-generated Verilog, not on which tool you use.</p>
+<hr>
+<h2 id="quick-reference">Quick Reference</h2>
+<pre class="codehilite"><code class="language-bash"># ── Enter the course environment ──
+cd hdl-course &amp;&amp; nix develop
+
+# ── Simulation ──
+iverilog -o sim.vvp -g2012 tb_module.v module.v
+vvp sim.vvp
+gtkwave dump.vcd
+
+# ── Synthesis → Program (Go Board) ──
+yosys -p &quot;synth_ice40 -top top_module -json top.json&quot; top.v sub1.v sub2.v
+nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
+icepack top.asc top.bin
+iceprog top.bin
+
+# ── Resource analysis ──
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; stat&quot;
+
+# ── Schematic visualization ──
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; show&quot;
+
+# ── SystemVerilog simulation (use -g2012 flag) ──
+iverilog -g2012 -o sim.vvp tb_module.sv module.sv
+</code></pre>
+
+<hr>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nix: command not found</code></td>
+<td>Open a <strong>new terminal</strong> after installing Nix, or run <code>source /etc/profile.d/nix.sh</code></td>
+</tr>
+<tr>
+<td><code>nix develop</code> is slow the first time</td>
+<td>Normal — it's downloading the toolchain. Subsequent runs use the cache.</td>
+</tr>
+<tr>
+<td><code>error: experimental feature 'flakes' is disabled</code></td>
+<td>You may have used the default Nix installer. Reinstall with the Determinate Systems installer (see Step 1), or add <code>experimental-features = nix-command flakes</code> to <code>~/.config/nix/nix.conf</code></td>
+</tr>
+<tr>
+<td><code>iceprog: Permission denied</code> (Linux)</td>
+<td>Check udev rules (see Linux prerequisites) or use <code>sudo iceprog</code> as a temporary workaround</td>
+</tr>
+<tr>
+<td>WSL2 can't see USB device</td>
+<td>Run <code>usbipd attach --wsl --busid &lt;BUSID&gt;</code> from PowerShell (see Windows prerequisites)</td>
+</tr>
+<tr>
+<td>GTKWave won't open on macOS</td>
+<td>Allow in System Settings → Privacy &amp; Security → Security</td>
+</tr>
+<tr>
+<td>GTKWave won't open on WSL2 (Win 10)</td>
+<td>Install VcXsrv and set <code>export DISPLAY=:0</code> in <code>~/.bashrc</code></td>
+</tr>
+<tr>
+<td><code>iverilog</code> rejects SystemVerilog syntax</td>
+<td>Ensure you pass the <code>-g2012</code> flag</td>
+</tr>
+<tr>
+<td>Serial terminal shows garbled text</td>
+<td>Verify baud rate is 115200 and settings are 8N1, no flow control</td>
+</tr>
+<tr>
+<td><code>screen</code> won't release serial port</td>
+<td>Detach with <code>Ctrl-A</code> then <code>K</code>, confirm with <code>Y</code></td>
+</tr>
+<tr>
+<td>Nix store using too much disk space</td>
+<td>Run <code>nix store gc</code> to garbage-collect unused packages</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="uninstalling-after-the-course">Uninstalling (after the course)</h2>
+<p>If you want to remove Nix and reclaim disk space:</p>
+<pre class="codehilite"><code class="language-bash">/nix/nix-installer uninstall
+</code></pre>
+
+<p>This cleanly removes the Nix daemon, store, and configuration. Your system packages are unaffected.</p>
+</article>
+</body>
+</html>

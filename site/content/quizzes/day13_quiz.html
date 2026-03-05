@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13 Pre-Class Quiz — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-13-pre-class-self-check-quiz">Day 13: Pre-Class Self-Check Quiz</h1>
+<h2 id="systemverilog-for-design">SystemVerilog for Design</h2>
+<p><strong>Q1:</strong> What does the <code>logic</code> type replace? What is its one restriction?</p>
+<details><summary>Answer</summary>
+`logic` replaces both `wire` and `reg`. It can be driven by `assign`, `always_ff`, or `always_comb`. Its one restriction: it can only have **one driver**. For multi-driver buses (rare in FPGA), use `wire`.
+</details>
+
+<p><strong>Q2:</strong> What happens if you accidentally create an incomplete <code>case</code> statement (missing a default) inside <code>always_comb</code>? How is this different from Verilog's <code>always @(*)</code>?</p>
+<details><summary>Answer</summary>
+In `always_comb`, the compiler **errors** because a latch would be inferred — `always_comb` requires purely combinational logic. In Verilog's `always @(*)`, a latch is silently inferred with at most a synthesis warning that you might miss. This is the single biggest safety win of SystemVerilog.
+</details>
+
+<p><strong>Q3:</strong> Rewrite this Verilog FSM state declaration using SystemVerilog <code>enum</code>:</p>
+<pre class="codehilite"><code class="language-verilog">localparam S_IDLE = 2'b00, S_RUN = 2'b01, S_DONE = 2'b10;
+reg [1:0] state;
+</code></pre>
+
+<details><summary>Answer</summary>
+
+
+<pre class="codehilite"><code class="language-systemverilog">typedef enum logic [1:0] {
+    S_IDLE = 2'b00,
+    S_RUN  = 2'b01,
+    S_DONE = 2'b10
+} my_state_t;
+
+my_state_t state;
+</code></pre>
+
+
+Bonus: `$display("State: %s", state.name());` prints the state name.
+</details>
+
+<p><strong>Q4:</strong> What is a <code>packed struct</code> and why is it synthesizable?</p>
+<details><summary>Answer</summary>
+A `packed struct` stores its fields as a contiguous bit vector. For example, a struct with an 8-bit data field, a valid bit, and a busy bit is 10 bits wide. Because it's a flat bit vector, synthesis tools can map it directly to wires and registers — no different from a `logic [9:0]` bus, but with named fields for readability.
+</details>
+</article>
+</body>
+</html>

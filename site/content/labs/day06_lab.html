@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 6 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-6-lab-testbenches-simulation-driven-development">Day 6 Lab: Testbenches &amp; Simulation-Driven Development</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design-week-2-session-6">Course: Accelerated HDL for Digital System Design — Week 2, Session 6</h2>
+<hr>
+<h2 id="objectives">Objectives</h2>
+<p>By the end of this lab, you will:
+- Write a comprehensive self-checking testbench with automated pass/fail reporting
+- Use <code>task</code> blocks to organize test stimulus and checking
+- Apply file-driven testing with <code>$readmemh</code>
+- Demonstrate exhaustive testing of a small combinational module</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Completed Days 1–5 labs (ALU from Day 3, debounce from Day 5)</li>
+<li>Watched Day 6 pre-class video (~50 min): testbench anatomy, self-checking patterns</li>
+<li>Copy your <code>alu_4bit.v</code> from Day 3 (or use the provided version)</li>
+</ul>
+<h2 id="key-rule-the-verification-contract">Key Rule: The Verification Contract</h2>
+<p><strong>From today forward, every lab deliverable must include:</strong>
+1. The design module(s)
+2. A self-checking testbench with pass/fail output
+3. A passing test report (terminal output screenshot)
+4. Only after tests pass: the hardware demo</p>
+<h2 id="deliverables">Deliverables</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Exercise</th>
+<th>Time</th>
+<th>What to Submit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>ALU Testbench</td>
+<td>35 min</td>
+<td><code>tb_alu_4bit.v</code> — all tests pass + bug injection demo</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Debounce Testbench</td>
+<td>25 min</td>
+<td><code>tb_debounce_thorough.v</code> — 4 scenarios pass</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Counter Testbench</td>
+<td>20 min</td>
+<td><code>tb_counter.v</code> — rollover, reset, enable verified</td>
+</tr>
+<tr>
+<td>4</td>
+<td>File-Driven TB (stretch)</td>
+<td>15 min</td>
+<td><code>tb_hex_file.v</code> + <code>hex_vectors.hex</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Exhaustive Test (stretch)</td>
+<td>20 min</td>
+<td>1024 vectors, 0 failures</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Primary deliverable:</strong> Self-checking ALU testbench with automated pass/fail report.</p>
+<hr>
+<h2 id="exercise-1-self-checking-alu-testbench-35-min">Exercise 1: Self-Checking ALU Testbench (35 min)</h2>
+<p><strong>SLOs: 6.1, 6.2, 6.3, 6.6</strong></p>
+<h3 id="part-a-create-tb_alu_4bitv">Part A: Create <code>tb_alu_4bit.v</code></h3>
+<p>Use the starter file. Implement the <code>check_alu</code> task and complete the test vectors.</p>
+<p>Requirements:
+1. Clock generation (practice the pattern for sequential designs)
+2. Waveform dump (<code>$dumpfile</code>/<code>$dumpvars</code>)
+3. <code>check_alu</code> task: apply inputs, wait, compare result/carry/zero, report pass/fail
+4. Final summary with total pass/fail counts</p>
+<h3 id="part-b-run-and-verify-all-tests-pass">Part B: Run and verify all tests pass</h3>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_alu_4bit.v SRCS=&quot;alu_4bit.v&quot;
+</code></pre>
+
+<h3 id="part-c-intentional-bug-injection">Part C: Intentional bug injection</h3>
+<p>Change SUB to <code>a + b</code> in the ALU. Re-run the testbench. Confirm SUB tests fail.</p>
+<hr>
+<h2 id="exercise-2-debounce-module-testbench-25-min">Exercise 2: Debounce Module Testbench (25 min)</h2>
+<p><strong>SLOs: 6.2, 6.6</strong></p>
+<p>Write <code>tb_debounce_thorough.v</code> with four test scenarios:
+1. <strong>Clean press:</strong> Input settles low, verify <code>o_clean</code> transitions after threshold
+2. <strong>Bounce rejection:</strong> 6+ toggles within threshold window, verify single transition
+3. <strong>Glitch rejection:</strong> Input low for less than threshold, verify no transition
+4. <strong>Clean release:</strong> After stable press, verify release transition</p>
+<hr>
+<h2 id="exercise-3-counter-testbench-20-min">Exercise 3: Counter Testbench (20 min)</h2>
+<p><strong>SLOs: 6.2, 6.3</strong></p>
+<p>Write <code>tb_counter.v</code> for a simple 4-bit counter. Verify:
+1. Reset sets count to 0
+2. Counter increments each enabled clock
+3. Rollover from F to 0
+4. Enable=0 holds the count</p>
+<hr>
+<h2 id="exercise-4-stretch-file-driven-testing-15-min">Exercise 4 (Stretch): File-Driven Testing (15 min)</h2>
+<p><strong>SLO: 6.4</strong></p>
+<p>Use <code>$readmemh</code> to load test vectors from <code>hex_vectors.hex</code>. Verify the hex-to-7seg decoder against file-based expected outputs.</p>
+<hr>
+<h2 id="exercise-5-stretch-exhaustive-combinational-test-20-min">Exercise 5 (Stretch): Exhaustive Combinational Test (20 min)</h2>
+<p><strong>SLO: 6.2</strong></p>
+<p>Test all 1024 ALU input combinations (4-bit a × 4-bit b × 2-bit opcode). Report: "Tested 1024 combinations, 0 failures."</p>
+</article>
+</body>
+</html>

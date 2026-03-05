@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 8: Hierarchy, Parameters, Generate &amp; Design Reuse — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-8-hierarchy-parameters-generate-design-reuse">Day 8: Hierarchy, Parameters, Generate &amp; Design Reuse</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-2-session-8-of-16">Week 2, Session 8 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 8.1:</strong> Use named port connections and parameter overrides to instantiate and configure reusable modules.</li>
+<li><strong>SLO 8.2:</strong> Design parameterized modules using <code>parameter</code> and explain when parameterization is appropriate.</li>
+<li><strong>SLO 8.3:</strong> Use <code>generate for</code> and <code>generate if</code> to replicate hardware and conditionally include features.</li>
+<li><strong>SLO 8.4:</strong> Build a hierarchical top-level module that integrates multiple parameterized sub-modules.</li>
+<li><strong>SLO 8.5:</strong> Use AI to generate testbenches for parameterized modules and evaluate whether AI correctly handles parameter overrides and width-dependent edge cases.</li>
+<li><strong>SLO 8.6:</strong> Record and compare <code>yosys stat</code> resource utilization across parameter configurations (PPA thread).</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-50-min-revised-lecture">Pre-Class Video (~50 min) ★ Revised lecture</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Module instantiation: positional vs. named ports (always use named!)</td>
+<td>10 min</td>
+<td><code>video/day08_seg1_instantiation.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>parameter</code> and <code>localparam</code>: making modules reusable</td>
+<td>12 min</td>
+<td><code>video/day08_seg2_parameters.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>generate</code> blocks: <code>for</code>-generate, <code>if</code>-generate, hardware replication</td>
+<td>13 min</td>
+<td><code>video/day08_seg3_generate.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Recursive generate patterns: conditional features, nested structures ★</td>
+<td>10 min</td>
+<td><code>video/day08_seg4_recursive_generate.mp4</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Design for reuse: building a personal Verilog library</td>
+<td>5 min</td>
+<td><code>video/day08_seg5_design_reuse.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Segment 4 key points (new content):</strong>
+- <code>generate if</code> for conditional feature inclusion (e.g., optional parity, configurable pipeline depth)
+- Nested <code>generate for</code> for 2D structures (e.g., array of processing elements)
+- The "recursive module" pattern: a module that instantiates itself with different parameters (tree adder preview)</p>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up: hierarchy questions, pre-class review</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: parameterization, generate, PPA seed</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:35</td>
+<td>Lab Exercise 1: Parameterized N-bit counter</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>0:55</td>
+<td>Lab Exercise 2: AI-assisted parameterized TB</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>1:20</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:25</td>
+<td>Lab Exercise 3: Generate-based LED driver</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>1:45</td>
+<td>Lab Exercise 4: Hierarchical top module</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>2:10</td>
+<td>Lab Exercise 5: Resource comparison</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>2:15</td>
+<td>Lab Exercise 6 (Stretch): Parameterized LFSR</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:25</td>
+<td>Wrap-up and Day 9 preview</td>
+<td>5 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="hierarchy-as-the-key-to-complexity-5-min">Hierarchy as the Key to Complexity (5 min)</h3>
+<ul>
+<li>Top-down vs. bottom-up design approaches</li>
+<li>Named port connections: <code>.port_name(signal_name)</code> — always, no exceptions</li>
+<li>The difference between <code>parameter</code> (overridable from outside) and <code>localparam</code> (internal constants)</li>
+</ul>
+<h3 id="parameterization-philosophy-10-min">Parameterization Philosophy (10 min)</h3>
+<ul>
+<li><strong>What to parameterize:</strong> width, depth, timing thresholds, feature enables</li>
+<li><strong>What not to parameterize:</strong> fundamental architecture choices, protocol definitions</li>
+<li><code>#(.WIDTH(8))</code> override syntax</li>
+<li>Live demo: parameterized N-bit counter, instantiated at WIDTH=4, 8, 16, 32</li>
+</ul>
+<h3 id="generate-blocks-10-min">Generate Blocks (10 min)</h3>
+<ul>
+<li><code>generate for</code>: compile-time loop that replicates hardware</li>
+<li><code>generate if</code>: conditional hardware inclusion — "same RTL, different hardware"</li>
+<li>Think of <code>generate</code> as <strong>instantiation automation</strong>, not a runtime loop</li>
+<li>Live demo: <code>generate for</code> to create N instances of a blink module</li>
+</ul>
+<h3 id="ppa-seed-5-min">PPA Seed (5 min)</h3>
+<ul>
+<li>After synthesizing the parameterized counter at WIDTH=4, 8, 16, 32:</li>
+<li>Run <code>yosys stat</code> for each configuration</li>
+<li>Show the resource scaling: how does LUT count grow with width?</li>
+<li>"Is it linear? What would this look like in an ASIC?"</li>
+<li>Plant the question — answer it fully on Day 10</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-parameterized-n-bit-counter-20-min">Exercise 1: Parameterized N-Bit Counter (20 min)</h3>
+<p><strong>Objective (SLO 8.1, 8.2):</strong> Build a reusable counter module that can be instantiated at any width.</p>
+<p><strong>Tasks:</strong>
+1. Create a parameterized counter module with:
+   - <code>parameter WIDTH = 8</code>
+   - Synchronous reset, enable, rollover output
+2. Instantiate as 8-bit, 16-bit, and 24-bit in a test top module.
+3. Simulate all three instances in a single testbench. Verify rollover at the correct value for each width.</p>
+<p><strong>Checkpoint:</strong> Three counter instances, each rolling over at their respective max values.</p>
+<hr>
+<h3 id="exercise-2-ai-assisted-tb-for-parameterized-modules-25-min">Exercise 2: AI-Assisted TB for Parameterized Modules (25 min)</h3>
+<p><strong>Objective (SLO 8.5):</strong> Use AI to generate a testbench that handles multiple parameter configurations.</p>
+<p><strong>Tasks:</strong>
+1. <strong>Write a prompt</strong> specifying:
+   - Counter module interface (with <code>parameter WIDTH</code>)
+   - Request: test the counter at WIDTH=4, WIDTH=8, and WIDTH=16 in a single testbench
+   - Required checks: reset, count-up, rollover at <code>2^WIDTH - 1</code>, enable toggling
+2. <strong>Generate</strong> the testbench using AI.
+3. <strong>Evaluate</strong> the AI output. Key questions:
+   - Does the AI correctly use <code>#(.WIDTH(N))</code> parameter overrides?
+   - Does it test rollover at the right value for each width (not hardcoded)?
+   - Does it handle the different counter ranges properly?
+4. <strong>Correct</strong> and annotate any issues.
+5. <strong>Run</strong> the corrected testbench.</p>
+<p><strong>Deliverable for this exercise:</strong> Prompt + corrected AI TB with annotations.</p>
+<p><strong>Checkpoint:</strong> AI-generated TB correctly tests 3 width configurations.</p>
+<hr>
+<h3 id="exercise-3-generate-based-led-driver-20-min">Exercise 3: Generate-Based LED Driver (20 min)</h3>
+<p><strong>Objective (SLO 8.3):</strong> Use <code>generate for</code> to replicate parameterized instances.</p>
+<p><strong>Tasks:</strong>
+1. Create a parameterized blink module: takes <code>parameter HALF_PERIOD</code> and toggles an output.
+2. Use <code>generate for</code> to instantiate 4 blink modules, each with a different <code>HALF_PERIOD</code>, driving the 4 Go Board LEDs.
+3. Result: 4 LEDs blinking at 4 different rates from a single <code>generate</code> block.
+4. Synthesize and program.</p>
+<p><strong>Checkpoint:</strong> Four LEDs blinking at visibly different rates on the Go Board.</p>
+<hr>
+<h3 id="exercise-4-hierarchical-top-module-25-min">Exercise 4: Hierarchical Top Module (25 min)</h3>
+<p><strong>Objective (SLO 8.4):</strong> Integrate multiple modules into a clean hierarchical design.</p>
+<p><strong>Tasks:</strong>
+1. Create a top module that instantiates:
+   - Debouncer (from Day 5) for each button
+   - Parameterized counter (from Exercise 1) — width controlled by buttons
+   - 7-segment decoder (from Day 2)
+   - LED blink generators (from Exercise 3)
+2. Wire everything together using named port connections.
+3. The design should have at least 3 levels of hierarchy.
+4. Synthesize and program the Go Board.</p>
+<p><strong>Checkpoint:</strong> Hierarchical design running on hardware with button-controlled counter displayed on 7-seg.</p>
+<hr>
+<h3 id="exercise-5-resource-comparison-5-min">Exercise 5: Resource Comparison (5 min)</h3>
+<p><strong>Objective (SLO 8.6):</strong> Build PPA analysis habits by recording resource utilization.</p>
+<p><strong>Tasks:</strong>
+1. Run <code>yosys stat</code> on the hierarchical design from Exercise 4.
+2. Record: LUTs, FFs, and EBR counts.
+3. Change the counter WIDTH parameter — does the resource count change as expected?</p>
+<p><strong>Checkpoint:</strong> Resource counts recorded. You'll reference these on Day 10.</p>
+<hr>
+<h3 id="exercise-6-stretch-parameterized-lfsr-with-generate-10-min">Exercise 6 (Stretch): Parameterized LFSR with Generate (10 min)</h3>
+<p><strong>Objective (SLO 8.2, 8.3):</strong> Combine parameterization and generate for a configurable pseudo-random generator.</p>
+<p><strong>Tasks:</strong>
+1. Implement a parameterized LFSR where the feedback polynomial is configured via <code>generate if</code> based on WIDTH (e.g., different taps for 4-bit, 8-bit, 16-bit).
+2. Verify each configuration produces a maximal-length sequence.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<ol>
+<li>Hierarchical design with 3+ levels of hierarchy running on the Go Board.</li>
+<li>AI-generated parameterized testbench with annotated corrections.</li>
+<li><code>yosys stat</code> resource snapshot for the hierarchical design.</li>
+</ol>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — Parameterized counter</td>
+<td>8.1, 8.2</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — AI-assisted parameterized TB</td>
+<td>8.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — Generate-based LED driver</td>
+<td>8.3</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — Hierarchical top module</td>
+<td>8.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>5 — Resource comparison</td>
+<td>8.6</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>6 — Parameterized LFSR</td>
+<td>8.2, 8.3</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Positional vs. named ports:</strong> Students may try positional connections for speed. Insist on named — the bugs from misordered ports are painful and instructive.</li>
+<li><strong>Generate scope:</strong> Remind students that <code>generate for</code> requires a <code>genvar</code> declaration and a named <code>begin:</code> block. Icarus gives cryptic errors without these.</li>
+<li><strong>AI and parameter overrides:</strong> This is often where AI stumbles — it may hardcode rollover values instead of computing <code>2**WIDTH - 1</code>. High-value teaching moment.</li>
+<li><strong>Resource scaling insight:</strong> Students often expect LUT count to exactly double with WIDTH. It's close but not exact — synthesis optimization makes it interesting.</li>
+</ul>
+<h3 id="cross-cutting-threads">Cross-Cutting Threads</h3>
+<ul>
+<li><strong>AI Verification (Day 2 of thread):</strong> Students now prompt for parameterized modules. The evaluation question shifts from "does it work?" to "does it handle configuration correctly?"</li>
+<li><strong>PPA Analysis:</strong> Exercise 5 is brief but intentional — builds the habit of running <code>yosys stat</code> after every synthesis. Referenced on Day 10.</li>
+</ul>
+<hr>
+<h2 id="preview-day-9">Preview: Day 9</h2>
+<p>Memory — RAM, ROM, and Block RAM. You'll model memory in Verilog, use <code>$readmemh</code> to initialize from files, and learn how to write Verilog that Yosys maps to the iCE40's Block RAM resources.</p>
+</article>
+</body>
+</html>

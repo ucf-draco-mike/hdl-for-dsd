@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 5: Counters, Shift Registers &amp; Debouncing — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-5-counters-shift-registers-debouncing">Day 5: Counters, Shift Registers &amp; Debouncing</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-2-session-5-of-16">Week 2, Session 5 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 5.1:</strong> Design parameterized counter variations (up, down, modulo-N, loadable) for use as reusable building blocks.</li>
+<li><strong>SLO 5.2:</strong> Implement shift registers in multiple configurations (SISO, SIPO, PISO) and explain their role in serial communication.</li>
+<li><strong>SLO 5.3:</strong> Explain metastability and implement a 2-FF synchronizer chain for asynchronous inputs.</li>
+<li><strong>SLO 5.4:</strong> Design a counter-based button debouncer with a parameterized threshold.</li>
+<li><strong>SLO 5.5:</strong> Integrate counters, shift registers, and debouncing into a complete system on the Go Board.</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-45-min">Pre-Class Video (~45 min)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Counter variations: up, down, up/down, modulo-N, loadable</td>
+<td>12 min</td>
+<td><code>video/day05_seg1_counter_variations.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Shift registers: SISO, SIPO, PISO, PIPO — and why they matter for serial I/O</td>
+<td>12 min</td>
+<td><code>video/day05_seg2_shift_registers.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>The button bounce problem: mechanical switches are noisy</td>
+<td>10 min</td>
+<td><code>video/day05_seg3_button_bounce.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Synchronizer chains: metastability and the 2-FF synchronizer</td>
+<td>11 min</td>
+<td><code>video/day05_seg4_metastability.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up Q&amp;A: sequential logic review, pre-class questions</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>0:10</td>
+<td>Mini-lecture: metastability, debounce strategies, live demo</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:40</td>
+<td>Lab Exercise 1: Debouncer module</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>1:05</td>
+<td>Lab Exercise 2: Shift register</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>1:25</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:30</td>
+<td>Lab Exercise 3: LED chase pattern</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>1:55</td>
+<td>Lab Exercise 4: Debounced control integration</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>2:15</td>
+<td>Lab Exercise 5 (Stretch): LFSR</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:25</td>
+<td>Wrap-up and Day 6 preview</td>
+<td>5 min</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="metastability-why-its-terrifying-10-min">Metastability &amp; Why It's Terrifying (10 min)</h3>
+<ul>
+<li>What happens when a flip-flop samples during a transition</li>
+<li>Metastable state: neither 0 nor 1, resolves unpredictably</li>
+<li>The 2-FF synchronizer: why two FFs dramatically reduce the probability of failure</li>
+<li>Rule: <strong>any signal crossing from an asynchronous domain must be synchronized</strong></li>
+</ul>
+<h3 id="debounce-strategies-15-min">Debounce Strategies (15 min)</h3>
+<ul>
+<li>Counter-based debounce: sample the input, count consecutive stable readings</li>
+<li>Shift-register-based debounce: shift in samples, output changes when all bits agree</li>
+<li>Live demo: scope or simulation view of button bounce vs. debounced output</li>
+<li>Design decisions: threshold value (how many clock cycles = how many ms?)</li>
+<li>Parameterization: <code>parameter DEBOUNCE_THRESHOLD = 250000</code> (10 ms at 25 MHz)</li>
+</ul>
+<h3 id="led-chase-pattern-overview-5-min">LED Chase Pattern Overview (5 min)</h3>
+<ul>
+<li>Shift register + counter = scrolling LED pattern</li>
+<li>Direction control: shift left vs. shift right</li>
+<li>Speed control: counter threshold determines shift rate</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-reusable-debouncer-module-25-min">Exercise 1: Reusable Debouncer Module (25 min)</h3>
+<p><strong>Objective (SLO 5.3, 5.4):</strong> Build a parameterized debouncer that can be reused in every future design.</p>
+<p><strong>Tasks:</strong>
+1. Implement a counter-based debouncer module with:
+   - Parameterized <code>DEBOUNCE_THRESHOLD</code> (default = 250000 for 10 ms at 25 MHz)
+   - Input synchronizer (2-FF chain) built into the module
+   - Clean output signal that only transitions after the input has been stable for the full threshold
+2. Simulate with a noisy input stimulus: toggle the input rapidly for a few cycles, then hold steady. Verify the output only transitions after the threshold.
+3. Synthesize and test on the Go Board: button press should produce exactly one clean transition per physical press.</p>
+<p><strong>Checkpoint:</strong> Debouncer passes simulation. Single clean transition per button press on hardware.</p>
+<hr>
+<h3 id="exercise-2-8-bit-shift-register-20-min">Exercise 2: 8-Bit Shift Register (20 min)</h3>
+<p><strong>Objective (SLO 5.2):</strong> Implement a shift register that will serve as the foundation for UART and SPI in Week 3.</p>
+<p><strong>Tasks:</strong>
+1. Implement an 8-bit shift register with serial input, parallel output, and enable.
+2. Add a parallel load capability (PISO mode) — load 8 bits, shift them out one at a time.
+3. Simulate: load a known pattern, shift it out, verify each bit in sequence.</p>
+<p><strong>Checkpoint:</strong> Simulation shows correct serial output sequence after parallel load.</p>
+<hr>
+<h3 id="exercise-3-led-chase-pattern-25-min">Exercise 3: LED Chase Pattern (25 min)</h3>
+<p><strong>Objective (SLO 5.1, 5.2, 5.5):</strong> Combine a counter (for speed) and a shift register (for the pattern) into a visible system.</p>
+<p><strong>Tasks:</strong>
+1. Create a 4-bit shift register that drives the 4 Go Board LEDs.
+2. Use a counter to control shift rate — aim for a visible sweep speed (~5–10 Hz).
+3. Implement a "bounce" pattern: the lit LED sweeps left to right, then reverses direction (like a Knight Rider / Cylon eye).
+4. Synthesize and program the Go Board.</p>
+<p><strong>Checkpoint:</strong> LED chase pattern running on hardware at a comfortable visible speed.</p>
+<hr>
+<h3 id="exercise-4-debounced-button-control-20-min">Exercise 4: Debounced Button Control (20 min)</h3>
+<p><strong>Objective (SLO 5.4, 5.5):</strong> Integrate the debouncer to add button-controlled behavior.</p>
+<p><strong>Tasks:</strong>
+1. Instantiate the debouncer module from Exercise 1 for each button.
+2. Button 0: toggle direction (left vs. right).
+3. Button 1: cycle through 3 speed settings (slow, medium, fast).
+4. Verify clean single-press behavior — no accidental double-triggers.</p>
+<p><strong>Checkpoint:</strong> Chase pattern on hardware with debounced direction and speed control.</p>
+<hr>
+<h3 id="exercise-5-stretch-lfsr-pseudo-random-pattern-10-min">Exercise 5 (Stretch): LFSR Pseudo-Random Pattern (10 min)</h3>
+<p><strong>Objective (SLO 5.1, 5.2):</strong> Explore an LFSR as a shift register variant.</p>
+<p><strong>Tasks:</strong>
+1. Implement an 8-bit LFSR with XOR feedback taps (e.g., taps at positions 7, 5, 4, 3 for maximal length).
+2. Drive the LEDs from the lower 4 bits of the LFSR.
+3. Observe the pseudo-random pattern.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<p>Debounced button-controlled LED chase pattern on the Go Board, with simulation waveform for the debouncer module.</p>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — Debouncer</td>
+<td>5.3, 5.4</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — Shift register</td>
+<td>5.2</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>3 — LED chase</td>
+<td>5.1, 5.2, 5.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — Debounced control</td>
+<td>5.4, 5.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>5 — LFSR</td>
+<td>5.1, 5.2</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Debounce threshold too short:</strong> Students may set thresholds of a few hundred cycles, which is insufficient for real buttons. Guide them to calculate: 10 ms × 25 MHz = 250,000 cycles.</li>
+<li><strong>Metastability confusion:</strong> Students may not see why it matters since simulation can't reproduce metastability. Emphasize that this is a real-world hardware concern, not a simulation artifact.</li>
+<li><strong>Shift direction confusion:</strong> Common to mix up which direction is "left" and "right" relative to MSB/LSB. Have them draw the shift register and trace through one shift before coding.</li>
+<li><strong>Chase pattern stuck at one end:</strong> The direction reversal logic needs to detect when the lit bit reaches the end. Common bug: off-by-one on the boundary check.</li>
+</ul>
+<hr>
+<h2 id="preview-day-6">Preview: Day 6</h2>
+<p>Tomorrow we shift from <em>building</em> to <em>verifying</em>. You'll write your first proper testbenches, learn the simulation-first workflow, and get your first hands-on experience with AI-assisted testbench generation. The critical rule: you'll write testbenches by hand first, <em>then</em> use AI — because you can't evaluate what you can't write.</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 2 Lab Guide — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-2-lab-combinational-building-blocks">Day 2 Lab: Combinational Building Blocks</h1>
+<blockquote>
+<p><strong>Week 1, Session 2</strong> · Accelerated HDL for Digital System Design · UCF ECE</p>
+</blockquote>
+<h2 id="overview">Overview</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Duration</strong></td>
+<td>~2 hours</td>
+</tr>
+<tr>
+<td><strong>Prerequisites</strong></td>
+<td>Pre-class video (45 min): data types, vectors, operators, continuous assignment</td>
+</tr>
+<tr>
+<td><strong>Deliverable</strong></td>
+<td>7-segment display showing button states as hex digit, programmed on board</td>
+</tr>
+<tr>
+<td><strong>Tools</strong></td>
+<td>Yosys, nextpnr-ice40, icepack, iceprog</td>
+</tr>
+</tbody>
+</table>
+<h2 id="learning-objectives">Learning Objectives</h2>
+<table>
+<thead>
+<tr>
+<th>SLO</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1</td>
+<td>Declare and manipulate vectors using bit selection, concatenation, and replication</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>Apply bitwise, arithmetic, and reduction operators correctly</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>Build multiplexers using the conditional operator</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>Compose modules hierarchically using named port connections</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>Design a hex-to-7-segment decoder targeting the Go Board display</td>
+</tr>
+<tr>
+<td>2.6</td>
+<td>Use properly sized literals to avoid width mismatch warnings</td>
+</tr>
+</tbody>
+</table>
+<h2 id="exercises">Exercises</h2>
+<h3 id="exercise-1-vector-operations-warm-up-20-min">Exercise 1: Vector Operations Warm-Up (20 min)</h3>
+<p>Reduction operators on a 4-bit vector → LED display. Fill in <code>starter/w1d2_ex1_vector_ops.v</code>.</p>
+<h3 id="exercise-2-21-41-multiplexer-25-min">Exercise 2: 2:1 → 4:1 Multiplexer (25 min)</h3>
+<p>Build a 4:1 mux from three 2:1 mux instances. Fill in <code>starter/w1d2_ex2_mux4to1.v</code> and <code>starter/w1d2_ex2_top_mux.v</code>. Use <code>make ex2_show</code> to visualize the netlist in Yosys.</p>
+<h3 id="exercise-3-4-bit-ripple-carry-adder-25-min">Exercise 3: 4-Bit Ripple-Carry Adder (25 min)</h3>
+<p>Chain four <code>full_adder</code> modules. Fill in <code>starter/w1d2_ex3_ripple_adder_4bit.v</code> and <code>starter/w1d2_ex3_top_adder.v</code>.</p>
+<h3 id="exercise-4-hex-to-7-segment-decoder-30-min">Exercise 4: Hex-to-7-Segment Decoder (30 min)</h3>
+<p>Complete the nested conditional decoder in <code>starter/w1d2_ex4_hex_to_7seg.v</code>. Wire up the top module. Cycle through all 16 button combinations and verify each hex digit displays correctly.</p>
+<h3 id="exercise-5-stretch-adder-display-integration-20-min">Exercise 5 — Stretch: Adder + Display Integration (20 min)</h3>
+<p>Combine the adder and decoder into a single design that displays the sum on 7-seg.</p>
+<h2 id="deliverable-checklist">Deliverable Checklist</h2>
+<ul>
+<li>[ ] Exercise 1: LEDs respond correctly to reduction operations</li>
+<li>[ ] Exercise 2: 4:1 mux works on board</li>
+<li>[ ] Exercise 3: Adder shows correct sums on LEDs</li>
+<li>[ ] Exercise 4: All 16 hex digits display on 7-segment</li>
+<li>[ ] At minimum: Exercise 4 (hex display) programmed and working</li>
+</ul>
+<h2 id="quick-reference">Quick Reference</h2>
+<pre class="codehilite"><code>make ex1          make ex2          make ex3
+make ex4          make ex5          make ex2_show
+make clean
+</code></pre>
+</article>
+</body>
+</html>

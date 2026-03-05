@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14: Verification Techniques, AI-Driven Testing &amp; PPA Analysis — HDL for DSD</title>
+<link rel="stylesheet" href="../../css/content.css">
+</head>
+<body>
+<article class="content-page">
+<h1 id="day-14-verification-techniques-ai-driven-testing-ppa-analysis">Day 14: Verification Techniques, AI-Driven Testing &amp; PPA Analysis</h1>
+<h2 id="course-accelerated-hdl-for-digital-system-design">Course: Accelerated HDL for Digital System Design</h2>
+<h2 id="week-4-session-14-of-16">Week 4, Session 14 of 16</h2>
+<hr>
+<h2 id="student-learning-objectives">Student Learning Objectives</h2>
+<ol>
+<li><strong>SLO 14.1:</strong> Write immediate assertions (<code>assert</code>, <code>$error</code>, <code>$fatal</code>) to embed executable specifications directly in RTL.</li>
+<li><strong>SLO 14.2:</strong> Implement constraint-based UART parity using <code>generate if</code> and parameters, demonstrating conditional feature inclusion.</li>
+<li><strong>SLO 14.3:</strong> Write constraint specifications for AI-driven testbench generation and critically evaluate the resulting coverage.</li>
+<li><strong>SLO 14.4:</strong> Perform structured PPA analysis across design variants, producing a comparison table with LUTs, FFs, and Fmax.</li>
+<li><strong>SLO 14.5:</strong> Articulate design trade-offs in a written PPA report, connecting resource costs to architectural decisions.</li>
+<li><strong>SLO 14.6:</strong> Describe the verification maturity scale (manual → self-checking → AI-scaffolded → assertion-enhanced → coverage-driven) and place their own skills on it.</li>
+</ol>
+<hr>
+<h2 id="pre-class-video-55-min-revised-lecture">Pre-Class Video (~55 min) ★ Revised lecture</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Segment</th>
+<th>Duration</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Assertions — executable specifications: <code>assert</code>, <code>$error</code>, <code>$fatal</code>, concurrent assertions</td>
+<td>12 min</td>
+<td><code>video/day14_seg1_assertions.mp4</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>AI-driven verification workflows: constraint-based stimulus, prompt engineering for complex TBs</td>
+<td>15 min</td>
+<td><code>video/day14_seg2_ai_verification_workflows.mp4</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>PPA analysis methodology: structured reporting, FPGA vs. ASIC context, design-space exploration</td>
+<td>12 min</td>
+<td><code>video/day14_seg3_ppa_methodology.mp4</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Coverage &amp; the road ahead: <code>covergroup</code>, <code>coverpoint</code>, interfaces, industry verification landscape</td>
+<td>11 min</td>
+<td><code>video/day14_seg4_coverage_road_ahead.mp4</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Segment 1 key points:</strong>
+- Immediate assertions: inline checks that fire when a condition is violated during simulation
+- Concurrent assertions (brief): <code>assert property</code>, sequence syntax, <code>|-&gt;</code> implication operator
+- Assertions as executable documentation — catching bugs at the source rather than in waveforms</p>
+<p><strong>Segment 2 key points:</strong>
+- Verification productivity stack: manual → self-checking → AI-scaffolded → assertion-enhanced → coverage-driven
+- Constraint-based stimulus: defining legal input ranges, using <code>$urandom_range()</code> for bounded random testing
+- Writing a constraint spec in comments, then having AI generate the stimulus loop
+- Industry context: AI-assisted verification is increasingly common for TB scaffolding and coverage analysis</p>
+<p><strong>Segment 3 key points:</strong>
+- FPGA PPA report template: resource table, Fmax, utilization percentage
+- ASIC context: gate count, wire delay, process node impact, Liberty files, standard cells
+- Design-space exploration: synthesize same module at different parameters, plot area/timing curves
+- OpenROAD/OpenLane reminder: open-source ASIC PPA for the same Verilog</p>
+<hr>
+<h2 id="session-timeline">Session Timeline</h2>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Activity</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>Warm-up: verification maturity discussion, pre-class questions</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Mini-lecture: assertions demo, AI constraint-based TB, PPA walkthrough</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>0:35</td>
+<td>Lab Exercise 1: Assertion-enhanced UART TX</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>1:00</td>
+<td>Lab Exercise 2: Constraint-based UART parity extension</td>
+<td>20 min</td>
+</tr>
+<tr>
+<td>1:20</td>
+<td>Break</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>1:25</td>
+<td>Lab Exercise 3: AI constraint-based TB for project module</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>1:50</td>
+<td>Lab Exercise 4: PPA analysis exercise</td>
+<td>25 min</td>
+</tr>
+<tr>
+<td>2:15</td>
+<td>Lab Exercise 5: Project work time</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>2:25</td>
+<td>Wrap-up and Day 15 preview</td>
+<td>5 min</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Instructor note:</strong> This is the tightest day in the course. Exercise 2 (parity extension) has an <strong>escape valve</strong>: students who are behind on their final project may skip it and use the time for Exercises 3–4 or project work. Parity can be completed as homework.</p>
+</blockquote>
+<hr>
+<h2 id="in-class-mini-lecture-30-min">In-Class Mini-Lecture (30 min)</h2>
+<h3 id="assertions-quick-start-10-min">Assertions Quick-Start (10 min)</h3>
+<ul>
+<li>Live demo: add immediate assertions to UART TX</li>
+<li><code>assert (tx_out == 1'b1) else $error("TX should idle high");</code></li>
+<li>Assertion on <code>busy</code> consistency: can't accept new data while busy</li>
+<li>Assertion on bit index: <code>assert (bit_idx &lt; 8) else $fatal("Bit index overflow");</code></li>
+<li>Inject a bug (e.g., wrong idle polarity), re-run — show assertion catching it instantly</li>
+<li>"Assertions tell you <em>what</em> broke and <em>where</em>. Waveforms tell you <em>how</em> it looks. Assertions are faster."</li>
+</ul>
+<h3 id="ai-constraint-based-tb-demo-10-min">AI Constraint-Based TB Demo (10 min)</h3>
+<ul>
+<li>Prompt AI to generate a constrained-random testbench for the ALU:</li>
+<li>"Test all opcodes with random operands in [0, 2^WIDTH-1]. For ADD/SUB, ensure at least 10 cases each of: no overflow, overflow, zero result, max result. Include a self-checking scoreboard. Use <code>$urandom_range()</code>."</li>
+<li>Review the output together: Does it actually cover the corner cases? Does it count coverage?</li>
+<li>Fix and run</li>
+<li><strong>Key question to class:</strong> "How do you know when testing is <em>done</em>?" — leads into coverage concepts from pre-class video</li>
+</ul>
+<h3 id="ppa-analysis-walkthrough-10-min">PPA Analysis Walkthrough (10 min)</h3>
+<ul>
+<li>Take the shift-and-add multiplier (Day 10) and the behavioral <code>*</code> version</li>
+<li>Run <code>yosys stat</code> and <code>nextpnr</code> on both</li>
+<li>Build a PPA comparison table on the board:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Variant</th>
+<th>LUTs</th>
+<th>FFs</th>
+<th>Fmax</th>
+<th>Latency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sequential <code>*</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>8 cycles</td>
+</tr>
+<tr>
+<td>Behavioral <code>*</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>1 cycle</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>"This is the format your final project PPA report should follow."</li>
+</ul>
+<hr>
+<h2 id="lab-exercises">Lab Exercises</h2>
+<h3 id="exercise-1-assertion-enhanced-uart-tx-25-min">Exercise 1: Assertion-Enhanced UART TX (25 min)</h3>
+<p><strong>Objective (SLO 14.1):</strong> Embed executable specifications into an existing design.</p>
+<p><strong>Tasks:</strong>
+1. Open your UART TX module (Verilog or SV version).
+2. Add at least 5 immediate assertions:
+   - TX line idles high when not transmitting
+   - <code>tx_busy</code> is asserted during the entire transmission frame
+   - Bit index stays within [0, 7] during DATA state
+   - Start bit is 0, stop bit is 1
+   - No new <code>tx_start</code> accepted while <code>tx_busy</code> is asserted
+3. Run the existing UART TX testbench. All assertions should pass.
+4. <strong>Intentionally inject a bug</strong> (e.g., swap start/stop polarity, allow bit index overflow). Re-run. Verify the relevant assertion catches the bug with a clear error message.
+5. Fix the bug, re-run, confirm all assertions pass.</p>
+<p><strong>Checkpoint:</strong> 5+ assertions added. At least one bug injected and caught by assertions.</p>
+<hr>
+<h3 id="exercise-2-constraint-based-uart-parity-extension-20-min">Exercise 2: Constraint-Based UART Parity Extension (20 min)</h3>
+<p><strong>Objective (SLO 14.2, 14.4):</strong> Implement conditional hardware using <code>generate if</code> and measure its PPA cost.</p>
+<blockquote>
+<p><strong>Escape valve:</strong> Students behind on their final project may skip this exercise and use the time for Exercises 3–4. Parity can be completed as homework.</p>
+</blockquote>
+<p><strong>Tasks:</strong>
+1. Add configurable parity to UART TX:
+   - <code>parameter PARITY_EN = 0</code> (0 = no parity, 1 = parity bit included)
+   - <code>parameter PARITY_TYPE = 0</code> (0 = even, 1 = odd)
+2. Use <code>generate if (PARITY_EN) begin : gen_parity ... end</code> to conditionally include parity logic:
+   - When <code>PARITY_EN=1</code>: TX frame becomes start + 8 data + parity + stop (10-bit frame → 11 bits with parity)
+   - Parity calculation: XOR reduction of data byte (even parity), inverted for odd
+3. Simulate both configurations:
+   - <code>PARITY_EN=0</code>: standard 10-bit frame (verify existing TB still passes)
+   - <code>PARITY_EN=1, PARITY_TYPE=0</code>: 11-bit frame with even parity (write a brief TB extension)
+4. Synthesize both configurations. Run <code>yosys stat</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>LUTs</th>
+<th>FFs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PARITY_EN=0</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>PARITY_EN=1</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>Discussion:</strong> How many extra LUTs does parity cost? Is it significant relative to the total design?</li>
+</ol>
+<p><strong>Checkpoint:</strong> Both configurations simulate correctly. PPA comparison documented.</p>
+<blockquote>
+<p><strong>Cross-cutting thread note:</strong> This exercise bridges the constraint-based design concept from Day 12's pre-class video with today's PPA analysis theme.</p>
+</blockquote>
+<hr>
+<h3 id="exercise-3-ai-constraint-based-tb-for-project-module-25-min">Exercise 3: AI Constraint-Based TB for Project Module (25 min)</h3>
+<p><strong>Objective (SLO 14.3, 14.6):</strong> Apply AI-driven verification to your own final project design.</p>
+<p><strong>Tasks:</strong>
+1. <strong>Write a constraint specification</strong> for your final project's core module. Include:
+   - Module name and complete port list (with types and widths)
+   - Behavioral specification: what the module should do
+   - Input constraints: legal ranges, relationships between signals, timing requirements
+   - Corner cases to test: boundary values, error conditions, resets mid-operation
+   - Coverage goals: "Test at least N cases of [scenario]"
+2. <strong>Generate</strong> the testbench using AI from your constraint spec.
+3. <strong>Review and correct:</strong>
+   - Does the AI handle your module's specific parameters correctly?
+   - Are the random ranges appropriate for your input widths?
+   - Does it test the corner cases you specified?
+   - Are there timing or syntax issues?
+4. <strong>Run</strong> the corrected testbench.
+5. <strong>Document coverage gaps:</strong> After running, are there scenarios you specified that the AI didn't test well? Note them.</p>
+<p><strong>Deliverable for this exercise:</strong> Constraint specification + AI output + corrected TB + brief coverage analysis (what was tested, what was missed).</p>
+<p><strong>Checkpoint:</strong> AI-generated TB runs against project module. At least 3 annotations explain corrections made.</p>
+<hr>
+<h3 id="exercise-4-ppa-analysis-exercise-25-min">Exercise 4: PPA Analysis Exercise (25 min)</h3>
+<p><strong>Objective (SLO 14.4, 14.5):</strong> Produce a structured PPA analysis — the same format required for the final project.</p>
+<p><strong>Tasks:</strong>
+1. Pick 2–3 modules from your course library (e.g., ALU, counter, UART TX, parity-enabled UART TX).
+2. For each module, synthesize at 2+ parameter configurations (e.g., different WIDTH values, features enabled/disabled).
+3. Record for each configuration:
+   - LUT count (<code>yosys stat</code>)
+   - FF count (<code>yosys stat</code>)
+   - Fmax (<code>nextpnr</code> timing report)
+4. Fill in a PPA comparison table:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Configuration</th>
+<th>LUTs</th>
+<th>FFs</th>
+<th>Fmax (MHz)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Counter</td>
+<td>WIDTH=8</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Counter</td>
+<td>WIDTH=16</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Counter</td>
+<td>WIDTH=32</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>UART TX</td>
+<td>PARITY_EN=0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>UART TX</td>
+<td>PARITY_EN=1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>Write a brief PPA discussion</strong> (1 paragraph per module):</li>
+<li>How does area scale with the parameter?</li>
+<li>Is the scaling linear, quadratic, or something else?</li>
+<li>What is the Fmax impact of increasing width/features?</li>
+<li>What trade-off would you make for a real application?</li>
+</ol>
+<p><strong>Deliverable for this exercise:</strong> PPA analysis table + 1-page design trade-off discussion.</p>
+<p><strong>Checkpoint:</strong> Table populated with real data. At least 2 paragraphs of trade-off analysis.</p>
+<hr>
+<h3 id="exercise-5-project-work-time-10-min">Exercise 5: Project Work Time (10 min)</h3>
+<p><strong>Objective:</strong> Apply today's techniques to the final project.</p>
+<p><strong>Tasks:</strong>
+1. Add at least 2 assertions to a final project module.
+2. Plan your project's PPA report: which modules will you compare? Which parameters?
+3. Note any blockers for the Day 15 build session.</p>
+<blockquote>
+<p>Day 15 provides 2.25 hours of dedicated project time.</p>
+</blockquote>
+<hr>
+<h3 id="exercise-6-stretch-interface-based-tb-refactoring">Exercise 6 (Stretch): Interface-Based TB Refactoring</h3>
+<p><strong>Objective (SLO 14.6):</strong> Explore SV <code>interface</code> and <code>modport</code> for cleaner testbench organization.</p>
+<p><strong>Tasks:</strong>
+1. Define a SystemVerilog <code>interface</code> for the UART signals (tx, rx, data, valid, busy).
+2. Use <code>modport</code> to separate driver and monitor views.
+3. Refactor the UART testbench to use the interface.</p>
+<hr>
+<h2 id="deliverable">Deliverable</h2>
+<ol>
+<li><strong>Assertion-enhanced UART TX</strong> with 5+ assertions and bug injection demonstration.</li>
+<li><strong>Parity-parameterized UART TX</strong> with PPA comparison (if not using escape valve).</li>
+<li><strong>AI constraint-based testbench</strong> for final project module with annotated corrections and coverage analysis.</li>
+<li><strong>PPA analysis report</strong> — comparison table with trade-off discussion.</li>
+</ol>
+<hr>
+<h2 id="assessment-mapping">Assessment Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>Exercise</th>
+<th>SLOs Assessed</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — Assertion-enhanced UART</td>
+<td>14.1</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>2 — Parity extension + PPA</td>
+<td>14.2, 14.4</td>
+<td>Core (escape valve available)</td>
+</tr>
+<tr>
+<td>3 — AI constraint-based TB</td>
+<td>14.3, 14.6</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>4 — PPA analysis report</td>
+<td>14.4, 14.5</td>
+<td>Core</td>
+</tr>
+<tr>
+<td>5 — Project work</td>
+<td>—</td>
+<td>Participation</td>
+</tr>
+<tr>
+<td>6 — Interface-based TB</td>
+<td>14.6</td>
+<td>Stretch (bonus)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="common-issues-instructor-notes">Common Issues &amp; Instructor Notes</h2>
+<ul>
+<li><strong>Assertion syntax in iverilog:</strong> Icarus Verilog supports immediate assertions with <code>-g2012</code> but has limited support for concurrent/property-based assertions. Keep students focused on immediate assertions for this exercise.</li>
+<li><strong><code>generate if</code> scope confusion:</strong> Students may struggle with the named <code>begin : gen_parity</code> block. Remind them: generate blocks create scope — signals inside are accessed as <code>gen_parity.signal_name</code> from outside (though they usually shouldn't need to).</li>
+<li><strong>Parity timing:</strong> The parity bit adds one bit period to the frame. Students must update the FSM to include a PARITY state between DATA and STOP. Common bug: forgetting to adjust the bit counter.</li>
+<li><strong>AI coverage gaps:</strong> The most valuable part of Exercise 3 is often discovering what the AI <em>didn't</em> test. Students who identify specific gaps score higher than those who accept the AI output without critique.</li>
+<li><strong>PPA report quality:</strong> Emphasize that numbers alone aren't sufficient — the analysis paragraph explaining <em>why</em> the numbers look the way they do is what demonstrates understanding.</li>
+<li><strong>Time management:</strong> This is the tightest day. Monitor Exercise 2 closely — invoke the escape valve early if students are struggling. Exercises 3 and 4 are higher priority for the final project.</li>
+</ul>
+<h3 id="cross-cutting-thread-convergence">Cross-Cutting Thread Convergence</h3>
+<p>This is the day where all four cross-cutting threads converge:
+- <strong>AI Verification (Day 4 of thread):</strong> Students write independent constraint specs and generate TBs for their own project modules.
+- <strong>PPA Analysis:</strong> Structured comparison exercise with the same format as the final project report.
+- <strong>Constraint-Based Design:</strong> The parity extension brings the Day 12 concept to implementation.
+- <strong>Verification Maturity:</strong> Students can now place themselves on the manual → coverage-driven scale.</p>
+<hr>
+<h2 id="preview-day-15">Preview: Day 15</h2>
+<p>Build day — 2.25 hours of dedicated project work time. Come prepared with your project plan, any modules still in progress, and a testing strategy. Day 15 deliverable: working prototype + testbench + PPA snapshot. Day 16: live demos.</p>
+</article>
+</body>
+</html>
