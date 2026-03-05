@@ -1,0 +1,1 @@
+../docs/course_setup_guide.md

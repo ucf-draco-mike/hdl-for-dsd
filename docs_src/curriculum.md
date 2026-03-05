@@ -1,0 +1,1 @@
+../docs/course_curriculum.md

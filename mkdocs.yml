@@ -90,21 +90,25 @@ nav:
       - Daily Plan: days/day01/plan.md
       - Pre-Class Quiz: days/day01/quiz.md
       - Lab Guide: days/day01/lab.md
+      - Code & Notebooks: days/day01/code.md
     - "Day 2 — Combinational Blocks":
       - days/day02/index.md
       - Daily Plan: days/day02/plan.md
       - Pre-Class Quiz: days/day02/quiz.md
       - Lab Guide: days/day02/lab.md
+      - Code & Notebooks: days/day02/code.md
     - "Day 3 — Procedural Logic":
       - days/day03/index.md
       - Daily Plan: days/day03/plan.md
       - Pre-Class Quiz: days/day03/quiz.md
       - Lab Guide: days/day03/lab.md
+      - Code & Notebooks: days/day03/code.md
     - "Day 4 — Sequential Logic":
       - days/day04/index.md
       - Daily Plan: days/day04/plan.md
       - Pre-Class Quiz: days/day04/quiz.md
       - Lab Guide: days/day04/lab.md
+      - Code & Notebooks: days/day04/code.md
 
   - "Week 2: Verification & AI":
     - "Day 5 — Counters & Debouncing":
@@ -112,21 +116,25 @@ nav:
       - Daily Plan: days/day05/plan.md
       - Pre-Class Quiz: days/day05/quiz.md
       - Lab Guide: days/day05/lab.md
+      - Code & Notebooks: days/day05/code.md
     - "Day 6 — Testbenches & AI Verification":
       - days/day06/index.md
       - Daily Plan: days/day06/plan.md
       - Pre-Class Quiz: days/day06/quiz.md
       - Lab Guide: days/day06/lab.md
+      - Code & Notebooks: days/day06/code.md
     - "Day 7 — Finite State Machines":
       - days/day07/index.md
       - Daily Plan: days/day07/plan.md
       - Pre-Class Quiz: days/day07/quiz.md
       - Lab Guide: days/day07/lab.md
+      - Code & Notebooks: days/day07/code.md
     - "Day 8 — Hierarchy & Generate":
       - days/day08/index.md
       - Daily Plan: days/day08/plan.md
       - Pre-Class Quiz: days/day08/quiz.md
       - Lab Guide: days/day08/lab.md
+      - Code & Notebooks: days/day08/code.md
 
   - "Week 3: Communication & PPA":
     - "Day 9 — Memory: RAM & ROM":
@@ -134,21 +142,25 @@ nav:
       - Daily Plan: days/day09/plan.md
       - Pre-Class Quiz: days/day09/quiz.md
       - Lab Guide: days/day09/lab.md
+      - Code & Notebooks: days/day09/code.md
     - "Day 10 — Numerical & PPA":
       - days/day10/index.md
       - Daily Plan: days/day10/plan.md
       - Pre-Class Quiz: days/day10/quiz.md
       - Lab Guide: days/day10/lab.md
+      - Code & Notebooks: days/day10/code.md
     - "Day 11 — UART Transmitter":
       - days/day11/index.md
       - Daily Plan: days/day11/plan.md
       - Pre-Class Quiz: days/day11/quiz.md
       - Lab Guide: days/day11/lab.md
+      - Code & Notebooks: days/day11/code.md
     - "Day 12 — UART RX & SPI":
       - days/day12/index.md
       - Daily Plan: days/day12/plan.md
       - Pre-Class Quiz: days/day12/quiz.md
       - Lab Guide: days/day12/lab.md
+      - Code & Notebooks: days/day12/code.md
 
   - "Week 4: Project":
     - "Day 13 — SystemVerilog":
@@ -156,19 +168,23 @@ nav:
       - Daily Plan: days/day13/plan.md
       - Pre-Class Quiz: days/day13/quiz.md
       - Lab Guide: days/day13/lab.md
+      - Code & Notebooks: days/day13/code.md
     - "Day 14 — Verification & PPA":
       - days/day14/index.md
       - Daily Plan: days/day14/plan.md
       - Pre-Class Quiz: days/day14/quiz.md
       - Lab Guide: days/day14/lab.md
+      - Code & Notebooks: days/day14/code.md
     - "Day 15 — Build Day":
       - days/day15/index.md
       - Daily Plan: days/day15/plan.md
       - Lab Guide: days/day15/lab.md
+      - Code & Notebooks: days/day15/code.md
     - "Day 16 — Demo Day":
       - days/day16/index.md
       - Daily Plan: days/day16/plan.md
       - Lab Guide: days/day16/lab.md
+      - Code & Notebooks: days/day16/code.md
 
   - Reference:
     - Dev Status: dev-status.md

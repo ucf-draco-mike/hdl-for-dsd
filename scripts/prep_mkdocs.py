@@ -8,12 +8,20 @@ Usage:
     python3 scripts/prep_mkdocs.py --build   # prep + mkdocs build
 """
 
-import json, os, re, shutil, subprocess, sys
+import json, os, re, shutil, subprocess, sys, zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 DOCS = REPO / "docs_src"
 YOUTUBE_FILE = REPO / "youtube_ids.json"
+
+# ─── JupyterHub configuration ────────────────────────────────────
+JUPYTER_HUB_BASE = os.environ.get(
+    "HDL_JUPYTER_BASE",
+    "/hub/user-redirect/lab/tree/hdl-for-dsd"
+)
+GITHUB_RAW_BASE = "https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main"
+JUPYTER_EXTENSIONS = {".v", ".sv", ".hex", ".py", ".ipynb", ".md"}
 
 DAYS = [
     (1,  "week1_day01", "Welcome to Hardware Thinking"),
@@ -68,7 +76,7 @@ def get_slides(day_num, dir_name, yt_ids):
         })
     return results
 
-def generate_day_page(day_num, dir_name, title, yt_ids):
+def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
     slides = get_slides(day_num, dir_name, yt_ids)
     wk = (day_num - 1) // 4 + 1
     dz = f"{day_num:02d}"
@@ -78,13 +86,18 @@ def generate_day_page(day_num, dir_name, title, yt_ids):
     lines.append(f"# Day {day_num}: {title}\n")
     lines.append(f'<p class="subtitle">Week {wk} · Session {day_num} of 16</p>\n')
 
-    # Nav cards
+    # Nav cards — add code card if assets exist
     quiz_exists = (REPO / "lectures" / dir_name / f"day{dz}_quiz.md").exists()
-    lines.append('<div class="card-grid card-grid--3" markdown>\n')
+    has_code = code_assets and day_num in code_assets
+    n_cards = 3 + (1 if has_code else 0)
+    grid_class = "card-grid--4" if n_cards == 4 else "card-grid--3"
+    lines.append(f'<div class="card-grid {grid_class}" markdown>\n')
     lines.append(f'<div class="nav-card" markdown>\n:material-clipboard-text:{{ .card-icon }}\n\n**Daily Plan**\n\nSession timeline & instructor notes\n\n[:octicons-arrow-right-16: View plan](plan.md)\n</div>\n')
     lines.append(f'<div class="nav-card" markdown>\n:material-flask:{{ .card-icon }}\n\n**Lab Guide**\n\n{len(slides)} exercises · hands-on\n\n[:octicons-arrow-right-16: View lab](lab.md)\n</div>\n')
     if quiz_exists:
         lines.append(f'<div class="nav-card" markdown>\n:material-help-circle:{{ .card-icon }}\n\n**Pre-Class Quiz**\n\nSelf-check questions\n\n[:octicons-arrow-right-16: Take quiz](quiz.md)\n</div>\n')
+    if has_code:
+        lines.append(f'<div class="nav-card" markdown>\n:material-download-circle:{{ .card-icon }}\n\n**Code & Notebooks**\n\nStarter code, zips & JupyterHub links\n\n[:octicons-arrow-right-16: View code](code.md)\n</div>\n')
     lines.append('</div>\n')
 
     # Videos section
@@ -112,6 +125,240 @@ def generate_day_page(day_num, dir_name, title, yt_ids):
                 lines.append(f'[:material-presentation: View Slides]({s["slide_path"]})'
                              f'{{ .md-button .md-button--primary target="_blank" }}\n')
     return "\n".join(lines)
+
+
+# ─── Lab code asset discovery ────────────────────────────────────
+
+def discover_lab_code():
+    """Scan labs/ and return code asset metadata per day.
+
+    Returns: { day_num: { "exercises": [...], "shared_files": [...] } }
+    """
+    day_assets = {}
+
+    for day_num, dir_name, title in DAYS:
+        lab_dir = REPO / "labs" / dir_name
+        if not lab_dir.exists():
+            continue
+
+        exercises = []
+        shared_files = []
+
+        # Collect shared files (top-level Makefile, pcf)
+        for pattern in ["Makefile", "*.pcf"]:
+            for f in lab_dir.glob(pattern):
+                if f.is_file():
+                    shared_files.append(f)
+
+        has_exercise_dirs = any(lab_dir.glob("ex*"))
+
+        if not has_exercise_dirs:
+            # Week 1 flat layout: starter/ and solution/
+            starter_dir = lab_dir / "starter"
+            solution_dir = lab_dir / "solution"
+            if starter_dir.is_dir():
+                grouped = _group_flat_exercises(starter_dir)
+                for ex_name, files in grouped.items():
+                    has_sol = solution_dir.is_dir() and all(
+                        (solution_dir / f.name).exists() for f in files
+                    )
+                    sol_files = [solution_dir / f.name for f in files] if has_sol else []
+                    exercises.append({
+                        "name": ex_name,
+                        "label": _exercise_label(ex_name),
+                        "starter_files": sorted(files, key=lambda f: f.name),
+                        "solution_files": sorted(sol_files, key=lambda f: f.name),
+                    })
+        else:
+            for ex_dir in sorted(lab_dir.glob("ex*")):
+                if not ex_dir.is_dir():
+                    continue
+                starter_dir = ex_dir / "starter"
+                solution_dir = ex_dir / "solution"
+                src_dir = starter_dir if starter_dir.is_dir() else ex_dir
+                files = sorted(
+                    (f for f in src_dir.iterdir() if f.is_file() and f.name != ".DS_Store"),
+                    key=lambda f: f.name,
+                )
+                has_sol = solution_dir.is_dir() and any(solution_dir.iterdir())
+                sol_files = sorted(
+                    (f for f in solution_dir.iterdir() if f.is_file() and f.name != ".DS_Store"),
+                    key=lambda f: f.name,
+                ) if has_sol else []
+
+                exercises.append({
+                    "name": ex_dir.name,
+                    "label": _exercise_label(ex_dir.name),
+                    "starter_files": files,
+                    "solution_files": sol_files,
+                })
+
+        if exercises or shared_files:
+            day_assets[day_num] = {
+                "exercises": exercises,
+                "shared_files": shared_files,
+                "lab_dir": lab_dir,
+            }
+
+    return day_assets
+
+
+def build_lab_zips(code_assets):
+    """Create zip archives in docs_src/downloads/ for MkDocs to pick up.
+
+    Returns updated code_assets with zip relative paths added.
+    """
+    dl_dir = DOCS / "downloads"
+    dl_dir.mkdir(parents=True, exist_ok=True)
+
+    for day_num, assets in code_assets.items():
+        dz = f"{day_num:02d}"
+        day_dl = dl_dir / f"day{dz}"
+        day_dl.mkdir(parents=True, exist_ok=True)
+        lab_dir = assets["lab_dir"]
+
+        all_files = list(assets["shared_files"])
+
+        for ex in assets["exercises"]:
+            # Starter zip
+            zip_name = f"{ex['name']}_starter.zip"
+            zip_path = day_dl / zip_name
+            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for f in ex["starter_files"]:
+                    zf.write(f, f"{ex['name']}/starter/{f.name}")
+            ex["starter_zip"] = f"../../downloads/day{dz}/{zip_name}"
+
+            # Solution zip
+            if ex["solution_files"]:
+                sol_zip_name = f"{ex['name']}_solution.zip"
+                sol_zip_path = day_dl / sol_zip_name
+                with zipfile.ZipFile(sol_zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                    for f in ex["solution_files"]:
+                        zf.write(f, f"{ex['name']}/solution/{f.name}")
+                ex["solution_zip"] = f"../../downloads/day{dz}/{sol_zip_name}"
+            else:
+                ex["solution_zip"] = None
+
+            all_files.extend(ex["starter_files"])
+
+        # Day-level all-starter zip
+        all_zip_name = f"day{dz}_all_starter.zip"
+        all_zip_path = day_dl / all_zip_name
+        with zipfile.ZipFile(all_zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+            for f in all_files:
+                try:
+                    arcname = f"day{dz}_lab/{f.relative_to(lab_dir)}"
+                except ValueError:
+                    arcname = f"day{dz}_lab/{f.name}"
+                zf.write(f, arcname)
+        assets["all_zip"] = f"../../downloads/day{dz}/{all_zip_name}"
+
+    total = sum(1 for _ in dl_dir.rglob("*.zip"))
+    print(f"  Created: {total} zip files → docs_src/downloads/")
+    return code_assets
+
+
+def generate_code_page(day_num, code_assets):
+    """Generate a code.md page for a given day with download links and JupyterHub links."""
+    if day_num not in code_assets:
+        return None
+
+    assets = code_assets[day_num]
+    dz = f"{day_num:02d}"
+    lines = []
+    lines.append(f"---\ntitle: \"Day {day_num} — Code & Notebooks\"\n---\n")
+    lines.append(f"# :material-download-circle: Day {day_num} — Code & Notebooks\n")
+
+    # Download-all button
+    if assets.get("all_zip"):
+        lines.append(f'[:material-folder-download: Download All Starter Code (.zip)]({assets["all_zip"]})'
+                     f'{{ .md-button .md-button--primary }}\n')
+
+    # JupyterHub banner
+    lines.append(f'!!! tip "Open directly in JupyterHub"\n'
+                 f'    Click the **:material-notebook: Open in Hub** links below to edit files '
+                 f'directly in [JupyterHub]({JUPYTER_HUB_BASE}).\n'
+                 f'    Assumes the repo is cloned as `~/hdl-for-dsd/`.\n')
+
+    # Shared files
+    if assets["shared_files"]:
+        lines.append("## Shared Files\n")
+        lines.append("These files are shared across all exercises for this day.\n")
+        lines.append("| File | Links |")
+        lines.append("|------|-------|")
+        for f in sorted(assets["shared_files"], key=lambda f: f.name):
+            rel = f.relative_to(REPO)
+            gh = f"{GITHUB_RAW_BASE}/{rel}"
+            links = f"[:material-github: GitHub]({gh}){{ target=_blank }}"
+            if f.suffix.lower() in JUPYTER_EXTENSIONS or f.name == "Makefile":
+                jup = f"{JUPYTER_HUB_BASE}/{rel}"
+                links += f" · [:material-notebook: Open in Hub]({jup}){{ target=_blank }}"
+            icon = _file_icon_md(f)
+            lines.append(f"| {icon} `{f.name}` | {links} |")
+        lines.append("")
+
+    # Per-exercise sections
+    for ex in assets["exercises"]:
+        lines.append(f"## {ex['label']}\n")
+
+        # Zip download buttons
+        btns = f'[:material-download: Starter .zip]({ex["starter_zip"]}){{ .md-button }}'
+        if ex.get("solution_zip"):
+            btns += f' [:material-check-circle: Solution .zip]({ex["solution_zip"]}){{ .md-button }}'
+        lines.append(btns + "\n")
+
+        # File table
+        lines.append("| File | Links |")
+        lines.append("|------|-------|")
+        for f in ex["starter_files"]:
+            rel = f.relative_to(REPO)
+            gh = f"{GITHUB_RAW_BASE}/{rel}"
+            links = f"[:material-github: GitHub]({gh}){{ target=_blank }}"
+            if f.suffix.lower() in JUPYTER_EXTENSIONS or f.name == "Makefile":
+                jup = f"{JUPYTER_HUB_BASE}/{rel}"
+                links += f" · [:material-notebook: Open in Hub]({jup}){{ target=_blank }}"
+            icon = _file_icon_md(f)
+            lines.append(f"| {icon} `{f.name}` | {links} |")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+def _group_flat_exercises(starter_dir):
+    """Group files in a flat starter/ dir by exercise prefix (ex1_, ex2_, etc.)."""
+    groups = {}
+    for f in sorted(starter_dir.iterdir()):
+        if not f.is_file() or f.name == ".DS_Store":
+            continue
+        m = re.match(r"(ex\d+)_", f.name)
+        key = m.group(1) if m else "_misc"
+        groups.setdefault(key, []).append(f)
+    result = {}
+    for key, files in groups.items():
+        if len(files) == 1:
+            result[files[0].stem] = files
+        else:
+            result[key + "_files"] = files
+    return result
+
+
+def _exercise_label(ex_name):
+    """Convert ex1_alu_testbench → 'Ex 1 — ALU Testbench'."""
+    m = re.match(r"ex(\d+)_(.*)", ex_name)
+    if m:
+        return f"Ex {m.group(1)} — {m.group(2).replace('_', ' ').title()}"
+    return ex_name.replace("_", " ").title()
+
+
+FILE_ICONS = {".v": ":material-chip:", ".sv": ":material-chip:",
+              ".hex": ":material-hexadecimal:", ".pcf": ":material-pin:",
+              ".md": ":material-text:", ".py": ":material-language-python:",
+              ".ipynb": ":material-notebook:"}
+
+def _file_icon_md(f):
+    if f.name == "Makefile":
+        return ":material-cog:"
+    return FILE_ICONS.get(f.suffix.lower(), ":material-file:")
 
 
 WEEK_META = [
@@ -226,6 +473,16 @@ def post_build():
         slide_count = sum(1 for _ in lectures_dst.rglob("*.html"))
         print(f"  Copied: {slide_count} slide files → _site/lectures/")
 
+    # Copy download zips (built by build_lab_zips into docs_src/downloads/)
+    dl_src = DOCS / "downloads"
+    dl_dst = site / "downloads"
+    if dl_src.exists():
+        if dl_dst.exists():
+            shutil.rmtree(dl_dst)
+        shutil.copytree(dl_src, dl_dst)
+        zip_count = sum(1 for _ in dl_dst.rglob("*.zip"))
+        print(f"  Copied: {zip_count} zip files → _site/downloads/")
+
     # Copy theme CSS referenced by slides
     theme_src = REPO / "lectures" / "theme"
     theme_dst = site / "lectures" / "theme"
@@ -246,6 +503,11 @@ def main():
 
     yt_ids = load_youtube_ids()
     print(f"  YouTube: {len(yt_ids)} video IDs loaded")
+
+    # Discover lab code assets and build zips
+    code_assets = discover_lab_code()
+    print(f"  Lab code: {len(code_assets)} days with code assets")
+    code_assets = build_lab_zips(code_assets)
 
     # Top-level pages
     # index.md: generated rich landing page (README stays for GitHub)
@@ -268,8 +530,9 @@ def main():
         dd = DOCS / "days" / f"day{dz}"
         dd.mkdir(parents=True, exist_ok=True)
 
-        # Generated index
-        (dd / "index.md").write_text(generate_day_page(day_num, dir_name, title, yt_ids))
+        # Generated index (now with code_assets for nav card)
+        (dd / "index.md").write_text(
+            generate_day_page(day_num, dir_name, title, yt_ids, code_assets))
 
         # Symlinks
         plan = REPO / "docs" / f"day{dz}.md"
@@ -280,6 +543,11 @@ def main():
 
         lab = REPO / "labs" / dir_name / "README.md"
         if lab.exists(): symlink(lab, dd / "lab.md")
+
+        # Generated code page
+        code_md = generate_code_page(day_num, code_assets)
+        if code_md:
+            (dd / "code.md").write_text(code_md, encoding="utf-8")
 
     print(f"  Generated: 16 day sections")
 

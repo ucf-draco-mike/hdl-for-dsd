@@ -1,0 +1,1 @@
+../../../lectures/week2_day06/day06_quiz.md
