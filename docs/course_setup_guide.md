@@ -155,6 +155,14 @@ nix --version
 
 > **What just happened?** Nix installed a package manager in `/nix/store` that keeps all course tools completely isolated from your system. It won't interfere with your existing `apt`, `brew`, or other package managers.
 
+> **Already have Nix installed?** If you used the official Nix installer (not Determinate Systems), you'll need to enable Flakes manually. Create or edit `~/.config/nix/nix.conf` and add:
+>
+> ```
+> experimental-features = nix-command flakes
+> ```
+>
+> Then restart your terminal. Without this, you'll get `error: experimental Nix feature 'nix-command' is disabled`.
+
 ---
 
 ## Step 2: Clone the Course Repository

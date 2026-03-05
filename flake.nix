@@ -1,6 +1,12 @@
 {
   description = "Accelerated HDL for Digital System Design — Course Environment";
 
+  # Auto-enable experimental features so students don't need to configure Nix manually.
+  # This takes effect when using `nix develop`, `nix build`, etc. on this flake.
+  nixConfig = {
+    extra-experimental-features = "nix-command flakes";
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
@@ -59,7 +65,7 @@
         baseShellHook = ''
           echo ""
           echo "╔══════════════════════════════════════════════════╗"
-          echo "║  HDL for Digital System Design — Environment     ║"
+          echo "║  HDL for Digital System Design — Environment    ║"
           echo "╚══════════════════════════════════════════════════╝"
           echo ""
           echo "  yosys      $(yosys --version 2>&1 | head -1)"
@@ -88,12 +94,12 @@
         devShells.full = pkgs.mkShell {
           buildInputs = commonPkgs ++ linuxPkgs ++ [ pythonFull ];
           shellHook = baseShellHook + ''
-            echo "  ┌────────── Site building tools also available ────┐"
-            echo "  │  mkdocs     $(mkdocs --version 2>&1 | head -1)   |"
-            echo "  │                                                  │"
-            echo "  │  Build:  python3 scripts/prep_mkdocs.py --build  |"
-            echo "  │  Serve:  python3 scripts/prep_mkdocs.py --serve  |"
-            echo "  └──────────────────────────────────────────────────┘"
+            echo "  ┌─ Site building tools also available ─┐"
+            echo "  │  mkdocs     $(mkdocs --version 2>&1 | head -1)"
+            echo "  │                                      │"
+            echo "  │  Build:  python3 scripts/prep_mkdocs.py --build"
+            echo "  │  Serve:  python3 scripts/prep_mkdocs.py --serve"
+            echo "  └──────────────────────────────────────┘"
             echo ""
           '';
         };
