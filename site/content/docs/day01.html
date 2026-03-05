@@ -137,24 +137,24 @@
 <li>"The <code>.pcf</code> file is the bridge between your abstract design and the real world"</li>
 </ol>
 <h3 id="live-demo-code">Live Demo Code</h3>
-<pre class="codehilite"><code class="language-verilog">// led_on.v — simplest possible design
-module led_on (
-    output wire o_LED_1
-);
-    assign o_LED_1 = 1'b1;
-endmodule
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="c1">// led_on.v — simplest possible design</span>
+<span class="k">module</span><span class="w"> </span><span class="n">led_on</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">o_LED_1</span>
+<span class="p">);</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">o_LED_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</code></pre></div>
 
 <hr>
 <h2 id="lab-exercises-90-min">Lab Exercises (~90 min)</h2>
 <h3 id="exercise-1-environment-setup-toolchain-verification-20-min">Exercise 1: Environment Setup &amp; Toolchain Verification (20 min)</h3>
 <p><strong>Objective (SLO 1.4):</strong> Verify that all tools are installed and working.</p>
 <p>Run the following commands and confirm output:</p>
-<pre class="codehilite"><code class="language-bash">yosys -V                    # Should print version
-nextpnr-ice40 --version     # Should print version
-iverilog -V                 # Should print version
-iceprog                     # Should print usage (or error if no board connected)
-</code></pre>
+<div class="codehilite"><pre><span></span><code>yosys<span class="w"> </span>-V<span class="w">                    </span><span class="c1"># Should print version</span>
+nextpnr-ice40<span class="w"> </span>--version<span class="w">     </span><span class="c1"># Should print version</span>
+iverilog<span class="w"> </span>-V<span class="w">                 </span><span class="c1"># Should print version</span>
+iceprog<span class="w">                     </span><span class="c1"># Should print usage (or error if no board connected)</span>
+</code></pre></div>
 
 <p>Connect the Go Board via USB. Verify it's recognized.</p>
 <hr>
@@ -171,22 +171,22 @@ iceprog                     # Should print usage (or error if no board connected
 <hr>
 <h3 id="exercise-3-buttons-to-leds-25-min">Exercise 3: Buttons to LEDs (25 min)</h3>
 <p><strong>Objective (SLO 1.3, 1.5):</strong> Use <code>assign</code> to create combinational connections.</p>
-<pre class="codehilite"><code class="language-verilog">module buttons_to_leds (
-    input  wire i_Switch_1,
-    input  wire i_Switch_2,
-    input  wire i_Switch_3,
-    input  wire i_Switch_4,
-    output wire o_LED_1,
-    output wire o_LED_2,
-    output wire o_LED_3,
-    output wire o_LED_4
-);
-    assign o_LED_1 = i_Switch_1;
-    assign o_LED_2 = i_Switch_2;
-    assign o_LED_3 = i_Switch_3;
-    assign o_LED_4 = i_Switch_4;
-endmodule
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="k">module</span><span class="w"> </span><span class="n">buttons_to_leds</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">input</span><span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="n">i_Switch_1</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="n">i_Switch_2</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="n">i_Switch_3</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="n">i_Switch_4</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">o_LED_1</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">o_LED_2</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">o_LED_3</span><span class="p">,</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">o_LED_4</span>
+<span class="p">);</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">o_LED_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_Switch_1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">o_LED_2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_Switch_2</span><span class="p">;</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">o_LED_3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_Switch_3</span><span class="p">;</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">o_LED_4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_Switch_4</span><span class="p">;</span>
+<span class="k">endmodule</span>
+</code></pre></div>
 
 <p>Synthesize, program, verify: each button controls its corresponding LED.</p>
 <hr>
@@ -205,28 +205,28 @@ endmodule
 <li>Create an XOR pattern: <code>assign o_LED_1 = i_Switch_1 ^ i_Switch_2;</code></li>
 <li>Create a simple Makefile that automates the build flow:</li>
 </ol>
-<pre class="codehilite"><code class="language-makefile">TOP = buttons_to_leds
-PCF = ../../shared/pcf/go_board.pcf
+<div class="codehilite"><pre><span></span><code><span class="nv">TOP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>buttons_to_leds
+<span class="nv">PCF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>../../shared/pcf/go_board.pcf
 
-all: $(TOP).bin
+<span class="nf">all</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">TOP</span><span class="k">)</span>.<span class="n">bin</span>
 
-$(TOP).json: $(TOP).v
-    yosys -p &quot;synth_ice40 -top $(TOP) -json $@&quot; $&lt;
+<span class="nf">$(TOP).json</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">TOP</span><span class="k">)</span>.<span class="n">v</span>
+<span class="w">    </span>yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;synth_ice40 -top </span><span class="k">$(</span>TOP<span class="k">)</span><span class="s2"> -json </span><span class="nv">$@</span><span class="s2">&quot;</span><span class="w"> </span>$&lt;
 
-$(TOP).asc: $(TOP).json
-    nextpnr-ice40 --hx1k --package vq100 --pcf $(PCF) --json $&lt; --asc $@
+<span class="nf">$(TOP).asc</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">TOP</span><span class="k">)</span>.<span class="n">json</span>
+<span class="w">    </span>nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--pcf<span class="w"> </span><span class="k">$(</span>PCF<span class="k">)</span><span class="w"> </span>--json<span class="w"> </span>$&lt;<span class="w"> </span>--asc<span class="w"> </span><span class="nv">$@</span>
 
-$(TOP).bin: $(TOP).asc
-    icepack $&lt; $@
+<span class="nf">$(TOP).bin</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">TOP</span><span class="k">)</span>.<span class="n">asc</span>
+<span class="w">    </span>icepack<span class="w"> </span>$&lt;<span class="w"> </span><span class="nv">$@</span>
 
-prog: $(TOP).bin
-    iceprog $&lt;
+<span class="nf">prog</span><span class="o">:</span><span class="w"> </span><span class="k">$(</span><span class="nv">TOP</span><span class="k">)</span>.<span class="n">bin</span>
+<span class="w">    </span>iceprog<span class="w"> </span>$&lt;
 
-clean:
-    rm -f *.json *.asc *.bin
+<span class="nf">clean</span><span class="o">:</span>
+<span class="w">    </span>rm<span class="w"> </span>-f<span class="w"> </span>*.json<span class="w"> </span>*.asc<span class="w"> </span>*.bin
 
-.PHONY: all prog clean
-</code></pre>
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">all</span> <span class="n">prog</span> <span class="n">clean</span>
+</code></pre></div>
 
 <hr>
 <h2 id="deliverable">Deliverable</h2>

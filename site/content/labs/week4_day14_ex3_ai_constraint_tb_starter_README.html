@@ -17,7 +17,7 @@ generate a testbench from the spec, then critically review and correct the outpu
 <h3 id="step-1-write-the-constraint-specification-10-min">Step 1: Write the Constraint Specification (10 min)</h3>
 <p>Use the template below. Fill in every section for your project's core module.
 <strong>The quality of your spec determines the quality of the AI output.</strong></p>
-<pre class="codehilite"><code>MODULE SPECIFICATION
+<div class="codehilite"><pre><span></span><code>MODULE SPECIFICATION
 ====================
 Module name:
 File:
@@ -73,7 +73,7 @@ TOOL REQUIREMENTS
   - Language: Verilog or SystemVerilog (specify)
   - Simulator: iverilog -g2012
   - Waveform dump: $dumpfile / $dumpvars
-</code></pre>
+</code></pre></div>
 
 <h3 id="step-2-generate-with-ai-5-min">Step 2: Generate with AI (5 min)</h3>
 <p>Submit your constraint spec to an AI tool (Claude, ChatGPT, Copilot, etc.).
@@ -133,15 +133,15 @@ Use iverilog-compatible syntax with -g2012 flag."</p>
 </tbody>
 </table>
 <p>Fix any issues. Add comments explaining each correction:</p>
-<pre class="codehilite"><code class="language-verilog">// FIXED: AI used 'logic' in module-level scope, changed to 'reg' for iverilog
-// FIXED: AI hardcoded WIDTH=8 instead of using parameter override
-// FIXED: AI didn't test corner case #3 (reset during operation)
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="c1">// FIXED: AI used &#39;logic&#39; in module-level scope, changed to &#39;reg&#39; for iverilog</span>
+<span class="c1">// FIXED: AI hardcoded WIDTH=8 instead of using parameter override</span>
+<span class="c1">// FIXED: AI didn&#39;t test corner case #3 (reset during operation)</span>
+</code></pre></div>
 
 <h3 id="step-4-run-and-evaluate">Step 4: Run and Evaluate</h3>
-<pre class="codehilite"><code class="language-bash">iverilog -g2012 -o sim.vvp tb_your_module.sv your_module.sv
-vvp sim.vvp
-</code></pre>
+<div class="codehilite"><pre><span></span><code>iverilog<span class="w"> </span>-g2012<span class="w"> </span>-o<span class="w"> </span>sim.vvp<span class="w"> </span>tb_your_module.sv<span class="w"> </span>your_module.sv
+vvp<span class="w"> </span>sim.vvp
+</code></pre></div>
 
 <p>Document coverage gaps: after running, which scenarios from your spec were
 tested well? Which were missed or tested incorrectly?</p>

@@ -58,8 +58,8 @@
 <hr>
 <h2 id="production-architecture">Production Architecture</h2>
 <h3 id="per-lecture-deliverable-set">Per-Lecture Deliverable Set</h3>
-<pre class="codehilite"><code>lectures/weekN/dayNN_topic/
-├── slides.html              # reveal.js deck (what's on screen)
+<div class="codehilite"><pre><span></span><code>lectures/weekN/dayNN_topic/
+├── slides.html              # reveal.js deck (what&#39;s on screen)
 ├── script.md                # Narration script with timing marks and cues
 ├── code/
 │   ├── example_01.v         # Progressive examples shown during video
@@ -70,7 +70,7 @@
 │   ├── timing.wavedrom.json
 │   └── *.svg                # Any custom diagrams
 └── quiz.md                  # Pre-class comprehension check (3-5 questions)
-</code></pre>
+</code></pre></div>
 
 <h3 id="revealjs-slide-design-principles">reveal.js Slide Design Principles</h3>
 <p>Since you're doing <strong>slides + live coding</strong>, the slides need to support clean transitions to terminal/editor:</p>
@@ -85,22 +85,22 @@
 <li>Color coding: green = synthesizable, orange = simulation-only, red = common mistake</li>
 </ol>
 <h3 id="script-format">Script Format</h3>
-<pre class="codehilite"><code class="language-markdown">## Slide 3: The River Analogy [01:45–02:30]
+<div class="codehilite"><pre><span></span><code><span class="gu">## Slide 3: The River Analogy [01:45–02:30]</span>
 
-**[SLIDE: Side-by-side — recipe steps vs. river diagram]**
+<span class="gs">**[SLIDE: Side-by-side — recipe steps vs. river diagram]**</span>
 
-&gt; Software is like following a recipe: do step 1, then step 2, then step 3.
-&gt; Hardware is like a river system. Water flows through ALL tributaries simultaneously.
-&gt; Adding a dam here affects the flow there. Everything is happening at once.
-&gt; You're not writing instructions — you're describing the geography of the river.
+<span class="k">&gt; </span><span class="ge">Software is like following a recipe: do step 1, then step 2, then step 3.</span>
+<span class="k">&gt; </span><span class="ge">Hardware is like a river system. Water flows through ALL tributaries simultaneously.</span>
+<span class="k">&gt; </span><span class="ge">Adding a dam here affects the flow there. Everything is happening at once.</span>
+<span class="k">&gt; </span><span class="ge">You&#39;re not writing instructions — you&#39;re describing the geography of the river.</span>
 
-**[PAUSE — let this sink in]**
+<span class="gs">**[PAUSE — let this sink in]**</span>
 
-&gt; This analogy will carry us through the entire first week. When you're confused
-&gt; about why Verilog behaves a certain way, come back to the river.
+<span class="k">&gt; </span><span class="ge">This analogy will carry us through the entire first week. When you&#39;re confused</span>
+<span class="k">&gt; </span><span class="ge">about why Verilog behaves a certain way, come back to the river.</span>
 
 ---
-</code></pre>
+</code></pre></div>
 
 <p>Key script conventions:
 - <strong>Timestamp ranges</strong> in square brackets
@@ -979,7 +979,7 @@
 </tbody>
 </table>
 <h3 id="per-batch-workflow">Per-Batch Workflow</h3>
-<pre class="codehilite"><code>1. Generate all slide decks + scripts + code files + diagrams for the batch
+<div class="codehilite"><pre><span></span><code>1. Generate all slide decks + scripts + code files + diagrams for the batch
 2. Review the batch for:
    - Technical accuracy
    - Pacing (too fast? too slow? wrong emphasis?)
@@ -988,7 +988,7 @@
 3. Iterate on any issues
 4. Record the batch
 5. Commit to the repo
-</code></pre>
+</code></pre></div>
 
 <h3 id="estimated-production-time">Estimated Production Time</h3>
 <table>

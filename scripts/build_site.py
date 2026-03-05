@@ -13,6 +13,7 @@ import json
 import os
 import re
 import shutil
+import zipfile
 from pathlib import Path
 
 import markdown
@@ -25,6 +26,22 @@ from markdown.extensions.attr_list import AttrListExtension
 REPO = Path(__file__).resolve().parent.parent
 SITE = REPO / "site"
 CONTENT = SITE / "content"
+
+# ─── JupyterHub configuration ────────────────────────────────────
+# Base URL for JupyterHub — set to your institution's hub.
+# Notebook links assume the repo is cloned into the user's home dir
+# as  ~/hdl-for-dsd/  (i.e., the default git clone path).
+JUPYTER_HUB_BASE = os.environ.get(
+    "HDL_JUPYTER_BASE",
+    "/hub/user-redirect/lab/tree/hdl-for-dsd"
+)
+# GitHub raw base for direct file viewing (fallback when no hub)
+GITHUB_RAW_BASE = "https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main"
+
+# File extensions to include in code downloads
+CODE_EXTENSIONS = {".v", ".sv", ".hex", ".pcf", ".md"}
+# Extensions that get JupyterHub "open" links (text-editable files)
+JUPYTER_EXTENSIONS = {".v", ".sv", ".hex", ".py", ".ipynb", ".md"}
 
 # ─── Course metadata ───────────────────────────────────────────────
 
@@ -254,8 +271,229 @@ def build_overview():
     print(f"  Created: content/overview.html")
 
 
-def build_manifest():
+def build_lab_code_assets():
+    """Scan labs/, create per-exercise zips, and return a manifest of code assets per day.
+
+    Returns dict:  { day_num: { "exercises": [...], "all_zip": "path" } }
+    Each exercise entry:
+        { "name": "ex1_led_on", "label": "Ex 1 — LED On",
+          "files": [ { "name": "ex1_led_on.v", "path": "labs/week1_day01/starter/ex1_led_on.v",
+                        "jupyter_url": "...", "github_url": "..." } ],
+          "zip": "downloads/day01/ex1_led_on_starter.zip",
+          "has_solution": true,
+          "solution_zip": "downloads/day01/ex1_led_on_solution.zip" }
+    """
+    dl_dir = SITE / "downloads"
+    dl_dir.mkdir(parents=True, exist_ok=True)
+
+    day_assets = {}  # day_num -> { exercises: [...], all_zip: ... }
+
+    for week in WEEKS:
+        for day in week["days"]:
+            d = day["num"]
+            dz = f"{d:02d}"
+            week_dir_name = f"{week['dir_prefix']}_day{dz}"
+            lab_dir = REPO / "labs" / week_dir_name
+
+            if not lab_dir.exists():
+                continue
+
+            day_dl = dl_dir / f"day{dz}"
+            day_dl.mkdir(parents=True, exist_ok=True)
+
+            exercises = []
+            all_files_for_day_zip = []
+
+            # Detect structure: flat (week1) vs exercise-per-dir (week2+)
+            has_exercise_dirs = any(lab_dir.glob("ex*"))
+
+            if not has_exercise_dirs:
+                # Week 1 flat structure: starter/ and solution/ at top level
+                starter_dir = lab_dir / "starter"
+                solution_dir = lab_dir / "solution"
+                if starter_dir.is_dir():
+                    grouped = _group_flat_exercises(starter_dir)
+                    for ex_name, files in grouped.items():
+                        label = _exercise_label(ex_name)
+                        file_entries = []
+                        for f in sorted(files):
+                            rel = f.relative_to(REPO)
+                            file_entries.append(_file_entry(f, rel))
+                            all_files_for_day_zip.append(f)
+
+                        # Create starter zip
+                        zip_name = f"{ex_name}_starter.zip"
+                        zip_path = day_dl / zip_name
+                        _create_zip(zip_path, files, arcname_base=f"{ex_name}/starter")
+
+                        # Check for solution
+                        has_sol = False
+                        sol_zip_rel = None
+                        if solution_dir.is_dir():
+                            sol_files = [solution_dir / f.name for f in files if (solution_dir / f.name).exists()]
+                            if sol_files:
+                                has_sol = True
+                                sol_zip_name = f"{ex_name}_solution.zip"
+                                sol_zip_path = day_dl / sol_zip_name
+                                _create_zip(sol_zip_path, sol_files, arcname_base=f"{ex_name}/solution")
+                                sol_zip_rel = f"downloads/day{dz}/{sol_zip_name}"
+
+                        exercises.append({
+                            "name": ex_name,
+                            "label": label,
+                            "files": file_entries,
+                            "zip": f"downloads/day{dz}/{zip_name}",
+                            "has_solution": has_sol,
+                            "solution_zip": sol_zip_rel,
+                        })
+            else:
+                # Week 2+ structure: ex*/ subdirectories
+                for ex_dir in sorted(lab_dir.glob("ex*")):
+                    if not ex_dir.is_dir():
+                        continue
+                    ex_name = ex_dir.name
+                    label = _exercise_label(ex_name)
+                    starter_dir = ex_dir / "starter"
+                    solution_dir = ex_dir / "solution"
+
+                    src_dir = starter_dir if starter_dir.is_dir() else ex_dir
+                    files = sorted(f for f in src_dir.iterdir() if f.is_file() and f.name != ".DS_Store")
+                    file_entries = []
+                    for f in files:
+                        rel = f.relative_to(REPO)
+                        file_entries.append(_file_entry(f, rel))
+                        all_files_for_day_zip.append(f)
+
+                    # Create starter zip
+                    zip_name = f"{ex_name}_starter.zip"
+                    zip_path = day_dl / zip_name
+                    _create_zip(zip_path, files, arcname_base=f"{ex_name}/starter")
+
+                    # Solution zip
+                    has_sol = solution_dir.is_dir() and any(solution_dir.iterdir())
+                    sol_zip_rel = None
+                    if has_sol:
+                        sol_files = sorted(f for f in solution_dir.iterdir() if f.is_file() and f.name != ".DS_Store")
+                        sol_zip_name = f"{ex_name}_solution.zip"
+                        sol_zip_path = day_dl / sol_zip_name
+                        _create_zip(sol_zip_path, sol_files, arcname_base=f"{ex_name}/solution")
+                        sol_zip_rel = f"downloads/day{dz}/{sol_zip_name}"
+
+                    exercises.append({
+                        "name": ex_name,
+                        "label": label,
+                        "files": file_entries,
+                        "zip": f"downloads/day{dz}/{zip_name}",
+                        "has_solution": has_sol,
+                        "solution_zip": sol_zip_rel,
+                    })
+
+            # Also include shared files (Makefile, pcf) as a "shared" entry
+            shared_files = []
+            for pattern in ["Makefile", "*.pcf"]:
+                for f in lab_dir.glob(pattern):
+                    if f.is_file():
+                        shared_files.append(f)
+                        all_files_for_day_zip.append(f)
+            if shared_files:
+                sf_entries = []
+                for f in sorted(shared_files):
+                    rel = f.relative_to(REPO)
+                    sf_entries.append(_file_entry(f, rel))
+                exercises.insert(0, {
+                    "name": "_shared",
+                    "label": "Shared Files (Makefile, PCF)",
+                    "files": sf_entries,
+                    "zip": None,
+                    "has_solution": False,
+                    "solution_zip": None,
+                })
+
+            # Create day-level "all starter code" zip
+            all_zip_name = f"day{dz}_all_starter.zip"
+            all_zip_path = day_dl / all_zip_name
+            with zipfile.ZipFile(all_zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                for f in all_files_for_day_zip:
+                    try:
+                        arcname = f"day{dz}_lab/{f.relative_to(lab_dir)}"
+                    except ValueError:
+                        arcname = f"day{dz}_lab/{f.name}"
+                    zf.write(f, arcname)
+            all_zip_rel = f"downloads/day{dz}/{all_zip_name}"
+
+            day_assets[d] = {
+                "exercises": exercises,
+                "all_zip": all_zip_rel,
+            }
+
+    total_zips = sum(1 for _ in dl_dir.rglob("*.zip"))
+    print(f"  Created: {total_zips} zip files → downloads/")
+    return day_assets
+
+
+def _group_flat_exercises(starter_dir):
+    """Group files in a flat starter/ dir by exercise prefix (ex1_, ex2_, etc.)."""
+    groups = {}
+    for f in sorted(starter_dir.iterdir()):
+        if not f.is_file() or f.name == ".DS_Store":
+            continue
+        m = re.match(r"(ex\d+)_", f.name)
+        if m:
+            key = m.group(1)
+            # Use the full stem minus the leading exN_ for the group name
+            group_name = f.stem
+        else:
+            key = "_misc"
+            group_name = f.stem
+        groups.setdefault(key, []).append(f)
+    # Flatten into {ex_name: [files]} by picking the exercise prefix as name
+    result = {}
+    for key, files in groups.items():
+        # Use the first file's stem as the exercise name
+        if len(files) == 1:
+            result[files[0].stem] = files
+        else:
+            # Group all files under the common prefix
+            result[key + "_files"] = files
+    return result
+
+
+def _exercise_label(ex_name):
+    """Convert ex1_alu_testbench → 'Ex 1 — ALU Testbench'."""
+    m = re.match(r"ex(\d+)_(.*)", ex_name)
+    if m:
+        num = m.group(1)
+        desc = m.group(2).replace("_", " ").title()
+        return f"Ex {num} — {desc}"
+    return ex_name.replace("_", " ").title()
+
+
+def _file_entry(filepath, rel_path):
+    """Create a file entry dict with URLs for JupyterHub and GitHub."""
+    suffix = filepath.suffix.lower()
+    entry = {
+        "name": filepath.name,
+        "path": str(rel_path),
+        "github_url": f"{GITHUB_RAW_BASE}/{rel_path}",
+        "ext": suffix,
+    }
+    if suffix in JUPYTER_EXTENSIONS or filepath.name == "Makefile":
+        entry["jupyter_url"] = f"{JUPYTER_HUB_BASE}/{rel_path}"
+    return entry
+
+
+def _create_zip(zip_path, files, arcname_base=""):
+    """Create a zip archive from a list of files."""
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in files:
+            arcname = f"{arcname_base}/{f.name}" if arcname_base else f.name
+            zf.write(f, arcname)
+
+
+def build_manifest(code_assets=None):
     """Generate manifest.json with full navigation structure."""
+    if code_assets is None:
+        code_assets = {}
     # Load YouTube video IDs if available
     yt_path = REPO / "youtube_ids.json"
     youtube_ids = {}
@@ -272,6 +510,8 @@ def build_manifest():
             "institution": "UCF · College of Engineering & Computer Science",
             "version": "v2.1"
         },
+        "jupyter_base": JUPYTER_HUB_BASE,
+        "github_base": GITHUB_RAW_BASE,
         "docs": [
             {"id": "overview", "label": "Course Overview", "content": "content/overview.html"},
             {"id": "syllabus", "label": "Syllabus", "content": "content/docs/course_syllabus.html"},
@@ -310,6 +550,11 @@ def build_manifest():
             quiz_path = SITE / f"content/quizzes/day{dz}_quiz.html"
             if quiz_path.exists():
                 day_data["content"]["quiz"] = f"content/quizzes/day{dz}_quiz.html"
+
+            # Include code assets if available
+            if d in code_assets:
+                day_data["code_assets"] = code_assets[d]
+
             week_data["days"].append(day_data)
         manifest["weeks"].append(week_data)
 
@@ -706,6 +951,35 @@ button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
 .slide-toolbar .slide-title{flex:1;font-size:13px;font-weight:600;color:var(--black)}
 .slide-toolbar a{font-size:12px;color:var(--link);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid #1565C030}
 .slide-toolbar a:hover{background:#1565C010}
+
+/* ── Code & Notebook panel ── */
+.code-panel{flex:1;overflow-y:auto;background:#fdfcfa;padding:20px 24px}
+.code-panel .code-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.code-panel .code-header h3{font-size:16px;font-weight:700;color:var(--black);margin:0}
+.code-panel .dl-all{font-size:12px;color:#fff;background:var(--link);padding:6px 14px;border-radius:6px;text-decoration:none;font-weight:600}
+.code-panel .dl-all:hover{opacity:.9}
+.code-panel .jupyter-banner{background:#F37626;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:13px;display:flex;align-items:center;gap:10px}
+.code-panel .jupyter-banner .jup-icon{font-size:20px}
+.code-panel .jupyter-banner a{color:#fff;font-weight:700;text-decoration:underline}
+.ex-section{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.ex-section .ex-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-100);border-bottom:1px solid var(--border)}
+.ex-section .ex-header .ex-title{font-size:14px;font-weight:600;color:var(--black)}
+.ex-section .ex-header .ex-actions{display:flex;gap:6px}
+.ex-section .ex-header .ex-btn{font-size:11px;padding:4px 10px;border-radius:4px;text-decoration:none;border:1px solid #1565C030;color:var(--link);white-space:nowrap}
+.ex-section .ex-header .ex-btn:hover{background:#1565C010}
+.ex-section .ex-header .ex-btn.zip{background:var(--link);color:#fff;border-color:var(--link)}
+.ex-section .ex-header .ex-btn.zip:hover{opacity:.9}
+.ex-section .ex-header .ex-btn.sol{background:#2E7D32;color:#fff;border-color:#2E7D32}
+.ex-section .file-list{padding:0;margin:0;list-style:none}
+.ex-section .file-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid #f0f0ec;font-size:13px}
+.ex-section .file-item:last-child{border-bottom:none}
+.ex-section .file-item .file-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+.ex-section .file-item .file-name{flex:1;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--black)}
+.ex-section .file-item .file-links{display:flex;gap:6px}
+.ex-section .file-item .file-link{font-size:11px;color:var(--link);text-decoration:none;padding:2px 8px;border-radius:3px;border:1px solid #1565C020}
+.ex-section .file-item .file-link:hover{background:#1565C010}
+.ex-section .file-item .file-link.jup{color:#E65100;border-color:#E6510030}
+.ex-section .file-item .file-link.jup:hover{background:#E6510010}
 </style>
 </head>
 <body>
@@ -807,7 +1081,7 @@ window.addEventListener('message', function(e) {
 });
 
 function clearDayUI() {
-    const existing = document.querySelectorAll('.day-header, .slide-toolbar, .slide-grid-container, .yt-embed-container');
+    const existing = document.querySelectorAll('.day-header, .slide-toolbar, .slide-grid-container, .yt-embed-container, .code-panel');
     existing.forEach(el => el.remove());
 }
 
@@ -843,6 +1117,7 @@ function showDay(dayNum) {
             <div class="day-tab" data-tab="videos" onclick="switchDayTab('videos')">▶ Videos (${dayData.slides.length})</div>
             ${dayData.content.quiz ? '<div class="day-tab" data-tab="quiz" onclick="switchDayTab(\'quiz\')">📝 Quiz</div>' : ''}
             <div class="day-tab" data-tab="lab" onclick="switchDayTab('lab')">🔬 Lab</div>
+            ${dayData.code_assets ? '<div class="day-tab" data-tab="code" onclick="switchDayTab(\'code\')">💾 Code & Notebooks</div>' : ''}
         </div>
     `;
 
@@ -872,12 +1147,18 @@ function switchDayTab(tab) {
 }
 
 function loadDayContent(dayData, tab) {
-    // Remove existing slide toolbar/grid/youtube embeds
-    document.querySelectorAll('.slide-toolbar, .slide-grid-container, .yt-embed-container').forEach(el => el.remove());
+    // Remove existing slide toolbar/grid/youtube embeds/code panels
+    document.querySelectorAll('.slide-toolbar, .slide-grid-container, .yt-embed-container, .code-panel').forEach(el => el.remove());
 
     const frame = document.getElementById('contentFrame');
 
-    if (tab === 'videos') {
+    if (tab === 'code' && dayData.code_assets) {
+        frame.style.display = 'none';
+        const container = document.createElement('div');
+        container.className = 'code-panel';
+        container.innerHTML = renderCodePanel(dayData);
+        frame.parentNode.appendChild(container);
+    } else if (tab === 'videos') {
         // Show slide grid instead of iframe
         frame.style.display = 'none';
 
@@ -966,6 +1247,67 @@ function loadFrame(url) {
         frame.src = 'about:blank';
     }
 }
+
+// ── Code & Notebooks panel ──
+
+const FILE_ICONS = {'.v':'📄','.sv':'📄','.hex':'🔢','.pcf':'📌','.md':'📝','.py':'🐍','.ipynb':'📓'};
+const MAKEFILE_ICON = '⚙️';
+
+function renderCodePanel(dayData) {
+    const ca = dayData.code_assets;
+    if (!ca) return '<div style="padding:40px;text-align:center;color:#999">No code assets for this session.</div>';
+
+    const jupBase = manifest.jupyter_base;
+    let html = '';
+
+    // Header with download-all button
+    html += '<div class="code-header">';
+    html += `<h3>Lab Code & Notebooks — Day ${dayData.num}</h3>`;
+    if (ca.all_zip) {
+        html += `<a class="dl-all" href="${ca.all_zip}" download>⬇ Download All Starter Code (.zip)</a>`;
+    }
+    html += '</div>';
+
+    // JupyterHub banner
+    html += `<div class="jupyter-banner">
+        <span class="jup-icon">🪐</span>
+        <span>Open files directly in <a href="${jupBase}" target="_blank">JupyterHub</a> — click the <strong>Open in Hub</strong> links below.
+        Files assume the repo is cloned as <code style="background:rgba(255,255,255,.2);padding:1px 5px;border-radius:3px;font-size:12px">~/hdl-for-dsd/</code></span>
+    </div>`;
+
+    // Exercise sections
+    ca.exercises.forEach(ex => {
+        html += '<div class="ex-section">';
+        html += '<div class="ex-header">';
+        html += `<span class="ex-title">${ex.label}</span>`;
+        html += '<span class="ex-actions">';
+        if (ex.zip) {
+            html += `<a class="ex-btn zip" href="${ex.zip}" download>⬇ Starter .zip</a>`;
+        }
+        if (ex.has_solution && ex.solution_zip) {
+            html += `<a class="ex-btn sol" href="${ex.solution_zip}" download>✓ Solution .zip</a>`;
+        }
+        html += '</span></div>';
+
+        // File listing
+        html += '<ul class="file-list">';
+        ex.files.forEach(f => {
+            const icon = f.name === 'Makefile' ? MAKEFILE_ICON : (FILE_ICONS[f.ext] || '📄');
+            html += '<li class="file-item">';
+            html += `<span class="file-icon">${icon}</span>`;
+            html += `<span class="file-name">${f.name}</span>`;
+            html += '<span class="file-links">';
+            html += `<a class="file-link" href="${f.github_url}" target="_blank">GitHub ↗</a>`;
+            if (f.jupyter_url) {
+                html += `<a class="file-link jup" href="${f.jupyter_url}" target="_blank">Open in Hub ↗</a>`;
+            }
+            html += '</span></li>';
+        });
+        html += '</ul></div>';
+    });
+
+    return html;
+}
 </script>
 </body>
 </html>"""
@@ -1003,10 +1345,13 @@ def main():
     print("Phase 6: Generate overview")
     build_overview()
 
-    print("Phase 7: Generate manifest")
-    manifest = build_manifest()
+    print("Phase 7: Build lab code assets (zips + file manifest)")
+    code_assets = build_lab_code_assets()
 
-    print("Phase 8: Generate index.html")
+    print("Phase 8: Generate manifest")
+    manifest = build_manifest(code_assets)
+
+    print("Phase 9: Generate index.html")
     build_index(manifest)
 
     # Summary
