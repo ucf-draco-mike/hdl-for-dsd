@@ -11,6 +11,23 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        # ---------- Python environment (shared) ----------
+        pythonEnv = pkgs.python3.withPackages (ps: with ps; [
+          jupyterlab
+          notebook
+        ]);
+
+        # ---------- Python environment for site building ----------
+        pythonFull = pkgs.python3.withPackages (ps: with ps; [
+          jupyterlab
+          notebook
+          # MkDocs + extensions for building the course site
+          mkdocs
+          mkdocs-material
+          pymdown-extensions
+          markdown
+        ]);
+
         # ---------- common packages (all platforms) ----------
         commonPkgs = with pkgs; [
           # Synthesis & PnR
@@ -36,24 +53,45 @@
           usbutils           # lsusb for FTDI detection
         ];
 
-      in {
-        devShells.default = pkgs.mkShell {
-          buildInputs = commonPkgs ++ linuxPkgs;
+        # ---------- shared shell hook ----------
+        baseShellHook = ''
+          echo ""
+          echo "╔══════════════════════════════════════════════════╗"
+          echo "║  HDL for Digital System Design — Environment    ║"
+          echo "╚══════════════════════════════════════════════════╝"
+          echo ""
+          echo "  yosys      $(yosys --version 2>&1 | head -1)"
+          echo "  nextpnr    $(nextpnr-ice40 --version 2>&1 | head -1)"
+          echo "  icestorm   $(icepack 2>&1 | head -1 || echo 'installed')"
+          echo "  iverilog   $(iverilog -V 2>&1 | head -1)"
+          echo "  gtkwave    $(gtkwave --version 2>&1 | head -1 || echo 'installed')"
+          echo "  jupyter    $(jupyter --version 2>&1 | head -1)"
+          echo ""
+          echo "  Run 'make sim' in any lab directory to simulate."
+          echo "  Run 'make prog' to synthesize and program the Go Board."
+          echo "  Run 'jupyter lab' to open JupyterLab in your browser."
+          echo ""
+        '';
 
-          shellHook = ''
-            echo ""
-            echo "╔══════════════════════════════════════════════════╗"
-            echo "║  HDL for Digital System Design — Environment    ║"
-            echo "╚══════════════════════════════════════════════════╝"
-            echo ""
-            echo "  yosys      $(yosys --version 2>&1 | head -1)"
-            echo "  nextpnr    $(nextpnr-ice40 --version 2>&1 | head -1)"
-            echo "  icestorm   $(icepack 2>&1 | head -1 || echo 'installed')"
-            echo "  iverilog   $(iverilog -V 2>&1 | head -1)"
-            echo "  gtkwave    $(gtkwave --version 2>&1 | head -1 || echo 'installed')"
-            echo ""
-            echo "  Run 'make sim' in any lab directory to simulate."
-            echo "  Run 'make prog' to synthesize and program the Go Board."
+      in {
+        # Default shell: HDL toolchain + JupyterLab
+        # Usage: nix develop
+        devShells.default = pkgs.mkShell {
+          buildInputs = commonPkgs ++ linuxPkgs ++ [ pythonEnv ];
+          shellHook = baseShellHook;
+        };
+
+        # Full shell: everything above + MkDocs for building the course site
+        # Usage: nix develop .#full
+        devShells.full = pkgs.mkShell {
+          buildInputs = commonPkgs ++ linuxPkgs ++ [ pythonFull ];
+          shellHook = baseShellHook + ''
+            echo "  ┌─ Site building tools also available ─┐"
+            echo "  │  mkdocs     $(mkdocs --version 2>&1 | head -1)"
+            echo "  │                                      │"
+            echo "  │  Build:  python3 scripts/prep_mkdocs.py --build"
+            echo "  │  Serve:  python3 scripts/prep_mkdocs.py --serve"
+            echo "  └──────────────────────────────────────┘"
             echo ""
           '';
         };

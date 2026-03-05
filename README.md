@@ -95,7 +95,7 @@ The first run downloads the toolchain (~5–15 min). Subsequent runs are instant
 ### 4. Verify
 
 ```bash
-yosys --version && nextpnr-ice40 --version && iverilog -V
+yosys --version && nextpnr-ice40 --version && iverilog -V && jupyter --version
 ```
 
 ### 5. First Build (Day 1)
@@ -106,6 +106,48 @@ make prog    # synthesize + program the Go Board
 ```
 
 > **Full setup details** — including USB verification, GTKWave testing, serial terminal config, and troubleshooting — are in [`docs/course_setup_guide.md`](docs/course_setup_guide.md).
+
+## Course Site & JupyterHub
+
+The course includes a static site (built with MkDocs Material) with lecture videos, daily plans, lab guides, and **Code & Notebooks** pages for each day. The Code pages provide per-exercise zip downloads, GitHub source links, and direct "Open in Hub" links for JupyterHub.
+
+### JupyterLab (included in Nix)
+
+JupyterLab is part of the default dev shell. After `nix develop`, just run:
+
+```bash
+jupyter lab
+```
+
+This opens the full repo in a browser-based editor where you can edit Verilog, run terminal commands, and view waveform data.
+
+### JupyterHub Integration
+
+If your institution provides a JupyterHub, clone this repo into your hub home directory so the "Open in Hub" links resolve correctly:
+
+```bash
+# In a JupyterHub terminal:
+cd ~ && git clone https://github.com/ucf-draco-mike/hdl-for-dsd.git
+```
+
+### Building the Course Site
+
+The site build tools (MkDocs, Material theme) live in a separate `full` shell to keep the default shell lean:
+
+```bash
+nix develop .#full
+python3 scripts/prep_mkdocs.py --serve   # live preview at http://127.0.0.1:8000
+python3 scripts/prep_mkdocs.py --build   # static output → _site/
+```
+
+To customize the JupyterHub base URL for the "Open in Hub" links:
+
+```bash
+export HDL_JUPYTER_BASE="https://jupyter.example.edu/hub/user-redirect/lab/tree/hdl-for-dsd"
+python3 scripts/prep_mkdocs.py --build
+```
+
+See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) for full details on JupyterHub setup and troubleshooting.
 
 ## Toolchain Quick Reference
 

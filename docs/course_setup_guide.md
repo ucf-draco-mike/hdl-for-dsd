@@ -254,6 +254,9 @@ gtkwave --version && echo "✅ GTKWave — OK"
 # ── Test 5: Bitstream tools ──
 icepack test.asc test.bin && echo "✅ icepack — OK"
 
+# ── Test 6: JupyterLab ──
+jupyter --version > /dev/null 2>&1 && echo "✅ JupyterLab — OK"
+
 # ── Cleanup ──
 cd ~ && rm -rf /tmp/hdl-verify
 
@@ -328,6 +331,90 @@ You'll submit your AI prompts and corrected outputs as part of lab deliverables.
 
 ---
 
+## JupyterHub & Course Site
+
+The course website includes a **Code & Notebooks** page for each day with direct links to starter code, solution zips, and JupyterHub. This section explains how the pieces fit together.
+
+### Browsing the Course Site
+
+The static course site is built with MkDocs and deployed automatically. You can also build and preview it locally:
+
+```bash
+# Install MkDocs dependencies (once)
+pip install -r requirements.txt
+
+# Generate the source tree (creates docs_src/, downloads/ with zips)
+python3 scripts/prep_mkdocs.py
+
+# Preview locally with live reload
+python3 scripts/prep_mkdocs.py --serve
+# Open: http://127.0.0.1:8000
+```
+
+Each day's page includes a **Code & Notebooks** card that links to:
+
+- **Download All Starter Code (.zip)** — a single zip with every exercise's starter files for that day
+- **Per-exercise starter and solution zips**
+- **GitHub links** — view each file directly on GitHub
+- **Open in Hub links** — open each file directly in JupyterHub for editing
+
+### Using JupyterHub
+
+The "Open in Hub" links assume the course repository has been cloned into your JupyterHub home directory at `~/hdl-for-dsd/`. If your institution provides a JupyterHub instance:
+
+```bash
+# Inside your JupyterHub terminal:
+cd ~
+git clone https://github.com/ucf-draco-mike/hdl-for-dsd.git
+```
+
+Once cloned, all the "Open in Hub" links on the course site will resolve to the correct files. You can edit Verilog, SystemVerilog, Makefiles, and test vectors directly in JupyterLab's text editor, and use the built-in terminal to run simulations.
+
+> **Note:** JupyterHub does **not** replace the Nix development environment for synthesis and programming. You still need `nix develop` for Yosys, nextpnr, and iceprog. JupyterHub is useful for browsing, editing, and light simulation work — especially if your institution provides a shared hub with Icarus Verilog pre-installed.
+
+### Configuring the JupyterHub Base URL
+
+By default, the "Open in Hub" links point to `/hub/user-redirect/lab/tree/hdl-for-dsd/...`, which works for standard JupyterHub deployments. If your institution uses a different URL scheme, set the environment variable before building the site:
+
+```bash
+# Example: UCF CECS JupyterHub
+export HDL_JUPYTER_BASE="https://jupyter.cecs.ucf.edu/hub/user-redirect/lab/tree/hdl-for-dsd"
+
+# Then rebuild
+python3 scripts/prep_mkdocs.py --build
+```
+
+### Running JupyterLab Locally
+
+JupyterLab is included in the Nix development environment — no separate install needed. After entering the dev shell, just launch it:
+
+```bash
+cd hdl-for-dsd
+nix develop
+jupyter lab
+```
+
+This opens JupyterLab in your browser with the full repository tree. You can edit Verilog files in the built-in editor and use the terminal panel to run simulations (`make sim`) or program the board (`make prog`).
+
+> **Tip:** The "Open in Hub" links on the course site point to an institutional JupyterHub and won't resolve to your local instance, but you can navigate the file tree directly in JupyterLab's sidebar.
+
+### Building the Course Site Locally
+
+To build or preview the full course site (with download zips and all pages), use the `full` dev shell which adds MkDocs and its dependencies:
+
+```bash
+nix develop .#full
+
+# Preview with live reload
+python3 scripts/prep_mkdocs.py --serve
+
+# Or build a static copy
+python3 scripts/prep_mkdocs.py --build
+# Output: _site/
+```
+
+---
+
 ## Quick Reference
 
 ```bash
@@ -344,6 +431,9 @@ yosys -p "synth_ice40 -top top_module -json top.json" top.v sub1.v sub2.v
 nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
 icepack top.asc top.bin
 iceprog top.bin
+
+# ── JupyterLab (edit & browse in browser) ──
+jupyter lab
 
 # ── Resource analysis ──
 yosys -p "read_verilog module.v; synth_ice40 -top module; stat"
@@ -372,6 +462,8 @@ iverilog -g2012 -o sim.vvp tb_module.sv module.sv
 | Serial terminal shows garbled text | Verify baud rate is 115200 and settings are 8N1, no flow control |
 | `screen` won't release serial port | Detach with `Ctrl-A` then `K`, confirm with `Y` |
 | Nix store using too much disk space | Run `nix store gc` to garbage-collect unused packages |
+| "Open in Hub" links go to 404 | Clone the repo into `~/hdl-for-dsd/` on your JupyterHub instance, or check that `HDL_JUPYTER_BASE` matches your hub's URL |
+| JupyterHub can't find Icarus Verilog | Iverilog isn't in the default JupyterHub environment. Use the Nix shell (`nix develop`) in a JupyterHub terminal, or ask your admin to install `iverilog` system-wide |
 
 ---
 

@@ -14,11 +14,13 @@ cache:
 pages:
   stage: deploy
   script:
-    - pip install mkdocs mkdocs-material pymdown-extensions
+    - pip install -r requirements.txt
     - python3 scripts/prep_mkdocs.py
     - mkdocs build --site-dir public
     # Copy slides into deployed site so "View Slides" links work
     - cp -r lectures public/lectures
+    # Copy lab code zips so download links work
+    - cp -r docs_src/downloads public/downloads
   artifacts:
     paths:
       - public
