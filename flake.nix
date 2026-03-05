@@ -15,12 +15,14 @@
         pythonEnv = pkgs.python3.withPackages (ps: with ps; [
           jupyterlab
           notebook
+          jupytext             # markdown ↔ notebook conversion
         ]);
 
         # ---------- Python environment for site building ----------
         pythonFull = pkgs.python3.withPackages (ps: with ps; [
           jupyterlab
           notebook
+          jupytext             # markdown ↔ notebook conversion
           # MkDocs + extensions for building the course site
           mkdocs
           mkdocs-material
@@ -57,7 +59,7 @@
         baseShellHook = ''
           echo ""
           echo "╔══════════════════════════════════════════════════╗"
-          echo "║  HDL for Digital System Design — Environment    ║"
+          echo "║  HDL for Digital System Design — Environment     ║"
           echo "╚══════════════════════════════════════════════════╝"
           echo ""
           echo "  yosys      $(yosys --version 2>&1 | head -1)"
@@ -86,12 +88,12 @@
         devShells.full = pkgs.mkShell {
           buildInputs = commonPkgs ++ linuxPkgs ++ [ pythonFull ];
           shellHook = baseShellHook + ''
-            echo "  ┌─ Site building tools also available ─┐"
-            echo "  │  mkdocs     $(mkdocs --version 2>&1 | head -1)"
-            echo "  │                                      │"
-            echo "  │  Build:  python3 scripts/prep_mkdocs.py --build"
-            echo "  │  Serve:  python3 scripts/prep_mkdocs.py --serve"
-            echo "  └──────────────────────────────────────┘"
+            echo "  ┌────────── Site building tools also available ────┐"
+            echo "  │  mkdocs     $(mkdocs --version 2>&1 | head -1)   |"
+            echo "  │                                                  │"
+            echo "  │  Build:  python3 scripts/prep_mkdocs.py --build  |"
+            echo "  │  Serve:  python3 scripts/prep_mkdocs.py --serve  |"
+            echo "  └──────────────────────────────────────────────────┘"
             echo ""
           '';
         };

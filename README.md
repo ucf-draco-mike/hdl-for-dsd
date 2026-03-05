@@ -107,47 +107,37 @@ make prog    # synthesize + program the Go Board
 
 > **Full setup details** — including USB verification, GTKWave testing, serial terminal config, and troubleshooting — are in [`docs/course_setup_guide.md`](docs/course_setup_guide.md).
 
-## Course Site & JupyterHub
+## Course Site & JupyterLab
 
-The course includes a static site (built with MkDocs Material) with lecture videos, daily plans, lab guides, and **Code & Notebooks** pages for each day. The Code pages provide per-exercise zip downloads, GitHub source links, and direct "Open in Hub" links for JupyterHub.
+The course includes a static site (built with MkDocs Material) with lecture videos, daily plans, lab guides, and **Code & Notebooks** pages for each day. The Code pages provide per-exercise zip downloads, GitHub source links, and direct "Open in Jupyter" links for your local JupyterLab.
 
 ### JupyterLab (included in Nix)
 
-JupyterLab is part of the default dev shell. After `nix develop`, just run:
+JupyterLab is part of the default dev shell. After `nix develop`, launch it from the repo root:
 
 ```bash
 jupyter lab
 ```
 
-This opens the full repo in a browser-based editor where you can edit Verilog, run terminal commands, and view waveform data.
-
-### JupyterHub Integration
-
-If your institution provides a JupyterHub, clone this repo into your hub home directory so the "Open in Hub" links resolve correctly:
-
-```bash
-# In a JupyterHub terminal:
-cd ~ && git clone https://github.com/ucf-draco-mike/hdl-for-dsd.git
-```
+This opens the full repo in a browser-based editor where you can edit Verilog, open `.ipynb` lab notebooks, and use the terminal to run simulations. The "Open in Jupyter" links on the course site point to `localhost:8888` by default and will open files directly in your running instance.
 
 ### Building the Course Site
 
-The site build tools (MkDocs, Material theme) live in a separate `full` shell to keep the default shell lean:
+The site build tools (MkDocs, Material theme, jupytext) live in a separate `full` shell to keep the default shell lean:
 
 ```bash
 nix develop .#full
-python3 scripts/prep_mkdocs.py --serve   # live preview at http://127.0.0.1:8000
-python3 scripts/prep_mkdocs.py --build   # static output → _site/
+
+# Full build: notebooks + MkDocs site + downloads
+./scripts/build_all.sh
+
+# Or individual steps:
+./scripts/build_all.sh --notebooks  # only regenerate .ipynb files
+./scripts/build_all.sh --quick      # skip standalone site (build_site.py)
+./scripts/build_all.sh --serve      # build then live-preview at localhost:8000
 ```
 
-To customize the JupyterHub base URL for the "Open in Hub" links:
-
-```bash
-export HDL_JUPYTER_BASE="https://jupyter.example.edu/hub/user-redirect/lab/tree/hdl-for-dsd"
-python3 scripts/prep_mkdocs.py --build
-```
-
-See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) for full details on JupyterHub setup and troubleshooting.
+See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) for full details on JupyterLab setup and troubleshooting.
 
 ## Toolchain Quick Reference
 

@@ -15,10 +15,14 @@ REPO = Path(__file__).resolve().parent.parent
 DOCS = REPO / "docs_src"
 YOUTUBE_FILE = REPO / "youtube_ids.json"
 
-# ─── JupyterHub configuration ────────────────────────────────────
-JUPYTER_HUB_BASE = os.environ.get(
+# ─── JupyterLab configuration ─────────────────────────────────────
+# Base URL for JupyterLab file links.
+# Default assumes `jupyter lab` is launched from the repo root,
+# so file paths are relative to the working directory.
+# Override with HDL_JUPYTER_BASE for institutional JupyterHub deployments.
+JUPYTER_LAB_BASE = os.environ.get(
     "HDL_JUPYTER_BASE",
-    "/hub/user-redirect/lab/tree/hdl-for-dsd"
+    "http://localhost:8888/lab/tree"
 )
 GITHUB_RAW_BASE = "https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main"
 JUPYTER_EXTENSIONS = {".v", ".sv", ".hex", ".py", ".ipynb", ".md"}
@@ -97,7 +101,7 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
     if quiz_exists:
         lines.append(f'<div class="nav-card" markdown>\n:material-help-circle:{{ .card-icon }}\n\n**Pre-Class Quiz**\n\nSelf-check questions\n\n[:octicons-arrow-right-16: Take quiz](quiz.md)\n</div>\n')
     if has_code:
-        lines.append(f'<div class="nav-card" markdown>\n:material-download-circle:{{ .card-icon }}\n\n**Code & Notebooks**\n\nStarter code, zips & JupyterHub links\n\n[:octicons-arrow-right-16: View code](code.md)\n</div>\n')
+        lines.append(f'<div class="nav-card" markdown>\n:material-download-circle:{{ .card-icon }}\n\n**Code & Notebooks**\n\nStarter code, zips & Jupyter links\n\n[:octicons-arrow-right-16: View code](code.md)\n</div>\n')
     lines.append('</div>\n')
 
     # Videos section
@@ -259,7 +263,7 @@ def build_lab_zips(code_assets):
 
 
 def generate_code_page(day_num, code_assets):
-    """Generate a code.md page for a given day with download links and JupyterHub links."""
+    """Generate a code.md page for a given day with download links and JupyterLab links."""
     if day_num not in code_assets:
         return None
 
@@ -274,11 +278,27 @@ def generate_code_page(day_num, code_assets):
         lines.append(f'[:material-folder-download: Download All Starter Code (.zip)]({assets["all_zip"]})'
                      f'{{ .md-button .md-button--primary }}\n')
 
-    # JupyterHub banner
-    lines.append(f'!!! tip "Open directly in JupyterHub"\n'
-                 f'    Click the **:material-notebook: Open in Hub** links below to edit files '
-                 f'directly in [JupyterHub]({JUPYTER_HUB_BASE}).\n'
-                 f'    Assumes the repo is cloned as `~/hdl-for-dsd/`.\n')
+    # JupyterLab banner
+    lines.append(f'!!! tip "Open files in JupyterLab"\n'
+                 f'    Click the **:material-notebook: Open in Jupyter** links below to open files '
+                 f'directly in your local JupyterLab instance.\n'
+                 f'    Start JupyterLab from the repo root: `cd hdl-for-dsd && jupyter lab`\n')
+
+    # Lab notebook (.ipynb generated from README by jupytext)
+    lab_dir = assets["lab_dir"]
+    nb_name = f"{lab_dir.name}_lab.ipynb"
+    nb_path = lab_dir / nb_name
+    if nb_path.exists():
+        nb_rel = nb_path.relative_to(REPO)
+        nb_gh = f"{GITHUB_RAW_BASE}/{nb_rel}"
+        nb_jup = f"{JUPYTER_LAB_BASE}/{nb_rel}"
+        lines.append("## :material-notebook: Lab Notebook\n")
+        lines.append(f"The full lab guide is also available as a Jupyter notebook "
+                     f"(auto-generated from the lab markdown via `jupytext`).\n")
+        lines.append(f'[:material-notebook: Open `{nb_name}` in Hub]({nb_jup})'
+                     f'{{ .md-button .md-button--primary target=_blank }} '
+                     f'[:material-github: View on GitHub]({nb_gh})'
+                     f'{{ .md-button target=_blank }}\n')
 
     # Shared files
     if assets["shared_files"]:
@@ -291,8 +311,8 @@ def generate_code_page(day_num, code_assets):
             gh = f"{GITHUB_RAW_BASE}/{rel}"
             links = f"[:material-github: GitHub]({gh}){{ target=_blank }}"
             if f.suffix.lower() in JUPYTER_EXTENSIONS or f.name == "Makefile":
-                jup = f"{JUPYTER_HUB_BASE}/{rel}"
-                links += f" · [:material-notebook: Open in Hub]({jup}){{ target=_blank }}"
+                jup = f"{JUPYTER_LAB_BASE}/{rel}"
+                links += f" · [:material-notebook: Open in Jupyter]({jup}){{ target=_blank }}"
             icon = _file_icon_md(f)
             lines.append(f"| {icon} `{f.name}` | {links} |")
         lines.append("")
@@ -315,8 +335,8 @@ def generate_code_page(day_num, code_assets):
             gh = f"{GITHUB_RAW_BASE}/{rel}"
             links = f"[:material-github: GitHub]({gh}){{ target=_blank }}"
             if f.suffix.lower() in JUPYTER_EXTENSIONS or f.name == "Makefile":
-                jup = f"{JUPYTER_HUB_BASE}/{rel}"
-                links += f" · [:material-notebook: Open in Hub]({jup}){{ target=_blank }}"
+                jup = f"{JUPYTER_LAB_BASE}/{rel}"
+                links += f" · [:material-notebook: Open in Jupyter]({jup}){{ target=_blank }}"
             icon = _file_icon_md(f)
             lines.append(f"| {icon} `{f.name}` | {links} |")
         lines.append("")

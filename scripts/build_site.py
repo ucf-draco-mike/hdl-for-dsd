@@ -27,20 +27,20 @@ REPO = Path(__file__).resolve().parent.parent
 SITE = REPO / "site"
 CONTENT = SITE / "content"
 
-# ─── JupyterHub configuration ────────────────────────────────────
-# Base URL for JupyterHub — set to your institution's hub.
-# Notebook links assume the repo is cloned into the user's home dir
-# as  ~/hdl-for-dsd/  (i.e., the default git clone path).
-JUPYTER_HUB_BASE = os.environ.get(
+# ─── JupyterLab configuration ─────────────────────────────────────
+# Base URL for local JupyterLab file links.
+# Default assumes `jupyter lab` is launched from the repo root.
+# Override with HDL_JUPYTER_BASE for institutional JupyterHub deployments.
+JUPYTER_LAB_BASE = os.environ.get(
     "HDL_JUPYTER_BASE",
-    "/hub/user-redirect/lab/tree/hdl-for-dsd"
+    "http://localhost:8888/lab/tree"
 )
 # GitHub raw base for direct file viewing (fallback when no hub)
 GITHUB_RAW_BASE = "https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main"
 
 # File extensions to include in code downloads
 CODE_EXTENSIONS = {".v", ".sv", ".hex", ".pcf", ".md"}
-# Extensions that get JupyterHub "open" links (text-editable files)
+# Extensions that get JupyterLab "open" links (text-editable files)
 JUPYTER_EXTENSIONS = {".v", ".sv", ".hex", ".py", ".ipynb", ".md"}
 
 # ─── Course metadata ───────────────────────────────────────────────
@@ -469,7 +469,7 @@ def _exercise_label(ex_name):
 
 
 def _file_entry(filepath, rel_path):
-    """Create a file entry dict with URLs for JupyterHub and GitHub."""
+    """Create a file entry dict with URLs for JupyterLab and GitHub."""
     suffix = filepath.suffix.lower()
     entry = {
         "name": filepath.name,
@@ -478,7 +478,7 @@ def _file_entry(filepath, rel_path):
         "ext": suffix,
     }
     if suffix in JUPYTER_EXTENSIONS or filepath.name == "Makefile":
-        entry["jupyter_url"] = f"{JUPYTER_HUB_BASE}/{rel_path}"
+        entry["jupyter_url"] = f"{JUPYTER_LAB_BASE}/{rel_path}"
     return entry
 
 
@@ -510,7 +510,7 @@ def build_manifest(code_assets=None):
             "institution": "UCF · College of Engineering & Computer Science",
             "version": "v2.1"
         },
-        "jupyter_base": JUPYTER_HUB_BASE,
+        "jupyter_base": JUPYTER_LAB_BASE,
         "github_base": GITHUB_RAW_BASE,
         "docs": [
             {"id": "overview", "label": "Course Overview", "content": "content/overview.html"},
@@ -1268,11 +1268,11 @@ function renderCodePanel(dayData) {
     }
     html += '</div>';
 
-    // JupyterHub banner
+    // JupyterLab banner
     html += `<div class="jupyter-banner">
         <span class="jup-icon">🪐</span>
-        <span>Open files directly in <a href="${jupBase}" target="_blank">JupyterHub</a> — click the <strong>Open in Hub</strong> links below.
-        Files assume the repo is cloned as <code style="background:rgba(255,255,255,.2);padding:1px 5px;border-radius:3px;font-size:12px">~/hdl-for-dsd/</code></span>
+        <span>Open files directly in <a href="${jupBase}" target="_blank">JupyterLab</a> — click the <strong>Open in Jupyter</strong> links below.
+        Start JupyterLab from the repo root: <code style="background:rgba(255,255,255,.2);padding:1px 5px;border-radius:3px;font-size:12px">jupyter lab</code></span>
     </div>`;
 
     // Exercise sections
@@ -1299,7 +1299,7 @@ function renderCodePanel(dayData) {
             html += '<span class="file-links">';
             html += `<a class="file-link" href="${f.github_url}" target="_blank">GitHub ↗</a>`;
             if (f.jupyter_url) {
-                html += `<a class="file-link jup" href="${f.jupyter_url}" target="_blank">Open in Hub ↗</a>`;
+                html += `<a class="file-link jup" href="${f.jupyter_url}" target="_blank">Open in Jupyter ↗</a>`;
             }
             html += '</span></li>';
         });
