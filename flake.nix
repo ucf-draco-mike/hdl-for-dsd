@@ -50,6 +50,7 @@
           # Build / version control
           gnumake
           git
+          coreutils          # timeout, etc. (explicit for macOS compat)
 
           # Serial terminal (UART — Week 3+)
           screen
@@ -59,26 +60,49 @@
         # ---------- Linux-only packages ----------
         linuxPkgs = with pkgs; pkgs.lib.optionals pkgs.stdenv.isLinux [
           usbutils           # lsusb for FTDI detection
+          glibcLocales        # provides en_US.UTF-8 and other locales
         ];
 
+        # ---------- locale fix (Linux only) ----------
+        localeHook = if pkgs.stdenv.isLinux then ''
+          export LOCALE_ARCHIVE="${pkgs.glibcLocales}/lib/locale/locale-archive"
+        '' else "";
+
         # ---------- shared shell hook ----------
-        baseShellHook = ''
+        baseShellHook = localeHook + ''
+
+          # Version check with 3-second timeout — prevents hang from
+          # tools that probe X11/Wayland (gtkwave) or spin up servers (jupyter).
+          __ver() {
+            local label="$1"; shift
+            local result
+            result=$(timeout 3 "$@" 2>&1 | head -1) 2>/dev/null
+            if [ $? -eq 124 ]; then
+              printf "  %-10s %s\n" "$label" "installed (version check timed out)"
+            elif [ -n "$result" ]; then
+              printf "  %-10s %s\n" "$label" "$result"
+            else
+              printf "  %-10s %s\n" "$label" "installed"
+            fi
+          }
+
           echo ""
           echo "╔══════════════════════════════════════════════════╗"
           echo "║  HDL for Digital System Design — Environment    ║"
           echo "╚══════════════════════════════════════════════════╝"
           echo ""
-          echo "  yosys      $(yosys --version 2>&1 | head -1)"
-          echo "  nextpnr    $(nextpnr-ice40 --version 2>&1 | head -1)"
-          echo "  icestorm   $(icepack 2>&1 | head -1 || echo 'installed')"
-          echo "  iverilog   $(iverilog -V 2>&1 | head -1)"
-          echo "  gtkwave    $(gtkwave --version 2>&1 | head -1 || echo 'installed')"
-          echo "  jupyter    $(jupyter --version 2>&1 | head -1)"
+          __ver yosys    yosys --version
+          __ver nextpnr  nextpnr-ice40 --version
+          __ver icestorm icepack
+          __ver iverilog iverilog -V
+          __ver gtkwave  gtkwave --version
+          __ver jupyter  jupyter --version
           echo ""
           echo "  Run 'make sim' in any lab directory to simulate."
           echo "  Run 'make prog' to synthesize and program the Go Board."
           echo "  Run 'jupyter lab' to open JupyterLab in your browser."
           echo ""
+          unset -f __ver
         '';
 
       in {
@@ -94,12 +118,12 @@
         devShells.full = pkgs.mkShell {
           buildInputs = commonPkgs ++ linuxPkgs ++ [ pythonFull ];
           shellHook = baseShellHook + ''
-            echo "  ┌─ Site building tools also available ─┐"
-            echo "  │  mkdocs     $(mkdocs --version 2>&1 | head -1)"
-            echo "  │                                      │"
-            echo "  │  Build:  python3 scripts/prep_mkdocs.py --build"
-            echo "  │  Serve:  python3 scripts/prep_mkdocs.py --serve"
-            echo "  └──────────────────────────────────────┘"
+            echo "  ┌─ Site building tools also available ──────┐"
+            printf "  │  %-10s %s\n" "mkdocs" "$(timeout 3 mkdocs --version 2>&1 | head -1)"
+            echo "  │                                           │"
+            echo "  │  Build:  ./scripts/build_all.sh           │"
+            echo "  │  Serve:  ./scripts/build_all.sh --serve   │"
+            echo "  └───────────────────────────────────────────┘"
             echo ""
           '';
         };
