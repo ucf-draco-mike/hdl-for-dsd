@@ -166,11 +166,15 @@ The Day 13 session requires a project design document (block diagram + module li
 
 | Project | Description | Difficulty |
 |---------|-------------|------------|
-| **Reaction Timer** | Measure reaction time to LED stimulus, display on 7-seg, report via UART | ★★ |
-| **Digital Lock** | FSM-based combination lock with button input, 7-seg feedback, lockout timer | ★★ |
-| **Serial Calculator** | Receive expressions via UART, compute result, transmit back | ★★★ |
-| **VGA Pattern Generator** | Generate patterns/animation on VGA display, button-controlled | ★★★ |
-| **Numerical Compute Engine** | Parameterized ALU + sequential multiplier + fixed-point ops + UART I/O | ★★★ |
+| **Reaction Timer** | Measure reaction time, display on 7-seg, report via UART | ★★ |
+| **Digital Lock** | FSM combination lock with button input, 7-seg feedback, lockout | ★★ |
+| **Digital Clock** | Counters, 7-seg multiplexing, UART time-set | ★★ |
+| **Music / Tone Generator** | Counters, frequency dividers, PWM, ROM sequencer | ★★ |
+| **Serial Calculator** | Receive expressions via UART, compute, transmit result | ★★★ |
+| **VGA Pattern Generator** | Generate patterns/animation on VGA, button-controlled | ★★★ |
+| **UART Command Parser** | UART RX/TX, FSM, string matching, LED control | ★★★ |
+| **Numerical Compute Engine** | Parameterized ALU + sequential multiplier + fixed-point + UART I/O | ★★★ |
+| **Simple 4-bit Processor** | ALU + register file + sequencer + ROM program | ★★★ |
 | **Custom Proposal** | Student-designed project, approved by instructor by Day 13 | Varies |
 
 ---

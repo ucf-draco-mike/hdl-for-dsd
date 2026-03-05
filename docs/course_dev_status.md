@@ -68,7 +68,7 @@ Last updated: 2026-03-04
 | Resource | Status |
 |---|---|
 | `shared/pcf/go_board.pcf` | ✅ Complete pin constraint file |
-| `shared/lib/` | ✅ 5 design modules + 5 testbenches |
+| `shared/lib/` | ✅ 8 design modules + 5 testbenches + README |
 | `shared/.gtkwaverc` | ✅ GTKWave display defaults |
 
 ### Projects
@@ -82,4 +82,5 @@ Last updated: 2026-03-04
 | Day 10 content alignment | ✅ Fixed | Lectures & labs realigned to numerical architectures + PPA (2026-03-04) |
 | Day 14 content alignment | ✅ Fixed | Lectures & labs realigned: AI verification + PPA methodology + parity exercise (2026-03-04) |
 | Video recording | 🔶 Medium | 56 segments scripted, not yet recorded |
-| Lab structure normalization | 🔶 Medium | Three different org patterns across weeks |
+| Lab structure normalization | ✅ Fixed | Week 1 prefixes stripped, Week 2 Makefiles added, missing starters created (2026-03-04) |
+| Project options harmonized | ✅ Fixed | Merged syllabus + projects/README.md into unified list with PPA requirement (2026-03-04) |

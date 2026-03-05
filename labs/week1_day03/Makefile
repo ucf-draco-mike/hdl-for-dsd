@@ -9,7 +9,7 @@ IFLAGS   = -g2012 -Wall
 
 SRC_DIR = starter
 ifeq ($(SOL),1)
-  SRC_DIR = solutions
+  SRC_DIR = solution
 endif
 
 # ---- Exercise 1: Latch Hunting ----

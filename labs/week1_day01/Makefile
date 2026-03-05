@@ -11,7 +11,7 @@ IFLAGS   = -g2012 -Wall
 # Override with SOL=1 to build from solutions/
 SRC_DIR = starter
 ifeq ($(SOL),1)
-  SRC_DIR = solutions
+  SRC_DIR = solution
 endif
 
 # ---- Exercise 1: LED On ----
