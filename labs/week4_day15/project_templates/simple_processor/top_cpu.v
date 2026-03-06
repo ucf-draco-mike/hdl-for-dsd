@@ -30,7 +30,7 @@ module top_cpu (
         r_heartbeat <= r_heartbeat + 1;
 
     wire sw1;
-    debounce db1 (.i_clk(i_clk), .i_switch(i_switch1), .o_switch(sw1));
+    debounce db1 (.i_clk(i_clk), .i_bouncy(i_switch1), .o_clean(sw1));
 
     // ── TODO: Instruction ROM (16 × 8-bit) ─────────────────────────────
     // reg [7:0] rom [0:15];

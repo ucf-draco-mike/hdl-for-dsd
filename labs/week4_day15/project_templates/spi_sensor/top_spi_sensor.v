@@ -23,8 +23,8 @@ module top_spi_sensor (
         r_heartbeat <= r_heartbeat + 1;
 
     wire sw1, sw2;
-    debounce db1 (.i_clk(i_clk), .i_switch(i_switch1), .o_switch(sw1));
-    debounce db2 (.i_clk(i_clk), .i_switch(i_switch2), .o_switch(sw2));
+    debounce db1 (.i_clk(i_clk), .i_bouncy(i_switch1), .o_clean(sw1));
+    debounce db2 (.i_clk(i_clk), .i_bouncy(i_switch2), .o_clean(sw2));
 
     // ── TODO: SPI master instantiation ──────────────────────────────────
     // Connect SCLK, MOSI, MISO, CS to PMOD header pins

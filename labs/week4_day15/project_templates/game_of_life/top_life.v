@@ -24,9 +24,9 @@ module top_life (
         r_heartbeat <= r_heartbeat + 1;
 
     wire sw1, sw2, sw4;
-    debounce db1 (.i_clk(i_clk), .i_switch(i_switch1), .o_switch(sw1));
-    debounce db2 (.i_clk(i_clk), .i_switch(i_switch2), .o_switch(sw2));
-    debounce db4 (.i_clk(i_clk), .i_switch(i_switch4), .o_switch(sw4));
+    debounce db1 (.i_clk(i_clk), .i_bouncy(i_switch1), .o_clean(sw1));
+    debounce db2 (.i_clk(i_clk), .i_bouncy(i_switch2), .o_clean(sw2));
+    debounce db4 (.i_clk(i_clk), .i_bouncy(i_switch4), .o_clean(sw4));
 
     // ── TODO: Edge detectors ────────────────────────────────────────────
     // ---- YOUR CODE HERE ----

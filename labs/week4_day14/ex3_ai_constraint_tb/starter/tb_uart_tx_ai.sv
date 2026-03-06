@@ -11,19 +11,21 @@
 module tb_uart_tx_ai;
 
     // ────────────────────────────────────────────
-    // Parameters
+    // Parameters — must match shared/lib/uart_tx.v interface
+    // uart_tx uses: parameter CLK_FREQ, parameter BAUD_RATE
+    //   internally: localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE
     // ────────────────────────────────────────────
-    localparam CLK_FREQ    = 25_000_000;
-    localparam BAUD_RATE   = 115_200;
+    localparam CLK_FREQ  = 25_000_000;
+    localparam BAUD_RATE = 115_200;
     localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;
 
     // ────────────────────────────────────────────
     // DUT signals
+    //   Ports: i_clk, i_data[7:0], i_valid, o_tx, o_busy, o_done
     // ────────────────────────────────────────────
     reg        clk = 0;
-    reg        rst = 1;
     reg  [7:0] tx_data = 8'h00;
-    reg        tx_start = 0;
+    reg        tx_valid = 0;
     wire       tx_out;
     wire       tx_busy;
     wire       tx_done;
@@ -37,15 +39,15 @@ module tb_uart_tx_ai;
     // DUT instantiation
     // ────────────────────────────────────────────
     uart_tx #(
-        .CLKS_PER_BIT(CLKS_PER_BIT)
+        .CLK_FREQ(CLK_FREQ),
+        .BAUD_RATE(BAUD_RATE)
     ) uut (
         .i_clk(clk),
-        .i_rst(rst),
-        .i_tx_data(tx_data),
-        .i_tx_start(tx_start),
-        .o_tx_serial(tx_out),
-        .o_tx_busy(tx_busy),
-        .o_tx_done(tx_done)
+        .i_data(tx_data),
+        .i_valid(tx_valid),
+        .o_tx(tx_out),
+        .o_busy(tx_busy),
+        .o_done(tx_done)
     );
 
     // ────────────────────────────────────────────
@@ -55,7 +57,7 @@ module tb_uart_tx_ai;
     //   - Send at least 20 random bytes
     //   - Verify each byte by sampling tx_out at mid-bit
     //   - Check start bit = 0, stop bit = 1
-    //   - Test back-to-back transmissions (tx_start while tx_busy)
+    //   - Test back-to-back transmissions (tx_valid while tx_busy)
     //   - Report pass/fail with $display
     //
     // ---- PASTE AI OUTPUT HERE ----
@@ -64,9 +66,6 @@ module tb_uart_tx_ai;
         $dumpfile("dump.vcd");
         $dumpvars(0, tb_uart_tx_ai);
 
-        // Reset
-        #100;
-        rst = 0;
         #100;
 
         // TODO: Replace with AI-generated stimulus

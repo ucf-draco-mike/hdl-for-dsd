@@ -34,6 +34,12 @@ jobs:
             all_srcs="$srcs $syms"
             [ -z "$(echo $all_srcs | tr -d ' ')" ] && continue
 
+            # Skip directories that use Lattice FPGA primitives (iverilog can't resolve them)
+            if grep -ql 'SB_PLL40\|SB_IO\|SB_GB' $all_srcs 2>/dev/null; then
+              echo "SKIP: $dir/ (contains Lattice primitives)"
+              continue
+            fi
+
             CHECKED=$((CHECKED + 1))
             if ! iverilog -g2012 -Wall -t null -y "$LIB" $all_srcs 2>/tmp/iv_err; then
               echo "FAIL: $dir/"

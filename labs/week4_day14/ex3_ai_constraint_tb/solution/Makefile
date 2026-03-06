@@ -1,7 +1,7 @@
-# Auto-generated Makefile
-TOP      = tb_uart_tx_ai
-SRCS     = tb_uart_tx_ai.sv ../../ex1_uart_assertions/starter/uart_tx_asserted.sv
-IVFLAGS  = -g2012 -Wall
+# Makefile — day14/ex3 AI constraint TB (solution)
+SRCS     = tb_uart_tx_ai.sv
+LIB      = ../../../../shared/lib
+IVFLAGS  = -g2012 -Wall -y $(LIB)
 
 sim: $(SRCS)
 	iverilog $(IVFLAGS) -o sim.vvp $(SRCS)

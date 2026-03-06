@@ -13,9 +13,8 @@ module tb_uart_tx_ai;
     localparam BIT_PERIOD   = CLKS_PER_BIT * 40; // ns per bit at 25 MHz
 
     reg        clk = 0;
-    reg        rst = 1;
     reg  [7:0] tx_data;
-    reg        tx_start;
+    reg        tx_valid;
     wire       tx_out;
     wire       tx_busy;
     wire       tx_done;
@@ -23,15 +22,15 @@ module tb_uart_tx_ai;
     always #20 clk = ~clk;
 
     uart_tx #(
-        .CLKS_PER_BIT(CLKS_PER_BIT)
+        .CLK_FREQ(CLK_FREQ),
+        .BAUD_RATE(BAUD_RATE)
     ) uut (
         .i_clk(clk),
-        .i_rst(rst),
-        .i_tx_data(tx_data),
-        .i_tx_start(tx_start),
-        .o_tx_serial(tx_out),
-        .o_tx_busy(tx_busy),
-        .o_tx_done(tx_done)
+        .i_data(tx_data),
+        .i_valid(tx_valid),
+        .o_tx(tx_out),
+        .o_busy(tx_busy),
+        .o_done(tx_done)
     );
 
     // ── Bit sampler: capture tx_out at mid-bit ──────────────────────────
@@ -68,14 +67,11 @@ module tb_uart_tx_ai;
         $dumpvars(0, tb_uart_tx_ai);
 
         tx_data    = 8'h00;
-        tx_start   = 0;
+        tx_valid   = 0;
         pass_count = 0;
         fail_count = 0;
         seed       = 42;
 
-        // Reset
-        #200;
-        rst = 0;
         #200;
 
         // Send 20 random bytes
@@ -84,9 +80,9 @@ module tb_uart_tx_ai;
             tx_data  = expected;
 
             @(posedge clk);
-            tx_start = 1;
+            tx_valid = 1;
             @(posedge clk);
-            tx_start = 0;
+            tx_valid = 0;
 
             // Sample the transmitted byte
             sample_byte(received);
@@ -106,19 +102,19 @@ module tb_uart_tx_ai;
             #100;
         end
 
-        // Back-to-back test: assert tx_start while still busy
+        // Back-to-back test: assert tx_valid while still busy
         $display("--- Back-to-back test ---");
         tx_data  = 8'hA5;
         @(posedge clk);
-        tx_start = 1;
+        tx_valid = 1;
         @(posedge clk);
-        tx_start = 0;
+        tx_valid = 0;
         #(BIT_PERIOD * 3); // mid-transmission
         tx_data  = 8'h5A;
         @(posedge clk);
-        tx_start = 1;
+        tx_valid = 1;
         @(posedge clk);
-        tx_start = 0;
+        tx_valid = 0;
         sample_byte(received);
         if (received === 8'hA5)
             $display("PASS: first back-to-back byte correct (0x%02h)", received);
