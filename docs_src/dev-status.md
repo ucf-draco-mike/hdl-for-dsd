@@ -1,1 +1,0 @@
-../docs/course_dev_status.md
