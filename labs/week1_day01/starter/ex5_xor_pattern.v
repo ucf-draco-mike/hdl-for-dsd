@@ -20,10 +20,10 @@ module xor_pattern (
 );
 
     // Invert at boundary (active-high internally)
-    wire w_b1 = ~i_switch1;
-    wire w_b2 = ~i_switch2;
-    wire w_b3 = ~i_switch3;
-    wire w_b4 = ~i_switch4;
+    wire w_b1 = i_switch1;
+    wire w_b2 = i_switch2;
+    wire w_b3 = i_switch3;
+    wire w_b4 = i_switch4;
 
     // TODO: Design 4 unique logic functions
     // Ideas:
@@ -32,9 +32,9 @@ module xor_pattern (
     //   - Majority function (3 of 4 pressed)
     //   - Any creative combination!
 
-    assign o_led1 = 1'b1;  // TODO
-    assign o_led2 = 1'b1;  // TODO
-    assign o_led3 = 1'b1;  // TODO
-    assign o_led4 = 1'b1;  // TODO
+    assign o_led1 = 1'b0;  // TODO
+    assign o_led2 = 1'b0;  // TODO
+    assign o_led3 = 1'b0;  // TODO
+    assign o_led4 = 1'b0;  // TODO
 
 endmodule

@@ -36,9 +36,9 @@ module top_pattern (
     // pattern_detector pd (...);
 
     // ---- TODO: Map outputs to LEDs ----
-    // assign o_led1 = ~w_progress[1];   // active-high LED
-    // assign o_led2 = ~w_progress[0];
-    // assign o_led4 = ~w_detected;
+    // assign o_led1 = w_progress[1];    // active-high LED
+    // assign o_led2 = w_progress[0];
+    // assign o_led4 = w_detected;
 
     // Heartbeat
     reg [23:0] r_hb;

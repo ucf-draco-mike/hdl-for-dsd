@@ -58,7 +58,7 @@ module seg_counter (
     // TODO: Blink LED1 from a counter bit for visual feedback
 
     // Placeholder outputs — replace with your implementation
-    assign o_led1 = 1'b1;
+    assign o_led1 = 1'b0;
     assign o_segment1_a = 1'b1;
     assign o_segment1_b = 1'b1;
     assign o_segment1_c = 1'b1;

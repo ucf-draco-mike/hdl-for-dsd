@@ -5,21 +5,21 @@
 # Clock: 25 MHz crystal oscillator
 # Reference: Nandland Go Board schematic
 #
-# NOTE: LEDs and switches are ACTIVE LOW on this board
-#   - LED:    0 = on,  1 = off
-#   - Switch: 0 = pressed, 1 = released
+# NOTE: LEDs and switches are ACTIVE HIGH on this board
+#   - LED:    1 = on,  0 = off
+#   - Switch: 1 = pressed, 0 = released
 # =============================================================================
 
 # ---- Clock ----
 set_io i_clk 15
 
-# ---- Push Buttons (active low: pressed = 0) ----
+# ---- Push Buttons (active high: pressed = 1) ----
 set_io i_switch1 53
 set_io i_switch2 51
 set_io i_switch3 54
 set_io i_switch4 52
 
-# ---- LEDs (active low: 0 = on, 1 = off) ----
+# ---- LEDs (active high: 1 = on, 0 = off) ----
 set_io o_led1 56
 set_io o_led2 57
 set_io o_led3 59

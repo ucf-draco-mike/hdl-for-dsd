@@ -8,7 +8,7 @@ module debounce #(
 );
     reg r_sync_0, r_sync_1;
     always @(posedge i_clk) begin
-        r_sync_0 <= ~i_switch;
+        r_sync_0 <= i_switch;
         r_sync_1 <= r_sync_0;
     end
 

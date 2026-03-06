@@ -82,10 +82,10 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 ### Exercise 4: Active-Low Thinking (20 min)
 
-**Goal:** Develop a clean pattern for handling active-low signals.
+**Goal:** Develop a clean boundary pattern for readable designs.
 
-- Open `starter/w1d1_ex4_active_low_clean.v` — fill in the `TODO` sections
-- The pattern: invert active-low inputs at the boundary, work in active-high internally, invert outputs at the boundary
+- Open `starter/ex4_active_low_clean.v` — fill in the `TODO` sections
+- The pattern: name inputs clearly at the boundary, keep internal logic readable, drive outputs directly
 - Build and program: `make ex4`
 - **Compare:** Does this produce more or fewer LUTs than Exercise 3? Run `make ex4_stat`
 

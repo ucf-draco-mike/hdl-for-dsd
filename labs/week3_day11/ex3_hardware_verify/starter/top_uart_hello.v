@@ -58,7 +58,7 @@ module top_uart_hello (
     // LED indicators
     assign o_led1 = w_btn_press;
     assign o_led2 = w_tx_busy;
-    assign o_led3 = 1'b1;  // off
-    assign o_led4 = 1'b1;  // off
+    assign o_led3 = 1'b0;  // off
+    assign o_led4 = 1'b0;  // off
 
 endmodule

@@ -19,6 +19,6 @@ module top_adder (
 );
 
     // TODO: Invert switches, pad to 4 bits, instantiate adder, drive LEDs
-    // Hint: wire [3:0] w_a = {2'b00, ~i_switch1, ~i_switch2};
+    // Hint: wire [3:0] w_a = {2'b00, i_switch1, i_switch2};
 
 endmodule

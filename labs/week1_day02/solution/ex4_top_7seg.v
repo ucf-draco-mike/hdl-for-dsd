@@ -17,7 +17,7 @@ module top_7seg (
     output wire o_segment1_g
 );
 
-    wire [3:0] w_hex = ~{i_switch1, i_switch2, i_switch3, i_switch4};
+    wire [3:0] w_hex = {i_switch1, i_switch2, i_switch3, i_switch4};
     wire [6:0] w_seg;
 
     hex_to_7seg decoder (

@@ -15,10 +15,10 @@ module xor_pattern (
 );
 
     // Invert at boundary
-    wire w_b1 = ~i_switch1;
-    wire w_b2 = ~i_switch2;
-    wire w_b3 = ~i_switch3;
-    wire w_b4 = ~i_switch4;
+    wire w_b1 = i_switch1;
+    wire w_b2 = i_switch2;
+    wire w_b3 = i_switch3;
+    wire w_b4 = i_switch4;
 
     // LED1: XOR all 4 (odd parity — on when odd number pressed)
     assign o_led1 = (w_b1 ^ w_b2 ^ w_b3 ^ w_b4);

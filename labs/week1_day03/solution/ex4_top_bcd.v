@@ -18,7 +18,7 @@ module top_bcd (
     output wire o_segment1_g
 );
 
-    wire [3:0] w_bcd = ~{i_switch1, i_switch2, i_switch3, i_switch4};
+    wire [3:0] w_bcd = {i_switch1, i_switch2, i_switch3, i_switch4};
     wire [6:0] w_seg;
     wire       w_valid;
 

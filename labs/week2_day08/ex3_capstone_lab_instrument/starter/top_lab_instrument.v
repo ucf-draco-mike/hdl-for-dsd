@@ -25,7 +25,7 @@ module top_lab_instrument (
         .DEBOUNCE_MS(10)
     ) inputs (
         .i_clk(i_clk),
-        .i_buttons_n({i_switch1, i_switch2, i_switch3, i_switch4}),
+        .i_buttons({i_switch1, i_switch2, i_switch3, i_switch4}),
         .o_buttons(w_buttons),
         .o_press_edge(w_press),
         .o_release_edge()        // unused
@@ -56,6 +56,6 @@ module top_lab_instrument (
     // --- TODO: LEDs — heartbeat at different rates ---
     // reg [24:0] r_hb;
     // always @(posedge i_clk) r_hb <= r_hb + 1;
-    // assign o_led1 = ~r_hb[24]; ...
+    // assign o_led1 = r_hb[24]; ...
 
 endmodule

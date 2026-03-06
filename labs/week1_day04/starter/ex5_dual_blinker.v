@@ -18,9 +18,9 @@ module dual_blinker (
     // TODO: Counter 2 — ~4 Hz (count to ~3.125M)
     // LED pairs show complementary patterns (one on, one off)
 
-    assign o_led1 = 1'b1;  // TODO
-    assign o_led2 = 1'b1;  // TODO
-    assign o_led3 = 1'b1;  // TODO
-    assign o_led4 = 1'b1;  // TODO
+    assign o_led1 = 1'b0;  // TODO
+    assign o_led2 = 1'b0;  // TODO
+    assign o_led3 = 1'b0;  // TODO
+    assign o_led4 = 1'b0;  // TODO
 
 endmodule

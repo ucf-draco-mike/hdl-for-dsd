@@ -25,9 +25,9 @@ module top_alu (
     output wire o_segment1_g
 );
 
-    wire [1:0] w_opcode = ~{i_switch1, i_switch2};
+    wire [1:0] w_opcode = {i_switch1, i_switch2};
     wire [3:0] w_a = 4'd7;   // hardcoded operand a
-    wire [3:0] w_b = {2'b00, ~i_switch3, ~i_switch4};
+    wire [3:0] w_b = {2'b00, i_switch3, i_switch4};
 
     wire [3:0] w_result;
     wire       w_zero, w_carry;
@@ -39,10 +39,10 @@ module top_alu (
     // );
 
     // TODO: Drive LEDs (active-high) from carry, zero, result bits
-    assign o_led1 = 1'b1;  // TODO: ~w_carry
-    assign o_led2 = 1'b1;  // TODO: ~w_zero
-    assign o_led3 = 1'b1;  // TODO: ~w_result[1]
-    assign o_led4 = 1'b1;  // TODO: ~w_result[0]
+    assign o_led1 = 1'b0;  // TODO: w_carry
+    assign o_led2 = 1'b0;  // TODO: w_zero
+    assign o_led3 = 1'b0;  // TODO: w_result[1]
+    assign o_led4 = 1'b0;  // TODO: w_result[0]
 
     // TODO: Optionally drive 7-seg from result using hex_to_7seg from Day 2
     assign o_segment1_a = 1'b1;

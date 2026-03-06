@@ -15,7 +15,7 @@
 |------|-------------|----------------|
 | `code/day02_ex01_vector_ops.v` | Bit selection, concatenation, replication, sign extension | Yes |
 | `code/day02_ex02_mux_2to1.v` | Parameterized 2-to-1 multiplexer | Yes |
-| `code/day02_ex03_hex_to_7seg.v` | Complete hex-to-7-segment decoder (active low) | Yes |
+| `code/day02_ex03_hex_to_7seg.v` | Complete hex-to-7-segment decoder (Go Board 7-seg) | Yes |
 
 ## Diagrams
 

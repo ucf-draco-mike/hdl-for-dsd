@@ -15,7 +15,7 @@ module top_encoder (
     output wire o_led4       // unused
 );
 
-    wire [3:0] w_req = ~{i_switch1, i_switch2, i_switch3, i_switch4};
+    wire [3:0] w_req = {i_switch1, i_switch2, i_switch3, i_switch4};
     wire [1:0] w_enc;
     wire       w_valid;
 
@@ -28,6 +28,6 @@ module top_encoder (
     assign o_led1 = w_enc[1];
     assign o_led2 = w_enc[0];
     assign o_led3 = w_valid;
-    assign o_led4 = 1'b1;       // off
+    assign o_led4 = 1'b0;       // off
 
 endmodule

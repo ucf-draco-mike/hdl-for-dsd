@@ -245,7 +245,7 @@ module tb_test;
     test uut (.o_led(w_led));
     initial begin
         #10;
-        if (w_led === 1'b0) $display("PASS: LED driven low as expected");
+        if (w_led === 1'b1) $display("PASS: LED driven high as expected");
         else $display("FAIL: unexpected LED value");
         $finish;
     end

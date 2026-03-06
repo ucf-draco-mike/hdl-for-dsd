@@ -30,15 +30,15 @@ module led_blinker (
     // Or simpler: just use counter bits directly!
     //
     // Part B (multi-speed):
-    //   o_led1 <- ~r_counter[23]  (~1.5 Hz)
-    //   o_led2 <- ~r_counter[22]  (~3 Hz)
-    //   o_led3 <- ~r_counter[21]  (~6 Hz)
-    //   o_led4 <- ~r_counter[20]  (~12 Hz)
+    //   o_led1 <- r_counter[23]  (~1.5 Hz)
+    //   o_led2 <- r_counter[22]  (~3 Hz)
+    //   o_led3 <- r_counter[21]  (~6 Hz)
+    //   o_led4 <- r_counter[20]  (~12 Hz)
 
     // Placeholder — replace with your implementation
-    assign o_led1 = 1'b1;
-    assign o_led2 = 1'b1;
-    assign o_led3 = 1'b1;
-    assign o_led4 = 1'b1;
+    assign o_led1 = 1'b0;
+    assign o_led2 = 1'b0;
+    assign o_led3 = 1'b0;
+    assign o_led4 = 1'b0;
 
 endmodule

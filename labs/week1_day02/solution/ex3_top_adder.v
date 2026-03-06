@@ -14,8 +14,8 @@ module top_adder (
     output wire o_led4
 );
 
-    wire [3:0] w_a = {2'b00, ~i_switch1, ~i_switch2};
-    wire [3:0] w_b = {2'b00, ~i_switch3, ~i_switch4};
+    wire [3:0] w_a = {2'b00, i_switch1, i_switch2};
+    wire [3:0] w_b = {2'b00, i_switch3, i_switch4};
     wire [3:0] w_sum;
     wire       w_cout;
 

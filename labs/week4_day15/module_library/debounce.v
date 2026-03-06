@@ -12,7 +12,7 @@ module debounce #(
     // 2-FF synchronizer
     reg r_sync_0, r_sync_1;
     always @(posedge i_clk) begin
-        r_sync_0 <= ~i_switch;    // Invert: active-high → active-high
+        r_sync_0 <= i_switch;     // Active-high: no inversion needed
         r_sync_1 <= r_sync_0;
     end
 

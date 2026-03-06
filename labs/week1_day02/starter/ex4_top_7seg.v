@@ -19,7 +19,7 @@ module top_7seg (
 );
 
     // Collect switches into 4-bit hex value (active-high internally)
-    wire [3:0] w_hex = ~{i_switch1, i_switch2, i_switch3, i_switch4};
+    wire [3:0] w_hex = {i_switch1, i_switch2, i_switch3, i_switch4};
 
     // Decoder output
     wire [6:0] w_seg;

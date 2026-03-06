@@ -117,7 +117,7 @@ module top_tone (
     // ────────────────────────────────────────────
     assign o_led1 = r_playing;
     assign o_led2 = r_audio_out;       // Visual feedback of tone
-    assign o_led3 = 1'b1;
+    assign o_led3 = 1'b0;
     assign o_led4 = r_heartbeat[23];
 
     assign o_uart_tx = 1'b1;

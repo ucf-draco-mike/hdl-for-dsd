@@ -41,7 +41,7 @@ module top_cdc_demo (
 
     assign o_led1 = w_btn_active;
     assign o_led2 = w_pll_locked;
-    assign o_led3 = 1'b1;
-    assign o_led4 = 1'b1;
+    assign o_led3 = 1'b0;
+    assign o_led4 = 1'b0;
 
 endmodule

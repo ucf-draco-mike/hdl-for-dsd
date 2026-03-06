@@ -27,9 +27,9 @@ module updown_counter (
         r_sw2_prev <= i_switch2;
     end
 
-    // Falling edge = button press (active-high)
-    wire w_up_press   = r_sw1_prev & ~i_switch1;
-    wire w_down_press = r_sw2_prev & ~i_switch2;
+    // Rising edge = button press (active-high)
+    wire w_up_press   = ~r_sw1_prev & i_switch1;
+    wire w_down_press = ~r_sw2_prev & i_switch2;
 
     // 4-bit counter
     reg [3:0] r_count = 4'd0;

@@ -22,7 +22,7 @@ module buttons_to_leds (
 );
 
     // Direct connection: each button drives its LED
-    // Both are active low, so this gives intuitive behavior
+    // Both are active high, so this gives intuitive behavior
     assign o_led1 = i_switch1;
     assign o_led2 = i_switch2;
     assign o_led3 = i_switch3;

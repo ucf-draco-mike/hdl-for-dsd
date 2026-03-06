@@ -17,7 +17,7 @@ module top_alu_display (
     output wire o_segment1_g
 );
 
-    wire [1:0] w_opcode = ~{i_switch1, i_switch2};
+    wire [1:0] w_opcode = {i_switch1, i_switch2};
     wire [3:0] w_result;
     wire       w_zero, w_carry;
 

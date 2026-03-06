@@ -11,10 +11,10 @@ module top_mux (
     output wire o_led1
 );
 
-    wire [1:0] w_sel = ~{i_switch1, i_switch2};
+    wire [1:0] w_sel = {i_switch1, i_switch2};
     wire w_d0 = 1'b0;
-    wire w_d1 = ~i_switch3;
-    wire w_d2 = ~i_switch4;
+    wire w_d1 = i_switch3;
+    wire w_d2 = i_switch4;
     wire w_d3 = 1'b1;
     wire w_result;
 

@@ -69,8 +69,8 @@ module top_clock (
     // Outputs
     // ────────────────────────────────────────────
     assign o_led1 = r_running;         // LED1 = running indicator
-    assign o_led2 = 1'b1;
-    assign o_led3 = 1'b1;
+    assign o_led2 = 1'b0;
+    assign o_led3 = 1'b0;
     assign o_led4 = r_heartbeat[23];
 
     assign o_uart_tx = 1'b1;            // UART unused — idle high

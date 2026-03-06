@@ -6,7 +6,7 @@ into your project directory.
 | Module | File | Description |
 |--------|------|-------------|
 | Debounce | `debounce.v` | 2-FF sync + counter debounce (10 ms default) |
-| Hex to 7-Seg | `hex_to_7seg.v` | 4-bit hex → 7-segment with active-low |
+| Hex to 7-Seg | `hex_to_7seg.v` | 4-bit hex → 7-segment for Go Board |
 | UART TX | `uart_tx.v` | 8N1 transmitter, 115200 baud default |
 | UART RX | `uart_rx.v` | 8N1 receiver with 16× oversampling |
 | Baud Generator | `baud_gen.v` | Configurable baud rate tick generator |

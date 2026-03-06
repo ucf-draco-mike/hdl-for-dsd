@@ -15,7 +15,7 @@ module vector_ops (
 );
 
     wire [3:0] w_sw;
-    assign w_sw = ~{i_switch1, i_switch2, i_switch3, i_switch4};
+    assign w_sw = {i_switch1, i_switch2, i_switch3, i_switch4};
 
     // OR reduction — any switch pressed
     assign o_led1 = (|w_sw);

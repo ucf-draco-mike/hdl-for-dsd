@@ -21,9 +21,9 @@ module top_alu (
     output wire o_segment1_g
 );
 
-    wire [1:0] w_opcode = ~{i_switch1, i_switch2};
+    wire [1:0] w_opcode = {i_switch1, i_switch2};
     wire [3:0] w_a = 4'd7;
-    wire [3:0] w_b = {2'b00, ~i_switch3, ~i_switch4};
+    wire [3:0] w_b = {2'b00, i_switch3, i_switch4};
     wire [3:0] w_result;
     wire       w_zero, w_carry;
 

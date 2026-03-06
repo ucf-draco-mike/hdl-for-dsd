@@ -7,7 +7,7 @@ a matching testbench (`tb_<module>.v`).
 
 | Module | Description | Introduced | Testbench |
 |--------|-------------|------------|-----------|
-| `hex_to_7seg.v` | Hex-to-7-segment decoder (active-low, Go Board) | Day 2 | `tb_hex_to_7seg.v` |
+| `hex_to_7seg.v` | Hex-to-7-segment decoder (Go Board 7-segment) | Day 2 | `tb_hex_to_7seg.v` |
 | `debounce.v` | Counter-based button debouncer with 2-FF sync | Day 5 | `tb_debounce.v` |
 | `counter_mod_n.v` | Parameterized modulo-N counter | Day 5 | `tb_counter_mod_n.v` |
 | `uart_tx.v` | UART transmitter (parameterized baud rate) | Day 11 | `tb_uart_tx.v` |

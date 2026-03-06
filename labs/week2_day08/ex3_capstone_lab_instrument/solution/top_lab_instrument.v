@@ -23,7 +23,7 @@ module top_lab_instrument (
         .N_BUTTONS(4), .CLK_FREQ(25_000_000), .DEBOUNCE_MS(10)
     ) inputs (
         .i_clk(i_clk),
-        .i_buttons_n({i_switch1, i_switch2, i_switch3, i_switch4}),
+        .i_buttons({i_switch1, i_switch2, i_switch3, i_switch4}),
         .o_buttons(w_buttons),
         .o_press_edge(w_press),
         .o_release_edge()

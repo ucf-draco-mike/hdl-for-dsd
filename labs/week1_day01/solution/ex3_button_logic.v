@@ -15,18 +15,18 @@ module button_logic (
 );
 
     // LED1: ON when BOTH sw1 AND sw2 pressed
-    // OR of active-low = AND of pressed conditions
-    assign o_led1 = i_switch1 | i_switch2;
+    // Active-high: AND gives both-pressed
+    assign o_led1 = i_switch1 & i_switch2;
 
     // LED2: ON when EITHER sw3 OR sw4 pressed
-    // AND of active-low = OR of pressed conditions
-    assign o_led2 = i_switch3 & i_switch4;
+    // Active-high: OR gives either-pressed
+    assign o_led2 = i_switch3 | i_switch4;
 
     // LED3: XOR — on when exactly one of sw1/sw2 pressed
-    // XOR then invert for active-low output
+    // Active-high: XOR gives exactly-one-pressed
     assign o_led3 = (i_switch1 ^ i_switch2);
 
     // LED4: Inverted sw1 — LED on when NOT pressed
-    assign o_led4 = i_switch1;
+    assign o_led4 = ~i_switch1;
 
 endmodule

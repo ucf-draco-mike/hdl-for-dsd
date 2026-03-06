@@ -13,12 +13,12 @@ module top_mux (
 );
 
     // Invert switches at boundary
-    wire [1:0] w_sel = ~{i_switch1, i_switch2};
+    wire [1:0] w_sel = {i_switch1, i_switch2};
 
     // Hardcode two data inputs, use sw3/sw4 for the other two
     wire w_d0 = 1'b0;          // fixed low
-    wire w_d1 = ~i_switch3;    // from button 3
-    wire w_d2 = ~i_switch4;    // from button 4
+    wire w_d1 = i_switch3;    // from button 3
+    wire w_d2 = i_switch4;    // from button 4
     wire w_d3 = 1'b1;          // fixed high
 
     wire w_result;
