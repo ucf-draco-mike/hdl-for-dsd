@@ -26,3 +26,11 @@ result
 # Python
 __pycache__/
 *.pyc
+
+# Generated build outputs
+# Generated zip downloads (rebuilt by prep_mkdocs.py)
+docs_src/downloads/
+# Custom portal output (rebuilt by build_site.py, not deployed)
+site/
+# MkDocs build output
+_site/
