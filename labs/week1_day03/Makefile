@@ -1,51 +1,28 @@
 # =============================================================================
-# Makefile — Day 3: Procedural Combinational Logic
-# Accelerated HDL for Digital System Design · UCF ECE
+# Makefile — week1_day03 (dispatcher)
+# Delegates to per-exercise directories. Run from day directory.
 # =============================================================================
-DEVICE   = hx1k
-PACKAGE  = vq100
-PCF      = ../../../shared/pcf/go_board.pcf
-IFLAGS   = -g2012 -Wall
 
-SRC_DIR = starter
-ifeq ($(SOL),1)
-  SRC_DIR = solution
-endif
+ex1:
+	$(MAKE) -C ex1_latch_bugs/starter synth
 
-# ---- Exercise 1: Latch Hunting ----
-ex1_synth: $(SRC_DIR)/ex1_latch_bugs.v
-	yosys -p "read_verilog $<; synth_ice40 -top latch_bugs"
+ex2:
+	$(MAKE) -C ex2_priority_encoder/starter prog
 
-# ---- Exercise 2: Priority Encoder ----
-ex2: $(SRC_DIR)/ex2_priority_encoder.v $(SRC_DIR)/ex2_top_encoder.v
-	yosys -q -p "synth_ice40 -top top_encoder -json build/w1d3_ex2.json" $^
-	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) --json build/w1d3_ex2.json --asc build/w1d3_ex2.asc -q
-	icepack build/w1d3_ex2.asc build/w1d3_ex2.bin
-	iceprog build/w1d3_ex2.bin
+ex3:
+	$(MAKE) -C ex3_alu/starter prog
 
-# ---- Exercise 3: ALU ----
-ex3: $(SRC_DIR)/ex3_alu_4bit.v $(SRC_DIR)/ex3_top_alu.v
-	yosys -q -p "synth_ice40 -top top_alu -json build/w1d3_ex3.json" $^
-	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) --json build/w1d3_ex3.json --asc build/w1d3_ex3.asc -q
-	icepack build/w1d3_ex3.asc build/w1d3_ex3.bin
-	iceprog build/w1d3_ex3.bin
+ex4:
+	$(MAKE) -C ex4_bcd_7seg/starter prog
 
-# ---- Exercise 4: BCD-to-7-Seg ----
-ex4: $(SRC_DIR)/ex4_bcd_to_7seg.v $(SRC_DIR)/ex4_top_bcd.v
-	yosys -q -p "synth_ice40 -top top_bcd -json build/w1d3_ex4.json" $^
-	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) --json build/w1d3_ex4.json --asc build/w1d3_ex4.asc -q
-	icepack build/w1d3_ex4.asc build/w1d3_ex4.bin
-	iceprog build/w1d3_ex4.bin
-
-# ---- Exercise 5 (Stretch): ALU + Display ----
-ex5: $(SRC_DIR)/ex3_alu_4bit.v ../day02_combinational_building_blocks/solutions/w1d3_ex4_hex_to_7seg.v $(SRC_DIR)/ex5_top_alu_display.v
-	yosys -q -p "synth_ice40 -top top_alu_display -json build/w1d3_ex5.json" $^
-	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) --json build/w1d3_ex5.json --asc build/w1d3_ex5.asc -q
-	icepack build/w1d3_ex5.asc build/w1d3_ex5.bin
-	iceprog build/w1d3_ex5.bin
+ex5:
+	$(MAKE) -C ex5_top_alu_display/starter prog
 
 clean:
-	rm -rf build
+	$(MAKE) -C ex1_latch_bugs/starter clean
+	$(MAKE) -C ex2_priority_encoder/starter clean
+	$(MAKE) -C ex3_alu/starter clean
+	$(MAKE) -C ex4_bcd_7seg/starter clean
+	$(MAKE) -C ex5_top_alu_display/starter clean
 
-.PHONY: ex1_synth ex2 ex3 ex4 ex5 clean
-$(shell mkdir -p build)
+.PHONY: ex1 ex2 ex3 ex4 ex5 clean
