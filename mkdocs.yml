@@ -5,11 +5,19 @@ site_url: ""  # Set to GitLab/GitHub Pages URL when deployed
 docs_dir: docs_src
 site_dir: _site
 
-# Slide links point outside docs_src/ — they're resolved post-build
+# Slide and notebook links point outside docs_src/ — resolved post-build
+# when lectures/ and notebooks/ are copied into _site/
 validation:
   links:
     absolute_links: relative_to_docs
-    unrecognized_links: warn
+    not_found: info                 # post-build copies (lectures/, notebooks/) resolve these
+    unrecognized_links: info
+  nav:
+    omitted_files: info             # code.md pages accessible via links, not nav
+    not_found: warn
+
+not_in_nav: |
+  days/*/code.md
 
 theme:
   name: material
