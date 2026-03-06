@@ -1,7 +1,7 @@
 # Makefile — baud_gen
 PROJECT  = baud_gen
 TOP      = baud_gen
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_baud_gen.v
 

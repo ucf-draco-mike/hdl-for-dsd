@@ -1,7 +1,7 @@
 # Makefile — top_uart_hello
 PROJECT  = top_uart_hello
 TOP      = top_uart_hello
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = top_uart_hello.v uart_tx.v debounce.v
 TB       = tb_top_uart_hello.v
 

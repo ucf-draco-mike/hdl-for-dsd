@@ -19,10 +19,17 @@ make   # should synthesize the skeleton immediately
 
 | Template | Difficulty | Key Modules Needed |
 |----------|------------|-------------------|
-| `uart_command_parser/` | ★★★ | uart_tx, uart_rx, debounce, hex_to_7seg |
+| `reaction_game/` | ★★☆ | debounce, hex_to_7seg, edge_detect |
 | `digital_clock/` | ★★☆ | debounce, hex_to_7seg |
-| `reaction_game/` | ★★☆ | debounce, hex_to_7seg, uart_tx (optional) |
-| `pattern_generator/` | ★★☆ | uart_rx, debounce, hex_to_7seg |
+| `digital_lock/` | ★★☆ | debounce, hex_to_7seg, edge_detect |
+| `stopwatch/` | ★★☆ | debounce, hex_to_7seg, edge_detect, uart_tx |
 | `tone_generator/` | ★★☆ | debounce, hex_to_7seg, uart_rx (optional) |
+| `pattern_generator/` | ★★☆ | uart_rx, debounce, hex_to_7seg |
+| `serial_calculator/` | ★★★ | uart_tx, uart_rx, hex_to_7seg |
+| `uart_command_parser/` | ★★★ | uart_tx, uart_rx, debounce, hex_to_7seg |
+| `spi_sensor/` | ★★★ | debounce, hex_to_7seg, uart_tx |
+| `compute_engine/` | ★★★ | uart_tx, uart_rx, hex_to_7seg |
+| `simple_processor/` | ★★★ | debounce, hex_to_7seg |
+| `game_of_life/` | ★★★ | debounce, hex_to_7seg, uart_tx (optional) |
 
 All templates include a heartbeat LED and compile out of the box.

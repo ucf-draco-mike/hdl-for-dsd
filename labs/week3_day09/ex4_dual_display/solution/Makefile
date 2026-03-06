@@ -1,7 +1,7 @@
 # Makefile — dual_rom
 PROJECT  = dual_rom
 TOP      = dual_rom
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_dual_rom.v
 

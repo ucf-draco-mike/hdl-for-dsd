@@ -1,7 +1,7 @@
 # Makefile — register_file
 PROJECT  = register_file
 TOP      = register_file
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_register_file.v
 

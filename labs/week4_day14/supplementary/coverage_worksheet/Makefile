@@ -1,7 +1,7 @@
 # Makefile — alu_sv
 PROJECT  = alu_sv
 TOP      = alu_sv
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = alu_sv.sv
 TB       = tb_alu_sv.sv
 

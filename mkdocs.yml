@@ -1,6 +1,6 @@
 site_name: "HDL for Digital System Design"
 site_description: "Accelerated HDL for Digital System Design — UCF ECE"
-site_url: ""  # Set to GitLab/GitHub Pages URL when deployed
+site_url: "https://ucf-draco-mike.github.io/hdl-for-dsd/"
 
 docs_dir: docs_src
 site_dir: _site
@@ -52,7 +52,7 @@ theme:
     - toc.follow
   icon:
     logo: material/chip
-    repo: fontawesome/brands/gitlab
+    repo: fontawesome/brands/github
 
 extra_css:
   - overrides/extra.css

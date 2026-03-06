@@ -1,7 +1,7 @@
 # Makefile — spi_master
 PROJECT  = spi_master
 TOP      = spi_master
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_spi_master.v
 

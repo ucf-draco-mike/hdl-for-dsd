@@ -1,7 +1,7 @@
 # Makefile — traffic_asserted
 PROJECT  = traffic_asserted
 TOP      = traffic_asserted
-PCF      = ../go_board.pcf
+PCF      = ../../../go_board.pcf
 SRCS     = traffic_asserted.sv
 TB       = tb_traffic_asserted.sv
 

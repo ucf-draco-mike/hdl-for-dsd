@@ -1,7 +1,7 @@
 # Makefile — top_uart_loopback
 PROJECT  = top_uart_loopback
 TOP      = top_uart_loopback
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = top_uart_loopback.v uart_tx.v uart_rx.v hex_to_7seg.v
 TB       = tb_top_uart_loopback.v
 

@@ -1,0 +1,10 @@
+// seed.hex — Glider pattern starting at (1,1) on 8x8 grid
+// Row format: 8 bits per row, MSB = col 7, LSB = col 0
+00
+04
+02
+0E
+00
+00
+00
+00

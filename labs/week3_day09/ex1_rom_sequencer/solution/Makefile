@@ -1,7 +1,7 @@
 # Makefile — top_pattern
 PROJECT  = top_pattern
 TOP      = top_pattern
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_pattern_sequencer.v
 

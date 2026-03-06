@@ -1,0 +1,23 @@
+// program.hex — sample program for top_cpu
+// Instruction format: [opcode:4][dst:2][src:2] or [opcode:4][imm:4]
+//
+// LOAD R0, 5   (0001_0101)
+// LOAD R1, 3   (0001_0111) — NOTE: adjust dst encoding per your design
+// ADD  R0, R1  (0010_0001)
+// HALT         (1111_0000)
+15
+17
+21
+F0
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00
+00

@@ -1,7 +1,7 @@
 # Makefile — ram_init
 PROJECT  = ram_init
 TOP      = ram_init
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_ram_init.v
 

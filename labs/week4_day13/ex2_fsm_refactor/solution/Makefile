@@ -1,7 +1,7 @@
 # Makefile — traffic_light_sv
 PROJECT  = traffic_light_sv
 TOP      = traffic_light_sv
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = traffic_light_sv.sv
 TB       = tb_traffic_light_sv.sv
 

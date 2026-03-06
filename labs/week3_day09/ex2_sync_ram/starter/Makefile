@@ -1,7 +1,7 @@
 # Makefile — ram_sp
 PROJECT  = ram_sp
 TOP      = ram_sp
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_ram_sp.v
 

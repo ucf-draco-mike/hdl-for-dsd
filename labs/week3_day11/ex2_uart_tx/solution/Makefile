@@ -1,7 +1,7 @@
 # Makefile — uart_tx
 PROJECT  = uart_tx
 TOP      = uart_tx
-PCF      = ../go_board.pcf
+PCF      = ../../go_board.pcf
 SRCS     = $(wildcard *.v)
 TB       = tb_uart_tx.v
 
