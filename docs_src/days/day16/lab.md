@@ -1,1 +1,49 @@
-../../../labs/week4_day16/README.md
+# Day 16: Demos, Reflection & Next Steps
+
+!!! abstract "Starter Code & Notebooks"
+    [:material-folder-download: Download All Starter Code (.zip)](../../downloads/day16/day16_all_starter.zip){ .md-button .md-button--primary }
+
+    [:material-notebook: Open Lab Notebook](http://localhost:8888/lab/tree/notebooks/labs/lab_day16.ipynb){ .md-button target=_blank }
+    [:material-github: Notebook on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day16.ipynb){ .md-button target=_blank }
+
+    Individual exercise downloads are linked below each exercise.
+    Full file listing: [Code & Notebooks Reference](code.md)
+
+
+## Overview
+Today is the final session. Students demonstrate their projects, we reflect
+on the course, and we discuss where to go from here.
+
+## Session Structure
+
+| Time | Activity |
+|------|----------|
+| 0:00–0:10 | Demo setup and order |
+| 0:10–2:00 | Student demonstrations (~7 min each) |
+| 2:00–2:15 | Course retrospective |
+| 2:15–2:30 | Where to go from here |
+
+## Materials in This Package
+
+| File | Purpose |
+|------|---------|
+| `rubric.md` | Detailed evaluation rubric (give to students at start) |
+| `demo_checklist.md` | Pre-demo self-check for students |
+| `self_assessment.md` | Student self-assessment form (distribute post-demo) |
+| `next_steps.md` | Career pathways and resources handout |
+| `feedback_form.md` | Anonymous end-of-course feedback form |
+
+## Demo Format (5–7 min per student)
+1. **Introduction** (30 sec): Project name, one sentence
+2. **Live demo** (2 min): Show it working on the Go Board
+3. **Architecture** (1–2 min): Block diagram, data path, module reuse
+4. **Verification** (1 min): Testbench output, assertions, what's tested
+5. **Reflection** (1 min): Challenges, what you'd change
+6. **Q&A** (remaining time)
+
+## Evaluation Weights
+- Functionality: 30%
+- Design Quality: 25%
+- Verification: 20%
+- Integration: 15%
+- Presentation: 10%

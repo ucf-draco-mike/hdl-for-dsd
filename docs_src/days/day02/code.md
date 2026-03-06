@@ -25,36 +25,40 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex1_vector_ops.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex1_vector_ops.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex1_vector_ops.v){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex1_vector_ops/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex1_vector_ops/starter/Makefile){ target=_blank } |
+| :material-chip: `ex1_vector_ops.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex1_vector_ops/starter/ex1_vector_ops.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex1_vector_ops/starter/ex1_vector_ops.v){ target=_blank } |
 
-## Ex 2 — Files
+## Ex 2 — Mux Hierarchy
 
-[:material-download: Starter .zip](../../downloads/day02/ex2_files_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day02/ex2_files_solution.zip){ .md-button }
-
-| File | Links |
-|------|-------|
-| :material-chip: `ex2_mux2to1.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex2_mux2to1.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex2_mux2to1.v){ target=_blank } |
-| :material-chip: `ex2_mux4to1.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex2_mux4to1.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex2_mux4to1.v){ target=_blank } |
-| :material-chip: `ex2_top_mux.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex2_top_mux.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex2_top_mux.v){ target=_blank } |
-
-## Ex 3 — Files
-
-[:material-download: Starter .zip](../../downloads/day02/ex3_files_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day02/ex3_files_solution.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day02/ex2_mux_hierarchy_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day02/ex2_mux_hierarchy_solution.zip){ .md-button }
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex3_full_adder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex3_full_adder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex3_full_adder.v){ target=_blank } |
-| :material-chip: `ex3_ripple_adder_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex3_ripple_adder_4bit.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex3_ripple_adder_4bit.v){ target=_blank } |
-| :material-chip: `ex3_top_adder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex3_top_adder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex3_top_adder.v){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex2_mux_hierarchy/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex2_mux_hierarchy/starter/Makefile){ target=_blank } |
+| :material-chip: `ex2_mux2to1.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex2_mux_hierarchy/starter/ex2_mux2to1.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex2_mux_hierarchy/starter/ex2_mux2to1.v){ target=_blank } |
+| :material-chip: `ex2_mux4to1.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex2_mux_hierarchy/starter/ex2_mux4to1.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex2_mux_hierarchy/starter/ex2_mux4to1.v){ target=_blank } |
+| :material-chip: `ex2_top_mux.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex2_mux_hierarchy/starter/ex2_top_mux.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex2_mux_hierarchy/starter/ex2_top_mux.v){ target=_blank } |
 
-## Ex 4 — Files
+## Ex 3 — Ripple Adder
 
-[:material-download: Starter .zip](../../downloads/day02/ex4_files_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day02/ex4_files_solution.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day02/ex3_ripple_adder_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day02/ex3_ripple_adder_solution.zip){ .md-button }
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex4_hex_to_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex4_hex_to_7seg.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex4_hex_to_7seg.v){ target=_blank } |
-| :material-chip: `ex4_top_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex4_top_7seg.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex4_top_7seg.v){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex3_ripple_adder/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex3_ripple_adder/starter/Makefile){ target=_blank } |
+| :material-chip: `ex3_full_adder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex3_ripple_adder/starter/ex3_full_adder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex3_ripple_adder/starter/ex3_full_adder.v){ target=_blank } |
+| :material-chip: `ex3_ripple_adder_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex3_ripple_adder/starter/ex3_ripple_adder_4bit.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex3_ripple_adder/starter/ex3_ripple_adder_4bit.v){ target=_blank } |
+| :material-chip: `ex3_top_adder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex3_ripple_adder/starter/ex3_top_adder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex3_ripple_adder/starter/ex3_top_adder.v){ target=_blank } |
+
+## Ex 4 — 7Seg Decoder
+
+[:material-download: Starter .zip](../../downloads/day02/ex4_7seg_decoder_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day02/ex4_7seg_decoder_solution.zip){ .md-button }
+
+| File | Links |
+|------|-------|
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex4_7seg_decoder/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex4_7seg_decoder/starter/Makefile){ target=_blank } |
+| :material-chip: `ex4_hex_to_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex4_7seg_decoder/starter/ex4_hex_to_7seg.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex4_7seg_decoder/starter/ex4_hex_to_7seg.v){ target=_blank } |
+| :material-chip: `ex4_top_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex4_7seg_decoder/starter/ex4_top_7seg.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex4_7seg_decoder/starter/ex4_top_7seg.v){ target=_blank } |
 
 ## Ex 5 — Top Adder Display
 
@@ -62,4 +66,8 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex5_top_adder_display.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/starter/ex5_top_adder_display.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/starter/ex5_top_adder_display.v){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex5_top_adder_display/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex5_top_adder_display/starter/Makefile){ target=_blank } |
+| :material-chip: `ex3_full_adder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex5_top_adder_display/starter/ex3_full_adder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex5_top_adder_display/starter/ex3_full_adder.v){ target=_blank } |
+| :material-chip: `ex3_ripple_adder_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex5_top_adder_display/starter/ex3_ripple_adder_4bit.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex5_top_adder_display/starter/ex3_ripple_adder_4bit.v){ target=_blank } |
+| :material-chip: `ex4_hex_to_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex5_top_adder_display/starter/ex4_hex_to_7seg.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex5_top_adder_display/starter/ex4_hex_to_7seg.v){ target=_blank } |
+| :material-chip: `ex5_top_adder_display.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day02/ex5_top_adder_display/starter/ex5_top_adder_display.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day02/ex5_top_adder_display/starter/ex5_top_adder_display.v){ target=_blank } |
