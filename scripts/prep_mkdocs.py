@@ -388,6 +388,153 @@ WEEK_META = [
     (4, "Advanced Design, Verification & Final Project", "#2E7D32"),
 ]
 
+
+
+def generate_lab_page(day_num, dir_name, code_assets):
+    """Generate an enriched lab.md by reading the lab README and injecting code links.
+
+    For days with per-exercise headings (days 1-8), injects a compact code
+    admonition after each exercise heading. For days without (9+), appends
+    a consolidated code section at the end.
+
+    Returns None if no README exists.
+    """
+    lab_readme = REPO / "labs" / dir_name / "README.md"
+    if not lab_readme.exists():
+        return None
+
+    dz = f"{day_num:02d}"
+    content = lab_readme.read_text(encoding="utf-8")
+    has_code = day_num in code_assets
+    assets = code_assets.get(day_num, {})
+
+    # ── Build download banner ──────────────────────────────────────
+    banner_lines = []
+
+    if has_code and assets.get("all_zip"):
+        banner_lines.append(
+            f'!!! abstract "Starter Code & Notebooks"\n'
+            f'    [:material-folder-download: Download All Starter Code (.zip)]'
+            f'({assets["all_zip"]}){{ .md-button .md-button--primary }}\n'
+        )
+        # Notebook link
+        nb_path = REPO / "notebooks" / "labs" / f"lab_day{dz}.ipynb"
+        if nb_path.exists():
+            nb_rel = nb_path.relative_to(REPO)
+            nb_jup = f"{JUPYTER_LAB_BASE}/{nb_rel}"
+            nb_gh = f"{GITHUB_RAW_BASE}/{nb_rel}"
+            banner_lines.append(
+                f'    [:material-notebook: Open Lab Notebook]({nb_jup})'
+                f'{{ .md-button target=_blank }}\n'
+                f'    [:material-github: Notebook on GitHub]({nb_gh})'
+                f'{{ .md-button target=_blank }}\n'
+            )
+        banner_lines.append(
+            f'    Individual exercise downloads are linked below each exercise.\n'
+            f'    Full file listing: [Code & Notebooks Reference](code.md)\n'
+        )
+
+    banner = "\n".join(banner_lines)
+
+    # ── Build per-exercise admonitions ─────────────────────────────
+    ex_admonitions = {}  # exercise_number -> admonition string
+    if has_code:
+        for ex in assets.get("exercises", []):
+            m = re.match(r"ex(\d+)", ex["name"])
+            if not m:
+                continue
+            ex_num = int(m.group(1))
+
+            parts = []
+            if ex.get("starter_zip"):
+                parts.append(
+                    f'[:material-download: Starter .zip]({ex["starter_zip"]})'
+                    f'{{ .md-button }}'
+                )
+            if ex.get("solution_zip"):
+                parts.append(
+                    f'[:material-check-circle: Solution .zip]({ex["solution_zip"]})'
+                    f'{{ .md-button }}'
+                )
+            # GitHub link to the starter directory
+            for sf in ex.get("starter_files", []):
+                gh = f"{GITHUB_RAW_BASE}/{sf.relative_to(REPO)}"
+                parts.append(
+                    f'[:material-github: `{sf.name}`]({gh}){{ target=_blank }}'
+                )
+                break  # just link first file as representative
+
+            if parts:
+                btns = " ".join(parts)
+                ex_admonitions[ex_num] = (
+                    f'\n!!! code "Exercise {ex_num} — Code"\n'
+                    f'    {btns}\n\n'
+                )
+
+    # ── Inject into content ────────────────────────────────────────
+    lines = content.split("\n")
+    output = []
+    banner_inserted = False
+    exercises_found = 0
+
+    # Pattern: ## Exercise N or ### Exercise N (with various suffixes)
+    ex_heading_re = re.compile(
+        r'^(#{2,3})\s+Exercise\s+(\d+)\b', re.IGNORECASE
+    )
+
+    for i, line in enumerate(lines):
+        output.append(line)
+
+        # Insert banner after first heading
+        if not banner_inserted and line.startswith("# ") and banner:
+            output.append("")
+            output.append(banner)
+            banner_inserted = True
+            continue
+
+        # Check for exercise heading
+        m = ex_heading_re.match(line)
+        if m:
+            ex_num = int(m.group(2))
+            exercises_found += 1
+            if ex_num in ex_admonitions:
+                output.append(ex_admonitions[ex_num])
+
+    # If banner wasn't inserted (no H1), prepend it
+    if not banner_inserted and banner:
+        output.insert(0, banner + "\n")
+
+    # For days without exercise headings, append consolidated code section
+    if exercises_found <= 1 and has_code and assets.get("exercises"):
+        output.append("\n---\n")
+        output.append("## :material-download: Exercise Code\n")
+        for ex in assets["exercises"]:
+            output.append(f"### {ex['label']}\n")
+            parts = []
+            if ex.get("starter_zip"):
+                parts.append(
+                    f'[:material-download: Starter .zip]({ex["starter_zip"]})'
+                    f'{{ .md-button }}'
+                )
+            if ex.get("solution_zip"):
+                parts.append(
+                    f'[:material-check-circle: Solution .zip]({ex["solution_zip"]})'
+                    f'{{ .md-button }}'
+                )
+            if parts:
+                output.append(" ".join(parts) + "\n")
+
+            # File list
+            for sf in ex.get("starter_files", []):
+                rel = sf.relative_to(REPO)
+                gh = f"{GITHUB_RAW_BASE}/{rel}"
+                icon = _file_icon_md(sf)
+                output.append(f"- {icon} [`{sf.name}`]({gh}){{ target=_blank }}")
+            output.append("")
+
+    return "\n".join(output)
+
+
 def generate_homepage():
     """Generate a visually rich landing page."""
     lines = []
@@ -561,8 +708,13 @@ def main():
         quiz = REPO / "lectures" / dir_name / f"day{dz}_quiz.md"
         if quiz.exists(): symlink(quiz, dd / "quiz.md")
 
-        lab = REPO / "labs" / dir_name / "README.md"
-        if lab.exists(): symlink(lab, dd / "lab.md")
+        # Generate enriched lab page (with code links injected)
+        lab_md = generate_lab_page(day_num, dir_name, code_assets)
+        if lab_md:
+            (dd / "lab.md").write_text(lab_md, encoding="utf-8")
+        else:
+            lab = REPO / "labs" / dir_name / "README.md"
+            if lab.exists(): symlink(lab, dd / "lab.md")
 
         # Generated code page
         code_md = generate_code_page(day_num, code_assets)
