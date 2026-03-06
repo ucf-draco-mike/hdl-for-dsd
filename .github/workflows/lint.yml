@@ -18,32 +18,37 @@ jobs:
       - name: Install Icarus Verilog
         run: sudo apt-get update && sudo apt-get install -y iverilog
 
-      - name: Syntax-check all Verilog files
+      - name: Syntax-check Verilog by directory
         run: |
-          echo "=== Verilog syntax check ==="
+          echo "=== Verilog syntax check (per-directory with shared lib) ==="
+          LIB="$PWD/shared/lib"
           ERRORS=0
-          # Check .v files
-          while IFS= read -r f; do
-            if ! iverilog -g2012 -Wall -t null "$f" 2>/dev/null; then
-              echo "FAIL: $f"
-              ERRORS=$((ERRORS + 1))
-            fi
-          done < <(find labs/ shared/lib/ -name "*.v" -not -path "*/node_modules/*")
+          CHECKED=0
 
-          # Check .sv files
-          while IFS= read -r f; do
-            if ! iverilog -g2012 -Wall -t null "$f" 2>/dev/null; then
-              echo "FAIL: $f"
+          # Find every directory that contains at least one .v or .sv file,
+          # then compile all HDL in that directory as a unit.
+          while IFS= read -r dir; do
+            srcs=$(find "$dir" -maxdepth 1 \( -name "*.v" -o -name "*.sv" \) -not -type l | sort)
+            # Also include symlinked HDL (e.g. debounce.v → shared/lib/)
+            syms=$(find "$dir" -maxdepth 1 \( -name "*.v" -o -name "*.sv" \) -type l | sort)
+            all_srcs="$srcs $syms"
+            [ -z "$(echo $all_srcs | tr -d ' ')" ] && continue
+
+            CHECKED=$((CHECKED + 1))
+            if ! iverilog -g2012 -Wall -t null -y "$LIB" $all_srcs 2>/tmp/iv_err; then
+              echo "FAIL: $dir/"
+              sed 's/^/  /' /tmp/iv_err | head -20
               ERRORS=$((ERRORS + 1))
             fi
-          done < <(find labs/ -name "*.sv" -not -path "*/node_modules/*")
+          done < <(find labs/ shared/lib/ -type d | sort)
 
           echo ""
+          echo "Checked $CHECKED directories"
           if [ "$ERRORS" -gt 0 ]; then
-            echo "::error::$ERRORS file(s) failed syntax check"
+            echo "::error::$ERRORS directory(ies) failed syntax check"
             exit 1
           else
-            echo "All Verilog/SV files pass syntax check"
+            echo "All directories pass syntax check"
           fi
 
       - name: Verify symlinks resolve
