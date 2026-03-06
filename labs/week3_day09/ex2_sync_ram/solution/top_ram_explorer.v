@@ -54,10 +54,10 @@ module top_ram_explorer (
     hex_to_7seg seg2 (.i_hex(w_rdata[3:0]), .o_seg(w_seg2));
 
     // LEDs: upper nibbles for context
-    assign o_led1 = ~r_addr[4];
-    assign o_led2 = ~r_addr[5];
-    assign o_led3 = ~r_wdata[4];
-    assign o_led4 = ~r_wdata[5];
+    assign o_led1 = r_addr[4];
+    assign o_led2 = r_addr[5];
+    assign o_led3 = r_wdata[4];
+    assign o_led4 = r_wdata[5];
 
     assign {o_segment1_a, o_segment1_b, o_segment1_c,
             o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = w_seg1;

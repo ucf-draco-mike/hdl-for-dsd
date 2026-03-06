@@ -27,15 +27,15 @@ module button_counter (
         .i_clk(i_clk), .i_bouncy(i_switch2), .o_clean(w_count_clean)
     );
 
-    // --- Edge detector: press = falling edge of active-low ---
+    // --- Edge detector: press = rising edge of active-high ---
     reg r_count_prev;
     always @(posedge i_clk)
         r_count_prev <= w_count_clean;
 
-    wire w_count_press = ~w_count_clean & r_count_prev;
+    wire w_count_press = w_count_clean & ~r_count_prev;
 
     // --- 4-bit counter ---
-    wire w_reset = ~w_reset_clean;
+    wire w_reset = w_reset_clean;
     reg [3:0] r_count;
 
     always @(posedge i_clk) begin
@@ -57,6 +57,6 @@ module button_counter (
     reg [23:0] r_hb_count;
     always @(posedge i_clk)
         r_hb_count <= r_hb_count + 1;
-    assign o_led1 = ~r_hb_count[23];
+    assign o_led1 = r_hb_count[23];
 
 endmodule

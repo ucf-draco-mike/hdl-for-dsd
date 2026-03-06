@@ -7,8 +7,8 @@
 module top_mux (
     input  wire i_switch1,   // sel[1]
     input  wire i_switch2,   // sel[0]
-    input  wire i_switch3,   // data input (active-low)
-    input  wire i_switch4,   // data input (active-low)
+    input  wire i_switch3,   // data input (active-high)
+    input  wire i_switch4,   // data input (active-high)
     output wire o_led1       // mux output
 );
 
@@ -30,6 +30,6 @@ module top_mux (
     //     .o_y(w_result)
     // );
 
-    assign o_led1 = ~w_result;  // active-low output
+    assign o_led1 = w_result;  // active-high output
 
 endmodule

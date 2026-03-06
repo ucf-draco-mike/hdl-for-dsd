@@ -24,9 +24,9 @@ module top_adder (
         .o_sum(w_sum), .o_cout(w_cout)
     );
 
-    assign o_led1 = ~w_sum[2];
-    assign o_led2 = ~w_sum[1];
-    assign o_led3 = ~w_sum[0];
-    assign o_led4 = ~w_cout;
+    assign o_led1 = w_sum[2];
+    assign o_led2 = w_sum[1];
+    assign o_led3 = w_sum[0];
+    assign o_led4 = w_cout;
 
 endmodule

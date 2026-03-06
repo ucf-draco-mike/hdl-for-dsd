@@ -29,8 +29,8 @@ module top_alu_display (
     wire [6:0] w_seg;
     hex_to_7seg decoder (.i_hex(w_result), .o_seg(w_seg));
 
-    assign o_led1 = ~w_carry;
-    assign o_led2 = ~w_zero;
+    assign o_led1 = w_carry;
+    assign o_led2 = w_zero;
     assign o_segment1_a = w_seg[6];
     assign o_segment1_b = w_seg[5];
     assign o_segment1_c = w_seg[4];

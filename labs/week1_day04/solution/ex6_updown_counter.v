@@ -27,7 +27,7 @@ module updown_counter (
         r_sw2_prev <= i_switch2;
     end
 
-    // Falling edge = button press (active low)
+    // Falling edge = button press (active-high)
     wire w_up_press   = r_sw1_prev & ~i_switch1;
     wire w_down_press = r_sw2_prev & ~i_switch2;
 

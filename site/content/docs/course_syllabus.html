@@ -443,21 +443,21 @@ The Day 13 session requires a project design document (block diagram + module li
 <p>Lab deliverables are due at the end of each session. Late submissions receive a 10% penalty per day. The final project has no late submission window.</p>
 <hr>
 <h2 id="toolchain-quick-reference">Toolchain Quick Reference</h2>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Simulation</span>
-iverilog<span class="w"> </span>-o<span class="w"> </span>sim.vvp<span class="w"> </span>-g2012<span class="w"> </span>tb_module.v<span class="w"> </span>module.v
-vvp<span class="w"> </span>sim.vvp
-gtkwave<span class="w"> </span>dump.vcd
+<pre class="codehilite"><code class="language-bash"># Simulation
+iverilog -o sim.vvp -g2012 tb_module.v module.v
+vvp sim.vvp
+gtkwave dump.vcd
 
-<span class="c1"># Synthesis &amp; Programming</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;synth_ice40 -top top_module -json top.json&quot;</span><span class="w"> </span>top.v<span class="w"> </span>sub1.v<span class="w"> </span>sub2.v
-nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--pcf<span class="w"> </span>go_board.pcf<span class="w"> </span>--json<span class="w"> </span>top.json<span class="w"> </span>--asc<span class="w"> </span>top.asc
-icepack<span class="w"> </span>top.asc<span class="w"> </span>top.bin
-iceprog<span class="w"> </span>top.bin
+# Synthesis &amp; Programming
+yosys -p &quot;synth_ice40 -top top_module -json top.json&quot; top.v sub1.v sub2.v
+nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
+icepack top.asc top.bin
+iceprog top.bin
 
-<span class="c1"># PPA Analysis</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog module.v; synth_ice40 -top module; stat&quot;</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog module.v; synth_ice40 -top module; show&quot;</span>
-</code></pre></div>
+# PPA Analysis
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; stat&quot;
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; show&quot;
+</code></pre>
 
 <hr>
 <h2 id="resources">Resources</h2>

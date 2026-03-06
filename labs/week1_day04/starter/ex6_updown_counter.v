@@ -10,8 +10,8 @@
 
 module updown_counter (
     input  wire i_clk,
-    input  wire i_switch1,   // count up (raw, active-low)
-    input  wire i_switch2,   // count down (raw, active-low)
+    input  wire i_switch1,   // count up (raw, active-high)
+    input  wire i_switch2,   // count down (raw, active-high)
     output wire o_segment1_a,
     output wire o_segment1_b,
     output wire o_segment1_c,

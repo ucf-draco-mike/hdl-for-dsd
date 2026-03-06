@@ -26,10 +26,10 @@ module active_low_clean (
     wire w_xor_12    = w_btn1 ^ w_btn2;      // exactly one
     wire w_not_1     = ~w_btn1;              // btn1 NOT pressed
 
-    // Step 3: Invert outputs at boundary (active-low LEDs)
-    assign o_led1 = ~w_both_12;
-    assign o_led2 = ~w_either_34;
-    assign o_led3 = ~w_xor_12;
-    assign o_led4 = ~w_not_1;
+    // Step 3: Invert outputs at boundary (active-high LEDs)
+    assign o_led1 = w_both_12;
+    assign o_led2 = w_either_34;
+    assign o_led3 = w_xor_12;
+    assign o_led4 = w_not_1;
 
 endmodule

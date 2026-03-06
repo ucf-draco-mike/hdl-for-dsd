@@ -18,15 +18,15 @@ module vector_ops (
     assign w_sw = ~{i_switch1, i_switch2, i_switch3, i_switch4};
 
     // OR reduction — any switch pressed
-    assign o_led1 = ~(|w_sw);
+    assign o_led1 = (|w_sw);
 
     // AND reduction — all switches pressed
-    assign o_led2 = ~(&w_sw);
+    assign o_led2 = (&w_sw);
 
     // XOR reduction — odd number pressed
-    assign o_led3 = ~(^w_sw);
+    assign o_led3 = (^w_sw);
 
     // MSB — switch1 state
-    assign o_led4 = ~w_sw[3];
+    assign o_led4 = w_sw[3];
 
 endmodule

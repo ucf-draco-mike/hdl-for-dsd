@@ -84,8 +84,8 @@
 3. <code>check_alu</code> task: apply inputs, wait, compare result/carry/zero, report pass/fail
 4. Final summary with total pass/fail counts</p>
 <h3 id="part-b-run-and-verify-all-tests-pass">Part B: Run and verify all tests pass</h3>
-<div class="codehilite"><pre><span></span><code>make<span class="w"> </span>sim<span class="w"> </span><span class="nv">TB</span><span class="o">=</span>tb_alu_4bit.v<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;alu_4bit.v&quot;</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_alu_4bit.v SRCS=&quot;alu_4bit.v&quot;
+</code></pre>
 
 <h3 id="part-c-intentional-bug-injection">Part C: Intentional bug injection</h3>
 <p>Change SUB to <code>a + b</code> in the ALU. Re-run the testbench. Confirm SUB tests fail.</p>

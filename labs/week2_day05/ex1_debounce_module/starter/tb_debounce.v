@@ -26,7 +26,7 @@ module tb_debounce;
         $dumpfile("dump.vcd");
         $dumpvars(0, tb_debounce);
 
-        bouncy = 1;  // not pressed (active-low)
+        bouncy = 1;  // not pressed (active-high)
         #500;
 
         // ---- TODO: Simulate a bouncy press ----
@@ -46,7 +46,7 @@ module tb_debounce;
 
         // ---- TODO: Verify ----
         // Count transitions on clean — should be exactly 2
-        // (one falling edge for press, one rising edge for release)
+        // (one rising edge for press, one rising edge for release)
 
         $display("=== Debounce simulation complete ===");
         $display("Inspect waveform: clean should have exactly 2 transitions");

@@ -5,14 +5,14 @@ module debounce #(
     parameter DEBOUNCE_LIMIT = 250000
 )(
     input  wire i_clk,
-    input  wire i_switch,    // Raw switch input (active-low on Go Board)
+    input  wire i_switch,    // Raw switch input (active-high on Go Board)
     output reg  o_switch     // Debounced output (active-high)
 );
 
     // 2-FF synchronizer
     reg r_sync_0, r_sync_1;
     always @(posedge i_clk) begin
-        r_sync_0 <= ~i_switch;    // Invert: active-low → active-high
+        r_sync_0 <= ~i_switch;    // Invert: active-high → active-high
         r_sync_1 <= r_sync_0;
     end
 

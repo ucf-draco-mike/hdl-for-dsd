@@ -20,93 +20,93 @@
 <hr>
 <h3 id="linux-ubuntu-debian-fedora">Linux (Ubuntu / Debian / Fedora)</h3>
 <p><strong>What you need:</strong> <code>curl</code>, <code>xz-utils</code>, and USB permissions for the Go Board.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Install prerequisites (most systems already have these)</span>
-sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl<span class="w"> </span>xz-utils<span class="w">   </span><span class="c1"># Debian/Ubuntu</span>
-<span class="c1"># or: sudo dnf install -y curl xz                       # Fedora</span>
+<pre class="codehilite"><code class="language-bash"># 1. Install prerequisites (most systems already have these)
+sudo apt update &amp;&amp; sudo apt install -y curl xz-utils   # Debian/Ubuntu
+# or: sudo dnf install -y curl xz                       # Fedora
 
-<span class="c1"># 2. Set up USB permissions for the Go Board FTDI chip</span>
-<span class="c1">#    This avoids needing sudo every time you program the board.</span>
-sudo<span class="w"> </span>tee<span class="w"> </span>/etc/udev/rules.d/99-fpga-boards.rules<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
-<span class="s"># Nandland Go Board / iCEstick / iCE40 — FTDI FT2232H</span>
-<span class="s">ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0403&quot;, ATTR{idProduct}==&quot;6010&quot;, MODE=&quot;0666&quot;</span>
-<span class="s">EOF</span>
+# 2. Set up USB permissions for the Go Board FTDI chip
+#    This avoids needing sudo every time you program the board.
+sudo tee /etc/udev/rules.d/99-fpga-boards.rules &gt; /dev/null &lt;&lt; 'EOF'
+# Nandland Go Board / iCEstick / iCE40 — FTDI FT2232H
+ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0403&quot;, ATTR{idProduct}==&quot;6010&quot;, MODE=&quot;0666&quot;
+EOF
 
-sudo<span class="w"> </span>udevadm<span class="w"> </span>control<span class="w"> </span>--reload-rules
-sudo<span class="w"> </span>udevadm<span class="w"> </span>trigger
+sudo udevadm control --reload-rules
+sudo udevadm trigger
 
-<span class="c1"># 3. Verify FTDI detection (plug in the Go Board first)</span>
-lsusb<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>ftdi
-<span class="c1"># Expected: &quot;Future Technology Devices International&quot; or similar</span>
-</code></pre></div>
+# 3. Verify FTDI detection (plug in the Go Board first)
+lsusb | grep -i ftdi
+# Expected: &quot;Future Technology Devices International&quot; or similar
+</code></pre>
 
 <p><strong>GTKWave note:</strong> On headless or Wayland-only systems, GTKWave needs an X11 display. If you're using a standard desktop environment (GNOME, KDE, XFCE), this works out of the box.</p>
 <p><strong>Done.</strong> Proceed to <a href="#step-1-install-nix">Step 1: Install Nix</a>.</p>
 <hr>
 <h3 id="macos-intel-or-apple-silicon">macOS (Intel or Apple Silicon)</h3>
 <p><strong>What you need:</strong> Xcode Command Line Tools and a few system settings.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Install Xcode Command Line Tools (provides git, curl, etc.)</span>
-xcode-select<span class="w"> </span>--install
-<span class="c1"># Follow the dialog that appears. If already installed, you&#39;ll see a message saying so.</span>
+<pre class="codehilite"><code class="language-bash"># 1. Install Xcode Command Line Tools (provides git, curl, etc.)
+xcode-select --install
+# Follow the dialog that appears. If already installed, you'll see a message saying so.
 
-<span class="c1"># 2. Allow apps from &quot;identified developers&quot; (needed for GTKWave)</span>
-<span class="c1">#    System Settings → Privacy &amp; Security → Security → Allow</span>
-<span class="c1">#    (You may be prompted again the first time you launch GTKWave)</span>
-</code></pre></div>
+# 2. Allow apps from &quot;identified developers&quot; (needed for GTKWave)
+#    System Settings → Privacy &amp; Security → Security → Allow
+#    (You may be prompted again the first time you launch GTKWave)
+</code></pre>
 
 <p><strong>USB driver note:</strong> macOS recognizes the Go Board FTDI chip natively via the built-in AppleUSBFTDI driver. No additional drivers are needed. Verify with:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Plug in the Go Board, then:</span>
-ls<span class="w"> </span>/dev/cu.usbserial*
-<span class="c1"># Expected: /dev/cu.usbserial-&lt;something&gt;</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash"># Plug in the Go Board, then:
+ls /dev/cu.usbserial*
+# Expected: /dev/cu.usbserial-&lt;something&gt;
+</code></pre>
 
 <p><strong>Apple Silicon (M1/M2/M3/M4) note:</strong> Nix and all course tools support <code>aarch64-darwin</code> natively. No Rosetta needed.</p>
 <p><strong>Done.</strong> Proceed to <a href="#step-1-install-nix">Step 1: Install Nix</a>.</p>
 <hr>
 <h3 id="windows">Windows</h3>
 <p>Windows support works through <strong>WSL2</strong> (Windows Subsystem for Linux). You'll run an Ubuntu environment inside Windows and use Nix there.</p>
-<div class="codehilite"><pre><span></span><code><span class="c"># ── Run these in PowerShell (as Administrator) ──</span>
+<pre class="codehilite"><code class="language-powershell"># ── Run these in PowerShell (as Administrator) ──
 
-<span class="c"># 1. Install WSL2 with Ubuntu (reboot if prompted)</span>
-<span class="n">wsl</span> <span class="p">-</span><span class="n">-install</span>
+# 1. Install WSL2 with Ubuntu (reboot if prompted)
+wsl --install
 
-<span class="c"># 2. After reboot, open &quot;Ubuntu&quot; from the Start menu.</span>
-<span class="c">#    Set your UNIX username and password when prompted.</span>
-</code></pre></div>
+# 2. After reboot, open &quot;Ubuntu&quot; from the Start menu.
+#    Set your UNIX username and password when prompted.
+</code></pre>
 
 <p>Now <strong>inside the Ubuntu/WSL2 terminal</strong>:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># 3. Update packages</span>
-sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>curl<span class="w"> </span>xz-utils
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash"># 3. Update packages
+sudo apt update &amp;&amp; sudo apt install -y curl xz-utils
+</code></pre>
 
 <p><strong>USB passthrough (required for programming the Go Board):</strong></p>
 <p>WSL2 does not have native USB access. You need <code>usbipd-win</code> to forward the FTDI device.</p>
-<div class="codehilite"><pre><span></span><code><span class="c"># ── Back in PowerShell (as Administrator) ──</span>
+<pre class="codehilite"><code class="language-powershell"># ── Back in PowerShell (as Administrator) ──
 
-<span class="c"># 4. Install usbipd-win</span>
-<span class="n">winget</span> <span class="n">install</span> <span class="n">usbipd</span>
+# 4. Install usbipd-win
+winget install usbipd
 
-<span class="c"># 5. List USB devices (plug in the Go Board first)</span>
-<span class="n">usbipd</span> <span class="n">list</span>
-<span class="c"># Find the line with &quot;FTDI&quot; or &quot;USB Serial Converter&quot; — note its BUSID (e.g., 2-1)</span>
+# 5. List USB devices (plug in the Go Board first)
+usbipd list
+# Find the line with &quot;FTDI&quot; or &quot;USB Serial Converter&quot; — note its BUSID (e.g., 2-1)
 
-<span class="c"># 6. Bind and attach to WSL (repeat step 6b each time you reconnect the board)</span>
-<span class="n">usbipd</span> <span class="n">bind</span> <span class="p">-</span><span class="n">-busid</span> <span class="p">&lt;</span><span class="n">BUSID</span><span class="p">&gt;</span>       <span class="c"># one-time: makes device shareable</span>
-<span class="n">usbipd</span> <span class="n">attach</span> <span class="p">-</span><span class="n">-wsl</span> <span class="p">-</span><span class="n">-busid</span> <span class="p">&lt;</span><span class="n">BUSID</span><span class="p">&gt;</span>  <span class="c"># each session: forwards to WSL</span>
-</code></pre></div>
+# 6. Bind and attach to WSL (repeat step 6b each time you reconnect the board)
+usbipd bind --busid &lt;BUSID&gt;       # one-time: makes device shareable
+usbipd attach --wsl --busid &lt;BUSID&gt;  # each session: forwards to WSL
+</code></pre>
 
 <p>Then <strong>inside WSL2</strong>:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># 7. Verify the device appeared</span>
-ls<span class="w"> </span>/dev/ttyUSB*
-<span class="c1"># Expected: /dev/ttyUSB0 or /dev/ttyUSB1</span>
+<pre class="codehilite"><code class="language-bash"># 7. Verify the device appeared
+ls /dev/ttyUSB*
+# Expected: /dev/ttyUSB0 or /dev/ttyUSB1
 
-<span class="c1"># 8. Set up udev rules (same as Linux)</span>
-sudo<span class="w"> </span>tee<span class="w"> </span>/etc/udev/rules.d/99-fpga-boards.rules<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
-<span class="s">ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0403&quot;, ATTR{idProduct}==&quot;6010&quot;, MODE=&quot;0666&quot;</span>
-<span class="s">EOF</span>
+# 8. Set up udev rules (same as Linux)
+sudo tee /etc/udev/rules.d/99-fpga-boards.rules &gt; /dev/null &lt;&lt; 'EOF'
+ACTION==&quot;add&quot;, ATTR{idVendor}==&quot;0403&quot;, ATTR{idProduct}==&quot;6010&quot;, MODE=&quot;0666&quot;
+EOF
 
-sudo<span class="w"> </span>udevadm<span class="w"> </span>control<span class="w"> </span>--reload-rules
-sudo<span class="w"> </span>udevadm<span class="w"> </span>trigger
-</code></pre></div>
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+</code></pre>
 
 <p><strong>GTKWave on WSL2:</strong> Waveform viewing requires a GUI. Two options:
 - <strong>WSLg (default on Windows 11):</strong> GUI apps work automatically — just run <code>gtkwave</code> from the terminal.
@@ -115,36 +115,39 @@ sudo<span class="w"> </span>udevadm<span class="w"> </span>trigger
 <hr>
 <h2 id="step-1-install-nix">Step 1: Install Nix</h2>
 <p>We use the <a href="https://github.com/DeterminateSystems/nix-installer">Determinate Systems Nix Installer</a>, which enables Flakes by default and handles the multi-user daemon setup cleanly on all platforms.</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Works on Linux, macOS, and WSL2</span>
-curl<span class="w"> </span>--proto<span class="w"> </span><span class="s1">&#39;=https&#39;</span><span class="w"> </span>--tlsv1.2<span class="w"> </span>-sSf<span class="w"> </span>-L<span class="w"> </span>https://install.determinate.systems/nix<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh<span class="w"> </span>-s<span class="w"> </span>--<span class="w"> </span>install
+<pre class="codehilite"><code class="language-bash"># Works on Linux, macOS, and WSL2
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
-<span class="c1"># Follow any prompts (you may need to approve sudo access).</span>
-<span class="c1"># When finished, open a NEW terminal (or source the shell config):</span>
-<span class="nb">source</span><span class="w"> </span>/etc/profile.d/nix.sh<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
+# Follow any prompts (you may need to approve sudo access).
+# When finished, open a NEW terminal (or source the shell config):
+source /etc/profile.d/nix.sh 2&gt;/dev/null || true
 
-<span class="c1"># Verify Nix is working</span>
-nix<span class="w"> </span>--version
-<span class="c1"># Expected: nix (Nix) 2.x.x</span>
-</code></pre></div>
+# Verify Nix is working
+nix --version
+# Expected: nix (Nix) 2.x.x
+</code></pre>
 
 <blockquote>
 <p><strong>What just happened?</strong> Nix installed a package manager in <code>/nix/store</code> that keeps all course tools completely isolated from your system. It won't interfere with your existing <code>apt</code>, <code>brew</code>, or other package managers.</p>
+<p><strong>Already have Nix installed?</strong> If you used the official Nix installer (not Determinate Systems), you'll need to enable Flakes manually. Create or edit <code>~/.config/nix/nix.conf</code> and add:</p>
+<p><code>experimental-features = nix-command flakes</code></p>
+<p>Then restart your terminal. Without this, you'll get <code>error: experimental Nix feature 'nix-command' is disabled</code>.</p>
 </blockquote>
 <hr>
 <h2 id="step-2-clone-the-course-repository">Step 2: Clone the Course Repository</h2>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Clone the repo (replace with the actual URL your instructor provides)</span>
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/&lt;org&gt;/hdl-course.git
-<span class="nb">cd</span><span class="w"> </span>hdl-course
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash"># Clone the repo (replace with the actual URL your instructor provides)
+git clone https://github.com/&lt;org&gt;/hdl-course.git
+cd hdl-course
+</code></pre>
 
 <hr>
 <h2 id="step-3-enter-the-development-shell">Step 3: Enter the Development Shell</h2>
-<div class="codehilite"><pre><span></span><code>nix<span class="w"> </span>develop
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">nix develop
+</code></pre>
 
 <p>The first time you run this, Nix will download and build the toolchain. This takes <strong>5–15 minutes</strong> depending on your internet connection (subsequent runs are instant — everything is cached).</p>
 <p>You should see:</p>
-<div class="codehilite"><pre><span></span><code>╔══════════════════════════════════════════════════╗
+<pre class="codehilite"><code>╔══════════════════════════════════════════════════╗
 ║  HDL for Digital System Design — Environment    ║
 ╚══════════════════════════════════════════════════╝
 
@@ -154,9 +157,9 @@ git<span class="w"> </span>clone<span class="w"> </span>https://github.com/&lt;o
   iverilog   Icarus Verilog version 1x.x
   gtkwave    installed
 
-  Run &#39;make sim&#39; in any lab directory to simulate.
-  Run &#39;make prog&#39; to synthesize and program the Go Board.
-</code></pre></div>
+  Run 'make sim' in any lab directory to simulate.
+  Run 'make prog' to synthesize and program the Go Board.
+</code></pre>
 
 <p><strong>Every time you work on course material</strong>, <code>cd</code> into the repo and run <code>nix develop</code> to activate the environment. When you're done, just type <code>exit</code> or close the terminal.</p>
 <blockquote>
@@ -172,59 +175,59 @@ After this, the tools are available the moment you enter the directory.</p>
 <hr>
 <h2 id="step-4-verify-everything-works">Step 4: Verify Everything Works</h2>
 <p>Run the built-in verification script from inside the Nix shell:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Make sure you&#39;re in the Nix shell (run &#39;nix develop&#39; if you haven&#39;t)</span>
+<pre class="codehilite"><code class="language-bash"># Make sure you're in the Nix shell (run 'nix develop' if you haven't)
 
-<span class="c1"># ── Test 1: Synthesis ──</span>
-mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/hdl-verify<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/tmp/hdl-verify
+# ── Test 1: Synthesis ──
+mkdir -p /tmp/hdl-verify &amp;&amp; cd /tmp/hdl-verify
 
-cat<span class="w"> </span>&gt;<span class="w"> </span>test.v<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
-<span class="s">module test (output wire o_led);</span>
-<span class="s">    assign o_led = 1&#39;b0;</span>
-<span class="s">endmodule</span>
-<span class="s">EOF</span>
+cat &gt; test.v &lt;&lt; 'EOF'
+module test (output wire o_led);
+    assign o_led = 1'b0;
+endmodule
+EOF
 
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;synth_ice40 -top test -json test.json&quot;</span><span class="w"> </span>test.v
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ Yosys synthesis — OK&quot;</span>
+yosys -p &quot;synth_ice40 -top test -json test.json&quot; test.v
+echo &quot;✅ Yosys synthesis — OK&quot;
 
-<span class="c1"># ── Test 2: Place &amp; Route ──</span>
-nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--json<span class="w"> </span>test.json<span class="w"> </span>--asc<span class="w"> </span>test.asc<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ nextpnr place &amp; route — OK&quot;</span>
+# ── Test 2: Place &amp; Route ──
+nextpnr-ice40 --hx1k --package vq100 --json test.json --asc test.asc 2&gt;&amp;1 || true
+echo &quot;✅ nextpnr place &amp; route — OK&quot;
 
-<span class="c1"># ── Test 3: Simulation ──</span>
-cat<span class="w"> </span>&gt;<span class="w"> </span>tb_test.v<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
-<span class="s">module tb_test;</span>
-<span class="s">    wire w_led;</span>
-<span class="s">    test uut (.o_led(w_led));</span>
-<span class="s">    initial begin</span>
-<span class="s">        #10;</span>
-<span class="s">        if (w_led === 1&#39;b0) $display(&quot;PASS: LED driven low as expected&quot;);</span>
-<span class="s">        else $display(&quot;FAIL: unexpected LED value&quot;);</span>
-<span class="s">        $finish;</span>
-<span class="s">    end</span>
-<span class="s">endmodule</span>
-<span class="s">EOF</span>
+# ── Test 3: Simulation ──
+cat &gt; tb_test.v &lt;&lt; 'EOF'
+module tb_test;
+    wire w_led;
+    test uut (.o_led(w_led));
+    initial begin
+        #10;
+        if (w_led === 1'b0) $display(&quot;PASS: LED driven low as expected&quot;);
+        else $display(&quot;FAIL: unexpected LED value&quot;);
+        $finish;
+    end
+endmodule
+EOF
 
-iverilog<span class="w"> </span>-o<span class="w"> </span>sim.vvp<span class="w"> </span>tb_test.v<span class="w"> </span>test.v<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>vvp<span class="w"> </span>sim.vvp
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ Icarus Verilog simulation — OK&quot;</span>
+iverilog -o sim.vvp tb_test.v test.v &amp;&amp; vvp sim.vvp
+echo &quot;✅ Icarus Verilog simulation — OK&quot;
 
-<span class="c1"># ── Test 4: Waveform viewer ──</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Launching GTKWave (close the window to continue)...&quot;</span>
-gtkwave<span class="w"> </span>--version<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ GTKWave — OK&quot;</span>
+# ── Test 4: Waveform viewer ──
+echo &quot;Launching GTKWave (close the window to continue)...&quot;
+gtkwave --version &amp;&amp; echo &quot;✅ GTKWave — OK&quot;
 
-<span class="c1"># ── Test 5: Bitstream tools ──</span>
-icepack<span class="w"> </span>test.asc<span class="w"> </span>test.bin<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ icepack — OK&quot;</span>
+# ── Test 5: Bitstream tools ──
+icepack test.asc test.bin &amp;&amp; echo &quot;✅ icepack — OK&quot;
 
-<span class="c1"># ── Test 6: JupyterLab ──</span>
-jupyter<span class="w"> </span>--version<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ JupyterLab — OK&quot;</span>
+# ── Test 6: JupyterLab ──
+jupyter --version &gt; /dev/null 2&gt;&amp;1 &amp;&amp; echo &quot;✅ JupyterLab — OK&quot;
 
-<span class="c1"># ── Cleanup ──</span>
-<span class="nb">cd</span><span class="w"> </span>~<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/tmp/hdl-verify
+# ── Cleanup ──
+cd ~ &amp;&amp; rm -rf /tmp/hdl-verify
 
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;════════════════════════════════════════&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  All tools verified. You&#39;re ready.&quot;</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;════════════════════════════════════════&quot;</span>
-</code></pre></div>
+echo &quot;&quot;
+echo &quot;════════════════════════════════════════&quot;
+echo &quot;  All tools verified. You're ready.&quot;
+echo &quot;════════════════════════════════════════&quot;
+</code></pre>
 
 <hr>
 <h2 id="step-5-go-board-connection-test">Step 5: Go Board Connection Test</h2>
@@ -334,99 +337,100 @@ jupyter<span class="w"> </span>--version<span class="w"> </span>&gt;<span class=
 </ul>
 <p>You'll submit your AI prompts and corrected outputs as part of lab deliverables. The emphasis is on <strong>reviewing and debugging</strong> AI-generated Verilog, not on which tool you use.</p>
 <hr>
-<h2 id="jupyterhub-course-site">JupyterHub &amp; Course Site</h2>
-<p>The course website includes a <strong>Code &amp; Notebooks</strong> page for each day with direct links to starter code, solution zips, and JupyterHub. This section explains how the pieces fit together.</p>
-<h3 id="browsing-the-course-site">Browsing the Course Site</h3>
-<p>The static course site is built with MkDocs and deployed automatically. You can also build and preview it locally:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Install MkDocs dependencies (once)</span>
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+<h2 id="jupyterlab-course-site">JupyterLab &amp; Course Site</h2>
+<p>The course website includes a <strong>Code &amp; Notebooks</strong> page for each day with direct links to starter code, solution zips, and JupyterLab. This section explains how the pieces fit together.</p>
+<h3 id="running-jupyterlab">Running JupyterLab</h3>
+<p>JupyterLab is included in the Nix development environment — no separate install needed. Launch it from the repo root so that all file paths resolve correctly:</p>
+<pre class="codehilite"><code class="language-bash">cd hdl-for-dsd
+nix develop
+jupyter lab
+</code></pre>
 
-<span class="c1"># Generate the source tree (creates docs_src/, downloads/ with zips)</span>
-python3<span class="w"> </span>scripts/prep_mkdocs.py
-
-<span class="c1"># Preview locally with live reload</span>
-python3<span class="w"> </span>scripts/prep_mkdocs.py<span class="w"> </span>--serve
-<span class="c1"># Open: http://127.0.0.1:8000</span>
-</code></pre></div>
-
-<p>Each day's page includes a <strong>Code &amp; Notebooks</strong> card that links to:</p>
+<p>This opens JupyterLab in your browser with the full repository tree. You can:</p>
+<ul>
+<li>Edit Verilog, SystemVerilog, and testbench files in the built-in text editor</li>
+<li>Open the <code>.ipynb</code> lab notebooks for an interactive guided experience</li>
+<li>Use the terminal panel to run simulations (<code>make sim</code>) or program the board (<code>make prog</code>)</li>
+</ul>
+<h3 id="code-notebooks-pages">Code &amp; Notebooks Pages</h3>
+<p>Each day's page on the course site includes a <strong>Code &amp; Notebooks</strong> card with:</p>
 <ul>
 <li><strong>Download All Starter Code (.zip)</strong> — a single zip with every exercise's starter files for that day</li>
 <li><strong>Per-exercise starter and solution zips</strong></li>
 <li><strong>GitHub links</strong> — view each file directly on GitHub</li>
-<li><strong>Open in Hub links</strong> — open each file directly in JupyterHub for editing</li>
+<li><strong>Open in Jupyter links</strong> — open each file directly in your running JupyterLab instance</li>
+<li><strong>Lab Notebook (.ipynb)</strong> — the full lab guide as a Jupyter notebook (auto-generated via <code>jupytext</code>)</li>
 </ul>
-<h3 id="using-jupyterhub">Using JupyterHub</h3>
-<p>The "Open in Hub" links assume the course repository has been cloned into your JupyterHub home directory at <code>~/hdl-for-dsd/</code>. If your institution provides a JupyterHub instance:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Inside your JupyterHub terminal:</span>
-<span class="nb">cd</span><span class="w"> </span>~
-git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ucf-draco-mike/hdl-for-dsd.git
-</code></pre></div>
-
-<p>Once cloned, all the "Open in Hub" links on the course site will resolve to the correct files. You can edit Verilog, SystemVerilog, Makefiles, and test vectors directly in JupyterLab's text editor, and use the built-in terminal to run simulations.</p>
 <blockquote>
-<p><strong>Note:</strong> JupyterHub does <strong>not</strong> replace the Nix development environment for synthesis and programming. You still need <code>nix develop</code> for Yosys, nextpnr, and iceprog. JupyterHub is useful for browsing, editing, and light simulation work — especially if your institution provides a shared hub with Icarus Verilog pre-installed.</p>
+<p><strong>How the "Open in Jupyter" links work:</strong> The links point to <code>http://localhost:8888/lab/tree/&lt;path&gt;</code>, which is the default JupyterLab address when launched from the repo root. If JupyterLab starts on a different port, adjust the URL or navigate to the file manually in JupyterLab's file browser.</p>
 </blockquote>
-<h3 id="configuring-the-jupyterhub-base-url">Configuring the JupyterHub Base URL</h3>
-<p>By default, the "Open in Hub" links point to <code>/hub/user-redirect/lab/tree/hdl-for-dsd/...</code>, which works for standard JupyterHub deployments. If your institution uses a different URL scheme, set the environment variable before building the site:</p>
-<div class="codehilite"><pre><span></span><code><span class="c1"># Example: UCF CECS JupyterHub</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">HDL_JUPYTER_BASE</span><span class="o">=</span><span class="s2">&quot;https://jupyter.cecs.ucf.edu/hub/user-redirect/lab/tree/hdl-for-dsd&quot;</span>
+<h3 id="configuring-a-custom-url">Configuring a Custom URL</h3>
+<p>If you run JupyterLab on a different port, or your institution provides a shared JupyterHub, override the base URL when building the site:</p>
+<pre class="codehilite"><code class="language-bash"># Custom local port
+export HDL_JUPYTER_BASE=&quot;http://localhost:9999/lab/tree&quot;
 
-<span class="c1"># Then rebuild</span>
-python3<span class="w"> </span>scripts/prep_mkdocs.py<span class="w"> </span>--build
-</code></pre></div>
+# Institutional JupyterHub
+export HDL_JUPYTER_BASE=&quot;https://jupyter.cecs.ucf.edu/hub/user-redirect/lab/tree/hdl-for-dsd&quot;
 
-<h3 id="running-jupyterlab-locally">Running JupyterLab Locally</h3>
-<p>JupyterLab is included in the Nix development environment — no separate install needed. After entering the dev shell, just launch it:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>hdl-for-dsd
-nix<span class="w"> </span>develop
-jupyter<span class="w"> </span>lab
-</code></pre></div>
+# Then rebuild
+./scripts/build_all.sh --quick
+</code></pre>
 
-<p>This opens JupyterLab in your browser with the full repository tree. You can edit Verilog files in the built-in editor and use the terminal panel to run simulations (<code>make sim</code>) or program the board (<code>make prog</code>).</p>
-<blockquote>
-<p><strong>Tip:</strong> The "Open in Hub" links on the course site point to an institutional JupyterHub and won't resolve to your local instance, but you can navigate the file tree directly in JupyterLab's sidebar.</p>
-</blockquote>
-<h3 id="building-the-course-site-locally">Building the Course Site Locally</h3>
-<p>To build or preview the full course site (with download zips and all pages), use the <code>full</code> dev shell which adds MkDocs and its dependencies:</p>
-<div class="codehilite"><pre><span></span><code>nix<span class="w"> </span>develop<span class="w"> </span>.#full
+<h3 id="browsing-the-course-site-locally">Browsing the Course Site Locally</h3>
+<p>The static course site is built with MkDocs. To preview it locally:</p>
+<pre class="codehilite"><code class="language-bash">nix develop .#full
+./scripts/build_all.sh --serve
+# Open: http://127.0.0.1:8000
+</code></pre>
 
-<span class="c1"># Preview with live reload</span>
-python3<span class="w"> </span>scripts/prep_mkdocs.py<span class="w"> </span>--serve
+<h3 id="building-the-course-site">Building the Course Site</h3>
+<p>To build the full course site (with download zips, notebooks, and all pages), use the <code>full</code> dev shell which adds MkDocs, jupytext, and dependencies:</p>
+<pre class="codehilite"><code class="language-bash">nix develop .#full
 
-<span class="c1"># Or build a static copy</span>
-python3<span class="w"> </span>scripts/prep_mkdocs.py<span class="w"> </span>--build
-<span class="c1"># Output: _site/</span>
-</code></pre></div>
+# Full build: notebooks → MkDocs source → static site
+./scripts/build_all.sh
 
+# Or individual steps:
+./scripts/build_all.sh --notebooks  # only regenerate .ipynb files
+./scripts/build_all.sh --quick      # skip standalone site (build_site.py)
+./scripts/build_all.sh --serve      # build then live-preview at localhost:8000
+</code></pre>
+
+<p>The <code>build_all.sh</code> script runs each step in order:</p>
+<ol>
+<li><strong>Notebooks</strong> — converts every lab <code>README.md</code> to <code>.ipynb</code> via <code>jupytext</code> (incremental: skips unchanged files)</li>
+<li><strong>MkDocs prep</strong> — generates <code>docs_src/</code> with code pages, download zips, and day navigation</li>
+<li><strong>Standalone site</strong> — builds <code>site/</code> via <code>build_site.py</code> (skipped with <code>--quick</code>)</li>
+<li><strong>MkDocs build</strong> — produces the final <code>_site/</code> directory with slides and downloads copied in</li>
+</ol>
 <hr>
 <h2 id="quick-reference">Quick Reference</h2>
-<div class="codehilite"><pre><span></span><code><span class="c1"># ── Enter the course environment ──</span>
-<span class="nb">cd</span><span class="w"> </span>hdl-course<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>nix<span class="w"> </span>develop
+<pre class="codehilite"><code class="language-bash"># ── Enter the course environment ──
+cd hdl-course &amp;&amp; nix develop
 
-<span class="c1"># ── Simulation ──</span>
-iverilog<span class="w"> </span>-o<span class="w"> </span>sim.vvp<span class="w"> </span>-g2012<span class="w"> </span>tb_module.v<span class="w"> </span>module.v
-vvp<span class="w"> </span>sim.vvp
-gtkwave<span class="w"> </span>dump.vcd
+# ── Simulation ──
+iverilog -o sim.vvp -g2012 tb_module.v module.v
+vvp sim.vvp
+gtkwave dump.vcd
 
-<span class="c1"># ── Synthesis → Program (Go Board) ──</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;synth_ice40 -top top_module -json top.json&quot;</span><span class="w"> </span>top.v<span class="w"> </span>sub1.v<span class="w"> </span>sub2.v
-nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--pcf<span class="w"> </span>go_board.pcf<span class="w"> </span>--json<span class="w"> </span>top.json<span class="w"> </span>--asc<span class="w"> </span>top.asc
-icepack<span class="w"> </span>top.asc<span class="w"> </span>top.bin
-iceprog<span class="w"> </span>top.bin
+# ── Synthesis → Program (Go Board) ──
+yosys -p &quot;synth_ice40 -top top_module -json top.json&quot; top.v sub1.v sub2.v
+nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
+icepack top.asc top.bin
+iceprog top.bin
 
-<span class="c1"># ── JupyterLab (edit &amp; browse in browser) ──</span>
-jupyter<span class="w"> </span>lab
+# ── JupyterLab (edit &amp; browse in browser) ──
+jupyter lab
 
-<span class="c1"># ── Resource analysis ──</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog module.v; synth_ice40 -top module; stat&quot;</span>
+# ── Resource analysis ──
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; stat&quot;
 
-<span class="c1"># ── Schematic visualization ──</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog module.v; synth_ice40 -top module; show&quot;</span>
+# ── Schematic visualization ──
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; show&quot;
 
-<span class="c1"># ── SystemVerilog simulation (use -g2012 flag) ──</span>
-iverilog<span class="w"> </span>-g2012<span class="w"> </span>-o<span class="w"> </span>sim.vvp<span class="w"> </span>tb_module.sv<span class="w"> </span>module.sv
-</code></pre></div>
+# ── SystemVerilog simulation (use -g2012 flag) ──
+iverilog -g2012 -o sim.vvp tb_module.sv module.sv
+</code></pre>
 
 <hr>
 <h2 id="troubleshooting">Troubleshooting</h2>
@@ -483,20 +487,20 @@ iverilog<span class="w"> </span>-g2012<span class="w"> </span>-o<span class="w">
 <td>Run <code>nix store gc</code> to garbage-collect unused packages</td>
 </tr>
 <tr>
-<td>"Open in Hub" links go to 404</td>
-<td>Clone the repo into <code>~/hdl-for-dsd/</code> on your JupyterHub instance, or check that <code>HDL_JUPYTER_BASE</code> matches your hub's URL</td>
+<td>"Open in Jupyter" links go to wrong page</td>
+<td>Make sure JupyterLab is running (<code>jupyter lab</code>) from the repo root. If it's on a different port than 8888, set <code>HDL_JUPYTER_BASE</code> and rebuild</td>
 </tr>
 <tr>
-<td>JupyterHub can't find Icarus Verilog</td>
-<td>Iverilog isn't in the default JupyterHub environment. Use the Nix shell (<code>nix develop</code>) in a JupyterHub terminal, or ask your admin to install <code>iverilog</code> system-wide</td>
+<td>JupyterLab can't find Icarus Verilog</td>
+<td>Open a terminal inside JupyterLab and run <code>nix develop</code> to enter the course environment before running <code>make sim</code></td>
 </tr>
 </tbody>
 </table>
 <hr>
 <h2 id="uninstalling-after-the-course">Uninstalling (after the course)</h2>
 <p>If you want to remove Nix and reclaim disk space:</p>
-<div class="codehilite"><pre><span></span><code>/nix/nix-installer<span class="w"> </span>uninstall
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">/nix/nix-installer uninstall
+</code></pre>
 
 <p>This cleanly removes the Nix daemon, store, and configuration. Your system packages are unaffected.</p>
 </article>

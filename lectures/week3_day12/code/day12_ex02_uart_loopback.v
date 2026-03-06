@@ -71,7 +71,7 @@ module uart_loopback #(
     always @(posedge i_clk)
         if (w_rx_valid) r_display <= w_rx_data;
 
-    assign o_led = ~r_display[3:0];   // active-low LEDs
+    assign o_led = r_display[3:0];   // active-high LEDs
 
     // 7-segment decoders (if available in your library)
     // hex_to_7seg seg_hi (.i_hex(r_display[7:4]), .o_seg(o_seg1));

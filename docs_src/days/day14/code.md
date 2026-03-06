@@ -6,9 +6,9 @@ title: "Day 14 — Code & Notebooks"
 
 [:material-folder-download: Download All Starter Code (.zip)](../../downloads/day14/day14_all_starter.zip){ .md-button .md-button--primary }
 
-!!! tip "Open directly in JupyterHub"
-    Click the **:material-notebook: Open in Hub** links below to edit files directly in [JupyterHub](/hub/user-redirect/lab/tree/hdl-for-dsd).
-    Assumes the repo is cloned as `~/hdl-for-dsd/`.
+!!! tip "Open files in JupyterLab"
+    Click the **:material-notebook: Open in Jupyter** links below to open files directly in your local JupyterLab instance.
+    Start JupyterLab from the repo root: `cd hdl-for-dsd && jupyter lab`
 
 ## Shared Files
 
@@ -24,8 +24,8 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/Makefile){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex1_uart_assertions/starter/Makefile){ target=_blank } |
-| :material-chip: `uart_tx_asserted.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/uart_tx_asserted.sv){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex1_uart_assertions/starter/uart_tx_asserted.sv){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex1_uart_assertions/starter/Makefile){ target=_blank } |
+| :material-chip: `uart_tx_asserted.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/uart_tx_asserted.sv){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex1_uart_assertions/starter/uart_tx_asserted.sv){ target=_blank } |
 
 ## Ex 2 — Uart Parity
 
@@ -33,9 +33,9 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/Makefile){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex2_uart_parity/starter/Makefile){ target=_blank } |
-| :material-chip: `tb_uart_tx_parity.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/tb_uart_tx_parity.sv){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex2_uart_parity/starter/tb_uart_tx_parity.sv){ target=_blank } |
-| :material-chip: `uart_tx_parity.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/uart_tx_parity.sv){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex2_uart_parity/starter/uart_tx_parity.sv){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex2_uart_parity/starter/Makefile){ target=_blank } |
+| :material-chip: `tb_uart_tx_parity.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/tb_uart_tx_parity.sv){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex2_uart_parity/starter/tb_uart_tx_parity.sv){ target=_blank } |
+| :material-chip: `uart_tx_parity.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/uart_tx_parity.sv){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex2_uart_parity/starter/uart_tx_parity.sv){ target=_blank } |
 
 ## Ex 3 — Ai Constraint Tb
 
@@ -43,8 +43,8 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank } |
-| :material-text: `README.md` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank } |
+| :material-text: `README.md` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank } |
 
 ## Ex 4 — Ppa Analysis
 
@@ -52,5 +52,5 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/Makefile){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex4_ppa_analysis/starter/Makefile){ target=_blank } |
-| :material-text: `ppa_exercise.md` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/ppa_exercise.md){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week4_day14/ex4_ppa_analysis/starter/ppa_exercise.md){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex4_ppa_analysis/starter/Makefile){ target=_blank } |
+| :material-text: `ppa_exercise.md` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/ppa_exercise.md){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex4_ppa_analysis/starter/ppa_exercise.md){ target=_blank } |

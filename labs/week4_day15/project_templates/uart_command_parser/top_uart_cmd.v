@@ -91,10 +91,10 @@ module top_uart_cmd (
     // ────────────────────────────────────────────
     // Output Assignments
     // ────────────────────────────────────────────
-    assign o_led1 = ~r_led1_on;
-    assign o_led2 = ~r_led2_on;
-    assign o_led3 = ~r_led3_on;
-    assign o_led4 = ~r_heartbeat[23];
+    assign o_led1 = r_led1_on;
+    assign o_led2 = r_led2_on;
+    assign o_led3 = r_led3_on;
+    assign o_led4 = r_heartbeat[23];
 
     assign {o_segment1_a, o_segment1_b, o_segment1_c,
             o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = w_seg1;

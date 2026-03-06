@@ -33,7 +33,7 @@ Session timeline & instructor notes
 
 **Code & Notebooks**
 
-Starter code, zips & JupyterHub links
+Starter code, zips & Jupyter links
 
 [:octicons-arrow-right-16: View code](code.md)
 </div>

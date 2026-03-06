@@ -19,7 +19,7 @@ module top_uart_hello (
     wire w_btn_press;
     // TODO: Edge detect — one-cycle pulse on button press
     //   Hint: reg r_prev; w_btn_press = ~w_btn_clean & ~r_prev_inverted
-    //   (remember: active-low button, so pressed = 0)
+    //   (remember: active-high button, so pressed = 1)
 
     // ---- YOUR CODE HERE ----
 
@@ -56,8 +56,8 @@ module top_uart_hello (
     // ---- YOUR CODE HERE ----
 
     // LED indicators
-    assign o_led1 = ~w_btn_press;
-    assign o_led2 = ~w_tx_busy;
+    assign o_led1 = w_btn_press;
+    assign o_led2 = w_tx_busy;
     assign o_led3 = 1'b1;  // off
     assign o_led4 = 1'b1;  // off
 

@@ -15,13 +15,13 @@ module top_pll_demo (
     reg [23:0] r_count_25;
     always @(posedge i_clk)
         r_count_25 <= r_count_25 + 1;
-    assign o_led1 = ~r_count_25[23];
+    assign o_led1 = r_count_25[23];
     reg [24:0] r_count_pll;
     always @(posedge w_pll_clk) begin
         if (!w_pll_locked) r_count_pll <= 0;
         else               r_count_pll <= r_count_pll + 1;
     end
-    assign o_led2 = ~r_count_pll[24];
-    assign o_led3 = ~w_pll_locked;
-    assign o_led4 = ~r_count_25[22];
+    assign o_led2 = r_count_pll[24];
+    assign o_led3 = w_pll_locked;
+    assign o_led4 = r_count_25[22];
 endmodule

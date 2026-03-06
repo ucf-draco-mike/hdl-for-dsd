@@ -34,11 +34,11 @@ module top_pattern (
         r_sw2_prev <= w_sw2_clean;
         r_sw3_prev <= w_sw3_clean;
     end
-    wire w_btn1 = ~w_sw1_clean & r_sw1_prev;
-    wire w_btn2 = ~w_sw2_clean & r_sw2_prev;
-    wire w_btn3 = ~w_sw3_clean & r_sw3_prev;
+    wire w_btn1 = w_sw1_clean & ~r_sw1_prev;
+    wire w_btn2 = w_sw2_clean & ~r_sw2_prev;
+    wire w_btn3 = w_sw3_clean & ~r_sw3_prev;
 
-    wire w_reset = ~w_reset_clean;
+    wire w_reset = w_reset_clean;
     wire w_detected;
     wire [1:0] w_progress;
 
@@ -48,12 +48,12 @@ module top_pattern (
         .o_detected(w_detected), .o_progress(w_progress)
     );
 
-    assign o_led1 = ~w_progress[1];
-    assign o_led2 = ~w_progress[0];
-    assign o_led4 = ~w_detected;
+    assign o_led1 = w_progress[1];
+    assign o_led2 = w_progress[0];
+    assign o_led4 = w_detected;
 
     reg [23:0] r_hb;
     always @(posedge i_clk) r_hb <= r_hb + 1;
-    assign o_led3 = ~r_hb[23];
+    assign o_led3 = r_hb[23];
 
 endmodule

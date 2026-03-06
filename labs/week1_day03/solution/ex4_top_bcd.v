@@ -26,7 +26,7 @@ module top_bcd (
         .i_bcd(w_bcd), .o_seg(w_seg), .o_valid(w_valid)
     );
 
-    assign o_led1 = ~w_valid;
+    assign o_led1 = w_valid;
     assign o_segment1_a = w_seg[6];
     assign o_segment1_b = w_seg[5];
     assign o_segment1_c = w_seg[4];

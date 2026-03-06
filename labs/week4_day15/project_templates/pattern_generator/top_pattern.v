@@ -82,10 +82,10 @@ module top_pattern (
     // ────────────────────────────────────────────
     // Outputs
     // ────────────────────────────────────────────
-    assign o_led1 = ~r_led_pattern[0];
-    assign o_led2 = ~r_led_pattern[1];
-    assign o_led3 = ~r_led_pattern[2];
-    assign o_led4 = ~r_led_pattern[3];
+    assign o_led1 = r_led_pattern[0];
+    assign o_led2 = r_led_pattern[1];
+    assign o_led3 = r_led_pattern[2];
+    assign o_led4 = r_led_pattern[3];
 
     assign o_uart_tx = 1'b1;   // Stub — add echo or status reporting later
 

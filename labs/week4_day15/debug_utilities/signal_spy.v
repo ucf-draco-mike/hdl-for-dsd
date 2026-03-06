@@ -4,7 +4,7 @@ module signal_spy (
     input  wire        i_clk,
     input  wire [1:0]  i_group_sel,  // 2-bit select from switches
     input  wire [15:0] i_signals,    // 16 signals to observe
-    output wire [3:0]  o_leds        // 4 LEDs (active-low for Go Board)
+    output wire [3:0]  o_leds        // 4 LEDs (active-high for Go Board)
 );
     reg [3:0] r_selected;
 
@@ -17,5 +17,5 @@ module signal_spy (
         endcase
     end
 
-    assign o_leds = ~r_selected;   // Active-low for Go Board
+    assign o_leds = r_selected;   // active-high for Go Board
 endmodule

@@ -7,6 +7,6 @@ module led_on (
     output wire o_led1
 );
 
-    assign o_led1 = 1'b0;  // Active low: 0 = on
+    assign o_led1 = 1'b0;  // active-high: 1 = on
 
 endmodule

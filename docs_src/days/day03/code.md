@@ -6,9 +6,9 @@ title: "Day 3 — Code & Notebooks"
 
 [:material-folder-download: Download All Starter Code (.zip)](../../downloads/day03/day03_all_starter.zip){ .md-button .md-button--primary }
 
-!!! tip "Open directly in JupyterHub"
-    Click the **:material-notebook: Open in Hub** links below to edit files directly in [JupyterHub](/hub/user-redirect/lab/tree/hdl-for-dsd).
-    Assumes the repo is cloned as `~/hdl-for-dsd/`.
+!!! tip "Open files in JupyterLab"
+    Click the **:material-notebook: Open in Jupyter** links below to open files directly in your local JupyterLab instance.
+    Start JupyterLab from the repo root: `cd hdl-for-dsd && jupyter lab`
 
 ## Shared Files
 
@@ -16,7 +16,7 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/Makefile){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/Makefile){ target=_blank } |
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/Makefile){ target=_blank } |
 | :material-pin: `go_board.pcf` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/go_board.pcf){ target=_blank } |
 
 ## Ex 1 — Latch Bugs
@@ -25,7 +25,7 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex1_latch_bugs.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex1_latch_bugs.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex1_latch_bugs.v){ target=_blank } |
+| :material-chip: `ex1_latch_bugs.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex1_latch_bugs.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex1_latch_bugs.v){ target=_blank } |
 
 ## Ex 2 — Files
 
@@ -33,8 +33,8 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex2_priority_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex2_priority_encoder.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex2_priority_encoder.v){ target=_blank } |
-| :material-chip: `ex2_top_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex2_top_encoder.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex2_top_encoder.v){ target=_blank } |
+| :material-chip: `ex2_priority_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex2_priority_encoder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex2_priority_encoder.v){ target=_blank } |
+| :material-chip: `ex2_top_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex2_top_encoder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex2_top_encoder.v){ target=_blank } |
 
 ## Ex 3 — Files
 
@@ -42,8 +42,8 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex3_alu_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex3_alu_4bit.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex3_alu_4bit.v){ target=_blank } |
-| :material-chip: `ex3_top_alu.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex3_top_alu.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex3_top_alu.v){ target=_blank } |
+| :material-chip: `ex3_alu_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex3_alu_4bit.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex3_alu_4bit.v){ target=_blank } |
+| :material-chip: `ex3_top_alu.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex3_top_alu.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex3_top_alu.v){ target=_blank } |
 
 ## Ex 4 — Files
 
@@ -51,8 +51,8 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex4_bcd_to_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex4_bcd_to_7seg.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex4_bcd_to_7seg.v){ target=_blank } |
-| :material-chip: `ex4_top_bcd.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex4_top_bcd.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex4_top_bcd.v){ target=_blank } |
+| :material-chip: `ex4_bcd_to_7seg.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex4_bcd_to_7seg.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex4_bcd_to_7seg.v){ target=_blank } |
+| :material-chip: `ex4_top_bcd.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex4_top_bcd.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex4_top_bcd.v){ target=_blank } |
 
 ## Ex 5 — Top Alu Display
 
@@ -60,4 +60,4 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
-| :material-chip: `ex5_top_alu_display.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex5_top_alu_display.v){ target=_blank } · [:material-notebook: Open in Hub](/hub/user-redirect/lab/tree/hdl-for-dsd/labs/week1_day03/starter/ex5_top_alu_display.v){ target=_blank } |
+| :material-chip: `ex5_top_alu_display.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/starter/ex5_top_alu_display.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/starter/ex5_top_alu_display.v){ target=_blank } |

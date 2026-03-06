@@ -21,21 +21,21 @@ In `always_comb`, the compiler **errors** because a latch would be inferred — 
 </details>
 
 <p><strong>Q3:</strong> Rewrite this Verilog FSM state declaration using SystemVerilog <code>enum</code>:</p>
-<div class="codehilite"><pre><span></span><code><span class="k">localparam</span><span class="w"> </span><span class="n">S_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mb">&#39;b00</span><span class="p">,</span><span class="w"> </span><span class="n">S_RUN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mb">&#39;b01</span><span class="p">,</span><span class="w"> </span><span class="n">S_DONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mb">&#39;b10</span><span class="p">;</span>
-<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-verilog">localparam S_IDLE = 2'b00, S_RUN = 2'b01, S_DONE = 2'b10;
+reg [1:0] state;
+</code></pre>
 
 <details><summary>Answer</summary>
 
 
-<div class="codehilite"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="kt">logic</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">S_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">2&#39;b00</span><span class="p">,</span>
-<span class="w">    </span><span class="n">S_RUN</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mb">2&#39;b01</span><span class="p">,</span>
-<span class="w">    </span><span class="n">S_DONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mb">2&#39;b10</span>
-<span class="p">}</span><span class="w"> </span><span class="n">my_state_t</span><span class="p">;</span>
+<pre class="codehilite"><code class="language-systemverilog">typedef enum logic [1:0] {
+    S_IDLE = 2'b00,
+    S_RUN  = 2'b01,
+    S_DONE = 2'b10
+} my_state_t;
 
-<span class="n">my_state_t</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
-</code></pre></div>
+my_state_t state;
+</code></pre>
 
 
 Bonus: `$display("State: %s", state.name());` prints the state name.

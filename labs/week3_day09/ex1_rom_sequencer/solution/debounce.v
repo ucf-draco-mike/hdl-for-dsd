@@ -1,4 +1,4 @@
-// debounce.v — Switch debouncer (active-low input, active-high output)
+// debounce.v — Switch debouncer (active-high input, active-high output)
 module debounce #(
     parameter DEBOUNCE_LIMIT = 250000
 )(

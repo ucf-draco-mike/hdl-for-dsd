@@ -38,9 +38,9 @@ module dual_blinker (
     end
 
     // Complementary pairs
-    assign o_led1 = ~r_led1;
+    assign o_led1 = r_led1;
     assign o_led2 = r_led1;    // inverted from led1
-    assign o_led3 = ~r_led3;
+    assign o_led3 = r_led3;
     assign o_led4 = r_led3;    // inverted from led3
 
 endmodule

@@ -10,10 +10,10 @@
 //   statements does NOT matter.
 //
 //   Go Board mapping:
-//     i_sw[0] = Switch 1 (active low)   o_led[0] = LED 1
-//     i_sw[1] = Switch 2 (active low)   o_led[1] = LED 2
-//     i_sw[2] = Switch 3 (active low)   o_led[2] = LED 3
-//     i_sw[3] = Switch 4 (active low)   o_led[3] = LED 4
+//     i_sw[0] = Switch 1 (active-high)   o_led[0] = LED 1
+//     i_sw[1] = Switch 2 (active-high)   o_led[1] = LED 2
+//     i_sw[2] = Switch 3 (active-high)   o_led[2] = LED 3
+//     i_sw[3] = Switch 4 (active-high)   o_led[3] = LED 4
 //
 // Build & program:
 //   yosys -p "synth_ice40 -top button_logic -json day01_ex02_button_logic.json" day01_ex02_button_logic.v

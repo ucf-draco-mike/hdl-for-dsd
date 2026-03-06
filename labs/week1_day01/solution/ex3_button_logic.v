@@ -24,9 +24,9 @@ module button_logic (
 
     // LED3: XOR — on when exactly one of sw1/sw2 pressed
     // XOR then invert for active-low output
-    assign o_led3 = ~(i_switch1 ^ i_switch2);
+    assign o_led3 = (i_switch1 ^ i_switch2);
 
     // LED4: Inverted sw1 — LED on when NOT pressed
-    assign o_led4 = ~i_switch1;
+    assign o_led4 = i_switch1;
 
 endmodule

@@ -5,7 +5,7 @@
 // =============================================================================
 // Goal: Wire each button directly to its corresponding LED using assign.
 //
-// Go Board: Buttons and LEDs are both active low.
+// Go Board: Buttons and LEDs are both active-high.
 //   Button pressed = 0, LED on = 0
 //   Direct connection gives intuitive behavior (press → light)
 // =============================================================================

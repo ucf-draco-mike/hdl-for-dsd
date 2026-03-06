@@ -785,16 +785,16 @@
 </table>
 <hr>
 <h2 id="toolchain-reference">Toolchain Reference</h2>
-<div class="codehilite"><pre><span></span><code><span class="c1"># PPA analysis</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog module.v; synth_ice40 -top module; stat&quot;</span>
-<span class="c1"># Schematic comparison</span>
-yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog module.v; synth_ice40 -top module; show&quot;</span>
-<span class="c1"># Timing analysis</span>
-nextpnr-ice40<span class="w"> </span>...<span class="w"> </span>--report<span class="w"> </span>timing_report.json
-<span class="c1"># AI testbench generation</span>
-<span class="c1"># Students use Claude, ChatGPT, or Copilot — no tool installation</span>
-<span class="c1"># Prompts and outputs are submitted as part of lab deliverables</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash"># PPA analysis
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; stat&quot;
+# Schematic comparison
+yosys -p &quot;read_verilog module.v; synth_ice40 -top module; show&quot;
+# Timing analysis
+nextpnr-ice40 ... --report timing_report.json
+# AI testbench generation
+# Students use Claude, ChatGPT, or Copilot — no tool installation
+# Prompts and outputs are submitted as part of lab deliverables
+</code></pre>
 
 <hr>
 </article>

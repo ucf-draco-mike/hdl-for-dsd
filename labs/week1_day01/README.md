@@ -19,7 +19,7 @@
 | 1.3 | Write a syntactically correct Verilog module with ANSI-style ports |
 | 1.4 | Execute the full iCE40 toolchain: Yosys → nextpnr → icepack → iceprog |
 | 1.5 | Use a `.pcf` file to map HDL signals to physical Go Board pins |
-| 1.6 | Predict and verify the behavior of active-low LEDs and buttons |
+| 1.6 | Predict and verify the behavior of active-high LEDs and buttons |
 
 ## Exercises
 

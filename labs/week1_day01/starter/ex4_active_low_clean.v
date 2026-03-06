@@ -8,7 +8,7 @@
 // Pattern:
 //   1. Invert active-low inputs at the top (boundary) -> active-high wires
 //   2. Write all internal logic in active-high (natural, readable)
-//   3. Invert outputs at the bottom (boundary) -> active-low for LEDs
+//   3. Invert outputs at the bottom (boundary) -> active-high for LEDs
 //
 // This keeps your logic clean and readable — the messiness is contained.
 // =============================================================================
@@ -25,7 +25,7 @@ module active_low_clean (
 );
 
     // ---- Step 1: Invert active-low inputs at the boundary ----
-    // TODO: Create active-high wires from the active-low switches
+    // TODO: Create active-high wires from the active-high switches
     wire w_btn1, w_btn2, w_btn3, w_btn4;
     // assign w_btn1 = ???;
     // assign w_btn2 = ???;
@@ -45,7 +45,7 @@ module active_low_clean (
     // assign w_not_1     = ???;
 
     // ---- Step 3: Invert outputs at the boundary ----
-    // TODO: Drive active-low LEDs from active-high logic
+    // TODO: Drive active-high LEDs from active-high logic
     // assign o_led1 = ???;
     // assign o_led2 = ???;
     // assign o_led3 = ???;

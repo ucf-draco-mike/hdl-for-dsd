@@ -105,7 +105,7 @@ Watch the terminal for state codes. This is real industry debugging.
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
 | Nothing happens after programming | Wrong PCF / pin mismatch | Double-check go_board.pcf pin names |
-| LEDs always on or off | Active-low confusion | Go Board LEDs: `0`=on, `1`=off |
+| LEDs always on or off | active-high confusion | Go Board LEDs: `1`=on, `0`=off |
 | UART shows garbage | Baud rate mismatch | Verify CLK_FREQ parameter matches actual clock |
 | Works sometimes, fails randomly | Missing debounce or synchronizer | Add debounce on buttons, 2-FF sync on async inputs |
 | Synthesis: "can't fit" | Unexpected logic inference | Check for accidental multiplication or huge muxes |

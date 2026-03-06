@@ -11,7 +11,7 @@ module top_uart_hello (
 
     reg r_btn_prev;
     always @(posedge i_clk) r_btn_prev <= w_btn_clean;
-    wire w_btn_press = r_btn_prev & ~w_btn_clean; // falling edge = press
+    wire w_btn_press = ~r_btn_prev & w_btn_clean; // rising edge = press
 
     wire w_tx_busy;
     reg  [7:0] r_tx_data;
@@ -63,8 +63,8 @@ module top_uart_hello (
         endcase
     end
 
-    assign o_led1 = ~w_btn_press;
-    assign o_led2 = ~w_tx_busy;
-    assign o_led3 = ~(r_state != ST_IDLE);
+    assign o_led1 = w_btn_press;
+    assign o_led2 = w_tx_busy;
+    assign o_led3 = (r_state != ST_IDLE);
     assign o_led4 = 1'b1;
 endmodule

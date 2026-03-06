@@ -32,10 +32,10 @@ module top_alu (
         .o_result(w_result), .o_zero(w_zero), .o_carry(w_carry)
     );
 
-    assign o_led1 = ~w_carry;
-    assign o_led2 = ~w_zero;
-    assign o_led3 = ~w_result[1];
-    assign o_led4 = ~w_result[0];
+    assign o_led1 = w_carry;
+    assign o_led2 = w_zero;
+    assign o_led3 = w_result[1];
+    assign o_led4 = w_result[0];
 
     // 7-seg display of result (using simple decoder inline)
     reg [6:0] r_seg;

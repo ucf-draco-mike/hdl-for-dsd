@@ -29,7 +29,7 @@ module top_bcd (
         .o_valid(w_valid)
     );
 
-    assign o_led1 = ~w_valid;  // LED on when valid BCD
+    assign o_led1 = w_valid;  // 1 = on valid BCD
     assign o_segment1_a = w_seg[6];
     assign o_segment1_b = w_seg[5];
     assign o_segment1_c = w_seg[4];

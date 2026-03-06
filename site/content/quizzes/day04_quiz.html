@@ -23,10 +23,10 @@ No! Flip-flops inherently hold their value between clock edges. Latch inference 
 <p><strong>Q3:</strong> Write a D flip-flop with synchronous reset from memory.</p>
 <details><summary>Answer</summary>
 
-<div class="codehilite"><pre><span></span><code><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">i_clk</span><span class="p">)</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_reset</span><span class="p">)</span><span class="w"> </span><span class="n">r_q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
-<span class="w">    </span><span class="k">else</span><span class="w">         </span><span class="n">r_q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r_d</span><span class="p">;</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-verilog">always @(posedge i_clk)
+    if (i_reset) r_q &lt;= 1'b0;
+    else         r_q &lt;= r_d;
+</code></pre>
 
 
 </details>

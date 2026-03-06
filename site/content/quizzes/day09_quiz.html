@@ -31,12 +31,12 @@ Only **synchronous read** infers block RAM (EBR).
 <details><summary>Answer</summary>
 
 
-<div class="codehilite"><pre><span></span><code><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">i_clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i_write_en</span><span class="p">)</span>
-<span class="w">        </span><span class="n">r_mem</span><span class="p">[</span><span class="n">i_addr</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">i_write_data</span><span class="p">;</span>
-<span class="w">    </span><span class="n">o_read_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r_mem</span><span class="p">[</span><span class="n">i_addr</span><span class="p">];</span><span class="w">  </span><span class="c1">// reads old value during write</span>
-<span class="k">end</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-verilog">always @(posedge i_clk) begin
+    if (i_write_en)
+        r_mem[i_addr] &lt;= i_write_data;
+    o_read_data &lt;= r_mem[i_addr];  // reads old value during write
+end
+</code></pre>
 
 
 </details>

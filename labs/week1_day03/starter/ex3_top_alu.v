@@ -38,7 +38,7 @@ module top_alu (
     //     .o_result(w_result), .o_zero(w_zero), .o_carry(w_carry)
     // );
 
-    // TODO: Drive LEDs (active-low) from carry, zero, result bits
+    // TODO: Drive LEDs (active-high) from carry, zero, result bits
     assign o_led1 = 1'b1;  // TODO: ~w_carry
     assign o_led2 = 1'b1;  // TODO: ~w_zero
     assign o_led3 = 1'b1;  // TODO: ~w_result[1]

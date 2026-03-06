@@ -78,10 +78,10 @@
 5. Mid-state reset → GREEN</p>
 <h3 id="part-c-hardware-demo">Part C: Hardware Demo</h3>
 <p>Synthesize with real timer values (remove <code>SIMULATION</code> define). Watch the LEDs cycle.</p>
-<div class="codehilite"><pre><span></span><code>make<span class="w"> </span>sim<span class="w"> </span><span class="nv">TB</span><span class="o">=</span>tb_traffic_light.v<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;traffic_light.v&quot;</span>
-make<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>traffic_light
-make<span class="w"> </span>prog<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>traffic_light
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_traffic_light.v SRCS=&quot;traffic_light.v&quot;
+make PROJECT=traffic_light
+make prog PROJECT=traffic_light
+</code></pre>
 
 <hr>
 <h2 id="exercise-2-button-pattern-detector-35-min">Exercise 2: Button Pattern Detector (35 min)</h2>

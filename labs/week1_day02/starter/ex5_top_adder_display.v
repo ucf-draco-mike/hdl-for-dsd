@@ -28,6 +28,6 @@ module top_adder_display (
     // 2. Instantiate ripple_adder_4bit
     // 3. Instantiate hex_to_7seg with the sum
     // 4. Map segment outputs to pins
-    // 5. Drive o_led1 from carry (active-low)
+    // 5. Drive o_led1 from carry (active-high)
 
 endmodule

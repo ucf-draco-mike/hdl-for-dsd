@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 module led_blinker (
     input  wire i_clk,       // 25 MHz
-    output wire o_led1,      // ~1 Hz  (active low)
+    output wire o_led1,      // ~1 Hz  (active-high)
     output wire o_led2,      // ~1.5 Hz (counter bit tap)
     output wire o_led3,      // ~3 Hz
     output wire o_led4       // ~6 Hz
@@ -35,14 +35,14 @@ module led_blinker (
         end
     end
 
-    assign o_led1 = ~r_led;   // active low
+    assign o_led1 = r_led;   // active-high
 
     // --- Multi-speed via MSB taps (approximate) ---
     reg [23:0] r_free = 24'd0;
     always @(posedge i_clk)
         r_free <= r_free + 1;
 
-    assign o_led2 = ~r_free[23];  // ~1.5 Hz
-    assign o_led3 = ~r_free[22];  // ~3 Hz
-    assign o_led4 = ~r_free[21];  // ~6 Hz
+    assign o_led2 = r_free[23];  // ~1.5 Hz
+    assign o_led3 = r_free[22];  // ~3 Hz
+    assign o_led4 = r_free[21];  // ~6 Hz
 endmodule

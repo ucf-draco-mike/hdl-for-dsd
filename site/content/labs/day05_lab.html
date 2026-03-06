@@ -80,8 +80,8 @@
 <p>Use the starter file in <code>starter/debounce.v</code> — fill in the <code>YOUR CODE HERE</code> sections.</p>
 <h3 id="part-b-simulate-with-tb_debouncev">Part B: Simulate with <code>tb_debounce.v</code></h3>
 <p>The testbench simulates bouncy press/release sequences. Run it:</p>
-<div class="codehilite"><pre><span></span><code>make<span class="w"> </span>sim<span class="w"> </span><span class="nv">TB</span><span class="o">=</span>tb_debounce.v<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;debounce.v&quot;</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_debounce.v SRCS=&quot;debounce.v&quot;
+</code></pre>
 
 <h3 id="part-c-verify-in-gtkwave">Part C: Verify in GTKWave</h3>
 <ol>
@@ -94,9 +94,9 @@
 <p><strong>SLOs: 5.2, 5.5</strong></p>
 <p>Build a "Knight Rider" / Cylon LED pattern using a shift register with direction control.</p>
 <p>Use <code>starter/led_chase.v</code> — the clock divider and debounce instantiations are provided. You implement the bounce-back shift logic.</p>
-<div class="codehilite"><pre><span></span><code>make<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>led_chase<span class="w"> </span><span class="nv">TOP</span><span class="o">=</span>led_chase<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;led_chase.v debounce.v&quot;</span>
-make<span class="w"> </span>prog<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>led_chase
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">make PROJECT=led_chase TOP=led_chase SRCS=&quot;led_chase.v debounce.v&quot;
+make prog PROJECT=led_chase
+</code></pre>
 
 <p><strong>Tasks:</strong>
 1. Implement the chase logic (shift with direction reversal at walls)
@@ -115,10 +115,10 @@ make<span class="w"> </span>prog<span class="w"> </span><span class="nv">PROJECT
 <li><strong>Without debounce:</strong> Modify to bypass debounce (use direct sync only). Repeat. Record the erratic count.</li>
 <li><strong>Record:</strong> "With debounce: 16 presses → count reached 0 (wrapped). Without: 16 presses → count reached [X]."</li>
 </ol>
-<div class="codehilite"><pre><span></span><code>make<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>button_counter<span class="w"> </span><span class="nv">TOP</span><span class="o">=</span>button_counter<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;button_counter.v debounce.v hex_to_7seg.v&quot;</span>
-make<span class="w"> </span>prog<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>button_counter
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">make PROJECT=button_counter TOP=button_counter \
+     SRCS=&quot;button_counter.v debounce.v hex_to_7seg.v&quot;
+make prog PROJECT=button_counter
+</code></pre>
 
 <hr>
 <h2 id="exercise-4-stretch-lfsr-pattern-generator-20-min">Exercise 4 (Stretch): LFSR Pattern Generator (20 min)</h2>
@@ -136,12 +136,12 @@ make<span class="w"> </span>prog<span class="w"> </span><span class="nv">PROJECT
 <p><strong>Comparison task:</strong> Which approach (counter vs. shift register) uses more resources? Which responds faster? Which is easier to tune?</p>
 <hr>
 <h2 id="build-commands-quick-reference">Build Commands Quick Reference</h2>
-<div class="codehilite"><pre><span></span><code>make<span class="w"> </span>sim<span class="w"> </span><span class="nv">TB</span><span class="o">=</span>tb_debounce.v<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;debounce.v&quot;</span><span class="w">         </span><span class="c1"># Simulate</span>
-make<span class="w"> </span>wave<span class="w">                                              </span><span class="c1"># Open GTKWave</span>
-make<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>led_chase<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;led_chase.v debounce.v&quot;</span><span class="w">  </span><span class="c1"># Synthesize</span>
-make<span class="w"> </span>prog<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>led_chase<span class="w">                            </span><span class="c1"># Program board</span>
-make<span class="w"> </span>stat<span class="w"> </span><span class="nv">PROJECT</span><span class="o">=</span>led_chase<span class="w"> </span><span class="nv">SRCS</span><span class="o">=</span><span class="s2">&quot;led_chase.v debounce.v&quot;</span><span class="w">  </span><span class="c1"># Resources</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">make sim TB=tb_debounce.v SRCS=&quot;debounce.v&quot;         # Simulate
+make wave                                              # Open GTKWave
+make PROJECT=led_chase SRCS=&quot;led_chase.v debounce.v&quot;  # Synthesize
+make prog PROJECT=led_chase                            # Program board
+make stat PROJECT=led_chase SRCS=&quot;led_chase.v debounce.v&quot;  # Resources
+</code></pre>
 </article>
 </body>
 </html>

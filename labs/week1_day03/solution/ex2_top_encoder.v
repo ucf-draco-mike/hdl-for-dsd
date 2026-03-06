@@ -24,9 +24,9 @@ module top_encoder (
         .o_valid(w_valid)
     );
 
-    assign o_led1 = ~w_enc[1];
-    assign o_led2 = ~w_enc[0];
-    assign o_led3 = ~w_valid;
+    assign o_led1 = w_enc[1];
+    assign o_led2 = w_enc[0];
+    assign o_led3 = w_valid;
     assign o_led4 = 1'b1;
 
 endmodule

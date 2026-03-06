@@ -44,7 +44,7 @@ module top_uart_loopback (
     always @(posedge i_clk) begin
         if (w_rx_valid) r_activity <= ~r_activity;
     end
-    assign o_led1 = ~r_activity;
+    assign o_led1 = r_activity;
     assign o_led2 = 1'b1;
     assign o_led3 = 1'b1;
     assign o_led4 = 1'b1;

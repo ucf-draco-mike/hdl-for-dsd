@@ -9,7 +9,7 @@ module go_board_input #(
     parameter DEBOUNCE_MS = 10
 )(
     input  wire                  i_clk,
-    input  wire [N_BUTTONS-1:0]  i_buttons_n,  // active-low raw
+    input  wire [N_BUTTONS-1:0]  i_buttons_n,  // active-high raw
     output wire [N_BUTTONS-1:0]  o_buttons,     // active-high debounced
     output wire [N_BUTTONS-1:0]  o_press_edge,
     output wire [N_BUTTONS-1:0]  o_release_edge

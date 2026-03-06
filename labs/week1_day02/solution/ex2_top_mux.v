@@ -24,6 +24,6 @@ module top_mux (
         .o_y(w_result)
     );
 
-    assign o_led1 = ~w_result;
+    assign o_led1 = w_result;
 
 endmodule

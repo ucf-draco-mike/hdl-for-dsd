@@ -55,7 +55,7 @@ module seg_counter (
     end
 
     // Heartbeat
-    assign o_led1 = ~r_clk_count[22];
+    assign o_led1 = r_clk_count[22];
 
     // Segment outputs
     assign o_segment1_a = r_seg[6];

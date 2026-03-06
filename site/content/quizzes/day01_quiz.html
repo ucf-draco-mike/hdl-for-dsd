@@ -29,13 +29,13 @@
 <details><summary>Answer</summary>
 
 
-<div class="codehilite"><pre><span></span><code><span class="k">module</span><span class="w"> </span><span class="n">led_driver</span><span class="w"> </span><span class="p">(</span>
-<span class="w">    </span><span class="k">input</span><span class="w">  </span><span class="kt">wire</span><span class="w"> </span><span class="n">i_switch</span><span class="p">,</span>
-<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">o_led</span>
-<span class="p">);</span>
-<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">o_led</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i_switch</span><span class="p">;</span>
-<span class="k">endmodule</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-verilog">module led_driver (
+    input  wire i_switch,
+    output wire o_led
+);
+    assign o_led = i_switch;
+endmodule
+</code></pre>
 
 
 </details>
@@ -47,11 +47,11 @@
 </details>
 
 <p><strong>Q5:</strong> In the module below, does the order of the two <code>assign</code> statements matter? Why or why not?</p>
-<div class="codehilite"><pre><span></span><code><span class="k">module</span><span class="w"> </span><span class="n">example</span><span class="w"> </span><span class="p">(</span><span class="k">input</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">output</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">y1</span><span class="p">,</span><span class="w"> </span><span class="n">y2</span><span class="p">);</span>
-<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">y2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">y1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-<span class="k">endmodule</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-verilog">module example (input wire a, b, output wire y1, y2);
+    assign y2 = a | b;
+    assign y1 = a &amp; b;
+endmodule
+</code></pre>
 
 <details><summary>Answer</summary>
 

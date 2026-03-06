@@ -15,7 +15,7 @@ module parallel_debounce #(
     parameter CLKS_TO_STABLE = 250_000     // Debounce threshold (10 ms at 25 MHz)
 )(
     input  wire         i_clk,
-    input  wire [N-1:0] i_buttons,      // raw button inputs (active low ok)
+    input  wire [N-1:0] i_buttons,      // raw button inputs (active-high ok)
     output wire [N-1:0] o_clean,        // debounced levels
     output wire [N-1:0] o_press_edge,   // one-cycle pulse on press
     output wire [N-1:0] o_release_edge  // one-cycle pulse on release

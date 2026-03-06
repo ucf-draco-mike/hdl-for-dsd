@@ -29,7 +29,7 @@ module top_cdc_demo (
     debounce #(.CLKS_TO_STABLE(250_000)) db (
         .i_clk(i_clk), .i_bouncy(i_switch1), .o_clean(w_btn_clean)
     );
-    wire w_btn_active = ~w_btn_clean;
+    wire w_btn_active = w_btn_clean;
 
     // TODO: 2-FF synchronizer: 25 MHz → 50 MHz
     // TODO: Edge detector in PLL domain
@@ -39,8 +39,8 @@ module top_cdc_demo (
 
     // ---- YOUR CODE HERE ----
 
-    assign o_led1 = ~w_btn_active;
-    assign o_led2 = ~w_pll_locked;
+    assign o_led1 = w_btn_active;
+    assign o_led2 = w_pll_locked;
     assign o_led3 = 1'b1;
     assign o_led4 = 1'b1;
 

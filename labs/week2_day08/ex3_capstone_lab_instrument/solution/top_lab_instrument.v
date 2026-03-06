@@ -72,9 +72,9 @@ module top_lab_instrument (
     reg [24:0] r_hb;
     always @(posedge i_clk) r_hb <= r_hb + 1;
 
-    assign o_led1 = ~r_hb[24];
-    assign o_led2 = ~r_hb[23];
-    assign o_led3 = ~r_hb[22];
-    assign o_led4 = ~r_hb[21];
+    assign o_led1 = r_hb[24];
+    assign o_led2 = r_hb[23];
+    assign o_led3 = r_hb[22];
+    assign o_led4 = r_hb[21];
 
 endmodule

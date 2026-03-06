@@ -15,22 +15,22 @@
 <p>Use one of your designs from Exercises 1-2 (e.g., the behavioral 16-bit adder
 wrapped in a registered module, or the shift-and-add multiplier).</p>
 <h3 id="step-1-synthesize">Step 1: Synthesize</h3>
-<div class="codehilite"><pre><span></span><code>yosys<span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;read_verilog shift_add_mult.v; synth_ice40 -top shift_add_mult -json mult.json&quot;</span>
-</code></pre></div>
+<pre class="codehilite"><code class="language-bash">yosys -p &quot;read_verilog shift_add_mult.v; synth_ice40 -top shift_add_mult -json mult.json&quot;
+</code></pre>
 
 <h3 id="step-2-run-nextpnr-at-different-frequency-constraints">Step 2: Run nextpnr at different frequency constraints</h3>
-<div class="codehilite"><pre><span></span><code><span class="c1"># 25 MHz (the Go Board clock)</span>
-nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--json<span class="w"> </span>mult.json<span class="w"> </span>--asc<span class="w"> </span>mult.asc<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--freq<span class="w"> </span><span class="m">25</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Max frequency&quot;</span>
+<pre class="codehilite"><code class="language-bash"># 25 MHz (the Go Board clock)
+nextpnr-ice40 --hx1k --package vq100 --json mult.json --asc mult.asc \
+    --freq 25 2&gt;&amp;1 | grep &quot;Max frequency&quot;
 
-<span class="c1"># 50 MHz</span>
-nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--json<span class="w"> </span>mult.json<span class="w"> </span>--asc<span class="w"> </span>mult.asc<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--freq<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Max frequency&quot;</span>
+# 50 MHz
+nextpnr-ice40 --hx1k --package vq100 --json mult.json --asc mult.asc \
+    --freq 50 2&gt;&amp;1 | grep &quot;Max frequency&quot;
 
-<span class="c1"># 100 MHz</span>
-nextpnr-ice40<span class="w"> </span>--hx1k<span class="w"> </span>--package<span class="w"> </span>vq100<span class="w"> </span>--json<span class="w"> </span>mult.json<span class="w"> </span>--asc<span class="w"> </span>mult.asc<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--freq<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Max frequency&quot;</span>
-</code></pre></div>
+# 100 MHz
+nextpnr-ice40 --hx1k --package vq100 --json mult.json --asc mult.asc \
+    --freq 100 2&gt;&amp;1 | grep &quot;Max frequency&quot;
+</code></pre>
 
 <h3 id="step-3-record-results">Step 3: Record results</h3>
 <table>

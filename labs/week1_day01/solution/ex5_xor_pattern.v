@@ -21,10 +21,10 @@ module xor_pattern (
     wire w_b4 = ~i_switch4;
 
     // LED1: XOR all 4 (odd parity — on when odd number pressed)
-    assign o_led1 = ~(w_b1 ^ w_b2 ^ w_b3 ^ w_b4);
+    assign o_led1 = (w_b1 ^ w_b2 ^ w_b3 ^ w_b4);
 
     // LED2: XNOR of btn1 and btn3 (on when both same state)
-    assign o_led2 = ~(w_b1 ~^ w_b3);
+    assign o_led2 = (w_b1 ~^ w_b3);
 
     // LED3: Majority — on when 3 or more pressed
     assign o_led3 = ~((w_b1 & w_b2 & w_b3) |
@@ -33,6 +33,6 @@ module xor_pattern (
                       (w_b2 & w_b3 & w_b4));
 
     // LED4: NOR — on only when NO buttons pressed
-    assign o_led4 = ~(~(w_b1 | w_b2 | w_b3 | w_b4));
+    assign o_led4 = (~(w_b1 | w_b2 | w_b3 | w_b4));
 
 endmodule

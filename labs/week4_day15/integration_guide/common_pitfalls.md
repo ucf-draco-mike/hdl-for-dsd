@@ -21,11 +21,11 @@ wrong signal width.
 ## 3. Active-Low Confusion
 **Symptom:** LEDs are inverted (on when should be off). Buttons seem
 backwards.
-**Cause:** Go Board LEDs and switches are active-low.
+**Cause:** Go Board LEDs and switches are active-high.
 **Fix:** Invert at the boundary:
 ```verilog
 wire sw1_active = ~i_switch1;  // Convert to active-high internally
-assign o_led1 = ~led1_on;      // Convert active-high to active-low at pin
+assign o_led1 = ~led1_on;      // Convert active-high to active-high at pin
 ```
 
 ## 4. Missing Debounce

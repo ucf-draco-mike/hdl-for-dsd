@@ -8,7 +8,7 @@
 //   to an output LED using continuous assignment (assign).
 //
 //   This is your "Hello World" — a permanent wire from switch to LED.
-//   When the switch is pressed (active low on Go Board), the LED lights.
+//   When the switch is pressed (active-high on Go Board), the LED lights.
 //
 // Build & program:
 //   yosys -p "synth_ice40 -top led_driver -json day01_ex01_led_driver.json" day01_ex01_led_driver.v
@@ -19,7 +19,7 @@
 //-----------------------------------------------------------------------------
 
 module led_driver (
-    input  wire i_switch,   // Active-low pushbutton (directly from pin)
+    input  wire i_switch,   // active-high pushbutton (directly from pin)
     output wire o_led        // LED output (active high on Go Board)
 );
 

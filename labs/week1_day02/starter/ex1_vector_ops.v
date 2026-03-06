@@ -28,7 +28,7 @@ module vector_ops (
     assign w_sw = ~{i_switch1, i_switch2, i_switch3, i_switch4};
 
     // TODO: Implement the four LED assignments
-    // Remember: LEDs are active-low on the Go Board
+    // Remember: LEDs are active-high on the Go Board
     // Use the ~() inversion-at-output pattern
 
     // LED1: OR reduction — any switch pressed?

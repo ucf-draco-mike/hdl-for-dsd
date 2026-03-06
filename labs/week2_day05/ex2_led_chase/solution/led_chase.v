@@ -34,12 +34,12 @@ module led_chase (
         .i_clk(i_clk), .i_bouncy(i_switch2), .o_clean(w_dir_clean)
     );
 
-    wire w_reset = ~w_reset_clean;
+    wire w_reset = w_reset_clean;
 
     // --- Edge detect on direction button ---
     reg r_dir_prev;
     always @(posedge i_clk) r_dir_prev <= w_dir_clean;
-    wire w_dir_press = ~w_dir_clean & r_dir_prev;
+    wire w_dir_press = w_dir_clean & ~r_dir_prev;
 
     // --- Shift register with bounce-back ---
     reg [3:0] r_pattern;
@@ -70,9 +70,9 @@ module led_chase (
         end
     end
 
-    assign o_led1 = ~r_pattern[3];
-    assign o_led2 = ~r_pattern[2];
-    assign o_led3 = ~r_pattern[1];
-    assign o_led4 = ~r_pattern[0];
+    assign o_led1 = r_pattern[3];
+    assign o_led2 = r_pattern[2];
+    assign o_led3 = r_pattern[1];
+    assign o_led4 = r_pattern[0];
 
 endmodule

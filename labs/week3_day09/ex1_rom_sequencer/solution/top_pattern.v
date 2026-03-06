@@ -43,11 +43,11 @@ module top_pattern (
     hex_to_7seg seg1 (.i_hex(w_pattern[7:4]), .o_seg(w_seg1));
     hex_to_7seg seg2 (.i_hex(w_index),        .o_seg(w_seg2));
 
-    // Outputs (LEDs are active-low)
-    assign o_led1 = ~w_pattern[0];
-    assign o_led2 = ~w_pattern[1];
-    assign o_led3 = ~w_pattern[2];
-    assign o_led4 = ~w_pattern[3];
+    // Outputs (LEDs are active-high)
+    assign o_led1 = w_pattern[0];
+    assign o_led2 = w_pattern[1];
+    assign o_led3 = w_pattern[2];
+    assign o_led4 = w_pattern[3];
 
     assign {o_segment1_a, o_segment1_b, o_segment1_c,
             o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = w_seg1;

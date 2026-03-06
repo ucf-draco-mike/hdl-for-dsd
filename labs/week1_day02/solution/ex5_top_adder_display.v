@@ -34,7 +34,7 @@ module top_adder_display (
         .o_seg(w_seg)
     );
 
-    assign o_led1 = ~w_cout;
+    assign o_led1 = w_cout;
     assign o_segment1_a = w_seg[6];
     assign o_segment1_b = w_seg[5];
     assign o_segment1_c = w_seg[4];
