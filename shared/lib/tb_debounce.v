@@ -1,34 +1,35 @@
 // =============================================================================
 // tb_debounce.v — Self-checking testbench for debounce module
+// Accelerated HDL for Digital System Design · UCF · shared/lib
 // =============================================================================
 `timescale 1ns/1ps
 module tb_debounce;
-    parameter CLK_PERIOD    = 40;    // 25 MHz
-    parameter DEBOUNCE_CNT  = 20;    // Small for fast simulation
+    parameter CLKS_TO_STABLE = 20;    // Small for fast simulation
+    parameter CLK_PERIOD     = 40;    // 25 MHz
 
-    reg  i_clk, i_switch;
-    wire o_switch;
+    reg  i_clk    = 0;
+    reg  i_bouncy = 0;
+    wire o_clean;
 
-    debounce #(.DEBOUNCE_CNT(DEBOUNCE_CNT)) dut (
+    debounce #(.CLKS_TO_STABLE(CLKS_TO_STABLE)) dut (
         .i_clk    (i_clk),
-        .i_switch (i_switch),
-        .o_switch (o_switch)
+        .i_bouncy (i_bouncy),
+        .o_clean  (o_clean)
     );
 
-    initial i_clk = 0;
     always #(CLK_PERIOD/2) i_clk = ~i_clk;
 
     integer pass_count = 0, fail_count = 0;
 
     task check;
-        input     expected;
-        input [8*40-1:0] name;
+        input expected;
+        input [80*8-1:0] name;
         begin
-            if (o_switch !== expected) begin
-                $display("FAIL: %0s — expected %b got %b", name, expected, o_switch);
+            #1;
+            if (o_clean !== expected) begin
+                $display("FAIL: %0s — expected %b got %b", name, expected, o_clean);
                 fail_count = fail_count + 1;
             end else begin
-                $display("PASS: %0s", name);
                 pass_count = pass_count + 1;
             end
         end
@@ -36,42 +37,48 @@ module tb_debounce;
 
     task wait_cycles;
         input integer n;
-        repeat(n) @(posedge i_clk);
+        integer i;
+        begin
+            for (i = 0; i < n; i = i + 1) @(posedge i_clk);
+        end
     endtask
 
     initial begin
-        $dumpfile("dump.vcd"); $dumpvars(0, tb_debounce);
-        i_switch = 0;
+        $dumpfile("dump.vcd");
+        $dumpvars(0, tb_debounce);
+
+        i_bouncy = 0;
         wait_cycles(5);
-        check(0, "Initial output low");
 
-        // Test 1: Stable press (hold > DEBOUNCE_CNT cycles)
-        i_switch = 1;
-        wait_cycles(DEBOUNCE_CNT + 5);
-        check(1, "Stable press detected");
+        // Test 1: Stable press (hold > CLKS_TO_STABLE cycles)
+        i_bouncy = 1;
+        wait_cycles(CLKS_TO_STABLE + 5);
+        check(1, "stable press");
 
-        // Test 2: Glitch (pulse shorter than DEBOUNCE_CNT)
-        i_switch = 0;
-        wait_cycles(DEBOUNCE_CNT / 2);  // only halfway
-        i_switch = 1;                    // bounce back
-        wait_cycles(5);
-        check(1, "Glitch rejected (still high)");
+        // Test 2: Glitch (pulse shorter than CLKS_TO_STABLE)
+        i_bouncy = 0;
+        wait_cycles(CLKS_TO_STABLE / 2);
+        i_bouncy = 1;
+        wait_cycles(2);
+        check(1, "glitch rejected");
 
-        // Test 3: Stable release
-        i_switch = 0;
-        wait_cycles(DEBOUNCE_CNT + 5);
-        check(0, "Stable release detected");
+        // Test 3: Clean release
+        i_bouncy = 0;
+        wait_cycles(CLKS_TO_STABLE + 5);
+        check(0, "stable release");
 
-        // Test 4: Multiple rapid bounces
-        repeat(5) begin
-            i_switch = ~i_switch;
-            wait_cycles(DEBOUNCE_CNT / 3);
+        // Test 4: Bounce storm
+        repeat (8) begin
+            i_bouncy = ~i_bouncy;
+            wait_cycles(CLKS_TO_STABLE / 3);
         end
-        i_switch = 0;
-        wait_cycles(DEBOUNCE_CNT + 5);
-        check(0, "Output stable after rapid bouncing");
+        i_bouncy = 0;
+        wait_cycles(CLKS_TO_STABLE + 5);
+        check(0, "bounce storm resolved");
 
-        $display("\n=== debounce: %0d passed, %0d failed ===", pass_count, fail_count);
+        $display("\n=== tb_debounce: %0d passed, %0d failed ===", pass_count, fail_count);
+        if (fail_count > 0) $display("SOME TESTS FAILED");
+        else $display("ALL TESTS PASSED");
         $finish;
     end
 endmodule
