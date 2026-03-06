@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day07.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day07.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,11 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week2_day07/d07_s4_fsm_design_methodology.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 Fsm Template** — [`day07_ex01_fsm_template.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day07/code/day07_ex01_fsm_template.v){ target=_blank }
+- :material-chip: **Ex02 Pattern Detector** — [`day07_ex02_pattern_detector.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day07/code/day07_ex02_pattern_detector.v){ target=_blank }

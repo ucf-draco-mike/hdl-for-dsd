@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day03.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day03.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,12 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day03/d03_s4_blocking_vs_nonblocking.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 Latch Demo** — [`day03_ex01_latch_demo.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day03/code/day03_ex01_latch_demo.v){ target=_blank }
+- :material-chip: **Ex02 Latch Fixed** — [`day03_ex02_latch_fixed.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day03/code/day03_ex02_latch_fixed.v){ target=_blank }
+- :material-chip: **Ex03 Alu 4Bit** — [`day03_ex03_alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day03/code/day03_ex03_alu_4bit.v){ target=_blank }

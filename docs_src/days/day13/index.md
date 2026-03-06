@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day13.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day13.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,11 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week4_day13/d13_s4_enum_struct_package.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 Uart Tx Sv** — [`day13_ex01_uart_tx_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week4_day13/code/day13_ex01_uart_tx_sv.sv){ target=_blank }
+- :material-chip: **Ex02 Alu Sv** — [`day13_ex02_alu_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week4_day13/code/day13_ex02_alu_sv.sv){ target=_blank }

@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day12.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day12.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,11 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week3_day12/d12_s4_ip_integration.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 Uart Rx** — [`day12_ex01_uart_rx.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day12/code/day12_ex01_uart_rx.v){ target=_blank }
+- :material-chip: **Ex02 Uart Loopback** — [`day12_ex02_uart_loopback.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day12/code/day12_ex02_uart_loopback.v){ target=_blank }

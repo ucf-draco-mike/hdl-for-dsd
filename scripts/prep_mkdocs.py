@@ -93,15 +93,37 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
     # Nav cards — add code card if assets exist
     quiz_exists = (REPO / "lectures" / dir_name / f"day{dz}_quiz.md").exists()
     has_code = code_assets and day_num in code_assets
-    n_cards = 3 + (1 if has_code else 0)
+    lab_nb_chk = (REPO / "notebooks" / "labs" / f"lab_day{dz}.ipynb").exists()
+    lec_nb_chk = (REPO / "notebooks" / "lectures" / f"lecture_day{dz}.ipynb").exists()
+    has_notebooks = lab_nb_chk or lec_nb_chk
+    n_cards = 2 + (1 if quiz_exists else 0) + (1 if has_notebooks else 0)
     grid_class = "card-grid--4" if n_cards == 4 else "card-grid--3"
     lines.append(f'<div class="card-grid {grid_class}" markdown>\n')
     lines.append(f'<div class="nav-card" markdown>\n:material-clipboard-text:{{ .card-icon }}\n\n**Daily Plan**\n\nSession timeline & instructor notes\n\n[:octicons-arrow-right-16: View plan](plan.md)\n</div>\n')
     lines.append(f'<div class="nav-card" markdown>\n:material-flask:{{ .card-icon }}\n\n**Lab Guide**\n\n{len(slides)} exercises · hands-on\n\n[:octicons-arrow-right-16: View lab](lab.md)\n</div>\n')
     if quiz_exists:
         lines.append(f'<div class="nav-card" markdown>\n:material-help-circle:{{ .card-icon }}\n\n**Pre-Class Quiz**\n\nSelf-check questions\n\n[:octicons-arrow-right-16: Take quiz](quiz.md)\n</div>\n')
-    if has_code:
-        lines.append(f'<div class="nav-card" markdown>\n:material-download-circle:{{ .card-icon }}\n\n**Code & Notebooks**\n\nStarter code, zips & Jupyter links\n\n[:octicons-arrow-right-16: View code](code.md)\n</div>\n')
+    # Notebooks card — lab + lecture .ipynb
+    if has_notebooks:
+        nb_desc_parts = []
+        if lab_nb_chk:
+            nb_desc_parts.append("Lab notebook")
+        if lec_nb_chk:
+            nb_desc_parts.append("lecture notebook")
+        if has_code:
+            nb_desc_parts.append("[code ref](code.md)")
+        nb_desc = " · ".join(nb_desc_parts)
+        lines.append(f'<div class="nav-card" markdown>\n'
+                     f':material-notebook:{{ .card-icon }}\n\n'
+                     f'**Notebooks & Code**\n\n'
+                     f'{nb_desc}\n\n')
+        if lab_nb_chk:
+            nb_gh = f"{GITHUB_RAW_BASE}/notebooks/labs/lab_day{dz}.ipynb"
+            lines.append(f'[:material-notebook: Lab Notebook]({nb_gh}){{ target=_blank }}\n')
+        if lec_nb_chk:
+            nb_gh = f"{GITHUB_RAW_BASE}/notebooks/lectures/lecture_day{dz}.ipynb"
+            lines.append(f'[:material-notebook-outline: Lecture Notebook]({nb_gh}){{ target=_blank }}\n')
+        lines.append(f'</div>\n')
     lines.append('</div>\n')
 
     # Videos section
@@ -128,6 +150,25 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
                 lines.append(f'!!! info "Video coming soon"\n    This segment has not been recorded yet.\n')
                 lines.append(f'[:material-presentation: View Slides]({s["slide_path"]})'
                              f'{{ .md-button .md-button--primary target="_blank" }}\n')
+
+    # Lecture examples section
+    lec_code_dir = REPO / "lectures" / dir_name / "code"
+    if lec_code_dir.exists():
+        code_files = sorted(lec_code_dir.glob("*.*"))
+        code_files = [f for f in code_files if f.suffix in {".v", ".sv", ".mem", ".hex"}]
+        if code_files:
+            lines.append("## :material-code-braces: Lecture Code Examples\n")
+            lines.append("Code shown during the pre-class video. Use these as reference ")
+            lines.append("when working on the lab exercises.\n")
+            for f in code_files:
+                rel = f.relative_to(REPO)
+                gh = f"{GITHUB_RAW_BASE}/{rel}"
+                icon = ":material-chip:" if f.suffix in {".v", ".sv"} else ":material-file:"
+                # Derive a human-readable label
+                label = f.stem.replace(f"day{dz}_", "").replace("_", " ").title()
+                lines.append(f"- {icon} **{label}** — [`{f.name}`]({gh}){{ target=_blank }}")
+            lines.append("")
+
     return "\n".join(lines)
 
 
@@ -424,9 +465,11 @@ def generate_lab_page(day_num, dir_name, code_assets):
             nb_jup = f"{JUPYTER_LAB_BASE}/{nb_rel}"
             nb_gh = f"{GITHUB_RAW_BASE}/{nb_rel}"
             banner_lines.append(
-                f'    [:material-notebook: Open Lab Notebook]({nb_jup})'
+                f'    [:material-notebook: Open in JupyterLab]({nb_jup})'
                 f'{{ .md-button target=_blank }}\n'
-                f'    [:material-github: Notebook on GitHub]({nb_gh})'
+                f'    [:material-download: Download .ipynb](../../notebooks/labs/lab_day{dz}.ipynb)'
+                f'{{ .md-button target=_blank }}\n'
+                f'    [:material-github: View on GitHub]({nb_gh})'
                 f'{{ .md-button target=_blank }}\n'
             )
         banner_lines.append(
@@ -654,6 +697,17 @@ def post_build():
     theme_src = REPO / "lectures" / "theme"
     theme_dst = site / "lectures" / "theme"
     # Already copied by copytree above
+
+
+    # Copy notebooks (lab + lecture)
+    nb_src = REPO / "notebooks"
+    nb_dst = site / "notebooks"
+    if nb_src.exists():
+        if nb_dst.exists():
+            shutil.rmtree(nb_dst)
+        shutil.copytree(nb_src, nb_dst)
+        nb_count = sum(1 for _ in nb_dst.rglob("*.ipynb"))
+        print(f"  Copied: {nb_count} notebooks → _site/notebooks/")
 
     print(f"  Post-build complete. Site ready for deployment.")
 

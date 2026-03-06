@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day04.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day04.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,12 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day04/d04_s4_counters_and_clock_division.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 D Flip Flop** — [`day04_ex01_d_flip_flop.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day04/code/day04_ex01_d_flip_flop.v){ target=_blank }
+- :material-chip: **Ex02 Led Blinker** — [`day04_ex02_led_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day04/code/day04_ex02_led_blinker.v){ target=_blank }
+- :material-chip: **Ex03 Shift Register Demo** — [`day04_ex03_shift_register_demo.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day04/code/day04_ex03_shift_register_demo.v){ target=_blank }

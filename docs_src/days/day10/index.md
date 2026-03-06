@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day10.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day10.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,11 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week3_day10/d10_s4_asic_ppa_context.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Adder Widths** — [`day10_adder_widths.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day10/code/day10_adder_widths.v){ target=_blank }
+- :material-chip: **Mult Widths** — [`day10_mult_widths.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day10/code/day10_mult_widths.v){ target=_blank }

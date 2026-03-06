@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day08.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day08.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,11 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week2_day08/d08_s4_design_for_reuse.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 Parallel Debounce** — [`day08_ex01_parallel_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day08/code/day08_ex01_parallel_debounce.v){ target=_blank }
+- :material-chip: **Ex02 Param Alu** — [`day08_ex02_param_alu.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day08/code/day08_ex02_param_alu.v){ target=_blank }

@@ -39,13 +39,17 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day05.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day05.ipynb){ target=_blank }
+
 </div>
 
 </div>
@@ -79,3 +83,13 @@ Starter code, zips & Jupyter links
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week2_day05/d05_s4_button_debouncing.html){ .md-button .md-button--primary target="_blank" }
+
+## :material-code-braces: Lecture Code Examples
+
+Code shown during the pre-class video. Use these as reference 
+when working on the lab exercises.
+
+- :material-chip: **Ex01 Counter Mod N** — [`day05_ex01_counter_mod_n.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex01_counter_mod_n.v){ target=_blank }
+- :material-chip: **Ex02 Shift Reg Piso** — [`day05_ex02_shift_reg_piso.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex02_shift_reg_piso.v){ target=_blank }
+- :material-chip: **Ex03 Synchronizer** — [`day05_ex03_synchronizer.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex03_synchronizer.v){ target=_blank }
+- :material-chip: **Ex04 Debounce** — [`day05_ex04_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex04_debounce.v){ target=_blank }

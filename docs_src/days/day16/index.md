@@ -6,7 +6,7 @@ title: "Day 16: Final Project Demos & Course Wrap"
 
 <p class="subtitle">Week 4 · Session 16 of 16</p>
 
-<div class="card-grid card-grid--4" markdown>
+<div class="card-grid card-grid--3" markdown>
 
 <div class="nav-card" markdown>
 :material-clipboard-text:{ .card-icon }
@@ -29,13 +29,17 @@ Session timeline & instructor notes
 </div>
 
 <div class="nav-card" markdown>
-:material-download-circle:{ .card-icon }
+:material-notebook:{ .card-icon }
 
-**Code & Notebooks**
+**Notebooks & Code**
 
-Starter code, zips & Jupyter links
+Lab notebook · lecture notebook · [code ref](code.md)
 
-[:octicons-arrow-right-16: View code](code.md)
+
+[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day16.ipynb){ target=_blank }
+
+[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day16.ipynb){ target=_blank }
+
 </div>
 
 </div>

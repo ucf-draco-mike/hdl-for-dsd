@@ -39,6 +39,9 @@ jobs:
       - name: Copy slides into site
         run: cp -r lectures _site/lectures
 
+      - name: Copy notebooks into site
+        run: cp -r notebooks _site/notebooks
+
       - uses: actions/upload-pages-artifact@v3
 
   deploy:
