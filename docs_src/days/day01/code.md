@@ -45,7 +45,7 @@ These files are shared across all exercises for this day.
 
 ## Ex 4 — Active Low Clean
 
-[:material-download: Starter .zip](../../downloads/day01/ex4_clean_boundary_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex4_clean_boundary_solution.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day01/ex4_active_low_clean_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex4_active_low_clean_solution.zip){ .md-button }
 
 | File | Links |
 |------|-------|
