@@ -22,7 +22,7 @@
         </span>
     </div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Synthesis vs. Simulation</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb">
         <div class="seg-dot"></div>
@@ -36,7 +36,7 @@
         <span class="seg-label">Module Anatomy</span>
         <span class="seg-label">Logic Refresher</span>
     </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 1. This one's about 10 minutes. We're going to look at how the same Verilog file gets consumed by two fundamentally different tools — synthesis and simulation — and why understanding the difference is critical.</aside>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 1. This one's about 15 minutes. We're going to look at how the same Verilog file gets consumed by two fundamentally different tools — synthesis and simulation — why understanding the difference is critical, and then you'll see your first testbench so you know exactly what you're running when you type make-sim in lab.</aside>
 </section>
 
 <!-- ONE SOURCE, TWO CONSUMERS -->
@@ -181,6 +181,90 @@ end</code></pre>
     <aside class="notes">Here's your daily workflow for this course. Step 1: write your module. Step 2: simulate it — does it behave correctly? Step 3: synthesize it — does it fit on the FPGA? Step 4: program and test on hardware. Always simulate first. Fixing bugs in simulation takes minutes. Debugging on hardware takes hours. This workflow becomes second nature by the end of Week 1.</aside>
 </section>
 
+<!-- ==================== NEW: YOUR FIRST TESTBENCH ==================== -->
+<section>
+    <h2>Your First Testbench</h2>
+    <p style="font-size:0.8em;margin-bottom:0.3em;">
+        Step ② says "simulate it."  But simulate it <em>against what</em>?
+    </p>
+    <p class="fragment" style="font-size:0.8em;">
+        A <strong>testbench</strong> is a separate Verilog module that:
+    </p>
+    <div style="font-size:0.8em;margin-top:0.3em;">
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">①</span>&ensp; Has <strong>no ports</strong> — it's the top of the simulation world</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">②</span>&ensp; <strong>Instantiates</strong> your design (the "DUT" — Design Under Test)</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">③</span>&ensp; <strong>Drives</strong> inputs and <strong>checks</strong> outputs</p>
+        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">④</span>&ensp; Prints <strong>PASS / FAIL</strong> so you know immediately if something broke</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.6em;">
+        You won't write testbenches from scratch until Week 2.
+        For now you just need to <strong>read and run</strong> the ones we provide.
+    </div>
+    <aside class="notes">Step 2 says simulate it. But simulate it against what? A testbench. A testbench is a separate Verilog file — a module with no ports — that instantiates your design, drives its inputs, and checks its outputs. It prints PASS or FAIL so you know immediately whether your design is correct. You won't write testbenches from scratch until Week 2. For now, you just need to read and run the ones we provide.</aside>
+</section>
+
+<!-- ==================== NEW: READING A TESTBENCH ==================== -->
+<section>
+    <h2>Reading a Testbench</h2>
+    <pre class="sim-only"><code class="language-verilog" data-noescape><span style="color:#888;">// tb_button_logic.v — tests your button_logic module</span>
+`timescale 1ns / 1ps            <span style="color:#FFC904;">// ← time units for simulation</span>
+
+module tb_button_logic;          <span style="color:#FFC904;">// ← no ports!</span>
+    reg  sw1, sw2, sw3, sw4;    <span style="color:#FFC904;">// ← inputs you control</span>
+    wire led1, led2, led3, led4; <span style="color:#FFC904;">// ← outputs to check</span>
+
+    button_logic dut (           <span style="color:#FFC904;">// ← your design goes here</span>
+        .i_switch1(sw1), .i_switch2(sw2),
+        .i_switch3(sw3), .i_switch4(sw4),
+        .o_led1(led1), ...
+    );
+
+    initial begin
+        $dumpfile("dump.vcd");   <span style="color:#FFC904;">// ← record waveforms</span>
+        $dumpvars(0, tb_button_logic);
+
+        sw1=0; sw2=1; sw3=0; sw4=1; <span style="color:#FFC904;">// ← drive inputs</span>
+        #1;                          <span style="color:#FFC904;">// ← wait for logic to settle</span>
+        if (led1 === 1'b0) ...       <span style="color:#FFC904;">// ← check with ===</span>
+    end
+endmodule</code></pre>
+    <div class="fragment callout-warning" style="font-size:0.75em;margin-top:0.3em;">
+        Notice: <code>reg</code>, <code>initial</code>, <code>#1</code>, <code>$dumpfile</code> — <strong>all sim-only constructs</strong>.
+        A testbench will never become hardware.
+    </div>
+    <aside class="notes">Here's what a testbench looks like. This one tests the button-logic exercise you'll do today. At the top: timescale sets the time units. The module has no ports — it's the top level of simulation. Inside, reg signals are the inputs you control; wires are the outputs you check. The dut line instantiates your design — this is where your module plugs in. In the initial block: dumpfile and dumpvars record waveforms for GTKWave. Then you drive inputs, wait with hash-1 for combinational logic to settle, and check outputs with the triple-equals operator. Notice everything here — reg, initial, hash-delay, dollar-dumpfile — is simulation-only. A testbench never becomes hardware.</aside>
+</section>
+
+<!-- ==================== NEW: RUNNING A TESTBENCH ==================== -->
+<section>
+    <h2>Running a Testbench</h2>
+    <div style="margin-top:0.5em;">
+        <pre><code class="language-bash" data-noescape><span style="color:#888;"># From any lab exercise directory:</span>
+make sim       <span style="color:#FFC904;"># compile + run → prints PASS/FAIL</span>
+make wave      <span style="color:#FFC904;"># opens GTKWave to inspect waveforms</span></code></pre>
+    </div>
+    <div class="fragment" style="margin-top:0.8em;">
+        <p style="font-size:0.85em;">What <code>make sim</code> does under the hood:</p>
+        <pre><code class="language-bash" data-noescape>iverilog -g2012 -Wall -o sim.vvp tb_button_logic.v button_logic.v
+vvp sim.vvp</code></pre>
+        <p style="font-size:0.7em;color:#5F6062;">
+            <code>iverilog</code> compiles Verilog → simulator binary.&ensp;
+            <code>vvp</code> runs it → prints output + writes VCD.
+        </p>
+    </div>
+    <div class="fragment" style="margin-top:0.5em;background:#1E1E1E;padding:0.6em 0.8em;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:0.55em;color:#D4D4D4;line-height:1.6;">
+        PASS: sw=0000 -> led=0001<br>
+        PASS: sw=0011 -> led=1100<br>
+        ...<br>
+        <span style="color:#4EC9B0;">=== tb_button_logic: 16 passed, 0 failed ===</span><br>
+        <span style="color:#4EC9B0;">ALL TESTS PASSED</span>
+    </div>
+    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
+        Green text, zero failures → safe to synthesize.
+    </div>
+    <aside class="notes">Running a testbench is simple. From any lab directory, type make-sim. That compiles your design and testbench with Icarus Verilog, then runs the simulation. You'll see PASS or FAIL for each test case, and a summary at the bottom. If you want to see waveforms, type make-wave — that opens GTKWave with the recorded VCD file. Under the hood, make-sim runs two commands: iverilog to compile, and vvp to execute. The output looks like this — PASS for each test, and a final summary. Green text, zero failures — you're safe to synthesize. We'll dig much deeper into writing your own testbenches in Week 2. For now, just run the ones we provide and read the output.</aside>
+</section>
+
 <!-- GO BOARD INTRODUCTION (PLACEHOLDER) -->
 <section data-background-color="#FAFAFA">
     <h2>Your Hardware Platform</h2>
@@ -208,10 +292,14 @@ end</code></pre>
         </p>
         <p class="fragment" style="font-size:0.85em;">
             <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;
-            <strong>Always simulate first</strong>, then synthesize to hardware.
+            A <strong>testbench</strong> drives your design's inputs, checks its outputs, and prints PASS/FAIL.
+        </p>
+        <p class="fragment" style="font-size:0.85em;">
+            <span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;
+            <strong>Always simulate first</strong> — <code>make sim</code> before <code>make prog</code>.
         </p>
     </div>
-    <aside class="notes">Recap. One: same source, two paths — synthesis makes hardware, simulation tests behavior. Two: not all Verilog synthesizes. Hash-delay, dollar-display, initial are simulation only. Three: always simulate first, then synthesize. In the next video, we'll look at the anatomy of a Verilog module — the fundamental building block of every design.</aside>
+    <aside class="notes">Recap. One: same source, two paths — synthesis makes hardware, simulation tests behavior. Two: not all Verilog synthesizes. Hash-delay, dollar-display, initial are simulation only. Three: a testbench drives your design's inputs, checks its outputs, and prints PASS or FAIL — you'll run these from Day 1. Four: always simulate first. make-sim before make-prog. In the next video, we'll look at the anatomy of a Verilog module.</aside>
 </section>
 
 <!-- BRIDGE -->

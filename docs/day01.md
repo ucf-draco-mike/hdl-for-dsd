@@ -17,18 +17,19 @@ By the end of this session, students will be able to:
 
 ---
 
-## Pre-Class Video (~40 min)
+## Pre-Class Video (~45 min)
 
 | # | Segment | Duration | File |
 |---|---------|----------|------|
 | 1 | HDL ≠ Software: concurrent vs. sequential mental models | 12 min | `video/day01_seg1_hdl_not_software.mp4` |
-| 2 | Synthesis vs. Simulation: what's synthesizable and what isn't | 10 min | `video/day01_seg2_synthesis_vs_simulation.mp4` |
+| 2 | Synthesis, Simulation & Your First Testbench: two paths from one source, reading and running a TB | 15 min | `video/day01_seg2_synthesis_simulation_testbench.mp4` |
 | 3 | Anatomy of a Module: ports, `assign`, wires | 12 min | `video/day01_seg3_anatomy_of_a_module.mp4` |
 | 4 | Digital Logic Refresher: gates, truth tables, Boolean algebra | 8 min | `video/day01_seg4_digital_logic_refresher.mp4` |
 
 ### Key Concepts from Video
 - HDL describes hardware that runs concurrently — every `assign` and `always` block is "running" simultaneously
 - Synthesis transforms HDL into a netlist of gates/LUTs; simulation executes HDL as a software model
+- A **testbench** is a port-less module that instantiates, drives, and checks your design — run it with `make sim`
 - A Verilog module has a name, port declarations (`input`, `output`), and a body
 - `assign` creates combinational logic — the output continuously reflects the inputs
 
@@ -43,8 +44,9 @@ See `quiz.md` — 4 questions covering all 4 segments.
 |------|----------|----------|
 | 0:00–0:05 | Quiz review and Q&A | 5 min |
 | 0:05–0:35 | Mini-lecture: course roadmap, toolchain demo, `.pcf` files | 30 min |
-| 0:35–0:45 | Lab kickoff: objectives, deliverables, environment setup guidance | 10 min |
-| 0:45–2:15 | Hands-on lab | 90 min |
+| 0:35–0:45 | **Simulation live demo:** run `make sim` on `tb_button_logic`, walk through output | 10 min |
+| 0:45–0:55 | Lab kickoff: objectives, deliverables, environment setup guidance | 10 min |
+| 0:55–2:15 | Hands-on lab | 80 min |
 | 2:15–2:25 | Debrief: common issues, show a student's work | 10 min |
 | 2:25–2:30 | Preview Day 2, assign pre-class video | 5 min |
 
@@ -77,6 +79,42 @@ module led_on (
     assign o_LED_1 = 1'b1;
 endmodule
 ```
+
+---
+
+## Simulation Live Demo (10 min)
+
+> **Goal:** Students see `make sim` produce PASS/FAIL output before they ever touch `make prog`.
+
+### Walk-Through
+
+1. **Open `labs/week1_day01/ex3_button_logic/starter/`** — show two files side by side:
+   - `ex3_button_logic.v` (the design — has ports, `assign` statements)
+   - `tb_button_logic.v` (the testbench — no ports, drives inputs, checks outputs)
+
+2. **Annotate the testbench** (projector, 3 min):
+   - "No ports — this is the top of the simulation world"
+   - "The `dut` instance plugs in your design — same named-port syntax from the video"
+   - "`reg` signals are inputs you control; `wire` signals are outputs you observe"
+   - "`#1` — one time unit of propagation delay (sim-only, remember the `#10` trap?)"
+   - "`===` vs `==` — triple-equals catches X and Z, double-equals silently ignores them"
+   - "PASS/FAIL with `$display` — if all pass, you're safe to program the board"
+
+3. **Run it live** (terminal, 2 min):
+   ```bash
+   cd labs/week1_day01/ex3_button_logic/starter
+   make sim
+   ```
+   Point out the PASS/FAIL output and the summary line.
+
+4. **Show waveforms** (2 min):
+   ```bash
+   make wave
+   ```
+   Open GTKWave, add `sw1`, `sw2`, `led1`, `led3`. Show how input changes propagate instantly (combinational).
+
+5. **Key message** (1 min):
+   > "Every lab exercise from today forward has a testbench. Your workflow is: edit → `make sim` → fix until all pass → `make prog` to go to hardware. Simulation is where you find bugs. Hardware is where you celebrate."
 
 ---
 
@@ -147,7 +185,14 @@ Starting from the buttons-to-LEDs design, make these modifications:
 2. AND two buttons: `assign o_LED_3 = i_Switch_1 & i_Switch_2;`
 3. OR two buttons: `assign o_LED_4 = i_Switch_3 | i_Switch_4;`
 
-For each modification: synthesize, program, verify on hardware.
+**Simulation checkpoint:** Before programming the board, run the provided testbench:
+```bash
+cd labs/week1_day01/ex3_button_logic/starter
+make sim     # should print "16 passed, 0 failed"
+```
+If any tests fail, fix your logic before going to hardware.
+
+Then: synthesize, program, verify on hardware.
 
 **Discussion question:** How fast do the LEDs respond when you press a button? Why?
 

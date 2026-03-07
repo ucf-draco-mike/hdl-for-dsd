@@ -71,6 +71,11 @@
 - Walk through the code structure, discuss why `case` is natural for opcode decoding
 - Mention `default` handling — what should the ALU output for undefined opcodes?
 
+### Simulation as Latch Detective (2 min — quick callout)
+- "Today's TBs detect latches *before* synthesis — a latch produces X in simulation, which the TB catches"
+- Show the pattern: `if (output === 3'bxxx)` → FAIL → you have a latch
+- "Simulation + synthesis warnings = two independent checks. Trust both."
+
 ---
 
 ## Lab Exercises
@@ -86,6 +91,8 @@
 4. Fix the code by adding a default assignment. Re-synthesize and confirm the latch warning is gone.
 5. Try a second bug: `case` statement with a missing branch (no `default`). Observe, fix, and verify.
 
+**Simulation checkpoint:** Run `make sim` in `ex1_latch_bugs/starter/` — `tb_latch_bugs.v` detects latches by checking for X outputs. If any check prints `FAIL` with an X value, the latch hasn't been fixed yet.
+
 **Checkpoint:** Both buggy files synthesize latch-free after fixes. Student can explain why each fix works.
 
 ---
@@ -99,6 +106,8 @@
 2. Implement using `always @(*) begin ... end` with `if/else` chain: highest-numbered request wins.
 3. Include a `valid` output that indicates whether any request is active.
 4. Synthesize with Yosys and inspect the circuit using `show` — observe the priority mux chain.
+
+**Simulation checkpoint:** Run `make sim` in `ex2_priority_encoder/starter/` — exhaustively tests all 16 request patterns. Every input must map to the correct highest-priority encoding.
 
 **Checkpoint:** Priority encoder synthesizes cleanly (no latch warnings), produces correct output.
 
@@ -149,6 +158,8 @@
 3. Include a `default` case for undefined opcodes (output zero or hold — discuss the trade-off).
 4. Create a top module wiring buttons to inputs and displaying the result on the 7-seg decoder from Day 2.
 5. Program the Go Board and verify: manually test at least ADD, SUB, and AND.
+
+**Simulation checkpoint:** Run `make sim` in `ex3_alu/starter/` — `tb_alu_4bit.v` tests ADD, SUB, AND, OR with selected vectors including zero-flag and carry/borrow edge cases. All must pass before going to hardware.
 
 **Checkpoint:** ALU on hardware. Multiple opcodes verified by changing button inputs and observing 7-seg output.
 

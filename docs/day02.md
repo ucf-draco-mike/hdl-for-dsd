@@ -60,7 +60,13 @@
 - Forgetting `wire` vs `reg` context — which goes where
 - Sized literal mistakes: `8` vs `8'd8` vs `4'b1000`
 
-### 7-Segment Display Encoding (15 min)
+### Simulation Checkpoint Reminder (2 min)
+- Reinforce the Day 1 workflow: **`make sim` before `make prog`**
+- Every exercise today has a provided testbench — run it first
+- "If the TB says FAIL, your board will also fail — but the TB tells you *why*"
+- Quick show: `make sim` → `make wave` → inspect one signal in GTKWave (30 sec live demo)
+
+### 7-Segment Display Encoding (13 min)
 - Go Board's dual 7-seg: active-high segments, directly pin-mapped
 - Mapping 4-bit hex (0–F) to 7-segment patterns
 - Live design walkthrough: truth table → `assign` statements or look-up approach
@@ -81,6 +87,8 @@
 3. Extend to `mux_4to1.v`: use two select bits (buttons) to choose among four inputs. Display on an LED.
 4. Widen to 4-bit inputs: create a 4-bit 2:1 mux using vector ports `[3:0]`.
 
+**Simulation checkpoint:** Run `make sim` in `ex2_mux_hierarchy/starter/` — the provided `tb_mux.v` tests all 2:1 combinations and directed 4:1 patterns.
+
 **Checkpoint:** 4:1 mux working on hardware — correct LED output for all select combinations.
 
 ---
@@ -95,6 +103,8 @@
 3. Create `adder_4bit.v` that instantiates four `full_adder` modules, chaining `cout` to the next stage's `cin`.
 4. Use **named port connections**: `.a(a[0]), .b(b[0]), .cin(carry_in), .sum(sum[0]), .cout(c1)`.
 5. Create a top module: buttons provide two 2-bit inputs, display the sum on LEDs or 7-seg.
+
+**Simulation checkpoint:** Run `make sim` in `ex3_ripple_adder/starter/` — `tb_adder.v` exhaustively tests the full adder and samples the 4-bit ripple adder.
 
 **Checkpoint:** Adder produces correct sums on hardware for several input combinations.
 
@@ -112,6 +122,8 @@
 3. Build the segment truth table: for each hex value (0–F), determine which segments (a–g) should be lit.
 4. Wire it up: use buttons (or a counter) to select hex values, drive the Go Board display.
 5. Test all 16 values: cycle through 0–F and verify the display shows the correct character.
+
+**Simulation checkpoint:** Run `make sim` in `ex4_7seg_decoder/starter/` — `tb_hex_to_7seg.v` checks all 16 segment patterns. Fix any mismatches before programming.
 
 **Checkpoint:** All 16 hex digits display correctly on the Go Board's 7-segment display.
 

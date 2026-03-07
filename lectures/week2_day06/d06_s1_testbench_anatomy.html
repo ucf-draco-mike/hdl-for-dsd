@@ -41,14 +41,14 @@
 <section>
     <h2>Why Testbenches?</h2>
     <div class="golden-rule" style="font-size:1em;">
-        If you haven&rsquo;t simulated it, it doesn&rsquo;t work.
+        You&rsquo;ve been running them all week. Now you learn to write them.
     </div>
     <div style="font-size:0.8em;margin-top:1em;">
-        <p class="fragment"><strong>Simulate first</strong> → Synthesize second → Program last</p>
-        <p class="fragment">Debugging on hardware is 10× slower than in simulation</p>
+        <p class="fragment">Week 1 workflow: <code>make sim</code> → read PASS/FAIL → fix → <code>make prog</code></p>
+        <p class="fragment">This week: <strong>you write the testbench</strong> — same patterns, from scratch</p>
         <p class="fragment">A testbench is a module with <strong>no ports</strong> that drives your DUT</p>
     </div>
-    <aside class="notes">If you haven't simulated it, it doesn't work. Debugging on hardware is 10x slower. A testbench is a portless module that exercises your design under test.</aside>
+    <aside class="notes">You've been running testbenches since Day 1. Every time you typed make-sim and saw PASS or FAIL, a testbench was doing the work. This week, you learn to write them yourself — same patterns you've been relying on, but now you build them from scratch. A testbench is a port-less module that exercises your design under test. Let's look at the anatomy.</aside>
 </section>
 <section>
     <h2>Testbench Anatomy</h2>

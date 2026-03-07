@@ -5,6 +5,8 @@
 
 ---
 
+> **Context shift:** During Week 1, students ran provided testbenches with `make sim` and learned to read PASS/FAIL output and VCD waveforms.  Day 6 transitions from **running** testbenches to **writing** them from scratch.  The pre-class video formalizes concepts students have already been using informally (DUT instantiation, stimulus, self-checking assertions) and introduces new techniques (tasks, file-driven testing, AI-assisted generation).
+
 ## Student Learning Objectives
 
 1. **SLO 6.1:** Write a complete testbench from scratch: instantiate DUT, generate stimulus, dump waveforms, and terminate simulation.
@@ -52,11 +54,11 @@
 
 ## In-Class Mini-Lecture (30 min)
 
-### Verification Mindset (5 min)
-- "If you haven't simulated it, it doesn't work"
-- Workflow: **simulate first, then synthesize to board — always**
-- Self-checking testbenches: automating correctness checks vs. staring at waveforms
-- Why waveform-only verification doesn't scale
+### Verification Mindset — Level Up (5 min)
+- Recall Week 1: you've been running `make sim` and reading PASS/FAIL output since Day 1
+- Now the question changes: **who wrote those testbenches, and how?**
+- Today you learn to write them yourself — the same self-checking patterns you've been relying on
+- Why waveform-only verification doesn't scale — self-checking is essential for real projects
 
 ### Self-Checking Testbench Patterns (15 min)
 - The basic pattern: apply inputs → wait → compare actual vs. expected → report
