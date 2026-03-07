@@ -195,22 +195,25 @@
 | 4 — SPI master | 12.4 | Core |
 | 5 — UART-to-SPI bridge | 12.2, 12.4 | Stretch (bonus) |
 
-**Instructor note on AI tool comparison:** If time permits during debrief (2:15–2:25), ask 2–3 students to share their tool comparison findings. Five minutes of peer discussion here is high-value.
+**Debrief note:** During the end-of-class debrief, be ready to share your AI tool comparison findings with the group. Hearing how different students approached the same problem is one of the most valuable parts of the class.
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Oversampling math:** Students may confuse "16× oversampling" with "sample 16 times per bit." Clarify: the sample clock runs 16× faster than the baud rate. You sample once per bit at sample count ~7–8.
-- **Start-bit false detection:** Noise on the RX line can trigger false start bits. The center-sample confirmation in the start-bit state helps reject these — make sure students implement this check.
-- **SPI clock polarity:** Mode 0 means idle clock is low, data sampled on rising edge. Students often flip this. Have them draw the timing diagram.
-- **Time pressure:** This is a full day. If students are behind on UART RX, prioritize Exercises 1–3 and defer SPI to homework or stretch. The AI TB exercise (Exercise 3) should not be skipped — it's part of the progressive AI verification thread.
+> Day 12 completes the UART (RX) and introduces SPI. Both require precise protocol timing — simulation is your best debugging tool here.
 
-### Cross-Cutting Threads
+- **What does "16× oversampling" actually mean?** Your internal sample clock runs 16 times faster than the baud rate. You don't sample 16 times per bit — you use the 16× clock to find the *center* of each bit (around sample count 7 or 8) and sample once there. This gives you maximum noise margin.
 
-- **AI Verification (Day 3 of thread):** Students now prompt for protocol-level testbenches. The new challenge is timing-aware verification — AI must handle baud rate math and frame structure.
-- **Constraint-Based Design:** Concept introduced in pre-class Segment 4. Lab implementation deferred to Day 14 (parity extension of UART TX using `generate if`).
+- **False start-bit detections?** Noise on the RX line can look like a start bit. Your start-bit state should confirm the line is still low at the center sample point (count ~7). If it's high at the center, it was noise — go back to idle.
 
+- **SPI clock polarity wrong?** Mode 0 (CPOL=0, CPHA=0) means: clock idles low, data is sampled on the rising edge. If your SPI device expects a different mode, you'll read garbage. Draw the timing diagram before coding.
+
+- **Running behind today?** This is a packed day. If you're struggling with UART RX, prioritize Exercises 1–3 (RX implementation + loopback). SPI (Exercise 4) is a stretch goal. Do not skip Exercise 3's AI-assisted TB — it's part of the progressive verification thread.
+
+### 🔗 Bigger Picture
+
+This is the third day of the AI verification thread. The new challenge is protocol-level testbench generation — the AI must handle baud rate math and frame structure correctly. Evaluating this output develops judgment you'll need for the Day 14 constraint-based testing.
 ---
 
 ## Preview: Day 13

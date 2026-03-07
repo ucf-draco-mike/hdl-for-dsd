@@ -47,7 +47,7 @@ See `quiz.md` — 4 questions covering all 4 segments.
 | 0:35–0:45 | **Simulation live demo:** run `make sim` on `tb_button_logic`, walk through output | 10 min |
 | 0:45–0:55 | Lab kickoff: objectives, deliverables, environment setup guidance | 10 min |
 | 0:55–2:15 | Hands-on lab | 80 min |
-| 2:15–2:25 | Debrief: common issues, show a student's work | 10 min |
+| 2:15–2:25 | Debrief: common pitfalls, show a student's work | 10 min |
 | 2:25–2:30 | Preview Day 2, assign pre-class video | 5 min |
 
 ---
@@ -251,13 +251,17 @@ Buttons-to-LEDs design with at least one logic modification (inversion, AND, OR,
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **USB driver issues on macOS/Windows:** Have a troubleshooting guide ready. Linux usually works out of the box.
-- **`.pcf` pin name mismatches:** Students will misspell port names. The error messages from nextpnr are helpful — teach them to read error output.
-- **"Nothing happened":** Usually a programming issue. Verify with `iceprog -t` (test mode) first.
-- **Students finishing early:** Direct them to the Makefile exercise and encourage them to help peers.
+> These are the issues that trip up most students on Day 1. Read them before lab — knowing what to watch for saves debugging time.
 
+- **USB driver not working?** Linux usually works out of the box. On macOS/Windows, check the troubleshooting section in `docs/course_setup_guide.md` — USB passthrough on WSL2 requires `usbipd-win`.
+
+- **"Nothing happened" after programming?** Usually a connection issue, not a code issue. Verify your board is recognized with `iceprog -t` (test mode) before you try to program.
+
+- **`.pcf` pin name mismatch?** If `nextpnr` gives an error about unconstrained ports, double-check that the port names in your Verilog module *exactly* match the names in `go_board.pcf`. Spelling matters — even capitalization.
+
+- **Finished the required exercises early?** Try the stretch exercise (Ex 5: XOR pattern) and help a neighbor debug. Explaining your design to someone else is one of the best ways to solidify your understanding.
 ---
 
 ## Preview: Day 2

@@ -194,18 +194,21 @@
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Positional vs. named ports:** Students may try positional connections for speed. Insist on named — the bugs from misordered ports are painful and instructive.
-- **Generate scope:** Remind students that `generate for` requires a `genvar` declaration and a named `begin:` block. Icarus gives cryptic errors without these.
-- **AI and parameter overrides:** This is often where AI stumbles — it may hardcode rollover values instead of computing `2**WIDTH - 1`. High-value teaching moment.
-- **Resource scaling insight:** Students often expect LUT count to exactly double with WIDTH. It's close but not exact — synthesis optimization makes it interesting.
+> Day 8 is about building reusable, parameterized modules. The skills here directly affect your final project quality.
 
-### Cross-Cutting Threads
+- **Always use named port connections.** From today forward, positional connections (where you just list signals in order) are not acceptable. A single misordered port creates a silent bug that's extremely hard to find. Named connections (`.i_data(my_data)`) make the intent clear and catch errors at compile time.
 
-- **AI Verification (Day 2 of thread):** Students now prompt for parameterized modules. The evaluation question shifts from "does it work?" to "does it handle configuration correctly?"
-- **PPA Analysis:** Exercise 5 is brief but intentional — builds the habit of running `yosys stat` after every synthesis. Referenced on Day 10.
+- **`generate for` giving cryptic errors?** Three things you must have: (1) a `genvar` variable declaration, (2) the loop body wrapped in `begin : some_name ... end`, and (3) the named block label. Without any of these, Icarus gives unhelpful error messages.
 
+- **AI hardcodes values that should be parameterized?** This is a common AI failure mode. If your module has `parameter WIDTH = 8`, but the AI testbench checks `count == 255` instead of `count == (2**WIDTH - 1)`, the TB will break when you change WIDTH. Always review AI-generated code for hardcoded magic numbers.
+
+- **LUT count doesn't exactly double when WIDTH doubles?** That's expected — synthesis optimization can share logic across bits. The relationship is approximately linear but not exact. Noting and explaining this in your PPA observations is good practice for the final project.
+
+### 🔗 Bigger Picture
+
+This is the second day of the AI verification thread. The evaluation question shifts from "does it work?" to "does it handle configuration correctly?" — a harder problem for both humans and AI.
 ---
 
 ## Preview: Day 9

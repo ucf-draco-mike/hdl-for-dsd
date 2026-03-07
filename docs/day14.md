@@ -58,7 +58,7 @@
 | 2:15 | Lab Exercise 5: Project work time | 10 min |
 | 2:25 | Wrap-up and Day 15 preview | 5 min |
 
-> **Instructor note:** This is the tightest day in the course. Exercise 2 (parity extension) has an **escape valve**: students who are behind on their final project may skip it and use the time for Exercises 3–4 or project work. Parity can be completed as homework.
+> **Heads up:** This is the most packed day in the course. If you're behind on your final project, Exercise 2 (parity extension) can be deferred — use the time for Exercises 3–4 or project work instead. Parity can be completed as homework.
 
 ---
 
@@ -251,23 +251,23 @@
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Assertion syntax in iverilog:** Icarus Verilog supports immediate assertions with `-g2012` but has limited support for concurrent/property-based assertions. Keep students focused on immediate assertions for this exercise.
-- **`generate if` scope confusion:** Students may struggle with the named `begin : gen_parity` block. Remind them: generate blocks create scope — signals inside are accessed as `gen_parity.signal_name` from outside (though they usually shouldn't need to).
-- **Parity timing:** The parity bit adds one bit period to the frame. Students must update the FSM to include a PARITY state between DATA and STOP. Common bug: forgetting to adjust the bit counter.
-- **AI coverage gaps:** The most valuable part of Exercise 3 is often discovering what the AI *didn't* test. Students who identify specific gaps score higher than those who accept the AI output without critique.
-- **PPA report quality:** Emphasize that numbers alone aren't sufficient — the analysis paragraph explaining *why* the numbers look the way they do is what demonstrates understanding.
-- **Time management:** This is the tightest day. Monitor Exercise 2 closely — invoke the escape valve early if students are struggling. Exercises 3 and 4 are higher priority for the final project.
+> Day 14 brings together assertions, AI-generated testbenches, and PPA analysis. It's the most technically dense day — pace yourself.
 
-### Cross-Cutting Thread Convergence
+- **Assertion syntax not working in Icarus?** Icarus Verilog supports immediate assertions (the `assert(...)` statements inside procedural blocks) with `-g2012`, but has limited support for concurrent/property-based SVA. Stick to immediate assertions for this exercise.
 
-This is the day where all four cross-cutting threads converge:
-- **AI Verification (Day 4 of thread):** Students write independent constraint specs and generate TBs for their own project modules.
-- **PPA Analysis:** Structured comparison exercise with the same format as the final project report.
-- **Constraint-Based Design:** The parity extension brings the Day 12 concept to implementation.
-- **Verification Maturity:** Students can now place themselves on the manual → coverage-driven scale.
+- **`generate if` scope confusion?** The named `begin : gen_parity ... end` block creates a scope. Signals declared inside it are accessed from outside as `gen_parity.signal_name` — but you typically shouldn't need to do this. If you find yourself reaching into a generate block's scope, consider restructuring.
 
+- **Parity bit throws off your UART frame?** Adding parity means your frame is now Start + 8 Data + 1 Parity + Stop = 11 bits instead of 10. Your FSM needs a new `PARITY` state between `DATA` and `STOP`. Common bug: forgetting to adjust the bit counter.
+
+- **AI testbench looks complete but misses cases?** The most valuable part of Exercise 3 is discovering what the AI *didn't* test. If you identify specific coverage gaps (e.g., "AI tested even parity but not odd," or "AI never tested back-to-back frames"), document them in your deliverable — this demonstrates verification maturity.
+
+- **PPA report: numbers aren't enough.** Pasting `yosys stat` output earns partial credit. The analysis paragraph — explaining *why* the numbers look the way they do and what trade-offs they reveal — is what demonstrates understanding.
+
+### 🔗 Bigger Picture
+
+All four course threads converge today: AI verification (constraint specs for your own modules), PPA analysis (structured comparison format for final project), constraint-based design (parity extension of UART), and verification maturity (you can now place yourself on the manual → coverage-driven scale).
 ---
 
 ## Preview: Day 15

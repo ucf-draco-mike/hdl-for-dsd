@@ -144,13 +144,17 @@ ROM-driven 7-seg pattern sequencer + RAM read/write demo on hardware, with testb
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Combinational read prevents EBR inference:** This is the most common issue. If `yosys stat` doesn't show `SB_RAM40_4K`, the read is probably combinational. Show students the fix: register the output with `always @(posedge clk)`.
-- **`$readmemh` file path:** Icarus Verilog resolves paths relative to where `vvp` is run. Students may get "file not found" errors if the `.hex` file isn't in the right directory. Recommend placing it alongside the testbench.
-- **`$readmemh` format:** Students may put `0x` prefixes or commas in the hex file. The format is one hex value per line, no prefixes, optional comments with `//`.
-- **iCE40 EBR limitations:** The HX1K has 16 EBR blocks. A 256×16 RAM uses 1 block. If students try to create very large RAMs, they'll run out. This is a natural PPA discussion point.
+> Day 9 introduces memory — ROM and RAM. The biggest pitfall is writing code that *looks* like memory but doesn't map to the FPGA's dedicated memory blocks.
 
+- **`yosys stat` doesn't show `SB_RAM40_4K`?** This means your RAM didn't map to the iCE40's dedicated block RAM (EBR). The most common cause: a combinational read. If you read with `assign data_out = mem[addr]`, Yosys builds it from LUTs. To infer EBR, register the output: `always @(posedge clk) data_out <= mem[addr];`.
+
+- **`$readmemh` says "file not found"?** Icarus resolves paths relative to where `vvp` runs, not where the source file lives. Put your `.hex` file in the same directory you run `make sim` from, or use a relative path from there.
+
+- **`$readmemh` file format wrong?** One hex value per line, no `0x` prefix, no commas. Comments with `//` are OK. Example: a 4-entry ROM file looks like `0A` / `1B` / `2C` / `3D` (one per line).
+
+- **Running out of block RAM?** The iCE40 HX1K has 16 EBR blocks, each 256×16 or 512×8. A 256×16 RAM uses 1 block. If you need more, you'll consume LUTs instead — check `yosys stat` to see the trade-off.
 ---
 
 ## Preview: Day 10

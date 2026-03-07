@@ -118,7 +118,7 @@
 1. Create `hex_to_7seg.v` with `input [3:0] hex_digit` and `output [6:0] segments`.
 2. Implement the mapping using either:
    - (a) Sixteen `assign` statements using nested conditionals, or
-   - (b) A combinational `always @(*)` with `case` (preview of Day 3 — instructor can mention this alternative)
+   - (b) A combinational `always @(*)` with `case` (a preview of Day 3 — try it if you're curious)
 3. Build the segment truth table: for each hex value (0–F), determine which segments (a–g) should be lit.
 4. Wire it up: use buttons (or a counter) to select hex values, drive the Go Board display.
 5. Test all 16 values: cycle through 0–F and verify the display shows the correct character.
@@ -161,15 +161,19 @@ Hex-to-7-segment decoder displaying button-selected hex values on the Go Board's
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Bit width mismatches:** Students frequently mix 1-bit and multi-bit signals. Yosys will warn, but the warnings can be buried in output. Teach them to read synthesis output for width mismatch warnings early — this habit pays off all course.
-- **Named vs. positional port connections:** Exercise 2 is the first time students instantiate modules. Some will try positional for speed (`.full_adder fa0(a[0], b[0], cin, s[0], c1)`). Allow it here but flag that Day 8 will enforce named-only — and show them a bug caused by misordered ports.
-- **7-seg segment mapping confusion:** Students will get segments wrong. Have the Go Board segment map drawn on the whiteboard (or in a handout). Encourage them to light one segment at a time to identify the mapping before coding the full decoder.
-- **`wire` vs `reg` errors:** Students may try to assign to a `wire` inside an `always` block (if they peek ahead), or declare a `reg` for a simple `assign`. Clarify: `assign` → `wire`, `always` → `reg`.
-- **Replication operator confusion:** `{4{1'b0}}` looks strange. Walk through it: inner braces are the value, outer braces are concatenation, the number is the repeat count.
-- **Students finishing early:** Direct them to Exercise 4 (structural mux) — it's an excellent exercise in thinking about hierarchy.
+> Day 2 is your first time building modules that process multi-bit data. Watch for these.
 
+- **Bit width mismatch warnings?** Yosys will warn if you connect a 4-bit signal to an 8-bit port (or vice versa). Read the synthesis output carefully — these warnings indicate real bugs, even if the design still programs.
+
+- **Module instantiation: use named ports.** When you connect modules (like `full_adder fa0(...)`), always use named connections: `.i_a(a[0])`. Positional connections (`.full_adder fa0(a[0], b[0], cin, s[0], c1)`) are legal but dangerous — one misordered signal creates a silent bug. We enforce named-only starting Day 8.
+
+- **7-segment display looks wrong?** The Go Board's segments have a specific physical mapping. If you're getting random-looking patterns, light up one segment at a time (`o_seg = 7'b1111110` lights only segment `a`) to identify which bit controls which segment.
+
+- **`wire` vs `reg` confusion?** Simple rule for now: `assign` statements drive `wire` signals. `always` blocks drive `reg` signals. Using the wrong one gives a clear compiler error.
+
+- **What does `{4{1'b0}}` mean?** This is the replication operator. Inner braces hold the value, the number is the repeat count, outer braces are concatenation. So `{4{1'b0}}` = `4'b0000`.
 ---
 
 ## Preview: Day 3

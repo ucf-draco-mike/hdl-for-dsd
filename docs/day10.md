@@ -188,17 +188,21 @@
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Students expect manual = better:** The ripple-carry adder will often be identical or worse than behavioral `+` because Yosys optimizes well. This is the point — let the tool work for you, but understand what it does.
-- **Shift-and-add FSM complexity:** Students may struggle with the FSM + datapath combination. Suggest they draw the block diagram first: FSM, shift register, accumulator, counter, and the connections between them.
-- **Fixed-point bit indexing:** The most common bug is extracting the wrong bits from the Q8.8 product. Have students draw out the bit positions on paper before coding.
-- **Timing report confusion:** Students may not know where to look. Point them to the "Max frequency" line and the critical path description. Explain that the path name shows which flip-flops are at the endpoints.
+> Day 10 is about numerical architectures and your first structured PPA analysis. Understanding the trade-offs here is directly relevant to your final project.
 
-### Cross-Cutting Thread: PPA Analysis
+- **Behavioral `+` is just as good as my ripple-carry adder?** Often yes — and that's the point. Yosys optimizes behavioral operators aggressively. A hand-built ripple-carry adder may use the same or more LUTs than `assign sum = a + b;`. The lesson: let the tool work for you, but understand what it produces so you can make informed decisions when it matters.
 
-This is the anchor day for the PPA thread. Students have seen `yosys stat` on Days 3 and 8 in brief snapshots. Today they do structured, comparative PPA analysis for the first time. The comparison tables from Exercises 1–2 establish the format they'll use in the final project PPA report (Days 15–16).
+- **Shift-and-add multiplier FSM is complex — where do I start?** Draw the block diagram first: FSM controller, shift register (for the multiplier), accumulator (for the partial product), and a bit counter. Label the connections between them. Then code each block separately before wiring them together.
 
+- **Fixed-point: extracting the wrong bits?** For Q8.8 multiplication (8 integer bits, 8 fractional bits), the full product is 32 bits wide. The integer result is in bits [23:16], not [31:24] or [15:8]. Draw out the bit positions on paper — label the integer and fractional portions — before writing the extraction code.
+
+- **Where do I find the timing report?** After `nextpnr` runs, look for the "Max frequency" line in the output and the critical path description. The path name tells you which flip-flops are at the start and end of the longest combinational delay.
+
+### 🔗 Bigger Picture
+
+This is the anchor day for PPA analysis. The comparison tables you build in today's exercises establish the exact format you'll use in your final project PPA report (Days 15–16).
 ---
 
 ## Preview: Day 11

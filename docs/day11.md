@@ -148,14 +148,19 @@
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **LSB first:** UART sends the least significant bit first. Students accustomed to MSB-first thinking will reverse the bit order. Draw the timing diagram and label D0–D7.
-- **Baud rate mismatch:** If characters appear as garbage in the terminal, the baud rate is likely wrong. Have students verify `CLKS_PER_BIT` calculation and check terminal settings.
-- **tx_busy not checked:** Students may fire multiple bytes without waiting for the previous one to finish. The "HELLO" sequencer in Exercise 3 forces them to handle this properly.
-- **Terminal emulator issues:** Common problems include wrong COM port, wrong baud rate, or hardware flow control enabled. Keep a troubleshooting checklist handy.
-- **.pcf pin for TX:** Ensure students map `tx_out` to the correct FPGA pin connected to the USB-to-serial interface on the Go Board.
+> Day 11 is your first communication interface. UART is unforgiving about timing — one wrong clock count and every byte is garbled.
 
+- **Characters show as garbage in the terminal?** The most common cause is a baud rate mismatch. Double-check your `CLKS_PER_BIT` calculation: for 115200 baud at 25 MHz, it should be `25000000 / 115200 = 217`. Also verify your terminal emulator is set to 115200 baud, 8N1.
+
+- **UART sends LSB first.** This catches everyone at least once. Bit 0 of your data byte goes out on the wire first, then bit 1, etc. If you're seeing characters that are "almost right but wrong," check your bit ordering.
+
+- **Sending multiple bytes and getting corruption?** You must wait for `o_busy` to go low (or `o_done` to pulse) before sending the next byte. The "HELLO" sequencer in Exercise 3 forces you to handle this — don't shortcut it.
+
+- **Terminal emulator won't connect?** Common causes: wrong COM port (try them all), hardware flow control enabled (disable it), or another program has the port open. On Linux, check `ls /dev/ttyUSB*`; on macOS, `ls /dev/cu.*`.
+
+- **Which pin is TX on the Go Board?** Check `go_board.pcf` for the UART TX pin. It must match the pin connected to the USB-to-serial chip on the board. If you get this wrong, the terminal will show nothing at all.
 ---
 
 ## Preview: Day 12

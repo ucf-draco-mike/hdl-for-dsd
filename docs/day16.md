@@ -166,11 +166,15 @@ Students should submit (per course_syllabus requirements):
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Demo anxiety:** Some students will be nervous about live demos. Reassure them that bugs during demos are normal and expected — how they respond to the bug (debugging strategy, explanation of what should happen) is as valuable as a clean demo.
-- **Last-minute fixes:** Students may try to make changes right before their demo. Advise against it — "Demo what works, not what you just broke."
-- **Time management:** Strictly enforce the 5–7 minute window. Use a visible timer. Students who run over should be gently cut off — this is a professional skill.
-- **Peer learning during demos:** Encourage students to take notes on interesting approaches they see in other projects. The Q&A after each demo should be substantive.
-- **Incomplete projects:** Some students won't have fully working hardware. This is OK. Grade based on the rubric — a well-documented, well-tested partial implementation with good PPA analysis can score well.
-- **Course feedback:** Take the retrospective seriously. Student feedback on the AI integration, pacing, and lab difficulty directly informs the next iteration of the course.
+> Demo day. These tips help you deliver a clean, professional presentation.
+
+- **Nervous about the live demo?** Bugs during demos are normal and expected in engineering. If something breaks, explaining *what should have happened* and showing your debugging approach is as valuable as a flawless demo.
+
+- **Tempted to make last-minute code changes?** Don't. Demo what works, not what you just broke. Lock your code the night before and practice the demo flow.
+
+- **Presentation running long?** You have 5–7 minutes. Practice with a timer. Structure: ~1 min context, ~2 min live hardware demo, ~1 min key testbench/waveform, ~1 min design trade-off discussion, ~1 min AI TB with corrections, ~30 sec PPA summary.
+
+- **Project isn't fully working?** Present what you have. Show your testbench results (which pass, which fail), explain what's working and what isn't, and discuss what you'd do differently. A well-understood partial project demonstrates more learning than a working project you can't explain.
+

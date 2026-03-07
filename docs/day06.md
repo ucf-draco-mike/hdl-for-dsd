@@ -182,22 +182,21 @@
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Students skip manual TB:** Emphasize that Exercise 1 must be completed before Exercise 3. The whole point of the "manual first" rule is building the judgment to evaluate AI output.
-- **`!=` vs `!==`:** Students often use `!=` which doesn't catch X/Z. Show them an example where `!==` catches a problem `!=` misses.
-- **Timescale confusion:** Icarus Verilog defaults are fine for most cases. If students see timing issues, a `` `timescale 1ns/1ps`` directive at the top of the testbench usually resolves it.
-- **AI generates SystemVerilog in a Verilog context:** Very common. Students may see `logic` instead of `reg`/`wire`, `always_comb` instead of `always @(*)`, etc. Good teaching moment about language versions and tool capabilities.
-- **AI misses edge cases:** Often the most valuable part of Exercise 3 — when students discover the AI didn't test what they asked for, or tested it incorrectly.
+> Day 6 is your transition from running testbenches to writing them. These are the gotchas that catch most people.
 
-### Cross-Cutting Thread: AI Verification
+- **Don't skip the hand-written TB.** Exercise 1 (manual ALU testbench) must be completed before Exercise 3 (AI-assisted). You can't evaluate AI-generated code if you haven't written a TB yourself first — you won't know what's wrong.
 
-This is the first day of the AI verification thread. Today establishes the foundation:
-- **Observe:** Watch the live demo, see how AI output is reviewed.
-- **Prompt + Review:** Write a real prompt, review the output, correct errors.
+- **Using `!=` instead of `!==` in checks?** `!=` treats X as "maybe equal" and can silently pass when it shouldn't. `!==` (identity not-equal) treats X as a definite mismatch. Always use `===` / `!==` in testbench assertions.
 
-Future days will build on this: Day 8 (parameterized modules), Day 12 (protocol-level TBs), Day 14 (constraint-based testing).
+- **AI generates SystemVerilog in a Verilog project?** Very common. You'll see `logic` instead of `reg`/`wire`, `always_comb` instead of `always @(*)`, etc. This is a real tool-compatibility issue — Icarus with `-g2012` supports some SV but not all. When reviewing AI output, watch for language-version mismatches.
 
+- **AI-generated testbench misses edge cases?** This is often the most valuable discovery in Exercise 3. If you asked the AI to test "all opcodes" and it only tested ADD and SUB, that's a prompt specificity problem. If it tested all opcodes but missed overflow, that's a coverage gap. Document both.
+
+### 🔗 Bigger Picture
+
+Day 6 establishes the foundation of the AI verification thread that runs through the rest of the course. Today: prompt + review. Day 8: parameterized modules. Day 12: protocol-level TBs. Day 14: constraint-based testing. Each day builds on the judgment you develop here.
 ---
 
 ## Preview: Day 7

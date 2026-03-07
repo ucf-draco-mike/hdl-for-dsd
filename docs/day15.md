@@ -47,7 +47,7 @@ There is no pre-class video for Day 15. Instead, students should arrive prepared
   - What's working
   - What they're working on today
   - Any blockers
-- Instructor triages: common issues addressed to the group, individual issues noted for 1-on-1 help
+- Common blockers addressed to the whole group; individual issues handled during the work session
 
 ### Debugging Strategies Reminder (5 min)
 - **Divide and conquer:** Simulate each module independently before integrating
@@ -77,7 +77,7 @@ Focus areas (suggested priorities):
 2. **Integration:** Wire modules together in the top-level file. Use named port connections.
 3. **Testbench completion:** Ensure at least one manual and one AI-assisted testbench are done.
 
-**Instructor circulates** for 1-on-1 debugging and design review.
+**Use this time** to get 1-on-1 help with debugging and design review.
 
 ### Work Block 2 (55 min)
 
@@ -114,15 +114,19 @@ By end of Day 15, submit (or be prepared to submit on Day 16):
 
 ---
 
-## Common Issues & Instructor Notes
+## ⚠️ Common Pitfalls & FAQ
 
-- **Scope creep:** Students who chose ambitious projects may be behind. Help them identify a "minimum viable demo" — what's the simplest version that demonstrates the core concept? They can describe planned extensions during the demo.
-- **Pin assignment errors:** The most common "works in sim, fails on board" issue. Have students double-check every pin in the `.pcf` against the Go Board schematic.
-- **Clock domain issues:** Students integrating UART with other logic may hit timing issues if they haven't synchronized external signals. Remind them: any signal from outside the FPGA (buttons, UART RX) must pass through a synchronizer.
-- **Students who are stuck:** If a student has a fundamental design flaw, help them simplify. A working simple project is better than a broken complex one.
-- **PPA report shortcuts:** Some students will just paste `yosys stat` output without analysis. Remind them: the numbers alone are worth partial credit, but the discussion of trade-offs is what demonstrates understanding.
-- **Peer help dynamics:** Encourage students who finish early to help others. Debugging someone else's design is excellent learning.
+> Day 15 is project work day. The biggest risk is ambition outrunning time.
 
+- **Project scope too large?** Identify your "minimum viable demo" now — what's the simplest version that demonstrates your core concept? A working simple project scores better than a broken complex one. You can describe planned extensions during your demo.
+
+- **"Works in sim, fails on board"?** 90% of the time this is a pin assignment error. Double-check every pin in your `.pcf` against the Go Board schematic/pinout reference. The other 10% is usually a missing synchronizer on an external input (buttons, UART RX).
+
+- **Clock domain issues?** If you're integrating UART with other logic and getting strange behavior, check that every signal from outside the FPGA passes through a 2-FF synchronizer before use. This includes button inputs and the UART RX line.
+
+- **PPA report: just `yosys stat` output?** That's only half the deliverable. The discussion of *why* your design uses the resources it does, and what trade-offs you made (or could make), is equally important. Compare against a simpler alternative where possible.
+
+- **Stuck with a fundamental design flaw?** Simplify. A well-documented, well-tested partial implementation with good PPA analysis can score well on the rubric. Talk to your instructor about descoping.
 ---
 
 ## Preview: Day 16
