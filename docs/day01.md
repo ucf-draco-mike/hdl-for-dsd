@@ -256,11 +256,8 @@ Buttons-to-LEDs design with at least one logic modification (inversion, AND, OR,
 > These are the issues that trip up most students on Day 1. Read them before lab — knowing what to watch for saves debugging time.
 
 - **USB driver not working?** Linux usually works out of the box. On macOS/Windows, check the troubleshooting section in `docs/course_setup_guide.md` — USB passthrough on WSL2 requires `usbipd-win`.
-
 - **"Nothing happened" after programming?** Usually a connection issue, not a code issue. Verify your board is recognized with `iceprog -t` (test mode) before you try to program.
-
 - **`.pcf` pin name mismatch?** If `nextpnr` gives an error about unconstrained ports, double-check that the port names in your Verilog module *exactly* match the names in `go_board.pcf`. Spelling matters — even capitalization.
-
 - **Finished the required exercises early?** Try the stretch exercise (Ex 5: XOR pattern) and help a neighbor debug. Explaining your design to someone else is one of the best ways to solidify your understanding.
 ---
 

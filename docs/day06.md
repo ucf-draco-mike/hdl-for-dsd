@@ -187,11 +187,8 @@
 > Day 6 is your transition from running testbenches to writing them. These are the gotchas that catch most people.
 
 - **Don't skip the hand-written TB.** Exercise 1 (manual ALU testbench) must be completed before Exercise 3 (AI-assisted). You can't evaluate AI-generated code if you haven't written a TB yourself first — you won't know what's wrong.
-
 - **Using `!=` instead of `!==` in checks?** `!=` treats X as "maybe equal" and can silently pass when it shouldn't. `!==` (identity not-equal) treats X as a definite mismatch. Always use `===` / `!==` in testbench assertions.
-
 - **AI generates SystemVerilog in a Verilog project?** Very common. You'll see `logic` instead of `reg`/`wire`, `always_comb` instead of `always @(*)`, etc. This is a real tool-compatibility issue — Icarus with `-g2012` supports some SV but not all. When reviewing AI output, watch for language-version mismatches.
-
 - **AI-generated testbench misses edge cases?** This is often the most valuable discovery in Exercise 3. If you asked the AI to test "all opcodes" and it only tested ADD and SUB, that's a prompt specificity problem. If it tested all opcodes but missed overflow, that's a coverage gap. Document both.
 
 ### 🔗 Bigger Picture

@@ -166,13 +166,9 @@ Hex-to-7-segment decoder displaying button-selected hex values on the Go Board's
 > Day 2 is your first time building modules that process multi-bit data. Watch for these.
 
 - **Bit width mismatch warnings?** Yosys will warn if you connect a 4-bit signal to an 8-bit port (or vice versa). Read the synthesis output carefully — these warnings indicate real bugs, even if the design still programs.
-
 - **Module instantiation: use named ports.** When you connect modules (like `full_adder fa0(...)`), always use named connections: `.i_a(a[0])`. Positional connections (`.full_adder fa0(a[0], b[0], cin, s[0], c1)`) are legal but dangerous — one misordered signal creates a silent bug. We enforce named-only starting Day 8.
-
 - **7-segment display looks wrong?** The Go Board's segments have a specific physical mapping. If you're getting random-looking patterns, light up one segment at a time (`o_seg = 7'b1111110` lights only segment `a`) to identify which bit controls which segment.
-
 - **`wire` vs `reg` confusion?** Simple rule for now: `assign` statements drive `wire` signals. `always` blocks drive `reg` signals. Using the wrong one gives a clear compiler error.
-
 - **What does `{4{1'b0}}` mean?** This is the replication operator. Inner braces hold the value, the number is the repeat count, outer braces are concatenation. So `{4{1'b0}}` = `4'b0000`.
 ---
 

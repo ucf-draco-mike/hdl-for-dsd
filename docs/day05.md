@@ -157,11 +157,8 @@ Debounced button-controlled LED chase pattern on the Go Board, with simulation w
 > Day 5 introduces modules you'll reuse for the rest of the course. Getting the debouncer and counter right here saves pain later.
 
 - **Debounce threshold too short?** A few hundred clock cycles won't cut it for real buttons. Do the math: 10 ms × 25 MHz = 250,000 cycles. Set your threshold accordingly.  For simulation, use a much smaller value (parameterize it!) so your TB runs in reasonable time.
-
 - **"Why does metastability matter if I can't see it in simulation?"** Simulation can't reproduce metastability — it's a real-world analog phenomenon where a flip-flop output hovers between 0 and 1 for a brief time. You won't see it fail in simulation, which makes it more dangerous, not less. The 2-FF synchronizer at the input of the debouncer is your protection.
-
 - **Shift direction confusion?** "Left shift" (`<<`) moves bits toward the MSB; "right shift" (`>>`) moves toward the LSB. If your shift register goes the wrong way, draw it on paper — label each bit position 0 through N-1 — and trace one shift before changing code.
-
 - **Chase pattern gets stuck at one end?** The direction-reversal logic needs to detect when the lit bit reaches position 0 or position N-1. Common bug: off-by-one on the boundary check. The lit bit is at position N-1 when `pattern[N-1] == 1`, not when `pattern == N-1`.
 ---
 

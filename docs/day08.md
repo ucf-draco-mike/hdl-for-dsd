@@ -199,11 +199,8 @@
 > Day 8 is about building reusable, parameterized modules. The skills here directly affect your final project quality.
 
 - **Always use named port connections.** From today forward, positional connections (where you just list signals in order) are not acceptable. A single misordered port creates a silent bug that's extremely hard to find. Named connections (`.i_data(my_data)`) make the intent clear and catch errors at compile time.
-
 - **`generate for` giving cryptic errors?** Three things you must have: (1) a `genvar` variable declaration, (2) the loop body wrapped in `begin : some_name ... end`, and (3) the named block label. Without any of these, Icarus gives unhelpful error messages.
-
 - **AI hardcodes values that should be parameterized?** This is a common AI failure mode. If your module has `parameter WIDTH = 8`, but the AI testbench checks `count == 255` instead of `count == (2**WIDTH - 1)`, the TB will break when you change WIDTH. Always review AI-generated code for hardcoded magic numbers.
-
 - **LUT count doesn't exactly double when WIDTH doubles?** That's expected — synthesis optimization can share logic across bits. The relationship is approximately linear but not exact. Noting and explaining this in your PPA observations is good practice for the final project.
 
 ### 🔗 Bigger Picture

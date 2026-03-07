@@ -193,11 +193,8 @@
 > Day 10 is about numerical architectures and your first structured PPA analysis. Understanding the trade-offs here is directly relevant to your final project.
 
 - **Behavioral `+` is just as good as my ripple-carry adder?** Often yes — and that's the point. Yosys optimizes behavioral operators aggressively. A hand-built ripple-carry adder may use the same or more LUTs than `assign sum = a + b;`. The lesson: let the tool work for you, but understand what it produces so you can make informed decisions when it matters.
-
 - **Shift-and-add multiplier FSM is complex — where do I start?** Draw the block diagram first: FSM controller, shift register (for the multiplier), accumulator (for the partial product), and a bit counter. Label the connections between them. Then code each block separately before wiring them together.
-
 - **Fixed-point: extracting the wrong bits?** For Q8.8 multiplication (8 integer bits, 8 fractional bits), the full product is 32 bits wide. The integer result is in bits [23:16], not [31:24] or [15:8]. Draw out the bit positions on paper — label the integer and fractional portions — before writing the extraction code.
-
 - **Where do I find the timing report?** After `nextpnr` runs, look for the "Max frequency" line in the output and the critical path description. The path name tells you which flip-flops are at the start and end of the longest combinational delay.
 
 ### 🔗 Bigger Picture

@@ -119,13 +119,9 @@ By end of Day 15, submit (or be prepared to submit on Day 16):
 > Day 15 is project work day. The biggest risk is ambition outrunning time.
 
 - **Project scope too large?** Identify your "minimum viable demo" now — what's the simplest version that demonstrates your core concept? A working simple project scores better than a broken complex one. You can describe planned extensions during your demo.
-
 - **"Works in sim, fails on board"?** 90% of the time this is a pin assignment error. Double-check every pin in your `.pcf` against the Go Board schematic/pinout reference. The other 10% is usually a missing synchronizer on an external input (buttons, UART RX).
-
 - **Clock domain issues?** If you're integrating UART with other logic and getting strange behavior, check that every signal from outside the FPGA passes through a 2-FF synchronizer before use. This includes button inputs and the UART RX line.
-
 - **PPA report: just `yosys stat` output?** That's only half the deliverable. The discussion of *why* your design uses the resources it does, and what trade-offs you made (or could make), is equally important. Compare against a simpler alternative where possible.
-
 - **Stuck with a fundamental design flaw?** Simplify. A well-documented, well-tested partial implementation with good PPA analysis can score well on the rubric. Talk to your instructor about descoping.
 ---
 

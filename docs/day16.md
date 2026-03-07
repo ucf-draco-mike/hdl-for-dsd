@@ -171,10 +171,7 @@ Students should submit (per course_syllabus requirements):
 > Demo day. These tips help you deliver a clean, professional presentation.
 
 - **Nervous about the live demo?** Bugs during demos are normal and expected in engineering. If something breaks, explaining *what should have happened* and showing your debugging approach is as valuable as a flawless demo.
-
 - **Tempted to make last-minute code changes?** Don't. Demo what works, not what you just broke. Lock your code the night before and practice the demo flow.
-
 - **Presentation running long?** You have 5–7 minutes. Practice with a timer. Structure: ~1 min context, ~2 min live hardware demo, ~1 min key testbench/waveform, ~1 min design trade-off discussion, ~1 min AI TB with corrections, ~30 sec PPA summary.
-
 - **Project isn't fully working?** Present what you have. Show your testbench results (which pass, which fail), explain what's working and what isn't, and discuss what you'd do differently. A well-understood partial project demonstrates more learning than a working project you can't explain.
 

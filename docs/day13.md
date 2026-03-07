@@ -174,11 +174,8 @@ SystemVerilog-refactored module(s) with PPA comparison notes documenting identic
 > Day 13 introduces SystemVerilog constructs. The language is more expressive, but toolchain support varies — watch for compatibility issues.
 
 - **Getting cryptic syntax errors?** Make sure your Makefile passes `-g2012` to `iverilog`. Without it, SystemVerilog constructs like `logic`, `always_comb`, and `enum` will not be recognized.
-
 - **`enum` type width mismatch?** If you declare `typedef enum logic [1:0] {...} state_t;` but list more than 4 states, the compiler should warn about overflow. Match the width to `$clog2(num_states)`.
-
 - **`always_comb` flagging errors that `always @(*)` didn't?** Good — that means `always_comb` is catching real latches or incomplete sensitivity issues that were silently hidden before. This is one of the main reasons to use SV: the compiler does more checking for you.
-
 - **Yosys rejects your SystemVerilog code?** Yosys has growing but incomplete SV support. Features like `interface`, `modport`, and `class` are not supported. Stick to the SV subset covered in the lectures: `logic`, `always_comb`/`always_ff`, `enum`, `typedef`, `struct`.
 ---
 

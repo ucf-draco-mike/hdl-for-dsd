@@ -204,11 +204,8 @@
 > Day 12 completes the UART (RX) and introduces SPI. Both require precise protocol timing — simulation is your best debugging tool here.
 
 - **What does "16× oversampling" actually mean?** Your internal sample clock runs 16 times faster than the baud rate. You don't sample 16 times per bit — you use the 16× clock to find the *center* of each bit (around sample count 7 or 8) and sample once there. This gives you maximum noise margin.
-
 - **False start-bit detections?** Noise on the RX line can look like a start bit. Your start-bit state should confirm the line is still low at the center sample point (count ~7). If it's high at the center, it was noise — go back to idle.
-
 - **SPI clock polarity wrong?** Mode 0 (CPOL=0, CPHA=0) means: clock idles low, data is sampled on the rising edge. If your SPI device expects a different mode, you'll read garbage. Draw the timing diagram before coding.
-
 - **Running behind today?** This is a packed day. If you're struggling with UART RX, prioritize Exercises 1–3 (RX implementation + loopback). SPI (Exercise 4) is a stretch goal. Do not skip Exercise 3's AI-assisted TB — it's part of the progressive verification thread.
 
 ### 🔗 Bigger Picture

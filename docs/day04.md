@@ -193,15 +193,10 @@ LED blinker at visible rate (~1 Hz) + counter value displayed on 7-seg (Exercise
 > Day 4 is your first day with sequential logic and clocked designs. The mental model shifts from "circuits settle instantly" to "things happen on clock edges."
 
 - **Using `=` instead of `<=` in `always @(posedge clk)`?** This is the single most common sequential logic bug. `=` (blocking) evaluates top-to-bottom like software. `<=` (non-blocking) updates all registers simultaneously at the clock edge — which is what real flip-flops do. If your multi-register design behaves strangely, check this first.
-
 - **Clock signal stays X in simulation?** The clock generator pattern `always #5 clk = ~clk;` requires initialization: `reg clk = 0;`. Without the initializer, `clk` starts as X, and `~X` is still X. Your simulation will hang.
-
 - **Blinker simulates in microseconds but takes seconds on hardware?** Simulation is event-driven — it skips idle time between clock edges. The real clock runs at 25 MHz, so counting to 12,500,000 takes 0.5 real seconds. This isn't a bug.
-
 - **Counter hits max and... nothing happens?** Hardware wraps silently. An 8-bit counter at 255 goes to 0 on the next increment. There's no exception, no error — just rollover. If you need to detect overflow, you must build that logic yourself.
-
 - **`$dumpfile` giving a syntax error?** It must go inside an `initial` block, not at module scope. Use this pattern: `initial begin $dumpfile("dump.vcd"); $dumpvars(0, tb_name); end`
-
 - **Feeling shaky on `=` vs `<=` or combinational vs sequential?** That's normal at this point. These concepts solidify with practice over Week 2. But if you're confused, ask now — these fundamentals must be solid before you move on.
 ---
 

@@ -149,13 +149,9 @@ Traffic light FSM running on the Go Board with a waveform-verified testbench sho
 > Day 7 is your first FSM. State machines are powerful but have specific patterns that must be followed precisely.
 
 - **Missing `default` in next-state `case`?** Every `case` statement in combinational logic needs a `default`. Without one, Yosys infers a latch — and your FSM will behave unpredictably. This is the same latch rule from Day 3, now applied to state transitions.
-
 - **Should the counter live inside the FSM?** No — keep them separate. Put the FSM logic (state transitions) in one `always` block, and the counter in another. Mixing them makes the FSM harder to debug and harder to read.
-
 - **Simulation is very slow?** If your timer counts to 25,000,000 in simulation, it will take forever. Parameterize your timeout values: use small values (10–100 cycles) for simulation, real values for synthesis. The Makefile can pass different parameters via `iverilog -D`.
-
 - **Confused about one-hot encoding?** Don't worry about it yet. Use simple binary `localparam` values (`S_IDLE = 2'b00`, `S_GREEN = 2'b01`, etc.) for your state definitions. The synthesis tool can re-encode to one-hot if it helps — that's its job, not yours.
-
 - **Don't have a working debouncer from Day 5?** The `shared/lib/debounce.v` module is a drop-in replacement. Use it so you can focus on FSM design.
 ---
 

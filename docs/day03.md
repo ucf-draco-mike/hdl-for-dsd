@@ -203,11 +203,8 @@ ALU running on hardware + screenshot comparing `yosys show` output for `if/else`
 > Day 3 introduces `always @(*)` blocks — and with them, the most common bug in RTL design: unintended latches.
 
 - **Yosys says "latch"?** This is always a bug. It means some output isn't assigned in every branch of your `if/else` or `case`. Fix: add a `default` case, or (better) add default assignments at the *top* of the `always` block, before any `if`/`case`.
-
 - **Simulation says "FAIL" with X values?** X values in simulation mean "unknown" — your signal was never driven. In the latch_bugs exercise, this is how the testbench detects latches: a latch holds the *previous* value, which starts as X. The Yosys warning and the TB's X-detection are two independent checks for the same bug.
-
 - **`if/else` vs `case` — does it matter?** They synthesize differently. `if/else` creates a priority chain (each condition checked in order). `case` creates a parallel mux (all branches evaluated simultaneously). Use `case` when conditions are mutually exclusive (opcodes, FSM states). Use `if/else` when priority matters (arbiters). Use `casez` when you need don't-care pattern matching. We'll quantify the timing difference on Day 10.
-
 - **What should the ALU output for an undefined opcode?** If your `case` covers all 4 opcodes (`2'b00` through `2'b11`), there's nothing undefined — a 2-bit signal can only take those 4 values. But a `default` is still good practice to prevent latches if you later add more opcodes. Output zero in the `default` case.
 ---
 

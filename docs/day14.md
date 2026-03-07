@@ -256,13 +256,9 @@
 > Day 14 brings together assertions, AI-generated testbenches, and PPA analysis. It's the most technically dense day — pace yourself.
 
 - **Assertion syntax not working in Icarus?** Icarus Verilog supports immediate assertions (the `assert(...)` statements inside procedural blocks) with `-g2012`, but has limited support for concurrent/property-based SVA. Stick to immediate assertions for this exercise.
-
 - **`generate if` scope confusion?** The named `begin : gen_parity ... end` block creates a scope. Signals declared inside it are accessed from outside as `gen_parity.signal_name` — but you typically shouldn't need to do this. If you find yourself reaching into a generate block's scope, consider restructuring.
-
 - **Parity bit throws off your UART frame?** Adding parity means your frame is now Start + 8 Data + 1 Parity + Stop = 11 bits instead of 10. Your FSM needs a new `PARITY` state between `DATA` and `STOP`. Common bug: forgetting to adjust the bit counter.
-
 - **AI testbench looks complete but misses cases?** The most valuable part of Exercise 3 is discovering what the AI *didn't* test. If you identify specific coverage gaps (e.g., "AI tested even parity but not odd," or "AI never tested back-to-back frames"), document them in your deliverable — this demonstrates verification maturity.
-
 - **PPA report: numbers aren't enough.** Pasting `yosys stat` output earns partial credit. The analysis paragraph — explaining *why* the numbers look the way they do and what trade-offs they reveal — is what demonstrates understanding.
 
 ### 🔗 Bigger Picture
