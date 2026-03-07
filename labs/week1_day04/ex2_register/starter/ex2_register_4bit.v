@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2: 4-Bit Loadable Register
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 module register_4bit (

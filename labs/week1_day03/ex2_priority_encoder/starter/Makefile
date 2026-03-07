@@ -1,10 +1,18 @@
 # Auto-generated Makefile
 TOP      = top_encoder
 SRCS     = ex2_priority_encoder.v ex2_top_encoder.v
+TB       = tb_priority_encoder.v
 PCF      = ../../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
+
+sim: $(TB) $(SRCS)
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
+	vvp sim.vvp
+
+wave: sim
+	gtkwave *.vcd &
 
 synth: $(SRCS)
 	yosys -p "synth_ice40 -top $(TOP) -json $(TOP).json" $(SRCS)

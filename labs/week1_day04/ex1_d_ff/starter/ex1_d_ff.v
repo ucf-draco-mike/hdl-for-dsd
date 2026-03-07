@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 1: D Flip-Flop
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Part A: Basic D-FF with synchronous reset
 // Part B: D-FF with clock enable (d_ff_en — uncomment below)

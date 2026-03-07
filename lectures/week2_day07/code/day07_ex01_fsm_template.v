@@ -1,7 +1,7 @@
 // =============================================================================
 // day07_ex01_fsm_template.v — 3-Always-Block FSM Template (Traffic Light)
 // Day 7: Finite State Machines
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // The canonical FSM coding style:
 //   Block 1 (seq):  State register — just a flip-flop

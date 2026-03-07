@@ -1,7 +1,7 @@
 // =============================================================================
 // day05_ex03_synchronizer.v — 2-FF Metastability Synchronizer
 // Day 5: Counters, Shift Registers & Debouncing
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Use this for EVERY signal entering your clock domain from outside:
 //   - Button/switch inputs

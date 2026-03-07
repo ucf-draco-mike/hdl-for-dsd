@@ -1,7 +1,7 @@
 // =============================================================================
 // day08_ex01_parallel_debounce.v — Generate-Based N-Button Input Pipeline
 // Day 8: Hierarchy, Parameters & Generate
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Demonstrates: generate-for, parameterized instantiation, hierarchy.
 // Creates N independent debounce + edge-detect pipelines from one module.

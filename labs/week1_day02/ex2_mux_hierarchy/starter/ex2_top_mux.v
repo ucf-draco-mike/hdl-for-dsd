@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2, Part C: Top Module for Mux on Go Board
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 module top_mux (

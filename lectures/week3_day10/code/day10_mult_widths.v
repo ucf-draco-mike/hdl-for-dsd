@@ -1,7 +1,7 @@
 // =============================================================================
 // day10_mult_widths.v — Combinational Multiplier at Multiple Widths
 // Day 10: Numerical Architectures & Design Trade-offs
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Synthesize each module independently to see LUT explosion:
 //   yosys -p "read_verilog day10_mult_widths.v; synth_ice40 -top mult_4bit;  stat"

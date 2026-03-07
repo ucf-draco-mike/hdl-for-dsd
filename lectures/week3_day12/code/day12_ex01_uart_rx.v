@@ -1,7 +1,7 @@
 // =============================================================================
 // day12_ex01_uart_rx.v — UART Receiver (8N1, 16× Oversampling)
 // Day 12: UART RX, SPI & IP Integration
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Built-in 2-FF synchronizer on i_rx. 16× oversampling for center-of-bit
 // sampling. Outputs o_valid pulse for one cycle when a byte is received.

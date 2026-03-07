@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 1: D Flip-Flop Testbench
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Verify: D is captured on posedge clk, reset clears output.
 // Use GTKWave to mark the moment i_d changes vs. the moment o_q changes.

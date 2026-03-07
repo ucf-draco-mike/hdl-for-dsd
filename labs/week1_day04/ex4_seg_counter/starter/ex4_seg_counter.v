@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 4: 7-Segment Counter (Week 1 Capstone)
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Display a running hex counter (0-F) on the 7-segment display.
 // Count rate: slow enough to read (~2 Hz)

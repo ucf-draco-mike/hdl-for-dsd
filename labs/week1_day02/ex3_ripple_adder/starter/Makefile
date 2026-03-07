@@ -1,10 +1,18 @@
 # Auto-generated Makefile
 TOP      = top_adder
 SRCS     = ex3_full_adder.v ex3_ripple_adder_4bit.v ex3_top_adder.v
+TB       = tb_adder.v
 PCF      = ../../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
+
+sim: $(TB) $(SRCS)
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
+	vvp sim.vvp
+
+wave: sim
+	gtkwave *.vcd &
 
 synth: $(SRCS)
 	yosys -p "synth_ice40 -top $(TOP) -json $(TOP).json" $(SRCS)

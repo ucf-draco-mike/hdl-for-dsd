@@ -1,7 +1,7 @@
 // =============================================================================
 // day07_ex02_pattern_detector.v — Sequence Detector FSM (Moore)
 // Day 7: Finite State Machines
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Detects the serial bit pattern "101" on i_serial_in.
 // When the full pattern is recognized, o_detected pulses high for one state.

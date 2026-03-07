@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 1: Vector Operations Warm-Up
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Use the 4 switches as a 4-bit input, display results on LEDs.
 //

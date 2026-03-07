@@ -1,7 +1,7 @@
 // =============================================================================
 // day05_ex04_debounce.v — Counter-Based Button Debouncer
 // Day 5: Counters, Shift Registers & Debouncing
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Includes built-in 2-FF synchronizer. Connect directly to raw button input.
 // Pipeline: async_in → [2-FF sync] → [debounce counter] → clean output

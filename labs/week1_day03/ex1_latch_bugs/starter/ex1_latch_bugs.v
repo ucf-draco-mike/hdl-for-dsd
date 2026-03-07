@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 1: Latch Hunting
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // BUGGY CODE — intentional latches for learning!
 // Your job: synthesize, read the warnings, find and fix every latch.

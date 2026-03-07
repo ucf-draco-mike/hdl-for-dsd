@@ -1,7 +1,7 @@
 // =============================================================================
 // day10_adder_widths.v — Behavioral Adder at Multiple Widths
 // Day 10: Numerical Architectures & Design Trade-offs
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Synthesize each module independently to compare LUT scaling:
 //   yosys -p "read_verilog day10_adder_widths.v; synth_ice40 -top adder_4bit;  stat"

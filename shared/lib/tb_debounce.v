@@ -1,6 +1,6 @@
 // =============================================================================
 // tb_debounce.v — Self-checking testbench for debounce module
-// Accelerated HDL for Digital System Design · UCF · shared/lib
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 `timescale 1ns/1ps
 module tb_debounce;

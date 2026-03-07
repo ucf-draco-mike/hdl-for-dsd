@@ -1,7 +1,7 @@
 // =============================================================================
 // day09_ex03_pattern_sequencer.v — ROM-Based LED Pattern Player
 // Day 9: Memory — RAM, ROM & Block RAM
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Steps through a ROM loaded from a .mem file.
 // i_next advances the address. o_pattern drives LEDs / 7-seg.

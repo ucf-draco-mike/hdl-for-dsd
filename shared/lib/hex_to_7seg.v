@@ -1,6 +1,6 @@
 // =============================================================================
 // hex_to_7seg.v — Hexadecimal to 7-Segment Decoder
-// Accelerated HDL for Digital System Design · UCF · shared/lib
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Description:
 //   Maps a 4-bit hexadecimal value (0x0-0xF) to the 7 segment enable signals

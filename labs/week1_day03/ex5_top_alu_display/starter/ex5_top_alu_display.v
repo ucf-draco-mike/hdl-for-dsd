@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 5 (Stretch): ALU + 7-Seg Integration
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Hardcoded operands: a=7, b=3. Switches select opcode.
 // Display ALU result on 7-seg, flags on LEDs.

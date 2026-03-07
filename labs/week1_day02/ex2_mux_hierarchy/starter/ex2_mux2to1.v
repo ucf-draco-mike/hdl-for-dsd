@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2, Part A: 2:1 Multiplexer
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 module mux2to1 (

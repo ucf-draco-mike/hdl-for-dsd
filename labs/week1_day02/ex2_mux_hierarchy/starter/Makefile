@@ -1,10 +1,18 @@
 # Auto-generated Makefile
 TOP      = top_mux
 SRCS     = ex2_mux2to1.v ex2_mux4to1.v ex2_top_mux.v
+TB       = tb_mux.v
 PCF      = ../../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
+
+sim: $(TB) $(SRCS)
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
+	vvp sim.vvp
+
+wave: sim
+	gtkwave *.vcd &
 
 synth: $(SRCS)
 	yosys -p "synth_ice40 -top $(TOP) -json $(TOP).json" $(SRCS)

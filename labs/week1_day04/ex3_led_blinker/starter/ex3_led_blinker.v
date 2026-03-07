@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3: Free-Running Counter + LED Blinker
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // The Go Board has a 25 MHz clock. To blink an LED at ~1 Hz:
 //   25,000,000 / 2 = 12,500,000 cycles per half-period

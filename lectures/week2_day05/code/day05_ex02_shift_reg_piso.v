@@ -1,7 +1,7 @@
 // =============================================================================
 // day05_ex02_shift_reg_piso.v — Parallel-In Serial-Out Shift Register
 // Day 5: Counters, Shift Registers & Debouncing
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // This is the core building block for UART TX (Week 3).
 // Load a byte, then shift it out LSB-first one bit per clock.

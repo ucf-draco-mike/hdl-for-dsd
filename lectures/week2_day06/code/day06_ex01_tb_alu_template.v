@@ -1,7 +1,7 @@
 // =============================================================================
 // day06_ex01_tb_alu_template.v — Self-Checking ALU Testbench Template
 // Day 6: Testbenches & Simulation-Driven Development
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Demonstrates: timescale, clock gen, $dumpfile/$dumpvars, structured test
 // reporting with tasks, case-equality operators, and summary report.

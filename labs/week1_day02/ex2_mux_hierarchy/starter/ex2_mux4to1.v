@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2, Part B: 4:1 Multiplexer from 2:1 Muxes
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Build a 4:1 mux by instantiating three 2:1 muxes hierarchically.
 //

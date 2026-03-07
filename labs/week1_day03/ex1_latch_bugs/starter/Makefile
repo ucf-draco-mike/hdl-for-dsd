@@ -1,12 +1,20 @@
 # Auto-generated Makefile
 TOP      = latch_bugs
 SRCS     = ex1_latch_bugs.v
+TB       = tb_latch_bugs.v
 PCF      = ../../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
 
 all: stat
+
+sim: $(TB) $(SRCS)
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
+	vvp sim.vvp
+
+wave: sim
+	gtkwave *.vcd &
 
 synth: $(SRCS)
 	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP)"

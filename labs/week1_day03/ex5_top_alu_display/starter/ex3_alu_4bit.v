@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3: 4-Bit ALU
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Operations:
 //   00 → ADD    01 → SUB    10 → AND    11 → OR

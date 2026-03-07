@@ -1,7 +1,7 @@
 // =============================================================================
 // day05_ex01_counter_mod_n.v — Parameterized Modulo-N Counter
 // Day 5: Counters, Shift Registers & Debouncing
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Build:  iverilog -o sim day05_ex01_counter_mod_n.v && vvp sim
 // Synth:  yosys -p "read_verilog day05_ex01_counter_mod_n.v; synth_ice40 -top counter_mod_n"

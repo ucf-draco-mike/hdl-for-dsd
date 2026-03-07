@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2: Priority Encoder
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // 4-input priority encoder
 // Priority: bit 3 (highest) → bit 0 (lowest)

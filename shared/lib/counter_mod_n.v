@@ -1,6 +1,6 @@
 // =============================================================================
 // counter_mod_n.v — Parameterized Modulo-N Counter
-// Accelerated HDL for Digital System Design · UCF · shared/lib
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Description:
 //   Counts from 0 to (MAX-1), then wraps back to 0.

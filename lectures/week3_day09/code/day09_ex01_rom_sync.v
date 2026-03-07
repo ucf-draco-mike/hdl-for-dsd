@@ -1,7 +1,7 @@
 // =============================================================================
 // day09_ex01_rom_sync.v — Parameterized Synchronous ROM (Block RAM Inference)
 // Day 9: Memory — RAM, ROM & Block RAM
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Synchronous read enables block RAM (EBR) inference on iCE40.
 // One-cycle read latency: address on cycle N, data on cycle N+1.

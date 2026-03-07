@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 6 (Stretch): Up/Down Counter with 7-Seg Display
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Button-controlled counter displayed on 7-segment.
 // sw1 = count up, sw2 = count down (raw, undebounced — will be bouncy!)

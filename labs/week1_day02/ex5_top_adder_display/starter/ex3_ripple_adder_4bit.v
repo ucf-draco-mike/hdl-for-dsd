@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3, Part B: 4-Bit Ripple-Carry Adder
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Instantiate four full_adder modules to create a 4-bit adder.
 // The carry output of each stage feeds into the carry input of the next.

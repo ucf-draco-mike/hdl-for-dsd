@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 4: Top Module — BCD Decoder on Go Board
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 module top_bcd (

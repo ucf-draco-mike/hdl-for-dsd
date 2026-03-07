@@ -1,10 +1,18 @@
 # Auto-generated Makefile
 TOP      = button_logic
 SRCS     = ex3_button_logic.v
+TB       = tb_button_logic.v
 PCF      = ../../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
+
+sim: $(TB) $(SRCS)
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
+	vvp sim.vvp
+
+wave: sim
+	gtkwave *.vcd &
 
 synth: $(SRCS)
 	yosys -p "synth_ice40 -top $(TOP) -json $(TOP).json" $(SRCS)

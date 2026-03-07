@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 4: BCD-to-7-Segment Decoder
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Only valid for inputs 0–9. Inputs 10–15 display 'E' for error.
 // Uses case statement — compare with Day 2's nested conditional approach.

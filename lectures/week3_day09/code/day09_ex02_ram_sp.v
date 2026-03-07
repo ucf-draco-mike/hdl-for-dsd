@@ -1,7 +1,7 @@
 // =============================================================================
 // day09_ex02_ram_sp.v — Single-Port Synchronous RAM
 // Day 9: Memory — RAM, ROM & Block RAM
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Read-before-write behavior. Synchronous read infers block RAM on iCE40.
 // One-cycle read latency: address cycle N → data cycle N+1.

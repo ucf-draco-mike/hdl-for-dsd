@@ -1,7 +1,18 @@
 # Shared Module Library
 
-Canonical, reusable modules used throughout the course. Each module includes
-a matching testbench (`tb_<module>.v`).
+Canonical, reusable modules used throughout the course. Every module includes
+a matching self-checking testbench (`tb_<module>.v`).
+
+## Testbench Utilities
+
+`tb_utils.vh` provides shared infrastructure for all testbenches:
+
+- `check_eq` / `check_eq_1` — assertion tasks with PASS/FAIL reporting
+- `tb_summary` — prints a final pass/fail summary line
+- Clock and reset generator snippets
+- ASIC vs. FPGA gate-level simulation notes (use `+define+GATE_LEVEL`)
+
+Include it in any testbench: `` `include "tb_utils.vh" ``
 
 ## Module Inventory
 
@@ -12,9 +23,9 @@ a matching testbench (`tb_<module>.v`).
 | `counter_mod_n.v` | Parameterized modulo-N counter | Day 5 | `tb_counter_mod_n.v` |
 | `uart_tx.v` | UART transmitter (parameterized baud rate) | Day 11 | `tb_uart_tx.v` |
 | `uart_rx.v` | UART receiver with 16× oversampling | Day 12 | `tb_uart_rx.v` |
-| `baud_gen.v` | Standalone baud rate tick generator | Day 15 | — |
-| `edge_detect.v` | Rising/falling edge detector (1-cycle pulse) | Day 15 | — |
-| `heartbeat.v` | Parameterized LED heartbeat blinker | Day 15 | — |
+| `baud_gen.v` | Standalone baud rate tick generator | Day 15 | `tb_baud_gen.v` |
+| `edge_detect.v` | Rising/falling edge detector (1-cycle pulse) | Day 15 | `tb_edge_detect.v` |
+| `heartbeat.v` | Parameterized LED heartbeat blinker | Day 15 | `tb_heartbeat.v` |
 
 ## Port Naming Convention
 

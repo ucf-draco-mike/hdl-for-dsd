@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2: Top Module — Priority Encoder on Go Board
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 module top_encoder (

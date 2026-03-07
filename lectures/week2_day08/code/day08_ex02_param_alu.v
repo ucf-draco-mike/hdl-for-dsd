@@ -1,7 +1,7 @@
 // =============================================================================
 // day08_ex02_param_alu.v — Parameterized N-Bit ALU
 // Day 8: Hierarchy, Parameters & Generate
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Refactored from the Day 3 hardcoded 4-bit ALU into a reusable,
 // parameterized module. Demonstrates parameter, localparam, and $clog2.

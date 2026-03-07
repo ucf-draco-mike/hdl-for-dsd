@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 4: Hex-to-7-Segment Decoder
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Input:  4-bit hex value (0-F)
 // Output: 7 segment signals (active low for Go Board)

@@ -1,6 +1,6 @@
 // =============================================================================
 // uart_tx.v — UART Transmitter (8N1, parameterized baud rate)
-// Accelerated HDL for Digital System Design · UCF · shared/lib
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Description:
 //   Transmits 8-bit data in 8N1 UART format (1 start bit, 8 data bits, 1 stop bit).

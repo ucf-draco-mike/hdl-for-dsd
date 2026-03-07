@@ -1,7 +1,7 @@
 // =============================================================================
 // day11_ex01_uart_tx.v — UART Transmitter (8N1, Parameterized)
 // Day 11: UART Transmitter
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // FSM + PISO shift register + baud counter.
 // Valid/busy handshake. LSB-first. Parameterized for any clock/baud.

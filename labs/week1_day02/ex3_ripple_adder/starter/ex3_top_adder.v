@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3, Part C: Top Module — Adder on Go Board
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // sw1,sw2 = 2-bit input a   sw3,sw4 = 2-bit input b
 // LEDs show the 3-bit sum (2 bits + carry)

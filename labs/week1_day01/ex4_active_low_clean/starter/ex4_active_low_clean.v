@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 4: Clean Boundary Pattern
 // Day 1 · Welcome to Hardware Thinking
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Goal: Develop a clean boundary pattern for readable designs.
 //

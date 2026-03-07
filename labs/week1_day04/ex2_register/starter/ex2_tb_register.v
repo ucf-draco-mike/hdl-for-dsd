@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2: Register Testbench
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 `timescale 1ns / 1ps

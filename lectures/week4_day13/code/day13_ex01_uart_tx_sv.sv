@@ -1,7 +1,7 @@
 // =============================================================================
 // day13_ex01_uart_tx_sv.sv — UART TX Refactored in SystemVerilog
 // Day 13: SystemVerilog for Design
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Same functionality as day11_ex01_uart_tx.v, refactored with:
 //   - logic (replaces wire/reg)

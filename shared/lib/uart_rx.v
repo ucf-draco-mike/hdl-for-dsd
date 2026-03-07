@@ -1,6 +1,6 @@
 // =============================================================================
 // uart_rx.v — UART Receiver with 16× Oversampling (8N1)
-// Accelerated HDL for Digital System Design · UCF · shared/lib
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Description:
 //   Receives 8-bit UART data (8N1 format) using 16× oversampling for

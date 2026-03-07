@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 5 (Stretch): XOR Pattern
 // Day 1 · Welcome to Hardware Thinking
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Goal: Create interesting LED patterns using gate combinations.
 //

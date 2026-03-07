@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3: Logic Between Buttons and LEDs
 // Day 1 · Welcome to Hardware Thinking
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Goal: Implement combinational logic between buttons and LEDs.
 //       All assign statements execute CONCURRENTLY — this is hardware!

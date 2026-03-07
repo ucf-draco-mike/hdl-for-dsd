@@ -11,7 +11,7 @@
 | **Course** | Accelerated HDL for Digital System Design |
 | **Format** | 4 weeks · 4 sessions/week · 2.5 hours/session (16 sessions, 40 contact hours) |
 | **Delivery** | Flipped classroom — recorded video lectures before class; class = mini-lecture + hands-on lab |
-| **Instructor** | Prof. Mike (Office hours by appointment) |
+| **Instructor** | Dr. Mike Borowczak · Electrical & Computer Engineering · CECS · UCF (Office hours by appointment) |
 | **Prerequisites** | Digital logic fundamentals (gates, Boolean algebra, flip-flops). No prior HDL experience required. |
 
 ---

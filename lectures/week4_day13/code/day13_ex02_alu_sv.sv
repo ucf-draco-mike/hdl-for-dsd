@@ -1,7 +1,7 @@
 // =============================================================================
 // day13_ex02_alu_sv.sv — ALU Refactored in SystemVerilog
 // Day 13: SystemVerilog for Design
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Demonstrates: logic, always_comb, enum for opcodes.
 // Compared to Verilog version: stronger latch checking, typed opcodes.

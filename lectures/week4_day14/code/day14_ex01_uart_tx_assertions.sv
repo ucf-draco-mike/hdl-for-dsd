@@ -1,7 +1,7 @@
 // =============================================================================
 // day14_ex01_uart_tx_assertions.sv — UART TX with Assertion-Enhanced Verification
 // Day 14: SystemVerilog for Verification
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Demonstrates:
 //   - Immediate assertions (inline design checks)

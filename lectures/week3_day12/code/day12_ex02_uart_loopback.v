@@ -1,7 +1,7 @@
 // =============================================================================
 // day12_ex02_uart_loopback.v — UART RX → TX Echo (Loopback)
 // Day 12: UART RX, SPI & IP Integration
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Gold-standard integration test: type on PC terminal → see echo.
 // Also displays the received byte on 7-seg and LEDs.

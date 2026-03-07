@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 2: Buttons to LEDs — Wires in Hardware
 // Day 1 · Welcome to Hardware Thinking
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Goal: Wire each button directly to its corresponding LED using assign.
 //

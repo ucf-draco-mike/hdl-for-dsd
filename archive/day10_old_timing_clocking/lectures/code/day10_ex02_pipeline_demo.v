@@ -1,7 +1,7 @@
 // =============================================================================
 // day10_ex02_pipeline_demo.v — Intentional Timing Violation + Pipeline Fix
 // Day 10: Timing, Clocking & Constraints
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Two versions: slow_adder (long critical path) and pipelined_adder (fixed).
 // Synthesize both and compare nextpnr timing reports.

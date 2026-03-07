@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3: Top Module — ALU on Go Board
 // Day 3 · Procedural Combinational Logic
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // With only 4 switches, we can't fully control a + b + opcode.
 // Design choice: Hardcode i_a = 4'd7, use sw1-sw2 as opcode, sw3-sw4 as i_b[1:0]

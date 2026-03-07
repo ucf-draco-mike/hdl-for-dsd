@@ -1,7 +1,7 @@
 // =============================================================================
 // day10_ex01_top_pll_demo.v — PLL Blinker: 25 MHz → 50 MHz
 // Day 10: Timing, Clocking & Constraints
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Demonstrates SB_PLL40_CORE on iCE40 Go Board.
 // LED1 blinks from PLL clock, LED2 = LOCK indicator.

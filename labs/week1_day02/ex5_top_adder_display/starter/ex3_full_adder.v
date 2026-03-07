@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 3, Part A: Full Adder
 // Day 2 · Combinational Building Blocks
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 
 module full_adder (

@@ -1,6 +1,6 @@
 // =============================================================================
 // debounce.v — Counter-based Button Debouncer (parameterized)
-// Accelerated HDL for Digital System Design · UCF · shared/lib
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Description:
 //   Eliminates switch bounce by requiring the input to be stable for

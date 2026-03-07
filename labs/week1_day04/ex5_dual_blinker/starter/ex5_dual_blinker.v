@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 5: Dual-Speed Blinker
 // Day 4 · Sequential Logic Fundamentals
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Two independent clock dividers driving two LED pairs at different rates.
 // =============================================================================

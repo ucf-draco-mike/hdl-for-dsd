@@ -1,7 +1,7 @@
 // =============================================================================
 // Exercise 1: LED On — The Simplest Possible Design
 // Day 1 · Welcome to Hardware Thinking
-// Accelerated HDL for Digital System Design · UCF ECE
+// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Goal: Drive LED1 permanently on. Confirm the full toolchain works.
 //
