@@ -8,7 +8,7 @@ module tb_uart_rx;
     reg [7:0] tx_data; reg tx_valid; wire tx_busy;
 
     uart_tx #(.CLK_FREQ(CLK_FREQ),.BAUD_RATE(BAUD_RATE)) utx (
-        .i_clk(clk),.i_reset(reset),.i_valid(tx_valid),
+        .i_clk(clk),.i_valid(tx_valid),
         .i_data(tx_data),.o_tx(tx_line),.o_busy(tx_busy));
 
     wire [7:0] rx_data; wire rx_valid;

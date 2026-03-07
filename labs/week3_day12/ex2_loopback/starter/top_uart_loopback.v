@@ -17,7 +17,7 @@ module top_uart_loopback (
     wire       w_rx_valid;
 
     uart_rx #(.CLK_FREQ(25_000_000), .BAUD_RATE(115_200)) rx (
-        .i_clk(i_clk), .i_reset(1'b0),
+        .i_clk(i_clk),
         .i_rx(i_uart_rx),
         .o_data(w_rx_data), .o_valid(w_rx_valid)
     );
@@ -26,7 +26,7 @@ module top_uart_loopback (
     //   When rx asserts o_valid, feed w_rx_data into the TX
 
     uart_tx #(.CLK_FREQ(25_000_000), .BAUD_RATE(115_200)) tx (
-        .i_clk(i_clk), .i_reset(1'b0),
+        .i_clk(i_clk),
         // TODO: Connect i_valid and i_data
         .i_valid(/* ---- YOUR CODE ---- */),
         .i_data(/* ---- YOUR CODE ---- */),

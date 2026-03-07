@@ -29,7 +29,7 @@ module top_uart_hello (
     reg        r_tx_valid;
 
     uart_tx #(.CLK_FREQ(25_000_000), .BAUD_RATE(115_200)) tx (
-        .i_clk(i_clk), .i_reset(1'b0),
+        .i_clk(i_clk),
         .i_valid(r_tx_valid), .i_data(r_tx_data),
         .o_tx(o_uart_tx), .o_busy(w_tx_busy)
     );
