@@ -6,6 +6,8 @@ title: "Day 3: Procedural Combinational Logic"
 
 <p class="subtitle">Week 1 · Session 3 of 16</p>
 
+<div class="day-thread-bar"><span class="thread-pill" style="border-color:#2E7D32; color:#2E7D32">📊 PPA Analysis</span> <span class="thread-pill" style="border-color:#E65100; color:#E65100">⚙️ Constraints</span></div>
+
 <div class="card-grid card-grid--4" markdown>
 
 <div class="nav-card" markdown>

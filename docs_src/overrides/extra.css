@@ -212,3 +212,36 @@ a.day-card:hover {
     border: none;
     border-radius: 8px;
 }
+
+/* ═══ Cross-Cutting Thread Badges (Day Cards on Homepage) ═══ */
+.day-threads {
+    margin-top: 8px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.thread-badge {
+    font-size: 0.85em;
+    line-height: 1;
+    cursor: default;
+}
+
+/* ═══ Cross-Cutting Thread Pills (Day Landing Pages) ═══ */
+.day-thread-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: -0.3em 0 1.2em;
+}
+.thread-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border: 1.5px solid;
+    border-radius: 20px;
+    background: transparent;
+    white-space: nowrap;
+}

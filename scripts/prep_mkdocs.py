@@ -90,6 +90,16 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
     lines.append(f"# Day {day_num}: {title}\n")
     lines.append(f'<p class="subtitle">Week {wk} · Session {day_num} of 16</p>\n')
 
+    # Cross-cutting thread badges
+    day_threads = threads_for_day(day_num)
+    if day_threads:
+        badges = " ".join(
+            f'<span class="thread-pill" style="border-color:{color}; color:{color}">'
+            f'{emoji} {name}</span>'
+            for emoji, name, color in day_threads
+        )
+        lines.append(f'<div class="day-thread-bar">{badges}</div>\n')
+
     # Nav cards — add code card if assets exist
     quiz_exists = (REPO / "lectures" / dir_name / f"day{dz}_quiz.md").exists()
     has_code = code_assets and day_num in code_assets
@@ -429,6 +439,18 @@ WEEK_META = [
     (4, "Advanced Design, Verification & Final Project", "#2E7D32"),
 ]
 
+# Cross-cutting threads: (emoji, short_name, color, set_of_day_numbers)
+THREADS = [
+    ("🤖", "AI Verification", "#7B1FA2", {6, 8, 12, 14, 16}),
+    ("📊", "PPA Analysis",    "#2E7D32", {3, 8, 10, 12, 14}),
+    ("⚙️", "Constraints",     "#E65100", {3, 7, 8, 10, 14}),
+    ("🔧", "AI Literacy",     "#1565C0", {6, 12, 14, 16}),
+]
+
+def threads_for_day(day_num):
+    """Return list of (emoji, name, color) for threads active on a given day."""
+    return [(e, n, c) for e, n, c, days in THREADS if day_num in days]
+
 
 
 def generate_lab_page(day_num, dir_name, code_assets):
@@ -624,18 +646,22 @@ def generate_homepage():
                      f'<div class="stat-sub">{sub}</div>\n</div>\n')
     lines.append('</div>\n')
 
-    # Cross-cutting threads
+    # Cross-cutting threads (derived from THREADS constant)
+    # Full display names for the homepage cards
+    _thread_full_names = {
+        "AI Verification": "AI-Assisted Verification",
+        "PPA Analysis":    "PPA Analysis",
+        "Constraints":     "Constraint-Based Design",
+        "AI Literacy":     "AI Tool Literacy",
+    }
     lines.append("## Cross-Cutting Threads\n")
     lines.append('<div class="card-grid card-grid--4">\n')
-    for emoji, name, days_str, color in [
-        ("🤖", "AI-Assisted Verification", "D6 → D8 → D12 → D14 → D16", "#7B1FA2"),
-        ("📊", "PPA Analysis", "D3 → D8 → D10 → D12 → D14", "#2E7D32"),
-        ("⚙️", "Constraint-Based Design", "D3 → D7 → D8 → D10 → D14", "#E65100"),
-        ("🔧", "AI Tool Literacy", "D6 → D12 → D14 → D16", "#1565C0"),
-    ]:
+    for emoji, short_name, color, day_set in THREADS:
+        full_name = _thread_full_names.get(short_name, short_name)
+        days_str = " → ".join(f"D{d}" for d in sorted(day_set))
         lines.append(f'<div class="thread-card" style="border-color: {color};">\n'
                      f'<div class="thread-icon">{emoji}</div>\n'
-                     f'<div class="thread-name" style="color: {color};">{name}</div>\n'
+                     f'<div class="thread-name" style="color: {color};">{full_name}</div>\n'
                      f'<div class="thread-days">{days_str}</div>\n</div>\n')
     lines.append('</div>\n')
 
@@ -652,9 +678,18 @@ def generate_homepage():
             if (day_num - 1) // 4 + 1 != wk_num:
                 continue
             dz = f"{day_num:02d}"
+            day_threads = threads_for_day(day_num)
+            thread_icons = ""
+            if day_threads:
+                badges = " ".join(
+                    f'<span class="thread-badge" title="{name}" style="color:{color}">{emoji}</span>'
+                    for emoji, name, color in day_threads
+                )
+                thread_icons = f'<div class="day-threads">{badges}</div>\n'
             lines.append(f'<a class="day-card" href="days/day{dz}/">\n'
                          f'<div class="day-num" style="color:{wk_color}">DAY {dz}</div>\n'
                          f'<div class="day-title">{day_title}</div>\n'
+                         f'{thread_icons}'
                          f'</a>\n')
         lines.append('</div>\n</div>\n')
 
@@ -1031,6 +1066,39 @@ a.day-card:hover {
     width: 100%; height: 100%;
     border: none;
     border-radius: 8px;
+}
+
+/* ═══ Cross-Cutting Thread Badges (Day Cards on Homepage) ═══ */
+.day-threads {
+    margin-top: 8px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.thread-badge {
+    font-size: 0.85em;
+    line-height: 1;
+    cursor: default;
+}
+
+/* ═══ Cross-Cutting Thread Pills (Day Landing Pages) ═══ */
+.day-thread-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: -0.3em 0 1.2em;
+}
+.thread-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 3px 10px;
+    border: 1.5px solid;
+    border-radius: 20px;
+    background: transparent;
+    white-space: nowrap;
 }
 """
 

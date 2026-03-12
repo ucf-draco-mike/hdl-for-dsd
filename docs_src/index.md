@@ -125,6 +125,7 @@ Full platform-specific instructions and troubleshooting.
 <a class="day-card" href="days/day03/">
 <div class="day-num" style="color:#1565C0">DAY 03</div>
 <div class="day-title">Procedural Combinational Logic</div>
+<div class="day-threads"><span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
 </a>
 
 <a class="day-card" href="days/day04/">
@@ -151,16 +152,19 @@ Full platform-specific instructions and troubleshooting.
 <a class="day-card" href="days/day06/">
 <div class="day-num" style="color:#7B1FA2">DAY 06</div>
 <div class="day-title">Testbenches & AI-Assisted Verification</div>
+<div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
 </a>
 
 <a class="day-card" href="days/day07/">
 <div class="day-num" style="color:#7B1FA2">DAY 07</div>
 <div class="day-title">Finite State Machines</div>
+<div class="day-threads"><span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
 </a>
 
 <a class="day-card" href="days/day08/">
 <div class="day-num" style="color:#7B1FA2">DAY 08</div>
 <div class="day-title">Hierarchy, Parameters & Generate</div>
+<div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
 </a>
 
 </div>
@@ -182,6 +186,7 @@ Full platform-specific instructions and troubleshooting.
 <a class="day-card" href="days/day10/">
 <div class="day-num" style="color:#E65100">DAY 10</div>
 <div class="day-title">Numerical Architectures & PPA</div>
+<div class="day-threads"><span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
 </a>
 
 <a class="day-card" href="days/day11/">
@@ -192,6 +197,7 @@ Full platform-specific instructions and troubleshooting.
 <a class="day-card" href="days/day12/">
 <div class="day-num" style="color:#E65100">DAY 12</div>
 <div class="day-title">UART RX, SPI & Protocol Verification</div>
+<div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
 </a>
 
 </div>
@@ -213,6 +219,7 @@ Full platform-specific instructions and troubleshooting.
 <a class="day-card" href="days/day14/">
 <div class="day-num" style="color:#2E7D32">DAY 14</div>
 <div class="day-title">Verification, AI Testing & PPA Analysis</div>
+<div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
 </a>
 
 <a class="day-card" href="days/day15/">
@@ -223,6 +230,7 @@ Full platform-specific instructions and troubleshooting.
 <a class="day-card" href="days/day16/">
 <div class="day-num" style="color:#2E7D32">DAY 16</div>
 <div class="day-title">Final Project Demos & Course Wrap</div>
+<div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
 </a>
 
 </div>

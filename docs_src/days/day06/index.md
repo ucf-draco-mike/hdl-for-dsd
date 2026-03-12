@@ -6,6 +6,8 @@ title: "Day 6: Testbenches & AI-Assisted Verification"
 
 <p class="subtitle">Week 2 · Session 6 of 16</p>
 
+<div class="day-thread-bar"><span class="thread-pill" style="border-color:#7B1FA2; color:#7B1FA2">🤖 AI Verification</span> <span class="thread-pill" style="border-color:#1565C0; color:#1565C0">🔧 AI Literacy</span></div>
+
 <div class="card-grid card-grid--4" markdown>
 
 <div class="nav-card" markdown>
