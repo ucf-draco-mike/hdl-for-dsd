@@ -16,6 +16,7 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/Makefile){ target=_blank } |
 | :material-pin: `go_board.pcf` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/go_board.pcf){ target=_blank } |
 
 ## Ex 1 — Uart Assertions
@@ -39,16 +40,17 @@ These files are shared across all exercises for this day.
 
 ## Ex 3 — Ai Constraint Tb
 
-[:material-download: Starter .zip](../../downloads/day14/ex3_ai_constraint_tb_starter.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day14/ex3_ai_constraint_tb_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day14/ex3_ai_constraint_tb_solution.zip){ .md-button }
 
 | File | Links |
 |------|-------|
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank } |
 | :material-text: `README.md` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank } |
+| :material-chip: `tb_uart_tx_ai.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/tb_uart_tx_ai.sv){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day14/ex3_ai_constraint_tb/starter/tb_uart_tx_ai.sv){ target=_blank } |
 
 ## Ex 4 — Ppa Analysis
 
-[:material-download: Starter .zip](../../downloads/day14/ex4_ppa_analysis_starter.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day14/ex4_ppa_analysis_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day14/ex4_ppa_analysis_solution.zip){ .md-button }
 
 | File | Links |
 |------|-------|

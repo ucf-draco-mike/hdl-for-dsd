@@ -16,4 +16,5 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
+| :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day15/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week4_day15/Makefile){ target=_blank } |
 | :material-pin: `go_board.pcf` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day15/go_board.pcf){ target=_blank } |

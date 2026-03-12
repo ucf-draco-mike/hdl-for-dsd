@@ -86,6 +86,8 @@ extra:
 nav:
   - Home:
     - Course Overview: index.md
+    - "Get Started": getting-started.md
+    - "Site Guide": site-guide.md
     - Syllabus: syllabus.md
     - Toolchain Setup: setup.md
     - Final Project: project.md

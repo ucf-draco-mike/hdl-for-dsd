@@ -47,6 +47,7 @@ These files are shared across all exercises for this day.
 |------|-------|
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex3_led_blinker/starter/Makefile){ target=_blank } |
 | :material-chip: `ex3_led_blinker.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/ex3_led_blinker.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex3_led_blinker/starter/ex3_led_blinker.v){ target=_blank } |
+| :material-chip: `tb_led_blinker.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/tb_led_blinker.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex3_led_blinker/starter/tb_led_blinker.v){ target=_blank } |
 
 ## Ex 4 — Seg Counter
 

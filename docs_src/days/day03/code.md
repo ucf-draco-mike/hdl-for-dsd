@@ -27,6 +27,7 @@ These files are shared across all exercises for this day.
 |------|-------|
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex1_latch_bugs/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex1_latch_bugs/starter/Makefile){ target=_blank } |
 | :material-chip: `ex1_latch_bugs.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex1_latch_bugs/starter/ex1_latch_bugs.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex1_latch_bugs/starter/ex1_latch_bugs.v){ target=_blank } |
+| :material-chip: `tb_latch_bugs.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex1_latch_bugs/starter/tb_latch_bugs.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex1_latch_bugs/starter/tb_latch_bugs.v){ target=_blank } |
 
 ## Ex 2 — Priority Encoder
 
@@ -37,6 +38,7 @@ These files are shared across all exercises for this day.
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex2_priority_encoder/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex2_priority_encoder/starter/Makefile){ target=_blank } |
 | :material-chip: `ex2_priority_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex2_priority_encoder/starter/ex2_priority_encoder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex2_priority_encoder/starter/ex2_priority_encoder.v){ target=_blank } |
 | :material-chip: `ex2_top_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex2_priority_encoder/starter/ex2_top_encoder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex2_priority_encoder/starter/ex2_top_encoder.v){ target=_blank } |
+| :material-chip: `tb_priority_encoder.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex2_priority_encoder/starter/tb_priority_encoder.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex2_priority_encoder/starter/tb_priority_encoder.v){ target=_blank } |
 
 ## Ex 3 — Alu
 
@@ -47,6 +49,7 @@ These files are shared across all exercises for this day.
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex3_alu/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex3_alu/starter/Makefile){ target=_blank } |
 | :material-chip: `ex3_alu_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex3_alu/starter/ex3_alu_4bit.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex3_alu/starter/ex3_alu_4bit.v){ target=_blank } |
 | :material-chip: `ex3_top_alu.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex3_alu/starter/ex3_top_alu.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex3_alu/starter/ex3_top_alu.v){ target=_blank } |
+| :material-chip: `tb_alu_4bit.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day03/ex3_alu/starter/tb_alu_4bit.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day03/ex3_alu/starter/tb_alu_4bit.v){ target=_blank } |
 
 ## Ex 4 — Bcd 7Seg
 

@@ -83,14 +83,15 @@ content for students who finish early or want additional practice:
 
 ### Ex 3 — Ai Constraint Tb
 
-[:material-download: Starter .zip](../../downloads/day14/ex3_ai_constraint_tb_starter.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day14/ex3_ai_constraint_tb_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day14/ex3_ai_constraint_tb_solution.zip){ .md-button }
 
 - :material-cog: [`Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/Makefile){ target=_blank }
 - :material-text: [`README.md`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank }
+- :material-chip: [`tb_uart_tx_ai.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/tb_uart_tx_ai.sv){ target=_blank }
 
 ### Ex 4 — Ppa Analysis
 
-[:material-download: Starter .zip](../../downloads/day14/ex4_ppa_analysis_starter.zip){ .md-button }
+[:material-download: Starter .zip](../../downloads/day14/ex4_ppa_analysis_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day14/ex4_ppa_analysis_solution.zip){ .md-button }
 
 - :material-cog: [`Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/Makefile){ target=_blank }
 - :material-text: [`ppa_exercise.md`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/ppa_exercise.md){ target=_blank }

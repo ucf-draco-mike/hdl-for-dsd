@@ -45,6 +45,7 @@ These files are shared across all exercises for this day.
 |------|-------|
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/Makefile){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex3_button_logic/starter/Makefile){ target=_blank } |
 | :material-chip: `ex3_button_logic.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/ex3_button_logic.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex3_button_logic/starter/ex3_button_logic.v){ target=_blank } |
+| :material-chip: `tb_button_logic.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/tb_button_logic.v){ target=_blank } · [:material-notebook: Open in Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex3_button_logic/starter/tb_button_logic.v){ target=_blank } |
 
 ## Ex 4 — Active Low Clean
 
