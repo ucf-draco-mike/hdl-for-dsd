@@ -245,3 +245,27 @@ a.day-card:hover {
     background: transparent;
     white-space: nowrap;
 }
+
+/* ═══ Thread Filter Interaction (Homepage) ═══ */
+.thread-filter {
+    transition: transform 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+.thread-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.thread-active {
+    box-shadow: 0 0 0 2.5px var(--ucf-gold), 0 4px 12px rgba(255,201,4,0.25);
+    transform: translateY(-2px);
+}
+a.day-card.day-highlight {
+    border-color: var(--ucf-gold) !important;
+    box-shadow: 0 0 0 2px var(--ucf-gold), 0 4px 16px rgba(255,201,4,0.18);
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+a.day-card.day-dim {
+    opacity: 0.3;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}

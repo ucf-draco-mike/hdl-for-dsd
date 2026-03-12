@@ -7,8 +7,7 @@
     [:material-download: Download .ipynb](../../notebooks/labs/lab_day05.ipynb){ .md-button target=_blank }
     [:material-github: View on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day05.ipynb){ .md-button target=_blank }
 
-    Individual exercise downloads are linked below each exercise.
-    Full file listing: [Code & Notebooks Reference](code.md)
+    Individual exercise downloads and file links are below each exercise.
 
 
 ## Course: Accelerated HDL for Digital System Design — Week 2, Session 5
@@ -46,7 +45,7 @@ By the end of this lab, you will:
 ## Exercise 1: Debounce Module — Build and Simulate (30 min)
 
 !!! code "Exercise 1 — Code"
-    [:material-download: Starter .zip](../../downloads/day05/ex1_debounce_module_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex1_debounce_module_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex1_debounce_module/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day05/ex1_debounce_module_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex1_debounce_module_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex1_debounce_module/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex1_debounce_module/starter/Makefile){ target=_blank } [:material-github: `debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex1_debounce_module/starter/debounce.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex1_debounce_module/starter/debounce.v){ target=_blank } [:material-github: `tb_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex1_debounce_module/starter/tb_debounce.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex1_debounce_module/starter/tb_debounce.v){ target=_blank }
 
 
 
@@ -82,7 +81,7 @@ make sim TB=tb_debounce.v SRCS="debounce.v"
 ## Exercise 2: Shift Register LED Chase (25 min)
 
 !!! code "Exercise 2 — Code"
-    [:material-download: Starter .zip](../../downloads/day05/ex2_led_chase_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex2_led_chase_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex2_led_chase/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day05/ex2_led_chase_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex2_led_chase_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex2_led_chase/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex2_led_chase/starter/Makefile){ target=_blank } [:material-github: `debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex2_led_chase/starter/debounce.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex2_led_chase/starter/debounce.v){ target=_blank } [:material-github: `led_chase.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex2_led_chase/starter/led_chase.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex2_led_chase/starter/led_chase.v){ target=_blank }
 
 
 
@@ -110,7 +109,7 @@ make prog PROJECT=led_chase
 ## Exercise 3: Debounced Button Counter (25 min)
 
 !!! code "Exercise 3 — Code"
-    [:material-download: Starter .zip](../../downloads/day05/ex3_button_counter_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex3_button_counter_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex3_button_counter/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day05/ex3_button_counter_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex3_button_counter_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex3_button_counter/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex3_button_counter/starter/Makefile){ target=_blank } [:material-github: `button_counter.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex3_button_counter/starter/button_counter.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex3_button_counter/starter/button_counter.v){ target=_blank } [:material-github: `debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex3_button_counter/starter/debounce.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex3_button_counter/starter/debounce.v){ target=_blank } [:material-github: `hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex3_button_counter/starter/hex_to_7seg.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex3_button_counter/starter/hex_to_7seg.v){ target=_blank }
 
 
 
@@ -137,7 +136,7 @@ make prog PROJECT=button_counter
 ## Exercise 4 (Stretch): LFSR Pattern Generator (20 min)
 
 !!! code "Exercise 4 — Code"
-    [:material-download: Starter .zip](../../downloads/day05/ex4_lfsr_pattern_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex4_lfsr_pattern_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex4_lfsr_pattern/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day05/ex4_lfsr_pattern_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day05/ex4_lfsr_pattern_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex4_lfsr_pattern/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex4_lfsr_pattern/starter/Makefile){ target=_blank } [:material-github: `hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex4_lfsr_pattern/starter/hex_to_7seg.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex4_lfsr_pattern/starter/hex_to_7seg.v){ target=_blank } [:material-github: `lfsr_8bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day05/ex4_lfsr_pattern/starter/lfsr_8bit.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day05/ex4_lfsr_pattern/starter/lfsr_8bit.v){ target=_blank }
 
 
 

@@ -76,25 +76,25 @@ Full platform-specific instructions and troubleshooting.
 
 <div class="card-grid card-grid--4">
 
-<div class="thread-card" style="border-color: #7B1FA2;">
+<div class="thread-card thread-filter" data-thread="ai-verification" style="border-color: #7B1FA2; cursor: pointer;" tabindex="0">
 <div class="thread-icon">🤖</div>
 <div class="thread-name" style="color: #7B1FA2;">AI-Assisted Verification</div>
 <div class="thread-days">D6 → D8 → D12 → D14 → D16</div>
 </div>
 
-<div class="thread-card" style="border-color: #2E7D32;">
+<div class="thread-card thread-filter" data-thread="ppa-analysis" style="border-color: #2E7D32; cursor: pointer;" tabindex="0">
 <div class="thread-icon">📊</div>
 <div class="thread-name" style="color: #2E7D32;">PPA Analysis</div>
 <div class="thread-days">D3 → D8 → D10 → D12 → D14</div>
 </div>
 
-<div class="thread-card" style="border-color: #E65100;">
+<div class="thread-card thread-filter" data-thread="constraints" style="border-color: #E65100; cursor: pointer;" tabindex="0">
 <div class="thread-icon">⚙️</div>
 <div class="thread-name" style="color: #E65100;">Constraint-Based Design</div>
 <div class="thread-days">D3 → D7 → D8 → D10 → D14</div>
 </div>
 
-<div class="thread-card" style="border-color: #1565C0;">
+<div class="thread-card thread-filter" data-thread="ai-literacy" style="border-color: #1565C0; cursor: pointer;" tabindex="0">
 <div class="thread-icon">🔧</div>
 <div class="thread-name" style="color: #1565C0;">AI Tool Literacy</div>
 <div class="thread-days">D6 → D12 → D14 → D16</div>
@@ -122,7 +122,7 @@ Full platform-specific instructions and troubleshooting.
 <div class="day-title">Combinational Building Blocks</div>
 </a>
 
-<a class="day-card" href="days/day03/">
+<a class="day-card" data-threads="ppa-analysis constraints" href="days/day03/">
 <div class="day-num" style="color:#1565C0">DAY 03</div>
 <div class="day-title">Procedural Combinational Logic</div>
 <div class="day-threads"><span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
@@ -149,19 +149,19 @@ Full platform-specific instructions and troubleshooting.
 <div class="day-title">Counters, Shift Registers & Debouncing</div>
 </a>
 
-<a class="day-card" href="days/day06/">
+<a class="day-card" data-threads="ai-verification ai-literacy" href="days/day06/">
 <div class="day-num" style="color:#7B1FA2">DAY 06</div>
 <div class="day-title">Testbenches & AI-Assisted Verification</div>
 <div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
 </a>
 
-<a class="day-card" href="days/day07/">
+<a class="day-card" data-threads="constraints" href="days/day07/">
 <div class="day-num" style="color:#7B1FA2">DAY 07</div>
 <div class="day-title">Finite State Machines</div>
 <div class="day-threads"><span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
 </a>
 
-<a class="day-card" href="days/day08/">
+<a class="day-card" data-threads="ai-verification ppa-analysis constraints" href="days/day08/">
 <div class="day-num" style="color:#7B1FA2">DAY 08</div>
 <div class="day-title">Hierarchy, Parameters & Generate</div>
 <div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
@@ -183,7 +183,7 @@ Full platform-specific instructions and troubleshooting.
 <div class="day-title">Memory: RAM, ROM & Block RAM</div>
 </a>
 
-<a class="day-card" href="days/day10/">
+<a class="day-card" data-threads="ppa-analysis constraints" href="days/day10/">
 <div class="day-num" style="color:#E65100">DAY 10</div>
 <div class="day-title">Numerical Architectures & PPA</div>
 <div class="day-threads"><span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span></div>
@@ -194,7 +194,7 @@ Full platform-specific instructions and troubleshooting.
 <div class="day-title">UART TX: Communication Interface</div>
 </a>
 
-<a class="day-card" href="days/day12/">
+<a class="day-card" data-threads="ai-verification ppa-analysis ai-literacy" href="days/day12/">
 <div class="day-num" style="color:#E65100">DAY 12</div>
 <div class="day-title">UART RX, SPI & Protocol Verification</div>
 <div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
@@ -216,7 +216,7 @@ Full platform-specific instructions and troubleshooting.
 <div class="day-title">SystemVerilog for Design</div>
 </a>
 
-<a class="day-card" href="days/day14/">
+<a class="day-card" data-threads="ai-verification ppa-analysis constraints ai-literacy" href="days/day14/">
 <div class="day-num" style="color:#2E7D32">DAY 14</div>
 <div class="day-title">Verification, AI Testing & PPA Analysis</div>
 <div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="PPA Analysis" style="color:#2E7D32">📊</span> <span class="thread-badge" title="Constraints" style="color:#E65100">⚙️</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
@@ -227,7 +227,7 @@ Full platform-specific instructions and troubleshooting.
 <div class="day-title">Final Project: Build Day</div>
 </a>
 
-<a class="day-card" href="days/day16/">
+<a class="day-card" data-threads="ai-verification ai-literacy" href="days/day16/">
 <div class="day-num" style="color:#2E7D32">DAY 16</div>
 <div class="day-title">Final Project Demos & Course Wrap</div>
 <div class="day-threads"><span class="thread-badge" title="AI Verification" style="color:#7B1FA2">🤖</span> <span class="thread-badge" title="AI Literacy" style="color:#1565C0">🔧</span></div>
@@ -276,3 +276,42 @@ nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc to
 icepack top.asc top.bin
 iceprog top.bin
 ```
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var active = null;
+  document.querySelectorAll('.thread-filter').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      var tid = this.dataset.thread;
+      var cards = document.querySelectorAll('a.day-card');
+
+      // Toggle off if same thread clicked again
+      if (active === tid) {
+        active = null;
+        cards.forEach(function(c) { c.classList.remove('day-highlight', 'day-dim'); });
+        document.querySelectorAll('.thread-filter').forEach(function(t) {
+          t.classList.remove('thread-active');
+        });
+        return;
+      }
+
+      active = tid;
+      document.querySelectorAll('.thread-filter').forEach(function(t) {
+        t.classList.toggle('thread-active', t.dataset.thread === tid);
+      });
+      cards.forEach(function(c) {
+        var threads = (c.dataset.threads || '').split(' ');
+        if (threads.indexOf(tid) >= 0) {
+          c.classList.add('day-highlight');
+          c.classList.remove('day-dim');
+        } else {
+          c.classList.add('day-dim');
+          c.classList.remove('day-highlight');
+        }
+      });
+    });
+  });
+});
+</script>

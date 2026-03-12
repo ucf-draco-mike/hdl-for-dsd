@@ -43,9 +43,9 @@ Self-check questions
 <div class="nav-card" markdown>
 :material-notebook:{ .card-icon }
 
-**Notebooks & Code**
+**Notebooks**
 
-Lab notebook · lecture notebook · [code ref](code.md)
+Lab notebook · lecture notebook
 
 
 [:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day07.ipynb){ target=_blank }

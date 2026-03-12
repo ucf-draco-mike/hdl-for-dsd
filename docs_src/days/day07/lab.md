@@ -7,8 +7,7 @@
     [:material-download: Download .ipynb](../../notebooks/labs/lab_day07.ipynb){ .md-button target=_blank }
     [:material-github: View on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day07.ipynb){ .md-button target=_blank }
 
-    Individual exercise downloads are linked below each exercise.
-    Full file listing: [Code & Notebooks Reference](code.md)
+    Individual exercise downloads and file links are below each exercise.
 
 
 ## Course: Accelerated HDL for Digital System Design — Week 2, Session 7
@@ -48,7 +47,7 @@ By the end of this lab, you will:
 ## Exercise 1: Traffic Light Controller (40 min)
 
 !!! code "Exercise 1 — Code"
-    [:material-download: Starter .zip](../../downloads/day07/ex1_traffic_light_fsm_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day07/ex1_traffic_light_fsm_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex1_traffic_light_fsm/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day07/ex1_traffic_light_fsm_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day07/ex1_traffic_light_fsm_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex1_traffic_light_fsm/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex1_traffic_light_fsm/starter/Makefile){ target=_blank } [:material-github: `hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex1_traffic_light_fsm/starter/hex_to_7seg.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex1_traffic_light_fsm/starter/hex_to_7seg.v){ target=_blank } [:material-github: `tb_traffic_light.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex1_traffic_light_fsm/starter/tb_traffic_light.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex1_traffic_light_fsm/starter/tb_traffic_light.v){ target=_blank } [:material-github: `traffic_light.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex1_traffic_light_fsm/starter/traffic_light.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex1_traffic_light_fsm/starter/traffic_light.v){ target=_blank }
 
 
 
@@ -86,7 +85,7 @@ make prog PROJECT=traffic_light
 ## Exercise 2: Button Pattern Detector (35 min)
 
 !!! code "Exercise 2 — Code"
-    [:material-download: Starter .zip](../../downloads/day07/ex2_pattern_detector_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day07/ex2_pattern_detector_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day07/ex2_pattern_detector_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day07/ex2_pattern_detector_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex2_pattern_detector/starter/Makefile){ target=_blank } [:material-github: `debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/debounce.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex2_pattern_detector/starter/debounce.v){ target=_blank } [:material-github: `hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/hex_to_7seg.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex2_pattern_detector/starter/hex_to_7seg.v){ target=_blank } [:material-github: `pattern_detector.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/pattern_detector.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex2_pattern_detector/starter/pattern_detector.v){ target=_blank } [:material-github: `tb_pattern_detector.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/tb_pattern_detector.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex2_pattern_detector/starter/tb_pattern_detector.v){ target=_blank } [:material-github: `top_pattern.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day07/ex2_pattern_detector/starter/top_pattern.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day07/ex2_pattern_detector/starter/top_pattern.v){ target=_blank }
 
 
 

@@ -7,8 +7,7 @@
     [:material-download: Download .ipynb](../../notebooks/labs/lab_day01.ipynb){ .md-button target=_blank }
     [:material-github: View on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day01.ipynb){ .md-button target=_blank }
 
-    Individual exercise downloads are linked below each exercise.
-    Full file listing: [Code & Notebooks Reference](code.md)
+    Individual exercise downloads and file links are below each exercise.
 
 
 > **Week 1, Session 1** · Accelerated HDL for Digital System Design · UCF ECE
@@ -54,7 +53,7 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 ### Exercise 1: LED On — The Simplest Possible Design (20 min)
 
 !!! code "Exercise 1 — Code"
-    [:material-download: Starter .zip](../../downloads/day01/ex1_led_on_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex1_led_on_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex1_led_on/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day01/ex1_led_on_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex1_led_on_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex1_led_on/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex1_led_on/starter/Makefile){ target=_blank } [:material-github: `ex1_led_on.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex1_led_on/starter/ex1_led_on.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex1_led_on/starter/ex1_led_on.v){ target=_blank }
 
 
 
@@ -70,7 +69,7 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 ### Exercise 2: Buttons to LEDs — Wires in Hardware (25 min)
 
 !!! code "Exercise 2 — Code"
-    [:material-download: Starter .zip](../../downloads/day01/ex2_buttons_to_leds_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex2_buttons_to_leds_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex2_buttons_to_leds/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day01/ex2_buttons_to_leds_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex2_buttons_to_leds_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex2_buttons_to_leds/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex2_buttons_to_leds/starter/Makefile){ target=_blank } [:material-github: `ex2_buttons_to_leds.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex2_buttons_to_leds/starter/ex2_buttons_to_leds.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex2_buttons_to_leds/starter/ex2_buttons_to_leds.v){ target=_blank }
 
 
 
@@ -86,7 +85,7 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 ### Exercise 3: Logic Between Buttons and LEDs (30 min)
 
 !!! code "Exercise 3 — Code"
-    [:material-download: Starter .zip](../../downloads/day01/ex3_button_logic_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex3_button_logic_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day01/ex3_button_logic_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex3_button_logic_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex3_button_logic/starter/Makefile){ target=_blank } [:material-github: `ex3_button_logic.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/ex3_button_logic.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex3_button_logic/starter/ex3_button_logic.v){ target=_blank } [:material-github: `tb_button_logic.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex3_button_logic/starter/tb_button_logic.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex3_button_logic/starter/tb_button_logic.v){ target=_blank }
 
 
 
@@ -109,7 +108,7 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 ### Exercise 4: Active-Low Thinking (20 min)
 
 !!! code "Exercise 4 — Code"
-    [:material-download: Starter .zip](../../downloads/day01/ex4_active_low_clean_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex4_active_low_clean_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex4_active_low_clean/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day01/ex4_active_low_clean_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex4_active_low_clean_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex4_active_low_clean/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex4_active_low_clean/starter/Makefile){ target=_blank } [:material-github: `ex4_active_low_clean.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex4_active_low_clean/starter/ex4_active_low_clean.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex4_active_low_clean/starter/ex4_active_low_clean.v){ target=_blank }
 
 
 
@@ -125,7 +124,7 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 ### Exercise 5 — Stretch: Makefile & XOR Pattern (10 min)
 
 !!! code "Exercise 5 — Code"
-    [:material-download: Starter .zip](../../downloads/day01/ex5_xor_pattern_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex5_xor_pattern_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex5_xor_pattern/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day01/ex5_xor_pattern_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day01/ex5_xor_pattern_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex5_xor_pattern/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex5_xor_pattern/starter/Makefile){ target=_blank } [:material-github: `ex5_xor_pattern.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day01/ex5_xor_pattern/starter/ex5_xor_pattern.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day01/ex5_xor_pattern/starter/ex5_xor_pattern.v){ target=_blank }
 
 
 

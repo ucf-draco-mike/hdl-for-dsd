@@ -7,8 +7,7 @@
     [:material-download: Download .ipynb](../../notebooks/labs/lab_day04.ipynb){ .md-button target=_blank }
     [:material-github: View on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day04.ipynb){ .md-button target=_blank }
 
-    Individual exercise downloads are linked below each exercise.
-    Full file listing: [Code & Notebooks Reference](code.md)
+    Individual exercise downloads and file links are below each exercise.
 
 
 > **Week 1, Session 4** · Accelerated HDL for Digital System Design · UCF ECE
@@ -38,7 +37,7 @@
 ### Exercise 1: D Flip-Flop — Simulate First! (25 min)
 
 !!! code "Exercise 1 — Code"
-    [:material-download: Starter .zip](../../downloads/day04/ex1_d_ff_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex1_d_ff_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex1_d_ff/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day04/ex1_d_ff_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex1_d_ff_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex1_d_ff/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex1_d_ff/starter/Makefile){ target=_blank } [:material-github: `ex1_d_ff.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex1_d_ff/starter/ex1_d_ff.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex1_d_ff/starter/ex1_d_ff.v){ target=_blank } [:material-github: `ex1_tb_d_ff.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex1_d_ff/starter/ex1_tb_d_ff.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex1_d_ff/starter/ex1_tb_d_ff.v){ target=_blank }
 
 
 Implement in `starter/w1d4_ex1_d_ff.v`, run testbench with `make ex1_sim`. Open waveforms in GTKWave. Mark the moment `i_d` changes vs. when `o_q` changes.
@@ -46,7 +45,7 @@ Implement in `starter/w1d4_ex1_d_ff.v`, run testbench with `make ex1_sim`. Open 
 ### Exercise 2: Loadable Register (20 min)
 
 !!! code "Exercise 2 — Code"
-    [:material-download: Starter .zip](../../downloads/day04/ex2_register_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex2_register_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex2_register/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day04/ex2_register_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex2_register_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex2_register/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex2_register/starter/Makefile){ target=_blank } [:material-github: `ex2_register_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex2_register/starter/ex2_register_4bit.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex2_register/starter/ex2_register_4bit.v){ target=_blank } [:material-github: `ex2_tb_register.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex2_register/starter/ex2_tb_register.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex2_register/starter/ex2_tb_register.v){ target=_blank }
 
 
 4-bit register with load enable. `make ex2_sim` to verify load/hold/reset behavior.
@@ -54,7 +53,7 @@ Implement in `starter/w1d4_ex1_d_ff.v`, run testbench with `make ex1_sim`. Open 
 ### Exercise 3: LED Blinker (25 min) ★ KEY EXERCISE
 
 !!! code "Exercise 3 — Code"
-    [:material-download: Starter .zip](../../downloads/day04/ex3_led_blinker_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex3_led_blinker_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day04/ex3_led_blinker_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex3_led_blinker_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex3_led_blinker/starter/Makefile){ target=_blank } [:material-github: `ex3_led_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/ex3_led_blinker.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex3_led_blinker/starter/ex3_led_blinker.v){ target=_blank } [:material-github: `tb_led_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex3_led_blinker/starter/tb_led_blinker.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex3_led_blinker/starter/tb_led_blinker.v){ target=_blank }
 
 
 Free-running counter with multi-speed LED output. `make ex3` to program. LED1 slowest, LED4 fastest — visually demonstrates binary counting.
@@ -62,7 +61,7 @@ Free-running counter with multi-speed LED output. `make ex3` to program. LED1 sl
 ### Exercise 4: 7-Segment Counter — Week 1 Capstone (30 min) ★ CAPSTONE
 
 !!! code "Exercise 4 — Code"
-    [:material-download: Starter .zip](../../downloads/day04/ex4_seg_counter_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex4_seg_counter_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex4_seg_counter/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day04/ex4_seg_counter_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex4_seg_counter_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex4_seg_counter/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex4_seg_counter/starter/Makefile){ target=_blank } [:material-github: `ex4_seg_counter.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex4_seg_counter/starter/ex4_seg_counter.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex4_seg_counter/starter/ex4_seg_counter.v){ target=_blank }
 
 
 Running hex counter on the display. Integrates clock division + counting + combinational decoding. `make ex4`.
@@ -70,7 +69,7 @@ Running hex counter on the display. Integrates clock division + counting + combi
 ### Exercise 5: Dual-Speed Blinker (15 min)
 
 !!! code "Exercise 5 — Code"
-    [:material-download: Starter .zip](../../downloads/day04/ex5_dual_blinker_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex5_dual_blinker_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex5_dual_blinker/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day04/ex5_dual_blinker_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex5_dual_blinker_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex5_dual_blinker/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex5_dual_blinker/starter/Makefile){ target=_blank } [:material-github: `ex5_dual_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex5_dual_blinker/starter/ex5_dual_blinker.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex5_dual_blinker/starter/ex5_dual_blinker.v){ target=_blank }
 
 
 Two independent dividers, complementary LED pairs. `make ex5`.
@@ -78,7 +77,7 @@ Two independent dividers, complementary LED pairs. `make ex5`.
 ### Exercise 6 — Stretch: Up/Down Counter (if time permits)
 
 !!! code "Exercise 6 — Code"
-    [:material-download: Starter .zip](../../downloads/day04/ex6_updown_counter_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex6_updown_counter_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex6_updown_counter/starter/Makefile){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day04/ex6_updown_counter_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day04/ex6_updown_counter_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex6_updown_counter/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex6_updown_counter/starter/Makefile){ target=_blank } [:material-github: `ex6_updown_counter.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week1_day04/ex6_updown_counter/starter/ex6_updown_counter.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week1_day04/ex6_updown_counter/starter/ex6_updown_counter.v){ target=_blank }
 
 
 Button-controlled counter on 7-seg. Will be bouncy without debouncing — this previews Day 5!

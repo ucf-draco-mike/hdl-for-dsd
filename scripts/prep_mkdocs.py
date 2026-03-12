@@ -120,12 +120,10 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
             nb_desc_parts.append("Lab notebook")
         if lec_nb_chk:
             nb_desc_parts.append("lecture notebook")
-        if has_code:
-            nb_desc_parts.append("[code ref](code.md)")
         nb_desc = " · ".join(nb_desc_parts)
         lines.append(f'<div class="nav-card" markdown>\n'
                      f':material-notebook:{{ .card-icon }}\n\n'
-                     f'**Notebooks & Code**\n\n'
+                     f'**Notebooks**\n\n'
                      f'{nb_desc}\n\n')
         if lab_nb_chk:
             nb_gh = f"{GITHUB_RAW_BASE}/notebooks/labs/lab_day{dz}.ipynb"
@@ -495,8 +493,7 @@ def generate_lab_page(day_num, dir_name, code_assets):
                 f'{{ .md-button target=_blank }}\n'
             )
         banner_lines.append(
-            f'    Individual exercise downloads are linked below each exercise.\n'
-            f'    Full file listing: [Code & Notebooks Reference](code.md)\n'
+            f'    Individual exercise downloads and file links are below each exercise.\n'
         )
 
     banner = "\n".join(banner_lines)
@@ -521,13 +518,17 @@ def generate_lab_page(day_num, dir_name, code_assets):
                     f'[:material-check-circle: Solution .zip]({ex["solution_zip"]})'
                     f'{{ .md-button }}'
                 )
-            # GitHub link to the starter directory
+            # GitHub + Jupyter links for all starter files
             for sf in ex.get("starter_files", []):
                 gh = f"{GITHUB_RAW_BASE}/{sf.relative_to(REPO)}"
                 parts.append(
                     f'[:material-github: `{sf.name}`]({gh}){{ target=_blank }}'
                 )
-                break  # just link first file as representative
+                if sf.suffix.lower() in JUPYTER_EXTENSIONS or sf.name == "Makefile":
+                    jup = f"{JUPYTER_LAB_BASE}/{sf.relative_to(REPO)}"
+                    parts.append(
+                        f'[:material-notebook: Jupyter]({jup}){{ target=_blank }}'
+                    )
 
             if parts:
                 btns = " ".join(parts)
@@ -656,10 +657,12 @@ def generate_homepage():
     }
     lines.append("## Cross-Cutting Threads\n")
     lines.append('<div class="card-grid card-grid--4">\n')
-    for emoji, short_name, color, day_set in THREADS:
+    for idx, (emoji, short_name, color, day_set) in enumerate(THREADS):
         full_name = _thread_full_names.get(short_name, short_name)
         days_str = " → ".join(f"D{d}" for d in sorted(day_set))
-        lines.append(f'<div class="thread-card" style="border-color: {color};">\n'
+        tid = short_name.lower().replace(" ", "-")
+        lines.append(f'<div class="thread-card thread-filter" data-thread="{tid}" '
+                     f'style="border-color: {color}; cursor: pointer;" tabindex="0">\n'
                      f'<div class="thread-icon">{emoji}</div>\n'
                      f'<div class="thread-name" style="color: {color};">{full_name}</div>\n'
                      f'<div class="thread-days">{days_str}</div>\n</div>\n')
@@ -679,6 +682,9 @@ def generate_homepage():
                 continue
             dz = f"{day_num:02d}"
             day_threads = threads_for_day(day_num)
+            thread_ids = " ".join(
+                n.lower().replace(" ", "-") for _, n, _ in day_threads
+            )
             thread_icons = ""
             if day_threads:
                 badges = " ".join(
@@ -686,7 +692,8 @@ def generate_homepage():
                     for emoji, name, color in day_threads
                 )
                 thread_icons = f'<div class="day-threads">{badges}</div>\n'
-            lines.append(f'<a class="day-card" href="days/day{dz}/">\n'
+            data_attr = f' data-threads="{thread_ids}"' if thread_ids else ""
+            lines.append(f'<a class="day-card"{data_attr} href="days/day{dz}/">\n'
                          f'<div class="day-num" style="color:{wk_color}">DAY {dz}</div>\n'
                          f'<div class="day-title">{day_title}</div>\n'
                          f'{thread_icons}'
@@ -720,6 +727,48 @@ def generate_homepage():
                  "icepack top.asc top.bin\n"
                  "iceprog top.bin\n"
                  "```\n")
+
+    # Thread filter script — click a cross-cutting thread card to
+    # highlight its days in the Weekly Arc. Click again to clear.
+    lines.append("""
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var active = null;
+  document.querySelectorAll('.thread-filter').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      var tid = this.dataset.thread;
+      var cards = document.querySelectorAll('a.day-card');
+
+      // Toggle off if same thread clicked again
+      if (active === tid) {
+        active = null;
+        cards.forEach(function(c) { c.classList.remove('day-highlight', 'day-dim'); });
+        document.querySelectorAll('.thread-filter').forEach(function(t) {
+          t.classList.remove('thread-active');
+        });
+        return;
+      }
+
+      active = tid;
+      document.querySelectorAll('.thread-filter').forEach(function(t) {
+        t.classList.toggle('thread-active', t.dataset.thread === tid);
+      });
+      cards.forEach(function(c) {
+        var threads = (c.dataset.threads || '').split(' ');
+        if (threads.indexOf(tid) >= 0) {
+          c.classList.add('day-highlight');
+          c.classList.remove('day-dim');
+        } else {
+          c.classList.add('day-dim');
+          c.classList.remove('day-highlight');
+        }
+      });
+    });
+  });
+});
+</script>
+""")
 
     return "\n".join(lines)
 
@@ -1099,6 +1148,30 @@ a.day-card:hover {
     border-radius: 20px;
     background: transparent;
     white-space: nowrap;
+}
+
+/* ═══ Thread Filter Interaction (Homepage) ═══ */
+.thread-filter {
+    transition: transform 0.15s, box-shadow 0.15s;
+    user-select: none;
+}
+.thread-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.thread-active {
+    box-shadow: 0 0 0 2.5px var(--ucf-gold), 0 4px 12px rgba(255,201,4,0.25);
+    transform: translateY(-2px);
+}
+a.day-card.day-highlight {
+    border-color: var(--ucf-gold) !important;
+    box-shadow: 0 0 0 2px var(--ucf-gold), 0 4px 16px rgba(255,201,4,0.18);
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+a.day-card.day-dim {
+    opacity: 0.3;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 """
 

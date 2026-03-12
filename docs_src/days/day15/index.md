@@ -31,9 +31,9 @@ Session timeline & instructor notes
 <div class="nav-card" markdown>
 :material-notebook:{ .card-icon }
 
-**Notebooks & Code**
+**Notebooks**
 
-Lab notebook · lecture notebook · [code ref](code.md)
+Lab notebook · lecture notebook
 
 
 [:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day15.ipynb){ target=_blank }
