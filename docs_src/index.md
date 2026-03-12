@@ -10,6 +10,40 @@ title: Course Overview
 
 A 4-week intensive course in Verilog and digital system design. Open-source toolchain, real FPGA hardware, AI-assisted verification.
 
+<div class="card-grid card-grid--3" markdown>
+
+<div class="nav-card" markdown>
+:material-rocket-launch:{ .card-icon }
+
+**New here?**
+
+Set up your environment and get ready for Day 1.
+
+[:octicons-arrow-right-16: Get Started](getting-started.md)
+</div>
+
+<div class="nav-card" markdown>
+:material-sitemap:{ .card-icon }
+
+**How this site works**
+
+Understand the page layout, repo structure, and daily workflow.
+
+[:octicons-arrow-right-16: Site Guide](site-guide.md)
+</div>
+
+<div class="nav-card" markdown>
+:material-tools:{ .card-icon }
+
+**Setup details**
+
+Full platform-specific instructions and troubleshooting.
+
+[:octicons-arrow-right-16: Toolchain Setup](setup.md)
+</div>
+
+</div>
+
 <div class="stat-grid" markdown>
 
 <div class="stat-card">

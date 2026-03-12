@@ -589,6 +589,28 @@ def generate_homepage():
     lines.append("A 4-week intensive course in Verilog and digital system design. "
                  "Open-source toolchain, real FPGA hardware, AI-assisted verification.\n")
 
+    # Quick-start nav cards (TLDR row)
+    lines.append('<div class="card-grid card-grid--3" markdown>\n')
+    lines.append('<div class="nav-card" markdown>\n'
+                 ':material-rocket-launch:{ .card-icon }\n\n'
+                 '**New here?**\n\n'
+                 'Set up your environment and get ready for Day 1.\n\n'
+                 '[:octicons-arrow-right-16: Get Started](getting-started.md)\n'
+                 '</div>\n')
+    lines.append('<div class="nav-card" markdown>\n'
+                 ':material-sitemap:{ .card-icon }\n\n'
+                 '**How this site works**\n\n'
+                 'Understand the page layout, repo structure, and daily workflow.\n\n'
+                 '[:octicons-arrow-right-16: Site Guide](site-guide.md)\n'
+                 '</div>\n')
+    lines.append('<div class="nav-card" markdown>\n'
+                 ':material-tools:{ .card-icon }\n\n'
+                 '**Setup details**\n\n'
+                 'Full platform-specific instructions and troubleshooting.\n\n'
+                 '[:octicons-arrow-right-16: Toolchain Setup](setup.md)\n'
+                 '</div>\n')
+    lines.append('</div>\n')
+
     # Stat cards
     lines.append('<div class="stat-grid" markdown>\n')
     for val, label, sub in [
@@ -735,15 +757,17 @@ def main():
     (DOCS / "index.md").write_text(generate_homepage(), encoding="utf-8")
 
     for name, src in [
-        ("syllabus.md",   REPO / "docs" / "course_syllabus.md"),
-        ("curriculum.md", REPO / "docs" / "course_curriculum.md"),
-        ("setup.md",      REPO / "docs" / "course_setup_guide.md"),
-        ("project.md",    REPO / "projects" / "README.md"),
-        ("library.md",    REPO / "shared" / "lib" / "README.md"),
-        ("dev-status.md", REPO / "docs" / "course_dev_status.md"),
+        ("syllabus.md",        REPO / "docs" / "course_syllabus.md"),
+        ("curriculum.md",      REPO / "docs" / "course_curriculum.md"),
+        ("setup.md",           REPO / "docs" / "course_setup_guide.md"),
+        ("project.md",         REPO / "projects" / "README.md"),
+        ("library.md",         REPO / "shared" / "lib" / "README.md"),
+        ("dev-status.md",      REPO / "docs" / "course_dev_status.md"),
+        ("getting-started.md", REPO / "docs" / "getting_started.md"),
+        ("site-guide.md",      REPO / "docs" / "site_guide.md"),
     ]:
         if src.exists(): symlink(src, DOCS / name)
-    print(f"  Created: 7 top-level pages (6 symlinks + index.md patched)")
+    print(f"  Created: top-level pages (symlinks + index.md generated)")
 
     # Day pages
     for day_num, dir_name, title in DAYS:
