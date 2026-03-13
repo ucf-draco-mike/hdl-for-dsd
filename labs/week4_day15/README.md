@@ -13,7 +13,7 @@ provided here.
 | 0:00–0:15 | Integration strategy briefing |
 | 0:15–0:45 | Individual check-ins (Mike circulates) |
 | 0:45–2:00 | Independent build time with on-call support |
-| 2:00–2:15 | Status round (30 sec per student) |
+| 2:00–2:15 | Status round (30 sec per person) |
 | 2:15–2:30 | Buffer / overflow debugging |
 
 ## What's in This Package

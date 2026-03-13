@@ -37,7 +37,7 @@ a structured PPA analysis.
 | 4 | PPA Analysis Exercise | 25 min | 14.4, 14.5 |
 | 5 | Project Work Time | 15 min | — |
 
-> **Instructor note:** Exercise 2 has an escape valve — students behind on their
+> **Instructor note:** Exercise 2 has an escape valve — those behind on their
 > final project may skip it and use the time for Exercises 3–4. Parity can be
 > completed as homework.
 
@@ -51,7 +51,7 @@ a structured PPA analysis.
 ## Supplementary Material
 
 The following exercises from the original Day 14 build are available as supplementary
-content for students who finish early or want additional practice:
+content for those who finish early or want additional practice:
 
 - `supplementary/fsm_assertions/` — Add transition and output assertions to the traffic light FSM
 - `supplementary/coverage_worksheet/` — Manual functional coverage analysis for the ALU

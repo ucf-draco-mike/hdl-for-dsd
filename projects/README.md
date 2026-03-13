@@ -19,7 +19,7 @@ All projects must include verification, PPA analysis, and a live demo.
 | **Numerical Compute Engine** | Parameterized ALU + sequential multiplier + fixed-point + UART I/O | ★★★ |
 | **Simple 4-bit Processor** | ALU + register file + sequencer + ROM program | ★★★ |
 | **Conway's Game of Life** | Block RAM grid, FSM update logic, LED or VGA output | ★★★ |
-| **Custom Proposal** | Student-designed project, approved by instructor by Day 13 | Varies |
+| **Custom Proposal** | Your own project, approved by instructor by Day 13 | Varies |
 
 ## Requirements
 

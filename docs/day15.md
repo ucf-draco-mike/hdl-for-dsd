@@ -17,7 +17,7 @@
 
 ## Pre-Class Preparation (no video)
 
-There is no pre-class video for Day 15. Instead, students should arrive prepared with:
+There is no pre-class video for Day 15. Instead, you should arrive prepared with:
 
 1. **Project plan status:** Which modules are complete? Which still need work?
 2. **Integration plan:** What is the top-module structure? Which modules connect to which?
@@ -32,7 +32,7 @@ There is no pre-class video for Day 15. Instead, students should arrive prepared
 
 | Time | Activity | Duration |
 |------|----------|----------|
-| 0:00 | Project check-in: quick stand-up (each student: progress, plan, blockers) | 15 min |
+| 0:00 | Project check-in: quick stand-up (each person: progress, plan, blockers) | 15 min |
 | 0:15 | Focused project work — Block 1 | 60 min |
 | 1:15 | Break | 5 min |
 | 1:20 | Focused project work — Block 2 | 55 min |
@@ -43,7 +43,7 @@ There is no pre-class video for Day 15. Instead, students should arrive prepared
 ## Mini-Lecture: Project Check-In & Debugging Strategies (15 min)
 
 ### Quick Stand-Up (10 min)
-- Each student briefly states (30–45 seconds each):
+- Each person briefly states (30–45 seconds each):
   - What's working
   - What they're working on today
   - Any blockers
@@ -86,7 +86,7 @@ Focus areas (suggested priorities):
 2. **PPA snapshot:** Run `yosys stat` on the final design. Record LUTs, FFs, EBRs. Run `nextpnr` and note Fmax and utilization percentage.
 3. **Polish:** Comment your code. Write the project README. Prepare your demo talking points.
 
-**Peer collaboration encouraged** — students can help each other debug. Hardware debugging is often faster with a second pair of eyes.
+**Peer collaboration encouraged** — you can help each other debug. Hardware debugging is often faster with a second pair of eyes.
 
 ---
 
@@ -127,4 +127,4 @@ By end of Day 15, submit (or be prepared to submit on Day 16):
 
 ## Preview: Day 16
 
-Demo day. Each student presents their project in 5–7 minutes: 1 minute of context, live hardware demo, show key testbench/waveforms, discuss one design trade-off, show AI-assisted testbench with corrections, and share `yosys stat` utilization. Followed by course wrap-up and "where to go from here."
+Demo day. Each person presents their project in 5–7 minutes: 1 minute of context, live hardware demo, show key testbench/waveforms, discuss one design trade-off, show AI-assisted testbench with corrections, and share `yosys stat` utilization. Followed by course wrap-up and "where to go from here."

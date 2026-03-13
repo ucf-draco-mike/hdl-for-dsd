@@ -47,7 +47,7 @@ hdl-for-dsd/
 │   ├── week1_day01/
 │   │   ├── README.md           ← Lab guide source
 │   │   ├── ex1_led_on/
-│   │   │   ├── starter/        ← What students start with
+│   │   │   ├── starter/        ← What you start with
 │   │   │   └── solution/       ← Reference solution
 │   │   └── ...
 │   └── ...

@@ -260,7 +260,7 @@ Every lab exercise in the course includes or references a testbench.  Here is th
 | 4 | Ex 2: register | `ex2_tb_register.v` | Load/hold/reset |
 | 4 | Ex 3: led_blinker | `tb_led_blinker.v` | Toggle count over N cycles |
 | 5 | Ex 1: debounce | `tb_debounce.v` | Bounce stimulus + clean output |
-| 6 | Ex 1–5 | Multiple | Systematic TB development (student-written) |
+| 6 | Ex 1–5 | Multiple | Systematic TB development (hand-written) |
 | 7 | Ex 1–2 | FSM TBs | State transition verification |
 | 8 | Ex 1 | `tb_counter_mod_n.v` | Parameterized rollover |
 | 9 | Ex 1–5 | Memory TBs | Read/write/address verification |

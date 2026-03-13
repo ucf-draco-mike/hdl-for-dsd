@@ -5,7 +5,7 @@
 
 ---
 
-> **Context shift:** During Week 1, students ran provided testbenches with `make sim` and learned to read PASS/FAIL output and VCD waveforms.  Day 6 transitions from **running** testbenches to **writing** them from scratch.  The pre-class video formalizes concepts students have already been using informally (DUT instantiation, stimulus, self-checking assertions) and introduces new techniques (tasks, file-driven testing, AI-assisted generation).
+> **Context shift:** During Week 1, you ran provided testbenches with `make sim` and learned to read PASS/FAIL output and VCD waveforms.  Day 6 transitions from **running** testbenches to **writing** them from scratch.  The pre-class video formalizes concepts you've already been using informally (DUT instantiation, stimulus, self-checking assertions) and introduces new techniques (tasks, file-driven testing, AI-assisted generation).
 
 ## Student Learning Objectives
 
@@ -178,7 +178,7 @@
 | 4 — Counter TB | 6.1, 6.2 | Core |
 | 5 — File-based stimulus | 6.1 | Stretch (bonus) |
 
-**Assessment note:** Grading for Exercise 3 distinguishes between "prompt quality" and "review quality." A student who writes a vague prompt and accepts broken output scores lower than one who writes a precise prompt and catches the AI's errors.
+**Assessment note:** Grading for Exercise 3 distinguishes between "prompt quality" and "review quality." Someone who writes a vague prompt and accepts broken output scores lower than one who writes a precise prompt and catches the AI's errors.
 
 ---
 

@@ -20,21 +20,21 @@
 | Time | Activity | Duration |
 |------|----------|----------|
 | 0:00 | Setup and final preparations | 5 min |
-| 0:05 | Student demos (5–7 min each, ~12–15 students) | 90 min |
+| 0:05 | Project demos (5–7 min each, ~12–15 people) | 90 min |
 | 1:35 | Break | 5 min |
 | 1:40 | Mini-lecture: where to go from here | 30 min |
 | 2:10 | Course retrospective and feedback | 15 min |
 | 2:25 | Wrap-up | 5 min |
 
-> **Demo timing note:** For a class of 12–15 students, 90 minutes allows 6–7 minutes per demo including Q&A. If the class is larger, consider reducing to 5 minutes each or splitting into parallel tracks.
+> **Demo timing note:** For a class of 12–15 people, 90 minutes allows 6–7 minutes per demo including Q&A. If the class is larger, consider reducing to 5 minutes each or splitting into parallel tracks.
 
 ---
 
 ## Demo Format
 
-Each student presents for **5–7 minutes**, followed by brief Q&A:
+Each person presents for **5–7 minutes**, followed by brief Q&A:
 
-### Demo Structure (5–7 min per student)
+### Demo Structure (5–7 min per person)
 
 1. **Context (1 min):** What does your project do? What problem does it solve or demonstrate?
 

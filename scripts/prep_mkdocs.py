@@ -705,9 +705,9 @@ def generate_homepage():
     lines.append('<div class="card-grid card-grid--2">\n')
     for title, desc in [
         ("Hands-on from Day 1", "Real hardware, real toolchain, every session."),
-        ("AI-Assisted Verification", "Students learn to prompt, evaluate, and correct AI-generated testbenches."),
+        ("AI-Assisted Verification", "Learn to prompt, evaluate, and correct AI-generated testbenches."),
         ("PPA Awareness", "Resource analysis via <code>yosys stat</code> becomes a habit, not a one-off exercise."),
-        ("Open-Source Everything", "No license servers, no vendor lock-in — students keep the tools forever."),
+        ("Open-Source Everything", "No license servers, no vendor lock-in — you keep the tools forever."),
     ]:
         lines.append(f'<div class="feature-card">\n'
                      f'<strong>{title}</strong>\n'

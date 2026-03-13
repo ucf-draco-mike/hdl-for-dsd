@@ -1,7 +1,7 @@
 # Day 16: Demos, Reflection & Next Steps
 
 ## Overview
-Today is the final session. Students demonstrate their projects, we reflect
+Today is the final session. You demonstrate your projects, we reflect
 on the course, and we discuss where to go from here.
 
 ## Session Structure
@@ -9,7 +9,7 @@ on the course, and we discuss where to go from here.
 | Time | Activity |
 |------|----------|
 | 0:00–0:10 | Demo setup and order |
-| 0:10–2:00 | Student demonstrations (~7 min each) |
+| 0:10–2:00 | Project demonstrations (~7 min each) |
 | 2:00–2:15 | Course retrospective |
 | 2:15–2:30 | Where to go from here |
 
@@ -17,13 +17,13 @@ on the course, and we discuss where to go from here.
 
 | File | Purpose |
 |------|---------|
-| `rubric.md` | Detailed evaluation rubric (give to students at start) |
-| `demo_checklist.md` | Pre-demo self-check for students |
-| `self_assessment.md` | Student self-assessment form (distribute post-demo) |
+| `rubric.md` | Detailed evaluation rubric (distribute at start) |
+| `demo_checklist.md` | Pre-demo self-check |
+| `self_assessment.md` | Self-assessment form (distribute post-demo) |
 | `next_steps.md` | Career pathways and resources handout |
 | `feedback_form.md` | Anonymous end-of-course feedback form |
 
-## Demo Format (5–7 min per student)
+## Demo Format (5–7 min per person)
 1. **Introduction** (30 sec): Project name, one sentence
 2. **Live demo** (2 min): Show it working on the Go Board
 3. **Architecture** (1–2 min): Block diagram, data path, module reuse

@@ -18,7 +18,7 @@
 
 ## Course Description
 
-This accelerated course takes students from zero HDL experience to confidently designing, simulating, and implementing digital systems in Verilog on real FPGA hardware. Students will learn fundamental to intermediate Verilog through a hands-on, project-based approach using the Nandland Go Board and an entirely open-source toolchain. The course integrates modern verification practices including AI-assisted testbench generation, PPA (Performance, Power, Area) analysis, and constraint-based design — skills directly relevant to industry and advanced coursework.
+This accelerated course takes you from zero HDL experience to confidently designing, simulating, and implementing digital systems in Verilog on real FPGA hardware. You'll learn fundamental to intermediate Verilog through a hands-on, project-based approach using the Nandland Go Board and an entirely open-source toolchain. The course integrates modern verification practices including AI-assisted testbench generation, PPA (Performance, Power, Area) analysis, and constraint-based design — skills directly relevant to industry and advanced coursework.
 
 By the end of this course, you will be able to design, verify, and implement multi-module digital systems that communicate with a host PC, and you will have the vocabulary and habits to continue learning independently.
 
@@ -26,7 +26,7 @@ By the end of this course, you will be able to design, verify, and implement mul
 
 ## Learning Outcomes
 
-Upon successful completion of this course, students will be able to:
+Upon successful completion of this course, you will be able to:
 
 1. **Design** combinational and sequential digital circuits in Verilog, including multiplexers, ALUs, counters, shift registers, FSMs, and communication interfaces (UART, SPI).
 2. **Simulate** designs using self-checking testbenches, interpreting waveforms, and diagnosing common errors (latches, timing violations, width mismatches).
@@ -44,7 +44,7 @@ Upon successful completion of this course, students will be able to:
 ### Required Hardware
 - **Nandland Go Board** (Lattice iCE40 HX1K · 4 LEDs · 4 switches · dual 7-segment displays · VGA · USB)
   - Available from [nandland.com](https://nandland.com/the-go-board/)
-  - Students keep the board after the course
+  - You keep the board after the course
 
 ### Software Toolchain (all free, open-source)
 - **Yosys** — Verilog synthesis
@@ -57,7 +57,7 @@ Upon successful completion of this course, students will be able to:
 Installation instructions: see `docs/course_setup_guide.md` in the course repository.
 
 ### AI Tools
-Students will use AI-assisted verification tools (e.g., Claude, ChatGPT, Copilot) beginning in Week 2. No specific tool is required — students may use any AI assistant. The critical skill is evaluating and correcting AI-generated code, not the tool itself.
+You'll use AI-assisted verification tools (e.g., Claude, ChatGPT, Copilot) beginning in Week 2. No specific tool is required — you may use any AI assistant. The critical skill is evaluating and correcting AI-generated code, not the tool itself.
 
 ---
 
@@ -110,8 +110,8 @@ Students will use AI-assisted verification tools (e.g., Claude, ChatGPT, Copilot
 | 0:00–0:05 | Warm-up: pre-class quiz review, questions |
 | 0:05–0:35 | Mini-lecture: key concepts, live coding, Yosys/GTKWave demos |
 | 0:35–0:45 | Lab kickoff: objectives, deliverables, hints |
-| 0:45–2:15 | Hands-on lab: students work, instructor circulates |
-| 2:15–2:25 | Debrief: show student work, common mistakes, preview next session |
+| 0:45–2:15 | Hands-on lab: you work, instructor circulates |
+| 2:15–2:25 | Debrief: share work, common mistakes, preview next session |
 | 2:25–2:30 | Assign pre-class video for next session |
 
 ---
@@ -154,7 +154,7 @@ AI-assisted verification is an **explicit learning objective** of this course, i
 ## Final Project
 
 The final project is an individual capstone spanning Days 13–16.
-The Day 13 session requires a project design document (block diagram + module list) before full build time begins on Day 15. Students design, verify, and demonstrate a complete FPGA-based system on the Go Board.
+The Day 13 session requires a project design document (block diagram + module list) before full build time begins on Day 15. You design, verify, and demonstrate a complete FPGA-based system on the Go Board.
 
 ### Requirements (all projects)
 1. At least one manually-written self-checking testbench for a core module
@@ -175,7 +175,7 @@ The Day 13 session requires a project design document (block diagram + module li
 | **UART Command Parser** | UART RX/TX, FSM, string matching, LED control | ★★★ |
 | **Numerical Compute Engine** | Parameterized ALU + sequential multiplier + fixed-point + UART I/O | ★★★ |
 | **Simple 4-bit Processor** | ALU + register file + sequencer + ROM program | ★★★ |
-| **Custom Proposal** | Student-designed project, approved by instructor by Day 13 | Varies |
+| **Custom Proposal** | Your own project, approved by instructor by Day 13 | Varies |
 
 ---
 
@@ -197,10 +197,10 @@ These skills build progressively across the course:
 This is an intensive, accelerated course. Every session builds directly on the previous one. Missing even one session puts you significantly behind. If you must miss a session, notify the instructor in advance and complete the lab independently before the next class.
 
 ### Pre-class Videos
-You are expected to watch the assigned video segments and complete the pre-class quiz before each session. Class time assumes you have seen the video. Students who arrive unprepared will struggle with the lab exercises.
+You are expected to watch the assigned video segments and complete the pre-class quiz before each session. Class time assumes you have seen the video. Those who arrive unprepared will struggle with the lab exercises.
 
 ### Academic Integrity
-All submitted work must be your own, with AI usage documented as described in the AI Policy above. Sharing code between students is not permitted except during explicitly collaborative exercises. The Go Board hardware enforces individual work — each student has their own board and their own project.
+All submitted work must be your own, with AI usage documented as described in the AI Policy above. Sharing code between classmates is not permitted except during explicitly collaborative exercises. The Go Board hardware enforces individual work — you have your own board and your own project.
 
 ### Late Work
 Lab deliverables are due at the end of each session. Late submissions receive a 10% penalty per day. The final project has no late submission window.

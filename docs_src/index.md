@@ -247,7 +247,7 @@ Full platform-specific instructions and troubleshooting.
 
 <div class="feature-card">
 <strong>AI-Assisted Verification</strong>
-<p>Students learn to prompt, evaluate, and correct AI-generated testbenches.</p>
+<p>Learn to prompt, evaluate, and correct AI-generated testbenches.</p>
 </div>
 
 <div class="feature-card">
@@ -257,7 +257,7 @@ Full platform-specific instructions and troubleshooting.
 
 <div class="feature-card">
 <strong>Open-Source Everything</strong>
-<p>No license servers, no vendor lock-in — students keep the tools forever.</p>
+<p>No license servers, no vendor lock-in — you keep the tools forever.</p>
 </div>
 
 </div>

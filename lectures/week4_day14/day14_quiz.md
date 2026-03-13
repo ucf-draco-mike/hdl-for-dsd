@@ -21,4 +21,4 @@
 **Q4:** Name the 5 levels of the verification maturity scale covered in this course. Which level are you at now?
 
 ??? success "Answer"
-    (1) Manual directed tests (Day 4), (2) Self-checking testbenches (Day 6), (3) AI-scaffolded testbenches (Days 6/8/12), (4) Assertion-enhanced (Day 14 Seg 1), (5) Constrained random + coverage analysis (Day 14 lab). Students are at Level 5 by end of today. Levels 6 (UVM) and 7 (formal) are covered in the department's V&V course.
+    (1) Manual directed tests (Day 4), (2) Self-checking testbenches (Day 6), (3) AI-scaffolded testbenches (Days 6/8/12), (4) Assertion-enhanced (Day 14 Seg 1), (5) Constrained random + coverage analysis (Day 14 lab). You're at Level 5 by end of today. Levels 6 (UVM) and 7 (formal) are covered in the department's V&V course.

@@ -7,7 +7,7 @@
 
 ## Student Learning Objectives
 
-By the end of this session, students will be able to:
+By the end of this session, you will be able to:
 
 1. **SLO 1.1:** Distinguish between the hardware description (concurrent) and software programming (sequential) mental models.
 2. **SLO 1.2:** Explain the difference between synthesis and simulation, and identify which constructs are synthesizable.
@@ -47,7 +47,7 @@ See `quiz.md` — 4 questions covering all 4 segments.
 | 0:35–0:45 | **Simulation live demo:** run `make sim` on `tb_button_logic`, walk through output | 10 min |
 | 0:45–0:55 | Lab kickoff: objectives, deliverables, environment setup guidance | 10 min |
 | 0:55–2:15 | Hands-on lab | 80 min |
-| 2:15–2:25 | Debrief: common pitfalls, show a student's work | 10 min |
+| 2:15–2:25 | Debrief: common pitfalls, share someone's work | 10 min |
 | 2:25–2:30 | Preview Day 2, assign pre-class video | 5 min |
 
 ---
@@ -253,7 +253,7 @@ Buttons-to-LEDs design with at least one logic modification (inversion, AND, OR,
 
 ## ⚠️ Common Pitfalls & FAQ
 
-> These are the issues that trip up most students on Day 1. Read them before lab — knowing what to watch for saves debugging time.
+> These are the issues that that come up most often on Day 1. Read them before lab — knowing what to watch for saves debugging time.
 
 - **USB driver not working?** Linux usually works out of the box. On macOS/Windows, check the troubleshooting section in `docs/course_setup_guide.md` — USB passthrough on WSL2 requires `usbipd-win`.
 - **"Nothing happened" after programming?** Usually a connection issue, not a code issue. Verify your board is recognized with `iceprog -t` (test mode) before you try to program.

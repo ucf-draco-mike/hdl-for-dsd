@@ -79,7 +79,7 @@
 - **Key lesson:** Protocol testbenches require domain expertise that AI approximates but doesn't guarantee
 
 ### IP Integration Quick Note (5 min)
-- For SPI: students choose to implement from scratch (recommended) or integrate open-source IP with a wrapper
+- For SPI: you choose to implement from scratch (recommended) or integrate open-source IP with a wrapper
 - Either approach: verify one complete SPI transaction in simulation
 
 ---
@@ -195,7 +195,7 @@
 | 4 — SPI master | 12.4 | Core |
 | 5 — UART-to-SPI bridge | 12.2, 12.4 | Stretch (bonus) |
 
-**Debrief note:** During the end-of-class debrief, be ready to share your AI tool comparison findings with the group. Hearing how different students approached the same problem is one of the most valuable parts of the class.
+**Debrief note:** During the end-of-class debrief, be ready to share your AI tool comparison findings with the group. Hearing how others approached the same problem is one of the most valuable parts of the class.
 
 ---
 
