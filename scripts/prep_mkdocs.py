@@ -855,6 +855,26 @@ def main():
         if src.exists(): symlink(src, DOCS / name)
     print(f"  Created: top-level pages (symlinks + index.md generated)")
 
+    # Barcelona sub-pages
+    bcn = DOCS / "barcelona"
+    bcn.mkdir(parents=True, exist_ok=True)
+
+    symlink(REPO / "barcelona" / "barcelona_adaptation_v2.md",
+            bcn / "adaptation.md")
+
+    for src in sorted((REPO / "barcelona" / "craft").glob("*.md")):
+        if src.name == "session_template.md":
+            continue
+        symlink(src, bcn / src.name)
+
+    for src in sorted((REPO / "barcelona" / "sessions").glob("*.md")):
+        symlink(src, bcn / src.name)
+
+    for src in sorted((REPO / "barcelona" / "visits").glob("*.md")):
+        symlink(src, bcn / src.name)
+
+    print(f"  Created: barcelona/ sub-pages (symlinks)")
+
     # Day pages
     for day_num, dir_name, title in DAYS:
         dz = f"{day_num:02d}"
