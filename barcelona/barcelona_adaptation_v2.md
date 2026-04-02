@@ -88,45 +88,15 @@ Every 2.5-hour teaching session follows this structure:
 | Wed 6/3 | CLASS | D8 | Hierarchy, Parameters & Generate | 🔧 Parameterize a module, synth at 3 widths, compare `yosys stat`. Eve: Cooking workshop |
 | Thu 6/4 | CLASS | D9 | Memory: RAM, ROM & Block RAM | 🔑 "Memory has physical constraints: read latency, port count, initialization. Coding patterns determine whether Yosys infers EBR or LUTs." |
 
-**D5+D6 Merge — Detailed Session Plan:**
+**D5+D6 Merge — CRAFT Overlay:**
 
-```
-🌍 Contextualize (10 min)
-   "Every digital system counts, shifts, and debounces. The processor
-    pipelines at Semidynamics you'll visit today? Built from the same
-    counters and shift registers you're about to design."
+- 🌍 **Contextualize:** Semidynamics visit — counters and shift registers in RISC-V pipelines
+- ⚠️ **Reframe:** Bounce needs a saturating counter, not `delay()`; simulation ≠ proof of correctness
+- 🔑 **Key Insight:** A testbench is not optional — writing it *before* the design is better
+- 🤖 **Check the Machine:** AI-generate a TB for debounce; compare coverage against manual TB
+- 🔗 **Transfer:** Sequential + verification mastered → FSMs tomorrow
 
-⚠️ Reframe (15 min)
-   Mini-lecture: "Buttons don't just work" — metastability, bounce
-   timing, why software debounce ≠ hardware debounce.
-   "If You're Thinking Like a Programmer: debounce with a delay()
-    call. Reframe: debounce with a counter that must saturate."
-
-👁️🤝🧪 Assemble — Part 1: Sequential Building Blocks (50 min)
-   👁️ I Do: Build modular counter + debounce circuit (15 min)
-   🤝 We Do: Add LFSR, wire debounced buttons → counter (15 min)
-   🧪 You Do: Design mod-N counter, deploy to Go Board (20 min)
-
-👁️🤝🧪 Assemble — Part 2: Testbenches & AI Verification (45 min)
-   👁️ I Do: Write self-checking TB for counter (10 min)
-      — testbench anatomy, $dumpvars, pass/fail counters
-   🤝 We Do: Prompt AI to generate TB for debounce module (15 min)
-      — structured prompt → evaluate output → annotate corrections
-   🧪 You Do: Write TB for your mod-N counter; then AI-generate
-      a second TB and compare coverage (20 min)
-
-🔧🤖 Fortify (15 min)
-   🔧 GTKWave: compare manual vs AI-generated waveforms
-   🤖 Check the Machine: "Which TB caught more bugs — yours or the
-      AI's? Why? What did each miss?"
-   🧠 How You Learn: "You wrote the TB *after* building the module.
-      What would change if you wrote it *before*?"
-
-🔗 Transfer (10 min)
-   "You can now build sequential circuits AND verify them. Tomorrow:
-    FSMs — the design pattern that ties everything together."
-   Homework: Watch D7 pre-class video (FSM theory, 50 min)
-```
+See `craft/day05_day06_craft.md` for full CRAFT overlay.
 
 **Pre-class video:** Students watch *both* the D5 video (counters/debounce, 45 min) and D6 video (testbench anatomy, 55 min) over the weekend. Total: ~100 min, split Sat/Sun.
 
@@ -154,44 +124,15 @@ Every 2.5-hour teaching session follows this structure:
 | UART loopback (TX→RX echo) | ❌ Dropped from required | Cool demo but not essential for learning objectives |
 | SPI Master | ❌ Dropped | Was already a stretch exercise; out of scope for abroad |
 
-**Condensed UART Session Plan:**
+**Condensed UART — CRAFT Overlay:**
 
-```
-🌍 Contextualize (10 min)
-   "Serial communication is everywhere — your Go Board's USB-to-UART
-    bridge, the debug ports on the RISC-V chips at Semidynamics,
-    the telemetry systems in the Metro control room."
+- 🌍 **Contextualize:** Serial communication everywhere — Go Board USB-UART, Semidynamics debug ports, Metro telemetry
+- ⚠️ **Reframe:** `print()` → FSM that shifts bits at a precise baud rate; no `print`, just shift register + counter + FSM
+- 🔑 **Key Insight:** UART TX = FSM shifting bits at a fixed rate; complexity is in timing, not logic
+- 🤖 **Check the Machine:** AI protocol-aware UART TB — does it check baud timing, all 8 data bits, back-to-back TX?
+- 🔗 **Transfer:** Communication interface from scratch → SystemVerilog tomorrow
 
-⚠️ Reframe (15 min)
-   "If You're Thinking Like a Programmer: send a string with
-    print(). Reframe: you're building a state machine that shifts
-    out one bit at a time at a precise baud rate."
-   UART protocol walkthrough: start bit, data bits, stop bit, baud.
-
-👁️🤝🧪 Assemble (80 min)
-   👁️ I Do: Build UART TX live — FSM + baud counter + shift
-      register (20 min)
-   🤝 We Do: Add configurable baud rate parameter (15 min)
-   🧪 You Do (25 min):
-      Ex 1: Parameterize for different baud rates, simulate
-      Ex 2: Deploy to Go Board — send your name to PC terminal
-      Ex 3 (stretch): Implement UART RX from pre-class video spec
-   🤖 AI Verification (20 min):
-      Prompt AI for a protocol-aware UART TB — does it check baud
-      timing? Start/stop bits? What does it miss?
-
-🔧 Fortify (15 min)
-   🔧 What Did the Tool Build? — synth UART at 9600 vs 115200 baud,
-      compare PPA. What changes? What doesn't?
-   🧠 How You Learn: "You just built a complete serial transmitter.
-      Three weeks ago you couldn't write a module. What changed?"
-
-🔗 Transfer (10 min)
-   "You've built a communication interface from scratch. Tomorrow:
-    SystemVerilog gives you better tools for everything you've
-    learned." Preview: `logic`, `always_ff`, `always_comb`, `enum`.
-   Homework: Watch D13 pre-class video (SV design, 45 min)
-```
+See `craft/day11_craft.md` for full CRAFT overlay.
 
 ---
 
