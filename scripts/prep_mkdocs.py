@@ -849,6 +849,8 @@ def main():
         ("dev-status.md",      REPO / "docs" / "course_dev_status.md"),
         ("getting-started.md", REPO / "docs" / "getting_started.md"),
         ("site-guide.md",      REPO / "docs" / "site_guide.md"),
+        ("barcelona-schedule.md", REPO / "docs" / "barcelona_schedule.md"),
+        ("barcelona-project.md",  REPO / "docs" / "barcelona_project.md"),
     ]:
         if src.exists(): symlink(src, DOCS / name)
     print(f"  Created: top-level pages (symlinks + index.md generated)")

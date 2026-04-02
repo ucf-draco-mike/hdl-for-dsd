@@ -179,3 +179,7 @@ nav:
       - days/day16/index.md
       - Daily Plan: days/day16/plan.md
       - Lab Guide: days/day16/lab.md
+
+  - Barcelona:
+      - Schedule: barcelona-schedule.md
+      - Project Spec: barcelona-project.md
