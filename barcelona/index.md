@@ -80,7 +80,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <span class="week-title">Verilog Foundations (May 25–29)</span>
 </div>
 
-<div class="card-grid card-grid--4">
+<div class="card-grid card-grid--5">
 
 <a class="day-card" href="day01_craft/">
 <div class="day-num" style="color:#1565C0">DAY 01</div>
@@ -98,6 +98,12 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">PM: Sagrada Familia</span></div>
 </a>
 
+<div class="day-card day-card--free" style="border-left:3px solid #1565C0">
+<div class="day-num" style="color:#1565C0">EXCURSION</div>
+<div class="day-title">Montserrat Day Trip</div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Thu 5/28</span></div>
+</div>
+
 <a class="day-card" href="day04_craft/">
 <div class="day-num" style="color:#1565C0">DAY 04</div>
 <div class="day-title">Clocked Logic & RTL Thinking</div>
@@ -112,7 +118,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <span class="week-title">Sequential Design & Verification (Jun 1–5)</span>
 </div>
 
-<div class="card-grid card-grid--4">
+<div class="card-grid card-grid--5">
 
 <a class="day-card" href="day05_day06_craft/">
 <div class="day-num" style="color:#7B1FA2">DAY 05+06</div>
@@ -136,6 +142,12 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">Memory: RAM & ROM</div>
 </a>
 
+<div class="day-card day-card--free" style="border-left:3px solid #7B1FA2">
+<div class="day-num" style="color:#7B1FA2">FREE</div>
+<div class="day-title">Independent Study / Explore Barcelona</div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Fri 6/5</span></div>
+</div>
+
 </div>
 </div>
 
@@ -145,7 +157,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <span class="week-title">Timing, UART & SystemVerilog (Jun 8–12)</span>
 </div>
 
-<div class="card-grid card-grid--4">
+<div class="card-grid card-grid--5">
 
 <a class="day-card" href="day10_craft/">
 <div class="day-num" style="color:#E65100">DAY 10</div>
@@ -169,6 +181,12 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">SystemVerilog for Verification</div>
 </a>
 
+<div class="day-card day-card--free" style="border-left:3px solid #E65100">
+<div class="day-num" style="color:#E65100">FREE</div>
+<div class="day-title">Independent Project Work</div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Fri 6/12</span></div>
+</div>
+
 </div>
 </div>
 
@@ -178,7 +196,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <span class="week-title">Integration & Demonstration (Jun 15–19)</span>
 </div>
 
-<div class="card-grid card-grid--4">
+<div class="card-grid card-grid--5">
 
 <a class="day-card" href="metro/">
 <div class="day-num" style="color:#2E7D32">VISIT</div>
@@ -201,6 +219,12 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">Demos & Course Wrap</div>
 <div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Baseline D16</span></div>
 </a>
+
+<div class="day-card day-card--free" style="border-left:3px solid #2E7D32">
+<div class="day-num" style="color:#2E7D32">FREE</div>
+<div class="day-title">Departure / Free Day</div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Fri 6/19</span></div>
+</div>
 
 </div>
 </div>
