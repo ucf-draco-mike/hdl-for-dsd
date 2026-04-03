@@ -49,11 +49,12 @@
 .card-grid--2 { grid-template-columns: repeat(2, 1fr); }
 .card-grid--3 { grid-template-columns: repeat(3, 1fr); }
 .card-grid--4 { grid-template-columns: repeat(4, 1fr); }
+.card-grid--5 { grid-template-columns: repeat(5, 1fr); }
 @media (max-width: 768px) {
-    .card-grid--3, .card-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .card-grid--3, .card-grid--4, .card-grid--5 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 480px) {
-    .card-grid--2, .card-grid--3, .card-grid--4 { grid-template-columns: 1fr; }
+    .card-grid--2, .card-grid--3, .card-grid--4, .card-grid--5 { grid-template-columns: 1fr; }
 }
 
 /* ═══ Stat Cards (Homepage) ═══ */
@@ -156,6 +157,17 @@ a.day-card:hover {
     color: var(--text-secondary);
     line-height: 1.35;
     min-height: 2.7em;
+}
+
+/* ═══ Free / Excursion Day Cards ═══ */
+.day-card--free {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    opacity: 0.8;
+    font-style: italic;
 }
 
 /* ═══ Feature Cards ═══ */
