@@ -911,7 +911,9 @@ def main():
     ov = DOCS / "overrides"
     ov.mkdir(exist_ok=True)
     (ov / "extra.css").write_text(EXTRA_CSS)
+    (ov / "extra.js").write_text(EXTRA_JS)
     print(f"  Created: overrides/extra.css")
+    print(f"  Created: overrides/extra.js")
 
     total = sum(1 for _ in DOCS.rglob("*") if _.is_file() or _.is_symlink())
     print(f"  Total: {total} files in docs_src/\n")
@@ -975,11 +977,12 @@ EXTRA_CSS = """\
 .card-grid--2 { grid-template-columns: repeat(2, 1fr); }
 .card-grid--3 { grid-template-columns: repeat(3, 1fr); }
 .card-grid--4 { grid-template-columns: repeat(4, 1fr); }
+.card-grid--5 { grid-template-columns: repeat(5, 1fr); }
 @media (max-width: 768px) {
-    .card-grid--3, .card-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    .card-grid--3, .card-grid--4, .card-grid--5 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 480px) {
-    .card-grid--2, .card-grid--3, .card-grid--4 { grid-template-columns: 1fr; }
+    .card-grid--2, .card-grid--3, .card-grid--4, .card-grid--5 { grid-template-columns: 1fr; }
 }
 
 /* ═══ Stat Cards (Homepage) ═══ */
@@ -1082,6 +1085,17 @@ a.day-card:hover {
     color: var(--text-secondary);
     line-height: 1.35;
     min-height: 2.7em;
+}
+
+/* ═══ Free / Excursion Day Cards ═══ */
+.day-card--free {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    opacity: 0.8;
+    font-style: italic;
 }
 
 /* ═══ Feature Cards ═══ */
@@ -1195,6 +1209,39 @@ a.day-card.day-dim {
     opacity: 0.3;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
+/* ═══ Clickable Cards (any card containing a link) ═══ */
+.nav-card--clickable,
+.feature-card--clickable {
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.nav-card--clickable:hover,
+.feature-card--clickable:hover {
+    border-color: var(--ucf-gold);
+    box-shadow: 0 2px 12px rgba(255, 201, 4, 0.12);
+}
+"""
+
+EXTRA_JS = """\
+/* Make any card containing a link clickable anywhere */
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.nav-card, .feature-card').forEach(function (card) {
+    var link = card.querySelector('a');
+    if (!link) return;
+    card.classList.add(card.classList.contains('nav-card')
+      ? 'nav-card--clickable'
+      : 'feature-card--clickable');
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;
+      if (link.target === '_blank') {
+        window.open(link.href, '_blank');
+      } else {
+        window.location.href = link.href;
+      }
+    });
+  });
+});
 """
 
 if __name__ == "__main__":
