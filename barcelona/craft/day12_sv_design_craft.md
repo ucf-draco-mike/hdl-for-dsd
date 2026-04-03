@@ -38,6 +38,6 @@
 
 [:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
 &nbsp;
-[:material-book-open-variant: Baseline D13 Materials](../../days/day13/plan.md){ .md-button .md-button--primary }
+[:material-book-open-variant: Baseline D13 Materials](../../days/day13/){ .md-button .md-button--primary }
 
-*This overlay supplements the [baseline D13 daily plan](../../days/day13/plan.md) (SystemVerilog). All lab exercises and lecture content come from the baseline D13 materials.*
+*This overlay supplements the [baseline D13 daily plan](../../days/day13/) (SystemVerilog). All lab exercises and lecture content come from the baseline D13 materials.*

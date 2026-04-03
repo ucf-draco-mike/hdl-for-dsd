@@ -32,6 +32,6 @@
 
 [:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
 &nbsp;
-[:material-book-open-variant: Baseline D2 Materials](../../days/day02/plan.md){ .md-button .md-button--primary }
+[:material-book-open-variant: Baseline D2 Materials](../../days/day02/){ .md-button .md-button--primary }
 
-*This overlay supplements the [baseline D2 daily plan](../../days/day02/plan.md). All lab exercises and lecture content come from the baseline D2 materials.*
+*This overlay supplements the [baseline D2 daily plan](../../days/day02/). All lab exercises and lecture content come from the baseline D2 materials.*
