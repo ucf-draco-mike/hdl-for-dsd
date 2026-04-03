@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # Academic Visit: Barcelona Metro Control Room
 
 **Date:** Monday, June 15 · 10:00 AM
@@ -40,3 +42,7 @@ communication, memory, timing — is running a city's transit."
 2. ⚠️ **What surprised you?**
 3. 🔧 **What connects?** — name at least 3 specific course concepts
 4. 🔗 **What's next?**
+
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }

@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # CRAFT Overlay — D4 — Clocked Logic & RTL Thinking
 
 **Date:** Fri 5/29
@@ -26,5 +28,10 @@
 
 ---
 
-*This overlay supplements the baseline daily plan. All lab exercises
-and lecture content come from the baseline D-day materials.*
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
+&nbsp;
+[:material-book-open-variant: Baseline D4 Materials](../../days/day04/plan.md){ .md-button .md-button--primary }
+
+*This overlay supplements the [baseline D4 daily plan](../../days/day04/plan.md). All lab exercises and lecture content come from the baseline D4 materials.*

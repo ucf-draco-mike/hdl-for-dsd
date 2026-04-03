@@ -363,13 +363,24 @@ Each project requires:
 
 ## Assessment
 
+Grading emphasizes hands-on lab and technical work (~85%) while recognizing
+engagement and enrichment activities (~15%).
+
+### Labs & Technical Work (85%)
+
 | Component | Weight | Notes |
 |-----------|--------|-------|
 | Lab exercises (12 sessions) | 35% | Quality over quantity; 12 graded lab sets |
 | Final project | 35% | Increased weight to match independent work emphasis |
-| Pre-class video quizzes | 10% | Unchanged |
-| Participation + visit reflections | 10% | Includes 3 visit write-ups (CRAFT-aligned) |
-| AI workflow portfolio | 10% | AI TB generations + corrections + reflections |
+| Pre-class video quizzes | 10% | Unchanged from baseline |
+| AI workflow portfolio | 5% | AI TB generations + corrections + reflections |
+
+### Activities & Engagement (15%)
+
+| Component | Weight | Notes |
+|-----------|--------|-------|
+| Visit reflections | 10% | 3 CRAFT-aligned write-ups (Semidynamics, HP, Metro) |
+| Participation & engagement | 5% | In-class contributions, questions, peer collaboration |
 
 **Academic Visit Reflection Format (CRAFT-aligned, 1 page max):**
 

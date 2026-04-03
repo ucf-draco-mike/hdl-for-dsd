@@ -52,7 +52,10 @@ must exercise at least: one FSM, one parameterized module, and one testbench.
 
 ---
 
-## Grading
+## Project Grading
+
+The final project is worth **35% of the course grade**. Within the
+project, components are weighted as follows:
 
 | Component | Weight |
 |-----------|--------|
@@ -61,6 +64,9 @@ must exercise at least: one FSM, one parameterized module, and one testbench.
 | Testbench + verification | 20% |
 | PPA snapshot + AI log | 15% |
 | Live demo presentation | 10% |
+
+For the full course grading breakdown, see the
+[Barcelona Day Plan](../barcelona/).
 
 ---
 

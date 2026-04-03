@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # Guest Lecture: RISC-V — David Castells Rufas
 
 **Date:** Wednesday, June 17 · 10:00 AM
@@ -31,12 +33,13 @@ to processor design. Examples:
 
 ## During the Lecture
 
-Note connections to course concepts:
-- [ ] FSMs (pipeline control, instruction decode)
-- [ ] Parameterization (configurable cores)
-- [ ] Memory (register file, caches)
-- [ ] Timing (pipeline stages, clock frequency)
-- [ ] Verification (how they test)
+Note connections to course concepts as you listen:
+
+- **FSMs** — pipeline control, instruction decode
+- **Parameterization** — configurable cores
+- **Memory** — register file, caches
+- **Timing** — pipeline stages, clock frequency
+- **Verification** — how they test
 
 ---
 
@@ -47,3 +50,7 @@ moment.** "You now have the foundation to understand and contribute
 to what David does. The path from your first `hello_led` module to
 a RISC-V core is a matter of scale, not fundamentally different
 skills."
+
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }

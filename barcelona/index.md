@@ -185,9 +185,10 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">Barcelona Metro Control Room</div>
 </a>
 
-<a class="day-card" href="../../days/day14/">
-<div class="day-num" style="color:#2E7D32">DAY 14</div>
+<a class="day-card" href="../../days/day15/">
+<div class="day-num" style="color:#2E7D32">BUILD</div>
 <div class="day-title">Project Build Day</div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Baseline D15</span></div>
 </a>
 
 <a class="day-card" href="riscv_lecture/">
@@ -195,9 +196,10 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">RISC-V Lecture — David Castells Rufas</div>
 </a>
 
-<a class="day-card" href="../../days/day15/">
-<div class="day-num" style="color:#2E7D32">DAY 15</div>
+<a class="day-card" href="../../days/day16/">
+<div class="day-num" style="color:#2E7D32">DEMO</div>
 <div class="day-title">Demos & Course Wrap</div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Baseline D16</span></div>
 </a>
 
 </div>
@@ -228,6 +230,36 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 </div>
 
 </div>
+
+## Course Grading
+
+<div class="card-grid card-grid--2" markdown>
+
+<div class="feature-card" markdown>
+<strong>Labs & Technical Work (85%)</strong>
+
+| Component | Weight |
+|-----------|--------|
+| Lab exercises (12 sessions) | 35% |
+| Final project | 35% |
+| Pre-class video quizzes | 10% |
+| AI workflow portfolio | 5% |
+
+</div>
+
+<div class="feature-card" markdown>
+<strong>Activities & Engagement (15%)</strong>
+
+| Component | Weight |
+|-----------|--------|
+| Visit reflections (3 write-ups) | 10% |
+| Participation & engagement | 5% |
+
+</div>
+
+</div>
+
+See the [Barcelona Project Spec](../barcelona-project.md) for project-specific deliverables and rubric.
 
 ## What Makes the Abroad Edition Different
 

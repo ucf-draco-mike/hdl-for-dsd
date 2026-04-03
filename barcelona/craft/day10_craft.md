@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # CRAFT Overlay — D10 — Timing, Numerical Architectures & PPA
 
 **Date:** Mon 6/8
@@ -26,5 +28,10 @@
 
 ---
 
-*This overlay supplements the baseline daily plan. All lab exercises
-and lecture content come from the baseline D-day materials.*
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
+&nbsp;
+[:material-book-open-variant: Baseline D10 Materials](../../days/day10/plan.md){ .md-button .md-button--primary }
+
+*This overlay supplements the [baseline D10 daily plan](../../days/day10/plan.md). All lab exercises and lecture content come from the baseline D10 materials.*

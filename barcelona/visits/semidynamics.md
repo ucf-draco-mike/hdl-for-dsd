@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # Academic Visit: Semidynamics
 
 **Date:** Monday, June 1 · 4:00–5:30 PM
@@ -44,3 +46,7 @@ Write 1 page max:
 2. ⚠️ **What surprised you?** What contradicted your expectations?
 3. 🔧 **What connects?** Which course concepts did you recognize?
 4. 🔗 **What's next?** How does this shift your thinking?
+
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }

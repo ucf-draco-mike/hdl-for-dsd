@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # CRAFT Overlay — D2 — Data Types, Vectors & Operators
 
 **Date:** Tue 5/26
@@ -26,5 +28,10 @@
 
 ---
 
-*This overlay supplements the baseline daily plan. All lab exercises
-and lecture content come from the baseline D-day materials.*
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
+&nbsp;
+[:material-book-open-variant: Baseline D2 Materials](../../days/day02/plan.md){ .md-button .md-button--primary }
+
+*This overlay supplements the [baseline D2 daily plan](../../days/day02/plan.md). All lab exercises and lecture content come from the baseline D2 materials.*
