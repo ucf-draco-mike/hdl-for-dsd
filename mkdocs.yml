@@ -201,6 +201,8 @@ nav:
         - "D11 — UART TX (Condensed)": barcelona/day11_craft.md
         - "D12 — SV for Design": barcelona/day12_sv_design_craft.md
         - "D13 — SV for Verification": barcelona/day13_sv_verif_craft.md
+        - "Build Day — Project Integration": barcelona/day14_build_craft.md
+        - "Demo Day — Demos & Course Wrap": barcelona/day16_demo_craft.md
       - Academic Visits:
         - Semidynamics: barcelona/semidynamics.md
         - Hewlett Packard: barcelona/hp.md
