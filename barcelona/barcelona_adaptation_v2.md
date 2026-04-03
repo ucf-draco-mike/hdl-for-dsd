@@ -79,7 +79,7 @@ Every 2.5-hour teaching session follows this structure:
 
 ---
 
-### Week 2: Sequential Design, Verification & Structure (Jun 1–4)
+### Week 2: Sequential Design, Verification & Structure (Jun 1–5)
 
 | Date | Cal Day | Baseline | Barcelona Session | Key CRAFT Moments |
 |------|---------|----------|-------------------|-------------------|
@@ -87,6 +87,7 @@ Every 2.5-hour teaching session follows this structure:
 | Tue 6/2 | CLASS | D7 | Finite State Machines | ⚠️ "If You're Thinking Like a Programmer: FSM = switch in a loop. Reframe: FSM = physical flip-flops + combinational next-state logic." PM: HP visit |
 | Wed 6/3 | CLASS | D8 | Hierarchy, Parameters & Generate | 🔧 Parameterize a module, synth at 3 widths, compare `yosys stat`. Eve: Cooking workshop |
 | Thu 6/4 | CLASS | D9 | Memory: RAM, ROM & Block RAM | 🔑 "Memory has physical constraints: read latency, port count, initialization. Coding patterns determine whether Yosys infers EBR or LUTs." |
+| Fri 6/5 | FREE | — | Independent study / explore Barcelona | |
 
 **D5+D6 Merge — CRAFT Overlay:**
 
@@ -102,7 +103,7 @@ See `craft/day05_day06_craft.md` for full CRAFT overlay.
 
 ---
 
-### Week 3: Timing, Communication & SystemVerilog (Jun 8–11)
+### Week 3: Timing, Communication & SystemVerilog (Jun 8–12)
 
 | Date | Cal Day | Baseline | Barcelona Session | Key CRAFT Moments |
 |------|---------|----------|-------------------|-------------------|
@@ -110,6 +111,7 @@ See `craft/day05_day06_craft.md` for full CRAFT overlay.
 | Tue 6/9 | CLASS | **D11+D12 condensed** | **UART: Protocol Design & Implementation** | 👁️🤝🧪 Full Assemble arc for TX; RX covered conceptually + stretch exercise. Eve: Flamenco |
 | Wed 6/10 | CLASS | D13 | SystemVerilog for Design | 🔗 "Everything you learned in Verilog translates. SV doesn't replace it — it sharpens it." PM: Park Güell |
 | Thu 6/11 | CLASS | D14 | SystemVerilog for Verification | 🤖 AI constraint-based TB for project module — capstone Fortify exercise |
+| Fri 6/12 | FREE | — | Independent project work | |
 
 **UART Condensed — What Stays, What Goes:**
 
@@ -136,7 +138,7 @@ See `craft/day11_craft.md` for full CRAFT overlay.
 
 ---
 
-### Week 4: Integration, Transfer & Demonstration (Jun 15–18)
+### Week 4: Integration, Transfer & Demonstration (Jun 15–19)
 
 | Date | Cal Day | Baseline | Barcelona Session | Key CRAFT Moments |
 |------|---------|----------|-------------------|-------------------|
@@ -144,6 +146,7 @@ See `craft/day11_craft.md` for full CRAFT overlay.
 | Tue 6/16 | CLASS | D15 | Project Build Day | 🧪 All You Do: structured project work + PPA analysis + AI-assisted final TB |
 | Wed 6/17 | GUEST | — | RISC-V Lecture (David Castells Rufas, UAB) | 🌍🔗 Capstone Transfer: from your first module to processor design |
 | Thu 6/18 | CLASS | D16 | Project Demos & Course Wrap | 🔗 "Where to go from here" — ASIC/FPGA careers, UVM, formal verification |
+| Fri 6/19 | FREE | — | Departure / free day | |
 
 ---
 
@@ -370,8 +373,8 @@ engagement and enrichment activities (~15%).
 
 | Component | Weight | Notes |
 |-----------|--------|-------|
-| Lab exercises (12 sessions) | 35% | Quality over quantity; 12 graded lab sets |
-| Final project | 35% | Increased weight to match independent work emphasis |
+| Lab exercises (12 sessions) | 65% | Quality over quantity; 12 graded lab sets |
+| Final project | 5% | Lightweight capstone demo |
 | Pre-class video quizzes | 10% | Unchanged from baseline |
 | AI workflow portfolio | 5% | AI TB generations + corrections + reflections |
 
