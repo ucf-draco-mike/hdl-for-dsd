@@ -181,6 +181,7 @@ nav:
       - Lab Guide: days/day16/lab.md
 
   - Barcelona:
+      - barcelona/index.md
       - Schedule: barcelona-schedule.md
       - Project Spec: barcelona-project.md
       - Adaptation Plan: barcelona/adaptation.md
@@ -189,15 +190,14 @@ nav:
         - "D2 — Data Types & Vectors": barcelona/day02_craft.md
         - "D3 — Combinational Logic": barcelona/day03_craft.md
         - "D4 — Clocked Logic & RTL": barcelona/day04_craft.md
+        - "D5+D6 — Counters, TBs & AI Verif (Merged)": barcelona/day05_day06_craft.md
         - "D7 — Finite State Machines": barcelona/day07_craft.md
         - "D8 — Hierarchy & Generate": barcelona/day08_craft.md
         - "D9 — Memory: RAM & ROM": barcelona/day09_craft.md
         - "D10 — Timing & PPA": barcelona/day10_craft.md
+        - "D11 — UART TX (Condensed)": barcelona/day11_craft.md
         - "D12 — SV for Design": barcelona/day12_sv_design_craft.md
         - "D13 — SV for Verification": barcelona/day13_sv_verif_craft.md
-      - Session Plans:
-        - "D5+D6 Merged Plan": barcelona/d05_d06_merged_plan.md
-        - "D11 Condensed Plan": barcelona/d11_condensed_plan.md
       - Academic Visits:
         - Semidynamics: barcelona/semidynamics.md
         - Hewlett Packard: barcelona/hp.md

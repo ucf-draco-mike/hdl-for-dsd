@@ -859,15 +859,15 @@ def main():
     bcn = DOCS / "barcelona"
     bcn.mkdir(parents=True, exist_ok=True)
 
+    # Landing page
+    symlink(REPO / "barcelona" / "index.md", bcn / "index.md")
+
     symlink(REPO / "barcelona" / "barcelona_adaptation_v2.md",
             bcn / "adaptation.md")
 
     for src in sorted((REPO / "barcelona" / "craft").glob("*.md")):
         if src.name == "session_template.md":
             continue
-        symlink(src, bcn / src.name)
-
-    for src in sorted((REPO / "barcelona" / "sessions").glob("*.md")):
         symlink(src, bcn / src.name)
 
     for src in sorted((REPO / "barcelona" / "visits").glob("*.md")):
