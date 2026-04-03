@@ -36,14 +36,17 @@ BARCELONA_DAYS = [
     ("Tue 6/2",  "CLASS",     "D7",     "Finite State Machines",                      2),
     ("Wed 6/3",  "CLASS",     "D8",     "Hierarchy, Parameters & Generate",           2),
     ("Thu 6/4",  "CLASS",     "D9",     "Memory: RAM, ROM & Block RAM",               2),
+    ("Fri 6/5",  "FREE",      None,     "Independent study / explore Barcelona",      2),
     ("Mon 6/8",  "CLASS",     "D10",    "Timing, Numerical Architectures & PPA",      3),
     ("Tue 6/9",  "CLASS",     "D11",    "UART: Protocol Design & Implementation",     3),
     ("Wed 6/10", "CLASS",     "D12",    "SystemVerilog for Design",                   3),
     ("Thu 6/11", "CLASS",     "D13",    "SystemVerilog for Verification",             3),
+    ("Fri 6/12", "FREE",      None,     "Independent project work",                   3),
     ("Mon 6/15", "VISIT",     None,     "Barcelona Metro Control Room",               4),
     ("Tue 6/16", "CLASS",     "D14",    "Project Build Day",                          4),
     ("Wed 6/17", "GUEST",     None,     "RISC-V Lecture — David Castells Rufas",      4),
     ("Thu 6/18", "CLASS",     "D15",    "Project Demos & Course Wrap",                4),
+    ("Fri 6/19", "FREE",      None,     "Departure / free day",                       4),
 ]
 
 # ── CRAFT phase template (shared across all session plans) ───────────────────
@@ -789,7 +792,7 @@ def main():
         | Thu 5/28 | Excursion | Montserrat Day Trip |
         | Fri 5/29 | Class | D4: Clocked Logic & RTL Thinking |
 
-        ### Week 2: Sequential Design & Verification (Jun 1–4)
+        ### Week 2: Sequential Design & Verification (Jun 1–5)
 
         | Date | Type | Session |
         |------|------|---------|
@@ -797,8 +800,9 @@ def main():
         | Tue 6/2 | Class | D7: FSMs · PM: HP Barcelona |
         | Wed 6/3 | Class | D8: Hierarchy & Parameters · Eve: Cooking |
         | Thu 6/4 | Class | D9: Memory Systems |
+        | Fri 6/5 | **Free** | Independent study / explore Barcelona |
 
-        ### Week 3: Timing, UART & SystemVerilog (Jun 8–11)
+        ### Week 3: Timing, UART & SystemVerilog (Jun 8–12)
 
         | Date | Type | Session |
         |------|------|---------|
@@ -806,8 +810,9 @@ def main():
         | Tue 6/9 | **Condensed** | D11: UART TX (RX = stretch) · Eve: Flamenco |
         | Wed 6/10 | Class | D12: SV for Design · PM: Park Güell |
         | Thu 6/11 | Class | D13: SV for Verification |
+        | Fri 6/12 | **Free** | Independent project work |
 
-        ### Week 4: Integration & Demonstration (Jun 15–18)
+        ### Week 4: Integration & Demonstration (Jun 15–19)
 
         | Date | Type | Session |
         |------|------|---------|
@@ -815,6 +820,7 @@ def main():
         | Tue 6/16 | Class | D14: Project Build Day |
         | Wed 6/17 | Guest | RISC-V Lecture — David Castells Rufas |
         | Thu 6/18 | Class | D15: Demos & Course Wrap |
+        | Fri 6/19 | **Free** | Departure / free day |
 
         ---
 

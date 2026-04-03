@@ -54,7 +54,7 @@ must exercise at least: one FSM, one parameterized module, and one testbench.
 
 ## Project Grading
 
-The final project is worth **35% of the course grade**. Within the
+The final project is worth **5% of the course grade**. Within the
 project, components are weighted as follows:
 
 | Component | Weight |

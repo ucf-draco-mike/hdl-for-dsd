@@ -109,7 +109,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="week-section">
 <div class="week-header">
 <span class="week-num" style="background:#7B1FA2">2</span>
-<span class="week-title">Sequential Design & Verification (Jun 1–4)</span>
+<span class="week-title">Sequential Design & Verification (Jun 1–5)</span>
 </div>
 
 <div class="card-grid card-grid--4">
@@ -142,7 +142,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="week-section">
 <div class="week-header">
 <span class="week-num" style="background:#E65100">3</span>
-<span class="week-title">Timing, UART & SystemVerilog (Jun 8–11)</span>
+<span class="week-title">Timing, UART & SystemVerilog (Jun 8–12)</span>
 </div>
 
 <div class="card-grid card-grid--4">
@@ -175,7 +175,7 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="week-section">
 <div class="week-header">
 <span class="week-num" style="background:#2E7D32">4</span>
-<span class="week-title">Integration & Demonstration (Jun 15–18)</span>
+<span class="week-title">Integration & Demonstration (Jun 15–19)</span>
 </div>
 
 <div class="card-grid card-grid--4">
@@ -240,8 +240,8 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 
 | Component | Weight |
 |-----------|--------|
-| Lab exercises (12 sessions) | 35% |
-| Final project | 35% |
+| Lab exercises (12 sessions) | 65% |
+| Final project | 5% |
 | Pre-class video quizzes | 10% |
 | AI workflow portfolio | 5% |
 
