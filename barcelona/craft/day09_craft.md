@@ -32,6 +32,6 @@
 
 [:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
 &nbsp;
-[:material-book-open-variant: Baseline D9 Materials](../../days/day09/plan.md){ .md-button .md-button--primary }
+[:material-book-open-variant: Baseline D9 Materials](../../days/day09/){ .md-button .md-button--primary }
 
-*This overlay supplements the [baseline D9 daily plan](../../days/day09/plan.md). All lab exercises and lecture content come from the baseline D9 materials.*
+*This overlay supplements the [baseline D9 daily plan](../../days/day09/). All lab exercises and lecture content come from the baseline D9 materials.*

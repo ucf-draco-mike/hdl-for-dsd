@@ -32,6 +32,6 @@
 
 [:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
 &nbsp;
-[:material-book-open-variant: Baseline D14 Materials](../../days/day14/plan.md){ .md-button .md-button--primary }
+[:material-book-open-variant: Baseline D14 Materials](../../days/day14/){ .md-button .md-button--primary }
 
-*This overlay supplements the [baseline D14 daily plan](../../days/day14/plan.md) (SV Verification). All lab exercises and lecture content come from the baseline D14 materials.*
+*This overlay supplements the [baseline D14 daily plan](../../days/day14/) (SV Verification). All lab exercises and lecture content come from the baseline D14 materials.*

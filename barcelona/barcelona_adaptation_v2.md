@@ -373,10 +373,9 @@ engagement and enrichment activities (~15%).
 
 | Component | Weight | Notes |
 |-----------|--------|-------|
-| Lab exercises (12 sessions) | 65% | Quality over quantity; 12 graded lab sets |
+| Lab exercises (12 sessions) | 72% | 6% per lab; 12 graded lab sets |
 | Final project | 5% | Lightweight capstone demo |
-| Pre-class video quizzes | 10% | Unchanged from baseline |
-| AI workflow portfolio | 5% | AI TB generations + corrections + reflections |
+| AI workflow portfolio | 8% | AI TB generations + corrections + reflections |
 
 ### Activities & Engagement (15%)
 

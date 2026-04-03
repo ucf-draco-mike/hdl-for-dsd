@@ -38,6 +38,6 @@
 
 [:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
 &nbsp;
-[:material-book-open-variant: Baseline D8 Materials](../../days/day08/plan.md){ .md-button .md-button--primary }
+[:material-book-open-variant: Baseline D8 Materials](../../days/day08/){ .md-button .md-button--primary }
 
-*This overlay supplements the [baseline D8 daily plan](../../days/day08/plan.md). All lab exercises and lecture content come from the baseline D8 materials.*
+*This overlay supplements the [baseline D8 daily plan](../../days/day08/). All lab exercises and lecture content come from the baseline D8 materials.*
