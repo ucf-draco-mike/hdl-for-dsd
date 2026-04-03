@@ -264,10 +264,9 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 
 | Component | Weight |
 |-----------|--------|
-| Lab exercises (12 sessions) | 65% |
+| Lab exercises (12 sessions) | 72% |
 | Final project | 5% |
-| Pre-class video quizzes | 10% |
-| AI workflow portfolio | 5% |
+| AI workflow portfolio | 8% |
 
 </div>
 

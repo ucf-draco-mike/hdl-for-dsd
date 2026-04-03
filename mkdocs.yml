@@ -57,6 +57,9 @@ theme:
 extra_css:
   - overrides/extra.css
 
+extra_javascript:
+  - overrides/extra.js
+
 markdown_extensions:
   - tables
   - fenced_code

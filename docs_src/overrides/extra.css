@@ -281,3 +281,15 @@ a.day-card.day-dim {
     opacity: 0.3;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
+
+/* ═══ Clickable Cards (any card containing a link) ═══ */
+.nav-card--clickable,
+.feature-card--clickable {
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.nav-card--clickable:hover,
+.feature-card--clickable:hover {
+    border-color: var(--ucf-gold);
+    box-shadow: 0 2px 12px rgba(255, 201, 4, 0.12);
+}
