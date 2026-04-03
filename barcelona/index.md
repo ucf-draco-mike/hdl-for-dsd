@@ -203,10 +203,10 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">Barcelona Metro Control Room</div>
 </a>
 
-<a class="day-card" href="../../days/day15/">
+<a class="day-card" href="day14_build_craft/">
 <div class="day-num" style="color:#2E7D32">BUILD</div>
 <div class="day-title">Project Build Day</div>
-<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Baseline D15</span></div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Tue 6/16</span></div>
 </a>
 
 <a class="day-card" href="riscv_lecture/">
@@ -214,10 +214,10 @@ Compression strategy, CRAFT mapping, and assessment adjustments.
 <div class="day-title">RISC-V Lecture — David Castells Rufas</div>
 </a>
 
-<a class="day-card" href="../../days/day16/">
+<a class="day-card" href="day16_demo_craft/">
 <div class="day-num" style="color:#2E7D32">DEMO</div>
 <div class="day-title">Demos & Course Wrap</div>
-<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Baseline D16</span></div>
+<div class="day-threads"><span class="thread-badge" style="font-size:0.72em; color:var(--text-muted)">Thu 6/18</span></div>
 </a>
 
 <div class="day-card day-card--free" style="border-left:3px solid #2E7D32">
