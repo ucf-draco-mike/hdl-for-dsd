@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # Academic Visit: Hewlett Packard Customer Center
 
 **Date:** Tuesday, June 2 · Afternoon (time TBD)
@@ -38,3 +40,7 @@ Same pattern: human expertise + AI scaffolding."
 2. ⚠️ **What surprised you?**
 3. 🔧 **What connects?**
 4. 🔗 **What's next?**
+
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }

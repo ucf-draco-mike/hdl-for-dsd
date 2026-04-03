@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # CRAFT Overlay — D13 — SystemVerilog for Verification
 
 **Date:** Thu 6/11
@@ -26,5 +28,10 @@
 
 ---
 
-*This overlay supplements the baseline daily plan. All lab exercises
-and lecture content come from the baseline D-day materials.*
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
+&nbsp;
+[:material-book-open-variant: Baseline D14 Materials](../../days/day14/plan.md){ .md-button .md-button--primary }
+
+*This overlay supplements the [baseline D14 daily plan](../../days/day14/plan.md) (SV Verification). All lab exercises and lecture content come from the baseline D14 materials.*

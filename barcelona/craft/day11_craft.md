@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # CRAFT Overlay — D11 — UART: Protocol Design & Implementation
 
 **Date:** Tue 6/9
@@ -32,5 +34,12 @@
 
 ---
 
-*This overlay supplements the baseline daily plan. All lab exercises
-and lecture content come from the baseline D11 + D12 materials.*
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
+&nbsp;
+[:material-book-open-variant: Baseline D11 Materials](../../days/day11/plan.md){ .md-button .md-button--primary }
+&nbsp;
+[:material-book-open-variant: Baseline D12 Materials](../../days/day12/plan.md){ .md-button .md-button--primary }
+
+*This overlay supplements the baseline daily plan. All lab exercises and lecture content come from the baseline [D11](../../days/day11/plan.md) + [D12](../../days/day12/plan.md) materials.*

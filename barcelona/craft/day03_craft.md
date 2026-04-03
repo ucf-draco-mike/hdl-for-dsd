@@ -1,3 +1,5 @@
+[**:material-arrow-left: Back to Barcelona Day Plan**](../index.md){ .md-button }
+
 # CRAFT Overlay — D3 — Combinational Logic & always@(*)
 
 **Date:** Wed 5/27
@@ -32,5 +34,10 @@
 
 ---
 
-*This overlay supplements the baseline daily plan. All lab exercises
-and lecture content come from the baseline D-day materials.*
+---
+
+[:material-arrow-left: Back to Barcelona Day Plan](../index.md){ .md-button }
+&nbsp;
+[:material-book-open-variant: Baseline D3 Materials](../../days/day03/plan.md){ .md-button .md-button--primary }
+
+*This overlay supplements the [baseline D3 daily plan](../../days/day03/plan.md). All lab exercises and lecture content come from the baseline D3 materials.*
