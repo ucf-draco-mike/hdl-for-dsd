@@ -73,9 +73,8 @@ Amaranth HDL (Python-to-RTL), LiteX (SoC builder), SymbiFlow/F4PGA (open FPGA to
 
 ---
 
-## You Keep the Go Board
+## Keep exploring
 
-The Go Board is yours. Keep tinkering. Try one project within the next week while everything is fresh.
 
 The open-source toolchain you learned was built by volunteers who believed this technology should be accessible to everyone. The tutorials, forum posts, and IP cores you've used were shared by engineers who want to help others learn.
 

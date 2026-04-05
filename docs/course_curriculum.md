@@ -517,7 +517,6 @@
 - Course retrospective: what worked, what to improve
 **Wrap (15 min):**
 - Feedback collection
-- You keep the Go Board — keep building!
 
 ---
 

@@ -1,6 +1,6 @@
 # Where to Go From Here
 
-## Keep the Go Board — Projects to Try
+## Get a Go Board — Projects to Try
 
 | Project | What You'll Learn | Difficulty |
 |---------|-------------------|-----------|

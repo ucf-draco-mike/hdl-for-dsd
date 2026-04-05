@@ -108,7 +108,6 @@ Each person presents for **5–7 minutes**, followed by brief Q&A:
 - Google/Efabless shuttle program: fabricate real chips from open-source designs
 
 ### Immediate Next Steps (5 min)
-- Keep the Go Board — keep building
 - Suggested projects: VGA display driver, I²C controller, simple CPU, audio synthesizer
 - Resources: FPGA4Fun, Nandland tutorials, Lattice documentation
 - Open-source community: join the YosysHQ and SymbiFlow communities
@@ -133,7 +132,6 @@ Each person presents for **5–7 minutes**, followed by brief Q&A:
 
 - Final submissions deadline reminder
 - Office hours for remaining questions
-- **You keep the Go Board** — it's yours. Build something amazing.
 
 ---
 

@@ -24,7 +24,7 @@
 
 ## 🔗 Transfer
 
-"This course gave you RTL fluency, verification discipline, and PPA intuition. Where you go next — UVM, formal verification, ASIC tapeout, RISC-V cores — depends on you. The Go Board is yours. Keep building."
+"This course gave you RTL fluency, verification discipline, and PPA intuition. Where you go next — UVM, formal verification, ASIC tapeout, RISC-V cores — depends on you."
 
 ---
 

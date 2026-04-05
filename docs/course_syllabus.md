@@ -44,7 +44,6 @@ Upon successful completion of this course, you will be able to:
 ### Required Hardware
 - **Nandland Go Board** (Lattice iCE40 HX1K · 4 LEDs · 4 switches · dual 7-segment displays · VGA · USB)
   - Available from [nandland.com](https://nandland.com/the-go-board/)
-  - You keep the board after the course
 
 ### Software Toolchain (all free, open-source)
 - **Yosys** — Verilog synthesis

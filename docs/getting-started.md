@@ -32,8 +32,6 @@ You need one piece of hardware: the **Nandland Go Board** (Lattice iCE40 HX1K).
 
 [:octicons-arrow-right-16: Nandland Go Board](https://nandland.com/the-go-board/){ .md-button .md-button--primary target=_blank }
 
-You'll keep the board after the course.
-
 ---
 
 ## :material-numeric-2-circle: Set Up Your Computer
