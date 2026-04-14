@@ -85,7 +85,7 @@ Open a **new terminal** after installation completes.
 ### 3. Clone & Enter the Course Environment
 
 ```bash
-git clone https://github.com/ucf-draco-mike/hdl-for-dsd.git
+git clone https://github.com/ucf-draco-mike/hdl-for-dsd-student.git hdl-for-dsd
 cd hdl-for-dsd
 nix develop
 ```

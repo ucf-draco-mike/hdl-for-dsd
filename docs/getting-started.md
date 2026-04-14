@@ -84,7 +84,7 @@ The entire toolchain installs through a single command using [Nix](https://nixos
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 
 # Open a NEW terminal, then:
-git clone https://github.com/ucf-draco-mike/hdl-for-dsd.git
+git clone https://github.com/ucf-draco-mike/hdl-for-dsd-student.git hdl-for-dsd
 cd hdl-for-dsd
 nix develop          # first run: ~5-15 min download; instant after that
 ```
