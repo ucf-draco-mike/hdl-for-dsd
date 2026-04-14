@@ -167,11 +167,23 @@ nix --version
 
 ## Step 2: Clone the Course Repository
 
+Clone the **student course repo**. It contains the flake, the labs
+(`labs/`), and the shared module library (`shared/`) — everything you
+need to work through the course on your laptop. It is auto-generated
+from the instructor source repo on every push, so `git pull` always
+gets you the latest fixes.
+
 ```bash
-# Clone the repo (replace with the actual URL your instructor provides)
-git clone https://github.com/<org>/hdl-course.git
-cd hdl-course
+git clone https://github.com/ucf-draco-mike/hdl-for-dsd-student.git hdl-for-dsd
+cd hdl-for-dsd
 ```
+
+> **Why not the main `hdl-for-dsd` repo?** That repo is the instructor
+> source-of-truth and also holds course planning docs, slide sources,
+> and site-build scripts you don't need. The student repo is the same
+> code minus the instructor-only material. Keep an eye on the course
+> site for per-exercise starter/solution zips if you ever want to grab
+> a single exercise without cloning.
 
 ---
 
@@ -209,7 +221,7 @@ You should see:
 > nix profile install nixpkgs#direnv nixpkgs#nix-direnv
 > echo 'eval "$(direnv hook bash)"' >> ~/.bashrc   # or ~/.zshrc
 > mkdir -p ~/.config/direnv && echo 'source $HOME/.nix-profile/share/nix-direnv/direnvrc' >> ~/.config/direnv/direnvrc
-> cd hdl-course && direnv allow
+> cd hdl-for-dsd && direnv allow
 > ```
 > After this, the tools are available the moment you enter the directory.
 
@@ -425,7 +437,7 @@ The `build_all.sh` script runs each step in order:
 
 ```bash
 # ── Enter the course environment ──
-cd hdl-course && nix develop
+cd hdl-for-dsd && nix develop
 
 # ── Simulation ──
 iverilog -o sim.vvp -g2012 tb_module.v module.v
