@@ -1,0 +1,23 @@
+# Paths (relative to repo root) that ship to the student mirror repo
+# `ucf-draco-mike/hdl-for-dsd-student`.
+#
+# One entry per line.
+#   - Directory entries (trailing slash or plain name that resolves to a dir)
+#     are copied recursively with symlinks preserved.
+#   - File entries are copied verbatim.
+#   - Lines beginning with `#` and blank lines are ignored.
+#
+# Anything NOT listed here is considered instructor-only and is excluded
+# from the mirror (see scripts/publish_student_mirror.py).
+#
+# When editing this list, keep the student's working tree minimal and
+# self-contained: the goal is that `nix develop` + `cd labs/...` + `make sim`
+# works with nothing else on disk.
+
+flake.nix
+.envrc
+.gitignore
+LICENSE
+labs/
+shared/
+projects/README.md

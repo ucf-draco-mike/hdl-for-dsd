@@ -1,0 +1,59 @@
+# .github/workflows/student-mirror.yml
+#
+# Publish the curated student mirror (ucf-draco-mike/hdl-for-dsd-student)
+# from the instructor source-of-truth. Runs on every push to main and on
+# manual dispatch.
+#
+# Requires repo secret STUDENT_MIRROR_DEPLOY_KEY: an SSH private key whose
+# public counterpart is registered as a write-enabled deploy key on the
+# mirror repo. Using a deploy key (over a PAT) scopes write access to that
+# single repo.
+#
+# See scripts/publish_student_mirror.py and scripts/student_mirror_allowlist.txt.
+
+name: Sync Student Mirror
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: "student-mirror"
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build mirror tree
+        run: |
+          python3 scripts/publish_student_mirror.py \
+            --out "$RUNNER_TEMP/mirror" \
+            --source-sha "${{ github.sha }}"
+
+      - name: Configure SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.STUDENT_MIRROR_DEPLOY_KEY }}
+
+      - name: Add github.com to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Push to mirror
+        run: |
+          python3 scripts/publish_student_mirror.py \
+            --out "$RUNNER_TEMP/mirror" \
+            --push git@github.com:ucf-draco-mike/hdl-for-dsd-student.git \
+            --source-sha "${{ github.sha }}"
