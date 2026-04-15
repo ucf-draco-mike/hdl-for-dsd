@@ -60,13 +60,20 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     border-radius: 6px;
     border-left: 4px solid var(--ucf-gold);
+    /* Scroll instead of silently clipping. 560px ≈ 720 logical − 80 header − 80 padding. */
+    max-height: 560px;
+    overflow: auto;
 }
 .reveal pre code {
     font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
     font-size: 0.55em; line-height: 1.5; padding: 1em;
-    max-height: 520px;
+    /* Let parent <pre> own height/scroll; code fills naturally. */
+    max-height: none;
+    overflow: visible;
     background: var(--color-code-bg); color: #D4D4D4;
     border-radius: 6px;
+    display: block;
+    box-sizing: border-box;
 }
 .reveal code {
     font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
@@ -86,6 +93,31 @@
 .reveal table th { background: var(--ucf-black); color: var(--ucf-gold); padding: 0.5em 0.8em; text-align: left; font-weight: 700; }
 .reveal table td { padding: 0.4em 0.8em; border-bottom: 1px solid var(--ucf-light-gray); }
 .reveal table tr:nth-child(even) td { background: #FAFAFA; }
+
+/* ── Overflow Guards ──
+   Reveal scales the 1280×720 logical slide; overflowing content is otherwise
+   clipped by .slides{overflow:hidden}. Cap common offenders to slide bounds. */
+.reveal img {
+    max-width: 100%;
+    max-height: calc(720px - 160px);  /* 720 logical − 2×40 padding − ~80 header */
+    height: auto;
+    object-fit: contain;
+}
+.reveal svg {
+    max-width: 100%;
+    max-height: calc(720px - 160px);
+}
+.reveal .slides section > table,
+.reveal .slides section > .table-wrap {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+}
+.reveal .columns > .col,
+.reveal .two-col > .col {
+    min-width: 0;
+    min-height: 0;  /* let flex children shrink */
+}
 
 /* ── Title Slide ── */
 .reveal .title-slide { text-align: center; }
