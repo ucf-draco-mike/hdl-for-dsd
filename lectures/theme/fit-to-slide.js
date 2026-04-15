@@ -101,9 +101,9 @@
     }
 
     function renderButton(btn) {
-        btn.textContent = enabled ? '⤢ fit: on' : '⤡ fit: off';
+        btn.textContent = enabled ? '⤢ Fit to window: ON' : '⤡ Fit to window: OFF';
         btn.setAttribute('aria-pressed', String(enabled));
-        btn.title = 'Fit slide content to screen (Shift+F)';
+        btn.title = 'Click to toggle fit-to-window scaling (keyboard: Shift+F)';
     }
 
     function toggle() {
@@ -121,13 +121,20 @@
         btn.type = 'button';
         btn.setAttribute('aria-label', 'Toggle fit-to-slide');
         btn.style.cssText =
-            'position:fixed;bottom:8px;right:8px;z-index:50;' +
-            'background:rgba(0,0,0,0.55);color:#FFC904;' +
-            'border:1px solid #FFC904;border-radius:4px;' +
-            'padding:3px 9px;font:500 11px/1.2 Inter,"Segoe UI",sans-serif;' +
-            'cursor:pointer;opacity:0.7;transition:opacity .15s;';
-        btn.onmouseenter = function () { btn.style.opacity = '1'; };
-        btn.onmouseleave = function () { btn.style.opacity = '0.7'; };
+            'position:fixed;bottom:10px;right:10px;z-index:50;' +
+            'background:#000;color:#FFC904;' +
+            'border:1.5px solid #FFC904;border-radius:5px;' +
+            'padding:6px 12px;font:600 13px/1.2 Inter,"Segoe UI",sans-serif;' +
+            'cursor:pointer;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,0.3);' +
+            'transition:transform .15s,box-shadow .15s;';
+        btn.onmouseenter = function () {
+            btn.style.transform = 'translateY(-1px)';
+            btn.style.boxShadow = '0 3px 10px rgba(0,0,0,0.4)';
+        };
+        btn.onmouseleave = function () {
+            btn.style.transform = 'none';
+            btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        };
         btn.onclick = toggle;
         renderButton(btn);
         document.body.appendChild(btn);

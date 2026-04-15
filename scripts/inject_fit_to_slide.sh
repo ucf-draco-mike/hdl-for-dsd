@@ -4,9 +4,12 @@
 # Accelerated HDL for Digital System Design — inject fit-to-slide.js into
 # every reveal.js slide deck under lectures/week*/d*.html.
 #
-# Adds one <script> tag pointing to ../../theme/fit-to-slide.js, inserted
+# Adds one <script> tag pointing to ../theme/fit-to-slide.js, inserted
 # immediately after the reveal.js notes plugin <script> tag (a common anchor
 # present in every deck, independent of init-form variant).
+#
+# Path note: lecture decks live at lectures/week*/d*.html, so the theme
+# directory is one level up (../theme/), NOT two (../../theme/).
 #
 # Usage:
 #   chmod +x scripts/inject_fit_to_slide.sh
@@ -34,7 +37,7 @@ fi
 echo ""
 
 ANCHOR='<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>'
-INJECT='<script src="../../theme/fit-to-slide.js"></script>'
+INJECT='<script src="../theme/fit-to-slide.js"></script>'
 MARKER='theme/fit-to-slide.js'
 
 FIXES=0
