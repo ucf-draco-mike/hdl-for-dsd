@@ -60,9 +60,14 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     border-radius: 6px;
     border-left: 4px solid var(--ucf-gold);
-    /* Scroll instead of silently clipping. 560px ≈ 720 logical − 80 header − 80 padding. */
-    max-height: 560px;
-    overflow: auto;
+    /* Viewport-relative cap so code blocks shrink with the actual window,
+       not the 1280×720 logical slide. Horizontal scroll keeps long lines
+       intact rather than wrapping them (which mangles indentation). */
+    max-height: 65vh;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 .reveal pre code {
     font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
@@ -74,6 +79,8 @@
     border-radius: 6px;
     display: block;
     box-sizing: border-box;
+    white-space: pre;         /* never wrap code lines */
+    overflow-wrap: normal;
 }
 .reveal code {
     font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
@@ -94,18 +101,62 @@
 .reveal table td { padding: 0.4em 0.8em; border-bottom: 1px solid var(--ucf-light-gray); }
 .reveal table tr:nth-child(even) td { background: #FAFAFA; }
 
-/* ── Overflow Guards ──
-   Reveal scales the 1280×720 logical slide; overflowing content is otherwise
-   clipped by .slides{overflow:hidden}. Cap common offenders to slide bounds. */
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE OVERFLOW + FIT-TO-WINDOW
+   Three-part defense for content that outgrows the 1280×720 logical slide:
+     1. Section-level vertical scroll (viewport-relative, not pixel)
+     2. Per-element caps (code, images, tables, flex columns)
+     3. Optional fit-mode that scales the active slide via CSS variable
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ─── 1. Section-level overflow (default mode) ───
+   Reveal silently clips overflow via .slides{overflow:hidden}. Give each
+   innermost section a viewport-scoped cap + vertical scrollbar so long
+   content becomes navigable instead of invisible. */
+.reveal .slides section {
+    box-sizing: border-box;
+    max-height: 95vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 0.5em;   /* keep scrollbar clear of reveal controls */
+}
+/* Stack parents (outer <section> wrapping nested <section>s) must not
+   double-scroll — reveal handles them. */
+.reveal .slides section.stack {
+    max-height: none;
+    overflow: visible;
+}
+
+/* Branded scrollbars so the scrollable region is obviously a region. */
+.reveal pre::-webkit-scrollbar,
+.reveal .slides section::-webkit-scrollbar { width: 8px; height: 8px; }
+.reveal pre::-webkit-scrollbar-track,
+.reveal .slides section::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.15); border-radius: 4px;
+}
+.reveal pre::-webkit-scrollbar-thumb,
+.reveal .slides section::-webkit-scrollbar-thumb {
+    background: var(--ucf-gold); border-radius: 4px; opacity: 0.75;
+}
+.reveal pre::-webkit-scrollbar-thumb:hover,
+.reveal .slides section::-webkit-scrollbar-thumb:hover {
+    background: var(--ucf-gold-dark);
+}
+.reveal pre, .reveal .slides section {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ucf-gold) rgba(0,0,0,0.15);
+}
+
+/* ─── 2. Per-element overflow guards ─── */
 .reveal img {
     max-width: 100%;
-    max-height: calc(720px - 160px);  /* 720 logical − 2×40 padding − ~80 header */
+    max-height: 80vh;
     height: auto;
     object-fit: contain;
 }
 .reveal svg {
     max-width: 100%;
-    max-height: calc(720px - 160px);
+    max-height: 80vh;
 }
 .reveal .slides section > table,
 .reveal .slides section > .table-wrap {
@@ -117,6 +168,30 @@
 .reveal .two-col > .col {
     min-width: 0;
     min-height: 0;  /* let flex children shrink */
+}
+
+/* ─── 3. Fit-mode (toggle via Shift+F or button) ───
+   When body has .fit-mode, the ACTIVE slide is scaled by a CSS variable
+   (--fit-scale) computed in JS to fit the viewport. Replaces in-slide
+   scrolling with a uniformly-shrunk slide — better for projector use. */
+body.fit-mode .reveal .slides section.present {
+    transform: scale(var(--fit-scale, 1));
+    transform-origin: top center;
+    /* In fit-mode the scale handles it — don't clip or scroll. */
+    max-height: none;
+    overflow: visible;
+}
+body.fit-mode .reveal pre {
+    max-height: none;
+    overflow: visible;
+}
+
+/* ─── 4. Print / PDF export ───
+   reveal's ?print-pdf mode needs untransformed, unscrolled content. */
+@media print {
+    body.fit-mode .reveal .slides section.present,
+    .reveal .slides section { transform: none !important; max-height: none !important; overflow: visible !important; }
+    .reveal pre { max-height: none !important; overflow: visible !important; }
 }
 
 /* ── Title Slide ── */
