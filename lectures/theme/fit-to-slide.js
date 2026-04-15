@@ -1,28 +1,43 @@
 /*
- * fit-to-slide.js — auto-shrink overflowing slide content to fit the logical
- * 1280×720 reveal.js slide. Toggleable via Shift+F and a bottom-right button.
+ * fit-to-slide.js — optional "fit the active slide to the browser window"
+ * toggle for reveal.js lecture decks.
  *
- * Why: reveal.js scales the whole slide container to fit the viewport but
- * does NOT shrink content that exceeds the logical slide area. Long code
- * blocks, tall diagrams, or dense compositions then get clipped by
- * .slides { overflow: hidden }.
+ * The primary defense against overflow is in CSS (ucf-hdl.css §
+ * RESPONSIVE OVERFLOW): each section caps at 95vh with a vertical
+ * scrollbar, each <pre> caps at 65vh, imgs/svgs cap at 80vh. That means
+ * out-of-the-box content scrolls inside the slide instead of silently
+ * clipping — no JS required.
  *
- * Strategy: on every slide change / resize / fragment event, wrap each
- * innermost <section>'s content in a <div class="fit-wrapper"> and apply
- * transform: scale(s) when measurement shows overflow. Reveal's own outer
- * scale composes with this inner scale, so content stays crisp and the
- * aspect ratio is preserved.
+ * This file adds an OPTIONAL fit-mode (keyboard Shift+F, or the
+ * bottom-right button) that, when enabled, measures the active slide's
+ * natural height and scales it down uniformly via transform: scale()
+ * so nothing scrolls — everything fits in one glance. Useful for
+ * projectors and lecture halls where scrolling is awkward.
  *
- * State: localStorage['hdl-fit-to-slide'] ('true'/'false'). Default ON.
+ * Strategy (adapted from the RTS course's approach):
+ *   • No DOM rewriting — no wrapper divs, no reparenting. Reveal keeps
+ *     full control of layout.
+ *   • Scale is applied via a single CSS variable `--fit-scale` on :root
+ *     and a `.fit-mode` class on <body>. CSS in ucf-hdl.css picks up
+ *     the scale on `.reveal .slides section.present`.
+ *   • JS only measures + writes the variable. Measurement uses
+ *     scrollHeight (unscaled, transform-independent) vs. innerHeight.
+ *   • Preference persisted in localStorage[hdl-fit-to-slide].
  */
 (function () {
     'use strict';
 
-    var LS_KEY = 'hdl-fit-to-slide';
-    var SAFETY = 0.98;  // 2% breathing room after fit
+    var LS_KEY   = 'hdl-fit-to-slide';
+    var BTN_ID   = 'fit-toggle-btn';
+    var SAFETY   = 0.92;    // leave 8% margin so nothing kisses the edges
+    var MIN_S    = 0.35;    // don't shrink past legibility
+
+    var root = document.documentElement;
+    var body = document.body;
+
     var enabled = (function () {
-        try { return localStorage.getItem(LS_KEY) !== 'false'; }
-        catch (e) { return true; }
+        try { return localStorage.getItem(LS_KEY) === 'true'; }
+        catch (e) { return false; }
     })();
 
     function persist() {
@@ -30,74 +45,24 @@
         catch (e) { /* storage disabled — in-memory only */ }
     }
 
-    // Wrap direct children of <section> in a .fit-wrapper, but leave reveal's
-    // <aside class="notes"> alone so the speaker-notes plugin still finds it.
-    function ensureWrapper(section) {
-        if (section.dataset.fitWrapped === '1') {
-            return section.querySelector(':scope > .fit-wrapper');
-        }
-        var wrap = document.createElement('div');
-        wrap.className = 'fit-wrapper';
-        wrap.style.transformOrigin = 'top left';
-        wrap.style.width = '100%';
-        wrap.style.height = '100%';
-
-        // Move non-aside.notes children into the wrapper, preserving order.
-        var kids = Array.prototype.slice.call(section.childNodes);
-        for (var i = 0; i < kids.length; i++) {
-            var n = kids[i];
-            if (n.nodeType === 1 && n.tagName === 'ASIDE' &&
-                n.classList.contains('notes')) continue;
-            wrap.appendChild(n);
-        }
-        section.insertBefore(wrap, section.firstChild);
-        section.dataset.fitWrapped = '1';
-        return wrap;
+    function computeScale() {
+        // The visible slide is the one reveal marked .present.
+        var slide = document.querySelector('.reveal .slides section.present');
+        if (!slide) return 1;
+        // scrollHeight is the unscaled layout height — transforms don't
+        // affect it, so we always measure the "natural" size even if a
+        // stale scale is still applied.
+        var natural = slide.scrollHeight;
+        var target  = window.innerHeight * SAFETY;
+        if (natural <= target) return 1;
+        var s = target / natural;
+        return s < MIN_S ? MIN_S : s;
     }
 
-    function unwrap(section) {
-        if (section.dataset.fitWrapped !== '1') return;
-        var wrap = section.querySelector(':scope > .fit-wrapper');
-        if (!wrap) { delete section.dataset.fitWrapped; return; }
-        while (wrap.firstChild) section.insertBefore(wrap.firstChild, wrap);
-        wrap.parentNode.removeChild(wrap);
-        delete section.dataset.fitWrapped;
-    }
-
-    function fitSection(section) {
-        if (!enabled) { unwrap(section); return; }
-
-        var wrap = ensureWrapper(section);
-        // Reset before measuring.
-        wrap.style.transform = 'none';
-        wrap.style.width = '100%';
-        wrap.style.height = '100%';
-
-        // Force layout read.
-        var sw = wrap.scrollWidth;
-        var sh = wrap.scrollHeight;
-        var cw = section.clientWidth;
-        var ch = section.clientHeight;
-
-        if (sw <= cw + 1 && sh <= ch + 1) {
-            return;  // fits naturally
-        }
-        var s = Math.min(cw / sw, ch / sh) * SAFETY;
-        if (!isFinite(s) || s <= 0) return;
-        wrap.style.transform = 'scale(' + s + ')';
-        // Counter-size wrapper so post-scale it still fills the slide visually.
-        wrap.style.width = (100 / s) + '%';
-        wrap.style.height = (100 / s) + '%';
-    }
-
-    function fitAll() {
-        var sections = document.querySelectorAll('.reveal .slides section');
-        for (var i = 0; i < sections.length; i++) {
-            var sec = sections[i];
-            // Skip stack parents (outer sections that contain nested <section>s).
-            if (sec.querySelector(':scope > section')) continue;
-            fitSection(sec);
-        }
+    function applyScale() {
+        if (!enabled) { root.style.removeProperty('--fit-scale'); return; }
+        var s = computeScale();
+        root.style.setProperty('--fit-scale', s.toFixed(3));
     }
 
     function renderButton(btn) {
@@ -106,18 +71,22 @@
         btn.title = 'Click to toggle fit-to-window scaling (keyboard: Shift+F)';
     }
 
-    function toggle() {
-        enabled = !enabled;
+    function setEnabled(on) {
+        enabled = !!on;
+        body.classList.toggle('fit-mode', enabled);
         persist();
-        var btn = document.getElementById('fit-toggle-btn');
+        var btn = document.getElementById(BTN_ID);
         if (btn) renderButton(btn);
-        fitAll();
+        if (enabled) requestAnimationFrame(applyScale);
+        else root.style.removeProperty('--fit-scale');
     }
 
+    function toggle() { setEnabled(!enabled); }
+
     function installUI() {
-        if (document.getElementById('fit-toggle-btn')) return;
+        if (document.getElementById(BTN_ID)) return;
         var btn = document.createElement('button');
-        btn.id = 'fit-toggle-btn';
+        btn.id = BTN_ID;
         btn.type = 'button';
         btn.setAttribute('aria-label', 'Toggle fit-to-slide');
         btn.style.cssText =
@@ -141,6 +110,7 @@
     }
 
     function installKey() {
+        // Capture phase — beat reveal's own key bindings.
         document.addEventListener('keydown', function (e) {
             if (!e.shiftKey) return;
             if (e.key !== 'F' && e.key !== 'f') return;
@@ -150,28 +120,31 @@
             e.preventDefault();
             e.stopPropagation();
             toggle();
-        }, true);  // capture phase — beat reveal's own handlers
-    }
-
-    function injectPrintStyle() {
-        // Disable scaling when reveal does ?print-pdf export.
-        var s = document.createElement('style');
-        s.textContent =
-            '@media print { .fit-wrapper { transform: none !important; ' +
-            'width: 100% !important; height: 100% !important; } }';
-        document.head.appendChild(s);
+        }, true);
     }
 
     function boot() {
         if (typeof Reveal === 'undefined') return;
-        injectPrintStyle();
         installUI();
         installKey();
-        Reveal.on('ready', fitAll);
-        Reveal.on('slidechanged', fitAll);
-        Reveal.on('resize', fitAll);
-        Reveal.on('fragmentshown', fitAll);
-        Reveal.on('fragmenthidden', fitAll);
+        // Initial state — button reflects saved pref; class + var reflect it too.
+        if (enabled) body.classList.add('fit-mode');
+
+        Reveal.on('ready', applyScale);
+        Reveal.on('slidechanged', function () {
+            // Reveal updates .present synchronously before firing; rAF waits
+            // for layout so scrollHeight is accurate.
+            requestAnimationFrame(applyScale);
+        });
+        Reveal.on('fragmentshown', applyScale);
+        Reveal.on('fragmenthidden', applyScale);
+
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            if (!enabled) return;
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(applyScale, 80);
+        });
     }
 
     if (document.readyState === 'loading') {
