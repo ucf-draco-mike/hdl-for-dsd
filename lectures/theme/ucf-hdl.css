@@ -186,12 +186,98 @@ body.fit-mode .reveal pre {
     overflow: visible;
 }
 
-/* ─── 4. Print / PDF export ───
-   reveal's ?print-pdf mode needs untransformed, unscrolled content. */
+/* ─── 4. Floating UI: discreet fit-mode toggle ───
+   A compact pill in the bottom-left corner. Faded by default so it
+   never competes with slide content or reveal's own slide-number
+   (bottom-right). Inspired by the RTS course's deck-ui pattern. */
+.deck-ui-button {
+    position: fixed;
+    bottom: 0.9em;
+    left: 0.9em;
+    z-index: 10000;
+    background: var(--ucf-black);
+    color: var(--ucf-gold);
+    border: 1px solid var(--ucf-gold);
+    border-radius: 3px;
+    padding: 0.35em 0.75em;
+    font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 1.2;
+}
+.deck-ui-button:hover,
+.deck-ui-button:focus-visible { opacity: 1; outline: none; }
+.deck-ui-button.is-active {
+    background: var(--ucf-gold);
+    color: var(--ucf-black);
+    opacity: 1;
+}
+
+/* ─── 5. Help / keybindings toast (one-shot, on first visit) ─── */
+.deck-help-toast {
+    position: fixed;
+    top: 1em;
+    right: 1em;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.92);
+    color: var(--ucf-white);
+    padding: 0.85em 1.1em 0.95em;
+    border-radius: 4px;
+    border-left: 3px solid var(--ucf-gold);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+    font-family: 'Inter','Segoe UI','Helvetica Neue',Arial,sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 300px;
+    cursor: pointer;
+    transition: opacity 0.4s ease;
+}
+.deck-help-toast strong {
+    display: block;
+    color: var(--ucf-gold);
+    font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+}
+.deck-help-toast kbd {
+    background: var(--ucf-gold);
+    color: var(--ucf-black);
+    padding: 0.05em 0.45em;
+    border-radius: 2px;
+    font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
+    font-weight: 700;
+    font-size: 0.85em;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    display: inline-block;
+    min-width: 1.2em;
+    text-align: center;
+}
+.deck-help-toast .dismiss-hint {
+    margin-top: 0.55em;
+    font-size: 0.78em;
+    opacity: 0.55;
+    font-style: italic;
+}
+.deck-help-toast.fading { opacity: 0; pointer-events: none; }
+
+/* ─── 6. Print / PDF export ───
+   reveal's ?print-pdf mode needs untransformed, unscrolled content.
+   Hide the floating UI — it has no place in exported PDFs. */
 @media print {
     body.fit-mode .reveal .slides section.present,
     .reveal .slides section { transform: none !important; max-height: none !important; overflow: visible !important; }
     .reveal pre { max-height: none !important; overflow: visible !important; }
+    .deck-ui-button, .deck-help-toast { display: none !important; }
 }
 
 /* ── Title Slide ── */

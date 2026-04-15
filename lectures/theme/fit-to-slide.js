@@ -9,12 +9,21 @@
  * clipping — no JS required.
  *
  * This file adds an OPTIONAL fit-mode (keyboard Shift+F, or the
- * bottom-right button) that, when enabled, measures the active slide's
+ * bottom-left button) that, when enabled, measures the active slide's
  * natural height and scales it down uniformly via transform: scale()
  * so nothing scrolls — everything fits in one glance. Useful for
  * projectors and lecture halls where scrolling is awkward.
  *
- * Strategy (adapted from the RTS course's approach):
+ * UI philosophy (adapted from the RTS course):
+ *   • The fit button is DISCREET — faded to ~35% opacity by default,
+ *     fully visible on hover. Compact uppercase monospace pill in the
+ *     bottom-left corner so it never competes with slide content or
+ *     reveal's own controls (arrows bottom-right, slide-number too).
+ *   • A one-shot help toast announces the Shift+F shortcut on first
+ *     visit, auto-dismisses after 5s, and is remembered in
+ *     localStorage so students see it exactly once.
+ *
+ * Implementation:
  *   • No DOM rewriting — no wrapper divs, no reparenting. Reveal keeps
  *     full control of layout.
  *   • Scale is applied via a single CSS variable `--fit-scale` on :root
@@ -27,10 +36,13 @@
 (function () {
     'use strict';
 
-    var LS_KEY   = 'hdl-fit-to-slide';
-    var BTN_ID   = 'fit-toggle-btn';
-    var SAFETY   = 0.92;    // leave 8% margin so nothing kisses the edges
-    var MIN_S    = 0.35;    // don't shrink past legibility
+    var LS_KEY       = 'hdl-fit-to-slide';
+    var LS_HELP_KEY  = 'hdl-fit-help-seen';
+    var BTN_ID       = 'fit-toggle-btn';
+    var TOAST_ID     = 'fit-help-toast';
+    var SAFETY       = 0.92;    // leave 8% margin so nothing kisses the edges
+    var MIN_S        = 0.35;    // don't shrink past legibility
+    var TOAST_MS     = 5000;    // auto-dismiss help toast after 5s
 
     var root = document.documentElement;
     var body = document.body;
@@ -66,9 +78,11 @@
     }
 
     function renderButton(btn) {
-        btn.textContent = enabled ? '⤢ Fit to window: ON' : '⤡ Fit to window: OFF';
+        // Short, glanceable label. Full context lives in the title attr.
+        btn.textContent = enabled ? '⤢ Fit on' : '⤢ Fit';
         btn.setAttribute('aria-pressed', String(enabled));
-        btn.title = 'Click to toggle fit-to-window scaling (keyboard: Shift+F)';
+        btn.title = 'Fit slide to window (Shift+F)';
+        btn.classList.toggle('is-active', enabled);
     }
 
     function setEnabled(on) {
@@ -88,25 +102,44 @@
         var btn = document.createElement('button');
         btn.id = BTN_ID;
         btn.type = 'button';
+        btn.className = 'deck-ui-button fit-toggle';
         btn.setAttribute('aria-label', 'Toggle fit-to-slide');
-        btn.style.cssText =
-            'position:fixed;bottom:10px;right:10px;z-index:50;' +
-            'background:#000;color:#FFC904;' +
-            'border:1.5px solid #FFC904;border-radius:5px;' +
-            'padding:6px 12px;font:600 13px/1.2 Inter,"Segoe UI",sans-serif;' +
-            'cursor:pointer;opacity:1;box-shadow:0 2px 6px rgba(0,0,0,0.3);' +
-            'transition:transform .15s,box-shadow .15s;';
-        btn.onmouseenter = function () {
-            btn.style.transform = 'translateY(-1px)';
-            btn.style.boxShadow = '0 3px 10px rgba(0,0,0,0.4)';
-        };
-        btn.onmouseleave = function () {
-            btn.style.transform = 'none';
-            btn.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
-        };
         btn.onclick = toggle;
         renderButton(btn);
         document.body.appendChild(btn);
+    }
+
+    function helpSeen() {
+        try { return localStorage.getItem(LS_HELP_KEY) === 'true'; }
+        catch (e) { return false; }
+    }
+    function markHelpSeen() {
+        try { localStorage.setItem(LS_HELP_KEY, 'true'); }
+        catch (e) { /* storage disabled */ }
+    }
+
+    function installHelpToast() {
+        if (helpSeen()) return;
+        if (document.getElementById(TOAST_ID)) return;
+        var toast = document.createElement('div');
+        toast.id = TOAST_ID;
+        toast.className = 'deck-help-toast';
+        toast.setAttribute('role', 'status');
+        toast.innerHTML =
+            '<strong>Deck tips</strong>' +
+            '<div><kbd>Shift</kbd>+<kbd>F</kbd> &mdash; fit slide to window</div>' +
+            '<div><kbd>F</kbd> &mdash; fullscreen &nbsp;·&nbsp; <kbd>S</kbd> &mdash; speaker notes</div>' +
+            '<div class="dismiss-hint">click to dismiss</div>';
+        function dismiss() {
+            toast.classList.add('fading');
+            markHelpSeen();
+            setTimeout(function () {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 450);
+        }
+        toast.addEventListener('click', dismiss);
+        document.body.appendChild(toast);
+        setTimeout(dismiss, TOAST_MS);
     }
 
     function installKey() {
@@ -127,6 +160,7 @@
         if (typeof Reveal === 'undefined') return;
         installUI();
         installKey();
+        installHelpToast();
         // Initial state — button reflects saved pref; class + var reflect it too.
         if (enabled) body.classList.add('fit-mode');
 
