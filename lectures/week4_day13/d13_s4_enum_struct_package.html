@@ -1,124 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13.4: enum, struct, package — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13.4: enum · struct · package — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">enum, struct, package</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~15 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog Transition</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">enum · struct · package</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Why SV?</span>
-        <span class="seg-label ">logic Type</span>
-        <span class="seg-label ">always_ff/comb</span>
-        <span class="seg-label active">enum/struct/pkg</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 13.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Why SV</span><span class="seg-label">logic type</span><span class="seg-label">always_*</span><span class="seg-label active">enum/struct/package</span></div>
+    <aside class="notes">Video 4 of 4. The features that make your codebase look like software engineering rather than a pile of Verilog files.</aside>
 </section>
 
 <section>
-    <h2><code>enum</code> — Named States</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;">
-    <pre class="sim" style="font-size:0.45em;"><code class="language-verilog">// Verilog
-localparam S_IDLE  = 2'b00;
-localparam S_START = 2'b01;
-localparam S_DATA  = 2'b10;
-localparam S_STOP  = 2'b11;
-reg [1:0] r_state;</code></pre>
-    <pre class="synth" style="font-size:0.45em;"><code class="language-verilog">// SystemVerilog
-typedef enum logic [1:0] {
-    S_IDLE, S_START,
-    S_DATA, S_STOP
-} uart_state_t;
-uart_state_t state;</code></pre>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Large RTL codebases live and die by their type systems. ARM's CPU projects have central <code>package</code> files defining instruction opcodes, cache states, pipeline bundle types — referenced by hundreds of modules. Intel's ASIC flows require <code>typedef enum</code> for every FSM state. Without these features, thousand-module codebases would drown in <code>localparam</code> and port lists. Shared types are how large teams stay sane.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Week 4 capstone will have a handful of modules sharing state definitions. <code>package</code> lets you define them once. <code>typedef enum</code> lets the compiler type-check your FSM transitions. <code>struct</code> lets you bundle UART frame fields into one signal. Modest codebase, large effect.</p>
+        </div>
     </div>
-    <div style="font-size:0.8em;margin-top:0.3em;">
-        <p class="fragment"><strong>Type safety:</strong> <code>state = 3;</code> → compile warning</p>
-        <p class="fragment"><strong>Debug:</strong> <code>$display("State: %s", state.name());</code> prints <code>"S_IDLE"</code></p>
-        <p class="fragment"><strong>Synthesis:</strong> Identical to <code>localparam</code> — zero hardware cost</p>
-    </div>
-    <aside class="notes">Enum gives you named, type-safe states. Compiler warns on invalid assignments. state.name() prints readable names in simulation. Zero hardware cost.</aside>
+    <aside class="notes">These features are how real codebases scale. At 10 modules you can fake it. At 100 modules you need package + typedef.</aside>
 </section>
-<section>
-    <h2><code>struct packed</code> — Grouped Signals</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>typedef struct packed {
-    logic [7:0] data;
-    logic       valid;
-    logic       busy;
-} uart_tx_ctrl_t;             // 10 bits wide
-<span class="fragment">
-uart_tx_ctrl_t tx;
 
-tx.data  = 8'h41;             // dot notation
-tx.valid = 1'b1;
-if (tx.busy) ...               // readable, clean</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <code>packed</code> = contiguous bit vector. Fully synthesizable. Same as <code>logic [9:0]</code> but with named fields.
-    </div>
-    <aside class="notes">Packed struct: contiguous bit vector with named fields. Fully synthesizable, zero overhead. Groups related signals for cleaner interfaces.</aside>
-</section>
 <section>
-    <h2><code>package</code> — Shared Definitions</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// uart_pkg.sv — shared across all UART modules
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;localparam Is Fine&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;My FSM uses <code>localparam [2:0] S_IDLE = 3'd0; ...</code> — it works. What does <code>enum</code> add?&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Three things <code>typedef enum</code> adds that <code>localparam</code> cannot: (1) <strong>type safety</strong> — the compiler catches <code>state = WRITE_REG</code> if <code>WRITE_REG</code> belongs to a different enum. (2) <strong>named value debugging</strong> — in GTKWave, signals show <code>S_BUSY</code> instead of <code>3'd2</code>. (3) <strong>width inference</strong> — no manual <code>$clog2</code> arithmetic. Three bugs shut, three readability wins, zero silicon cost.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> <code>typedef enum</code> is what <code>localparam</code> <em>should have been</em>. localparam was a hack for &ldquo;no enum keyword in 1995.&rdquo; Use enum now.
+    </div>
+    <aside class="notes">localparam for states is a workaround; typedef enum is the proper tool. Three concrete wins. Zero cost.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; <code>typedef enum</code> for FSM States</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
+        <div style="background:#fff8e1;padding:0.6em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">VERILOG-2001</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">localparam [1:0]
+    S_GREEN  = 2'd0,
+    S_YELLOW = 2'd1,
+    S_RED    = 2'd2;
+
+reg [1:0] r_state, r_next;
+
+always @(posedge clk)
+    r_state &lt;= r_next;</code></pre>
+        </div>
+        <div style="background:#f0f8ff;padding:0.6em;border-radius:6px;border:2px solid #2E86AB;">
+            <p style="color:#2E86AB;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">SYSTEMVERILOG</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">typedef enum logic [1:0] {
+    S_GREEN,
+    S_YELLOW,
+    S_RED
+} state_t;
+
+state_t r_state, r_next;
+
+always_ff @(posedge clk)
+    r_state &lt;= r_next;</code></pre>
+        </div>
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Three improvements. (1) <code>state_t</code> is a named type I can reuse across modules. (2) Values auto-assigned 0, 1, 2 (or I can override). (3) Width is part of the type — no width declaration on every variable. Plus GTKWave shows <code>S_GREEN</code> not <code>2'd0</code>.
+    </div>
+    <aside class="notes">Three wins in 10 lines. Reusable type, auto-assigned values, GTKWave readability.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>struct</code> for Bundled Signals</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Bundle a UART frame into one struct
+typedef struct packed {
+    logic       start_bit;    // 1 bit
+    logic [7:0] data;         // 8 bits
+    logic       parity;       // 1 bit
+    logic       stop_bit;     // 1 bit
+} uart_frame_t;                // total: 11 bits, packed left-to-right
+
+// Now this is one signal, not four
+uart_frame_t frame_in, frame_out;
+
+// Access individual fields:
+assign frame_out.data = processed_byte;
+// Or assign the whole thing:
+assign frame_out = '{start_bit: 1'b0, data: 8'hA5,
+                     parity: 1'b1, stop_bit: 1'b1};</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> <code>packed struct</code> means the struct lives contiguously in memory as a flat bit vector — <code>$bits(uart_frame_t)</code> = 11, and you can treat <code>frame_out</code> as an <code>[10:0]</code> value. Ports that carry frames no longer need 4 separate signals; they carry one <code>uart_frame_t</code>. Port lists shrink; bundling is explicit; individual fields are still accessible.
+    </div>
+    <aside class="notes">packed struct = explicit bit layout = flat wire in silicon. One port carries the whole frame. Dramatically reduces port list sprawl for protocol-heavy designs.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>package</code> for Shared Types</h2>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">// File: uart_pkg.sv
 package uart_pkg;
-    typedef enum logic [1:0] {
-        S_IDLE, S_START, S_DATA, S_STOP
-    } uart_state_t;
+    parameter int DEFAULT_BAUD = 115200;
 
-    localparam int CLK_FREQ  = 25_000_000;
-    localparam int BAUD_RATE = 115_200;
+    typedef enum logic [1:0] {
+        PARITY_NONE, PARITY_EVEN, PARITY_ODD, PARITY_MARK
+    } parity_t;
+
+    typedef struct packed {
+        logic       start_bit;
+        logic [7:0] data;
+        parity_t    parity_mode;   // nested enum!
+        logic       stop_bit;
+    } frame_t;
 endpackage
-<span class="fragment">
-// In any module:
-import uart_pkg::*;
-uart_state_t state;            // type from package</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Single source of truth. Change the baud rate in <em>one file</em>, all modules update.
+
+// File: uart_tx.sv
+import uart_pkg::*;        // now frame_t, parity_t, DEFAULT_BAUD all visible
+
+module uart_tx #(parameter BAUD = DEFAULT_BAUD) (
+    input frame_t frame_in,
+    // ...
+);</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> One <code>package</code> file defines all shared types and constants. Every module that needs them <code>import</code>s. Change the definition in one place, everyone sees the update. This is how real codebases scale from 10 modules to 1000 without drowning.
     </div>
-    <aside class="notes">Packages provide a single source of truth for shared types and constants. Change once, used everywhere. Eliminates duplicate localparam definitions.</aside>
+    <aside class="notes">Package = header file for RTL. Single source of truth for types and constants. Change once, propagate to all importers. Fundamental to scalable codebases.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Design a Package for Week 3's UART</h2>
+    <p style="font-size:0.78em;">Your UART TX, UART RX, and top-level need a shared definition. Sketch a <code>uart_pkg.sv</code> for them.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <pre style="font-size:0.85em;"><code class="language-verilog">package uart_pkg;
+    parameter int DEFAULT_CLKS_PER_BIT = 217;    // 25 MHz / 115200
+
+    typedef enum logic [1:0] {
+        TX_IDLE, TX_START, TX_DATA, TX_STOP
+    } tx_state_t;
+
+    typedef enum logic [1:0] {
+        RX_IDLE, RX_START, RX_DATA, RX_STOP
+    } rx_state_t;
+
+    typedef struct packed {
+        logic       valid;
+        logic [7:0] data;
+        logic       frame_error;
+    } rx_result_t;
+endpackage</code></pre>
+        <strong>Note:</strong> Different state types for TX and RX. Import in each module; compiler prevents assigning TX state to RX state variable. Type safety.
+    </div>
+    <aside class="notes">Separate enum types for TX and RX = type safety. Compiler catches accidental mix-ups across modules. Tiny investment, large payoff.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">State Names in GTKWave</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~3 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week4_day13/ex4_enum_struct/
+iverilog -g2012 -o sim \\
+    traffic_fsm_sv.sv tb_traffic.sv
+./sim
+gtkwave waves.vcd</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ IN GTKWAVE</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">r_state is shown as:
+
+  S_GREEN   S_YELLOW   S_RED
+
+not as:
+
+  2'd0   2'd1   2'd2
+
+(automatic — no manual VCD config)</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">GTKWave reads the SV enum symbol table from the VCD file. State names appear <em>automatically</em> — no format gymnastics. This alone changes debug ergonomics. Identifying &ldquo;we got stuck in <code>S_WAITING_ACK</code>&rdquo; is faster than &ldquo;we got stuck in 3'd4.&rdquo;</p>
+    </div>
+    <aside class="notes">[GTKWave] Show side-by-side: localparam version shows integer values, enum version shows state names. Students see the difference immediately.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Same Silicon, Better Source</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">$ yosys -p "read_verilog -sv traffic_fsm_sv.sv; synth_ice40; stat"
+
+=== traffic_fsm ===
+   Number of cells: 7     ← same as Verilog-2001 version
+     SB_DFF:  2
+     SB_LUT4: 5
+
+# SV types/packages/enums vanish at elaboration. The synthesis
+# result is identical to hand-written Verilog-2001 with localparam.
+# You pay nothing for the readability and type safety.</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> SV features are <em>source-level constructs</em>. They do not change the hardware. They change what you can catch at compile time. 7 cells before, 7 cells after. Same silicon, cleaner source, safer code.
+    </div>
+    <aside class="notes">Zero runtime cost. SV compiles down to the same silicon as Verilog. The only cost is learning the features. ROI is essentially infinite.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Refactor my UART design to use a shared package with typedef enums for states and a packed struct for the frame.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI introduces package + enum + struct.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: one package file, separate TX/RX enums, packed frame struct.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses import statements + packed struct. Weak AI inlines types per module.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Good AI produces a single package. Bad AI duplicates definitions — defeats the purpose.</p></div>
+    </div>
+    <aside class="notes">The failure mode is duplicated types across modules. That defeats the purpose. One package is the correct answer.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>typedef enum</code> is what <code>localparam</code> should have been: type-safe, debuggable, reusable.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>packed struct</code> bundles signals into a single-wire type with field access.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>package</code> is the single source of truth for shared types and constants.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Source-level features only. Same silicon, safer code, zero runtime cost.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Name your types. The compiler, your waveforms, and next year's you will thank you.</div>
+</section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> What does <code>logic</code> replace? What&rsquo;s its one restriction?</p>
-        <div class="fragment quiz-answer"><code>logic</code> replaces both <code>wire</code> and <code>reg</code>. Restriction: <strong>single driver only</strong>. This catches accidental multi-driver bugs.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> Missing <code>default</code> in <code>always_comb</code> — what happens?</p>
-        <div class="fragment quiz-answer"><strong>Compile error</strong> — latch would be inferred, and <code>always_comb</code> forbids latches. Verilog&rsquo;s <code>always @(*)</code> silently infers the latch.</div>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> What three things does <code>typedef enum</code> give you that <code>localparam</code> doesn't?</p>
+        <div class="fragment quiz-answer">(1) Type safety — compiler catches cross-enum assignment. (2) GTKWave shows named states instead of integers. (3) Automatic width — no <code>$clog2</code> gymnastics.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What's the difference between <code>packed</code> and <code>unpacked</code> struct?</p>
+        <div class="fragment quiz-answer">Packed = contiguous bit vector, can be treated as a flat wire (<code>[N-1:0]</code> value), usable on ports. Unpacked = collection of named fields, no bit ordering guarantee, primarily for testbenches.</div>
     </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> Rewrite <code>localparam S_IDLE=2&rsquo;b00, S_RUN=2&rsquo;b01, S_DONE=2&rsquo;b10; reg [1:0] state;</code> as SV enum.</p>
-        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.85em;white-space:pre;line-height:1.4;">typedef enum logic [1:0] {
-  S_IDLE, S_RUN, S_DONE
-} my_state_t;
-my_state_t state;</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> What is a <code>packed struct</code>? Why is it synthesizable?</p>
-        <div class="fragment quiz-answer">A <code>packed struct</code> stores fields as a contiguous bit vector. An 8-bit data + valid + busy struct = 10-bit vector. Synthesis tools map it to wires/regs identically.</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p><h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 13 · Hands-On Lab</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p></div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> You import a package. Can you redefine one of its types locally in a module?</p>
+        <div class="fragment quiz-answer">You can shadow it with a new typedef of the same name — but this is discouraged. The point of a package is a single source of truth. If you need a different type, name it differently. Shadowing produces the confusion package import was meant to eliminate.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> Do SV features (enum, struct, package) change the synthesized hardware?</p>
+        <div class="fragment quiz-answer">No. They vanish at elaboration — the synthesizer sees the same primitives as Verilog-2001. Zero silicon cost. All the gains are at source/compile/debug time.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 13</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Advanced Verification</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 14 · Assertions · AI Workflows · PPA · The Road Ahead</p>
+        <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Your testbenches so far check output values at specific times. Day 14 adds <strong>assertions</strong> — executable specifications that watch for protocol violations continuously. Plus AI-assisted verification workflows, PPA methodology, and the road ahead in hardware engineering. This is the capstone of your formal HDL education — after tomorrow you'll have every tool needed to build real silicon.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -126,4 +283,5 @@ my_state_t state;</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

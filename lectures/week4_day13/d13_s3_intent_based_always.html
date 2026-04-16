@@ -1,93 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13.3: Intent-Based Always Blocks — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13.3: Intent-Based always_* — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Intent-Based Always</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog Transition</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Intent-Based <code>always_*</code></h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Why SV?</span>
-        <span class="seg-label ">logic Type</span>
-        <span class="seg-label active">always_ff/comb</span>
-        <span class="seg-label ">enum/struct/pkg</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 13.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Why SV</span><span class="seg-label">logic type</span><span class="seg-label active">always_*</span><span class="seg-label">enum/struct/package</span></div>
+    <aside class="notes">Video 3 of 4. The block you write tells the tool what hardware you want. The tool then enforces it. Bugs caught at compile time.</aside>
 </section>
 
 <section>
-    <h2>Three Flavors of <code>always</code></h2>
-    <table style="font-size:0.65em;margin-top:0.3em;">
-        <thead><tr><th>Block</th><th>Intent</th><th>Enforcement</th></tr></thead>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every mature Verilog/SV style guide — Xilinx UG901, Intel Quartus Handbook, Synopsys RTL Coding Guidelines, lowRISC style guide — mandates <code>always_ff</code>, <code>always_comb</code>, and <code>always_latch</code> for RTL. Lint tools (Verilator <code>--lint-only</code>, Spyglass, Real Intent) flag legacy <code>always @(*)</code> as a violation. Code review rejects it. The transition is universal and settled.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">From Day 13 on, all new code uses the intent-based variants. Day 14 assertions work best with them. Your capstone and any senior-design code will use them. Your Week 1-3 modules can be modernized in a batch — one line per <code>always</code> block, mechanical.</p>
+        </div>
+    </div>
+    <aside class="notes">Industry-wide convergence on the intent-based variants. Legacy <code>always @(*)</code> is maintenance-mode only. Mandatory in every modern style guide.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;It's Just a Style Preference&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>always_comb</code> is just <code>always @(*)</code> with a fancy name. Same behavior, it's just a style preference. My old code is fine.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">The intent-based variants impose <strong>new semantic restrictions</strong>. <code>always_comb</code> requires that the block produce pure combinational logic — no latches, no flops. <code>always_ff</code> requires that the block produce only flip-flops (one clock edge, no latches). <code>always_latch</code> actively declares &ldquo;I want a latch.&rdquo; The compiler <em>enforces</em> these rules. Same hardware in the common case, but the common bugs become compile errors.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Accidentally create a latch inside <code>always @(*)</code> → silent. Same bug inside <code>always_comb</code> → loud compile-time warning. That's a real, tangible difference, not a style preference.
+    </div>
+    <aside class="notes">Not a style preference — a semantic change. The variants make accidental bugs into compile errors. Worth the 4-character change.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Three Variants</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Keyword</th><th>Meaning</th><th>Forbids</th></tr></thead>
         <tbody>
-            <tr><td><code>always_ff</code></td><td>Sequential (flip-flops)</td><td>Must use clock edge. Warns on <code>=</code> (blocking).</td></tr>
-            <tr class="fragment"><td><code>always_comb</code></td><td>Combinational</td><td>Auto-sensitivity. <strong>Errors on latch inference!</strong></td></tr>
-            <tr class="fragment"><td><code>always_latch</code></td><td>Intentional latch</td><td>Documents intent. Rare in FPGA design.</td></tr>
+            <tr><td><code>always_comb</code></td><td>Pure combinational logic</td><td>Latches, flops, partial assignment (missing defaults)</td></tr>
+            <tr><td><code>always_ff @(posedge clk)</code></td><td>Edge-triggered flip-flops</td><td>Multiple clocks in one block, combinational paths, latches</td></tr>
+            <tr><td><code>always_latch</code></td><td>Level-sensitive latch (you asked for it)</td><td>Flops, combinational, multiple levels</td></tr>
+            <tr><td><code>always @(*)</code></td><td>Any of the above</td><td>Nothing — permits all bugs</td></tr>
+            <tr><td><code>always @(posedge clk)</code></td><td>Any of the above</td><td>Nothing — permits all bugs</td></tr>
         </tbody>
     </table>
-    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
-        <code>always_comb</code> catching latches is the single biggest safety win of SystemVerilog.
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Legacy <code>always</code> blocks are &ldquo;trust me, I know what I'm doing.&rdquo; Intent variants are &ldquo;I'm declaring my intent; enforce it for me.&rdquo; In a field where latent bugs reach silicon and cost millions of dollars, that's a trade everyone wants to make.
     </div>
-    <aside class="notes">Three always flavors: always_ff for sequential, always_comb for combinational, always_latch for intentional latches. always_comb catching latches at compile time is the #1 safety improvement.</aside>
+    <aside class="notes">Three declared intents, three compile-time enforcements. &ldquo;always @(*)&rdquo; is trust; always_comb is trust-but-verify.</aside>
 </section>
+
 <section>
-    <h2>Side-by-Side Comparison</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;">
-    <pre class="sim" style="font-size:0.45em;"><code class="language-verilog">// Verilog
-always @(posedge i_clk)
-    if (i_reset) r_state &lt;= S_IDLE;
-    else         r_state &lt;= r_next;
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>always_comb</code></h2>
+    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// SV: declared combinational. Compiler checks.
+always_comb begin
+    // Defaults at top (SV enforces full assignment — missing one is a warning)
+    o_green = 1'b0; o_yellow = 1'b0; o_red = 1'b0;
+
+    case (r_state)
+        S_GREEN:  o_green  = 1'b1;
+        S_YELLOW: o_yellow = 1'b1;
+        S_RED:    o_red    = 1'b1;
+        default: ;  // required
+    endcase
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> <code>always_comb</code> adds two superpowers over <code>always @(*)</code>:
+        <ol style="font-size:0.95em;">
+            <li><strong>Auto-sensitivity</strong>: the block wakes on <em>any</em> signal read inside, no stale list to maintain.</li>
+            <li><strong>Latch prevention</strong>: the compiler warns if any path through the block fails to assign every output — even subtle ones you'd miss in a code review.</li>
+        </ol>
+    </div>
+    <aside class="notes">always_comb is strictly better than always @(*). Auto-sensitivity + latch prevention. No downsides. Drop-in replacement.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>always_ff</code></h2>
+    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// SV: declared flip-flop. One clock. No combinational paths.
+always_ff @(posedge i_clk) begin
+    if (i_reset) r_state &lt;= S_INIT;
+    else         r_state &lt;= r_next_state;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> <code>always_ff</code> forbids:
+        <ul style="font-size:0.95em;">
+            <li>Multiple clock edges in one block (no <code>@(posedge clk1 or posedge clk2)</code> — common CDC bug)</li>
+            <li>Combinational assignments mixed with sequential (no <code>always_ff @(posedge clk or sel)</code>)</li>
+            <li>Blocking assignments (<code>=</code> instead of <code>&lt;=</code>) — warning</li>
+        </ul>
+        These are exactly the patterns that cause synth-vs-sim mismatches in legacy <code>always</code> blocks. <code>always_ff</code> catches them at elaboration.
+    </div>
+    <aside class="notes">always_ff catches the classic CDC-related bugs at compile time. Multi-clock sensitivity lists are a huge source of silicon bugs in legacy code; always_ff makes them impossible.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Modernize an FSM</h2>
+    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">// Verilog-2001
+always @(posedge clk or posedge rst)
+    if (rst) state &lt;= IDLE;
+    else     state &lt;= next_state;
 
 always @(*) begin
-    r_next = r_state; // default
-    case (r_state) ...
+    case (state)
+        IDLE:    if (go) next_state = BUSY;
+        BUSY:    if (done) next_state = IDLE;
+        default: next_state = IDLE;
     endcase
 end</code></pre>
-    <pre class="synth" style="font-size:0.45em;"><code class="language-verilog">// SystemVerilog
-always_ff @(posedge i_clk)
-    if (i_reset) state &lt;= S_IDLE;
-    else         state &lt;= next_state;
+    <p style="font-size:0.78em;">Rewrite in SV. Note the bug the SV version exposes.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <pre style="font-size:0.88em;"><code class="language-verilog">always_ff @(posedge clk) begin            // synchronous reset (see below)
+    if (rst) state &lt;= IDLE;
+    else     state &lt;= next_state;
+end
 
 always_comb begin
-    next_state = state; // default
-    case (state) ...
+    next_state = state;                    // DEFAULT — was missing!
+    case (state)
+        IDLE:    if (go) next_state = BUSY;
+        BUSY:    if (done) next_state = IDLE;
+        default:                  next_state = IDLE;
     endcase
 end</code></pre>
+        <strong>Bug caught:</strong> original <code>always @(*)</code> was missing the default <code>next_state = state</code>. <code>always_comb</code> warns about the missing assignment — revealing a latent latch in the Verilog-2001 code. Fix: add the default.
     </div>
-    <div style="font-size:0.75em;margin-top:0.5em;">
-        <p class="fragment"><strong>Drop the <code>r_</code> prefix:</strong> <code>always_ff</code> tells you it&rsquo;s a register. The prefix is redundant.</p>
-        <p class="fragment"><strong>Missing <code>default</code>?</strong> <code>always_comb</code> flags it as a compile error. <code>always @(*)</code> silently infers a latch.</p>
-    </div>
-    <aside class="notes">Side by side: same structure, stronger checking. Drop the r_ prefix since always_ff declares register intent explicitly. Missing default? always_comb catches it; always @(*) silently infers a latch.</aside>
+    <aside class="notes">This is the core value of the migration: SV variants catch bugs that Verilog-2001 silently permits. Every module you modernize might expose one of these latent issues.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Synchronous vs Asynchronous Reset</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;">
+            <p style="color:#5A7FA0;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">SYNCHRONOUS RESET (prefer)</p>
+<pre style="font-size:0.56em;margin:0;"><code class="language-verilog">always_ff @(posedge clk) begin
+    if (rst) r_state &lt;= S_INIT;
+    else     r_state &lt;= r_next;
+end</code></pre>
+            <p style="font-size:0.68em;margin-top:0.2em;">Reset applies at the clock edge. Cleanest timing. FPGA-preferred.</p>
+        </div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">ASYNCHRONOUS RESET</p>
+<pre style="font-size:0.56em;margin:0;"><code class="language-verilog">always_ff @(posedge clk
+           or posedge rst) begin
+    if (rst) r_state &lt;= S_INIT;
+    else     r_state &lt;= r_next;
+end</code></pre>
+            <p style="font-size:0.68em;margin-top:0.2em;">Reset takes effect immediately. Needed in some ASIC flows. Requires release-edge synchronization — tricky.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Rule of thumb:</strong> Synchronous reset for FPGA work (iCE40 flops prefer it, and it composes cleanly with <code>always_ff</code>). Asynchronous reset only if you've been told specifically you need it.
+    </div>
+    <aside class="notes">Sync reset is the Go Board / FPGA default. Async reset is an ASIC technique that costs you reset-synchronizer work. For this course: sync.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Here's my FSM with <code>always @(*)</code> and <code>always @(posedge clk)</code>. Convert it to SV using always_comb and always_ff, and tell me if the conversion exposes any latent bugs.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI migrates + audits for latent bugs.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: convert keywords, check for missing defaults, check for mixed-clock always blocks.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI calls out defaults it had to add. Weak AI silently adds them without noting.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Ask explicitly for bugs exposed — it's the migration's hidden value.</p></div>
+    </div>
+    <aside class="notes">Migration as code audit. Ask AI to call out what changed and why — the &ldquo;why&rdquo; is often a latent bug.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>always_ff</code>: enforces clock edge, non-blocking, single driver.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>always_comb</code>: auto-sensitivity, <strong>errors on latch inference</strong>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>always_latch</code>: documents intentional latches (rare in FPGA).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Same RTL, stronger compiler checking. Bugs found earlier.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>always_comb</code> enforces combinational: no latches, no flops, no missing defaults.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>always_ff @(posedge clk)</code> enforces flip-flop: single clock, <code>&lt;=</code>, no mixed logic.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>always_latch</code> exists for when you genuinely want a latch — a declaration of intent.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Migration often exposes latent bugs. That's a feature, not a nuisance.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;"><code>enum</code>, <code>struct</code>, and <code>package</code></h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~15 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Type safety for FSMs, grouped signals, and shared definitions.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Tell the compiler what you want. Let it check that you got it.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">enum · struct · package</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've been writing state machines with <code>localparam</code> state lists. Video 4 replaces them with <code>typedef enum</code> — named state types that the compiler checks. Plus <code>struct</code>s for bundled signals and <code>package</code>s for shared types. These are the features that let your module library look like a real engineering codebase.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -95,4 +218,5 @@ end</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

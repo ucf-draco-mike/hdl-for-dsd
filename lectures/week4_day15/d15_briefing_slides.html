@@ -1,144 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 15: Integration Briefing — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 15: Build Day — Capstone Integration Briefing</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 15 · Final Project</span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 15 · Capstone Build Day</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Build Day</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Integration Strategy Briefing · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Capstone Integration Briefing · ~20 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <aside class="notes">15 minutes of strategy, then you build for 2 hours. Let's make the most of it.</aside>
+    <aside class="notes">This is the Day 15 briefing. After this, students work on the capstone. The briefing covers failure modes, method, and debug technique.</aside>
 </section>
 
 <section>
-    <h2>The #1 Failure Mode</h2>
-    <div style="font-size:1.2em;text-align:center;margin-top:1em;">
-        <p class="fragment" style="color:#C62828;font-weight:700;">Big Bang Integration</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every chip project has a &ldquo;build day&rdquo; cadence — at Intel it's nightly, at Apple it's weekly top-of-tree integration. The engineers who thrive are the ones who can take their own block, plus 10 other people's blocks, and make the whole assembly <em>work</em>. That's not a different skill from RTL design — it's the <em>application</em> of RTL design to a multi-module system. Today you do it at small scale on silicon you can hold.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">You have your Week 1-3 primitives, your Week 3 protocols, and your Week 4 SystemVerilog polish. Today you compose them into a working design on the Go Board. The capstone isn't about new concepts — it's about the integration discipline that turns concepts into silicon.</p>
+        </div>
     </div>
-    <div class="fragment" style="font-size:0.85em;text-align:center;margin-top:0.5em;">
-        <p>Write all modules → connect everything at once → hope it works</p>
+    <aside class="notes">Frame this as a skill application, not a new curriculum. Everything they need, they have. Today is about using it.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> The #1 Failure Mode</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:0.95em;">❌ The &ldquo;Big Bang&rdquo;</h3>
+            <p style="font-size:0.72em;">Write the whole design top-to-bottom. Instantiate every module. Run full simulation. Try to program. Everything fails at once. Stare at 400 lines of Verilog across 6 files. Three hours evaporate. Panic sets in. Final hour is frantic fixes, one of which breaks another. Submit broken.</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:0.95em;">✓ Incremental Integration</h3>
+            <p style="font-size:0.72em;">Bring up one module at a time. Each increment is testable <em>in isolation</em> before adding the next. Break = back out one step, fix, proceed. At any point, you have a working partial system. If time runs out, you submit something working — just fewer features.</p>
+        </div>
     </div>
-    <p class="fragment" style="font-size:0.9em;text-align:center;margin-top:1em;color:#C62828;">
-        It never works.
-    </p>
-    <p class="fragment" style="font-size:0.85em;text-align:center;">
-        Wall of errors. No idea which module is broken. No path forward.
-    </p>
-    <aside class="notes">Big bang integration is the number one failure mode on project day. The fix is incremental integration.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Industry postmortems agree — the most common cause of missed deadlines is monolithic integration. &ldquo;I wrote the whole thing and then tried to test it&rdquo; is the #1 antipattern. Every senior engineer learns this the hard way once. Today you learn it vicariously.
+    </div>
+    <aside class="notes">The monolith is seductive — &ldquo;I'll write it all, then test.&rdquo; It never works. Incremental is harder to start but faster to finish.</aside>
 </section>
 
 <section>
     <h2>Incremental Integration</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>Step 1:</strong> Verify module library — all testbenches pass</p>
-        <p class="fragment"><strong>Step 2:</strong> Skeleton top module + heartbeat LED → synthesize immediately</p>
-        <p class="fragment"><strong>Step 3:</strong> Add ONE module. Synthesize. Verify on hardware. Repeat.</p>
-        <p class="fragment"><strong>Step 4:</strong> UART printf debugging for hardware-only issues</p>
+    <p style="font-size:0.76em;">The disciplined sequence for today:</p>
+    <ol style="font-size:0.72em;">
+        <li class="fragment"><strong>Step 1 — Blink.</strong> Top-level module with one LED + clock + reset. Synthesize. Program. Verify LED blinks. This proves your flow (make, program, hardware) works. 10 minutes max.</li>
+        <li class="fragment"><strong>Step 2 — Skeleton top module.</strong> Add <em>empty</em> instantiations of every submodule you'll need. No logic inside. Port lists wired. Compiles + passes simple smoke test. ~15 minutes.</li>
+        <li class="fragment"><strong>Step 3 — Bring up one submodule.</strong> Fill in one module (start with the simplest — usually the clock divider or reset synchronizer). Add targeted testbench. Sim passes → program → verify on board. ~20 minutes per submodule.</li>
+        <li class="fragment"><strong>Step 4 — Integrate pairs.</strong> Once two modules work individually, check they work <em>composed</em>. Backpressure? Clock alignment? Reset ordering? ~15 min per pair.</li>
+        <li class="fragment"><strong>Step 5 — Full system.</strong> Everything wired, everything tested, now run end-to-end. Most surprises are already caught. ~30 minutes.</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Key property:</strong> after each step you have a <em>working</em> system — even if it does less than the final spec. Submit-at-any-time always beats monolithic-at-the-last-minute.
     </div>
-    <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
-        Each step produces a <strong>working</strong> system. If something breaks, it was the last thing you added.
-    </div>
-    <aside class="notes">Four steps. The key insight: each step produces a working system. When something breaks, you know exactly what caused it.</aside>
+    <aside class="notes">Five steps. Each increment leaves you with a working (if simpler) system. Never leave yourself in a state where nothing works.</aside>
 </section>
 
 <section>
     <h2>Step 2: Skeleton Top Module</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module top_project (
-    input  logic i_clk,
-    input  logic i_switch1, i_switch2, i_switch3, i_switch4,
-    input  logic i_uart_rx,
-    output logic o_uart_tx,
-    output logic o_led1, o_led2, o_led3, o_led4,
-    // ... 7-seg ports ...
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module capstone_top (
+    input  logic       i_clk,
+    input  logic [3:0] i_sw,
+    output logic [3:0] o_led,
+    output logic       o_uart_tx
 );
-    // Heartbeat — proves FPGA is configured and running
-    logic [23:0] heartbeat;
-    always_ff @(posedge i_clk)
-        heartbeat &lt;= heartbeat + 1;
-    assign o_led4 = ~heartbeat[23];
+    // Reset synchronizer (Week 2) — bring up first
+    logic r_rst_sync;
+    reset_sync u_rst   (.i_clk, .i_rst_async(i_sw[0]), .o_rst_sync(r_rst_sync));
 
-    // Stub everything else
-    assign o_uart_tx = 1'b1;  // idle high
-    assign {o_led1, o_led2, o_led3} = 3'b111; // off
+    // UART TX (Week 3) — add after reset works
+    logic       w_tx_valid, w_tx_busy;
+    logic [7:0] w_tx_data;
+    uart_tx #(.CLKS_PER_BIT(217)) u_tx (
+        .i_clk, .i_rst(r_rst_sync),
+        .i_valid(w_tx_valid), .i_data(w_tx_data),
+        .o_busy(w_tx_busy),   .o_tx_line(o_uart_tx)
+    );
+
+    // FSM controller (new for capstone) — add last
+    capstone_fsm u_fsm (
+        .i_clk, .i_rst(r_rst_sync),
+        .i_sw(i_sw[3:1]),
+        .o_led(o_led),
+        .o_tx_valid(w_tx_valid), .o_tx_data(w_tx_data),
+        .i_tx_busy(w_tx_busy)
+    );
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Synthesize and program this <strong>first</strong>. Heartbeat blinks? Toolchain works. Now add modules one at a time.
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Observe:</strong> the top reads like a wiring diagram. All the <em>work</em> is in the sub-modules; the top just composes them. Echoes Day 12's &ldquo;wrapper smaller than sub-modules&rdquo; rule. Each sub-module can be brought up one at a time.
     </div>
-    <aside class="notes">Skeleton top with heartbeat. Synthesize immediately. If the LED blinks, your toolchain and FPGA are working before you add any complexity.</aside>
+    <aside class="notes">Skeleton first, flesh later. The top-level is wire routing; each sub-module is testable in isolation. Incremental fill-in.</aside>
 </section>
 
 <section>
     <h2>Common Late-Stage Panics</h2>
-    <div style="font-size:0.75em;">
-        <p class="fragment"><strong>&ldquo;Works in sim, not on hardware&rdquo;</strong> → Check pin mappings, debounce, clock frequency params. Add debug LEDs.</p>
-        <p class="fragment"><strong>&ldquo;I can&rsquo;t fit it&rdquo;</strong> → Check <code>stat</code> output. Often caused by synthesis inferring unexpected logic (e.g., huge multipliers).</p>
-        <p class="fragment"><strong>&ldquo;Timing fails&rdquo;</strong> → Usually fine at 25 MHz. Check for long combinational chains (wide muxes, deep priority encoders).</p>
-        <p class="fragment"><strong>&ldquo;I haven&rsquo;t started&rdquo;</strong> → Simplest possible demo: heartbeat + one button-driven action. Start there.</p>
+    <table style="font-size:0.68em;">
+        <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+        <tbody>
+            <tr><td>Nothing happens on board</td><td>Reset polarity or stuck in reset</td><td>Check reset synchronizer; probe reset with LED</td></tr>
+            <tr><td>LEDs flicker randomly</td><td>Metastability on input, missing sync_2ff</td><td>Add 2-flop sync on any async input</td></tr>
+            <tr><td>UART outputs garbage</td><td>Wrong CLKS_PER_BIT or clock mismatch</td><td>Verify clock freq; recompute for actual baud</td></tr>
+            <tr><td>FSM stuck in one state</td><td>Transition condition never met</td><td>Add debug LED per state; run slowly</td></tr>
+            <tr><td>Fits in sim but not on board</td><td>Unconstrained I/O, missing pin mapping</td><td>Check .pcf file; every external pin listed</td></tr>
+            <tr><td>Timing violation in report</td><td>Combinational path too long</td><td>Add pipeline register; check Fmax report</td></tr>
+            <tr><td>Compiles once, fails next time</td><td>Leftover files, stale cache</td><td><code>make clean &amp;&amp; make</code> always</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Golden rule of today:</strong> when something breaks, <em>don't randomly edit</em>. Revert to the last working state. Change one thing. Re-test. The discipline feels slow; it's actually fast.
     </div>
-    <aside class="notes">Four common panics and their fixes. The key message: there's always a path forward, even if it means reducing scope.</aside>
+    <aside class="notes">Panic moves are random edits. Discipline moves are &ldquo;revert, change one thing, re-test.&rdquo; Students who stay disciplined under pressure finish. Students who panic don't.</aside>
 </section>
 
 <section>
     <h2>UART Printf Debugging</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Hardware printf: send a status byte via UART
-always_ff @(posedge i_clk) begin
-    if (w_debug_trigger &amp;&amp; !w_uart_busy) begin
-        uart_data  &lt;= {"S", state};  // or a debug code
-        uart_valid &lt;= 1'b1;
-    end else
-        uart_valid &lt;= 1'b0;
+    <p style="font-size:0.76em;">Your UART TX is now a <em>debug instrument</em>. Wire it up so the FSM can send a byte per state transition to your laptop terminal. Silicon's closest thing to <code>printf</code>.</p>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">// In FSM, on each state change:
+always_ff @(posedge clk) begin
+    if (r_state != r_prev_state) begin
+        o_tx_valid &lt;= 1'b1;
+        case (r_state)
+            S_IDLE: o_tx_data &lt;= 8'h49;  // 'I'
+            S_RUN:  o_tx_data &lt;= 8'h52;  // 'R'
+            S_DONE: o_tx_data &lt;= 8'h44;  // 'D'
+            S_ERR:  o_tx_data &lt;= 8'h45;  // 'E'
+        endcase
+    end else o_tx_valid &lt;= 1'b0;
+    r_prev_state &lt;= r_state;
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Your UART TX module becomes a <strong>hardware debugger</strong>. Send state codes, counter values, or flag bytes to the PC terminal.
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Power:</strong> open <code>minicom</code>, press buttons on the Go Board, watch the FSM's trace stream to your terminal. &ldquo;I → R → D&rdquo; tells you the FSM progressed through states you expected. &ldquo;I → R → R → E&rdquo; tells you it went to error — and you know exactly where. This is the single highest-yield debug technique you have today.
     </div>
-    <aside class="notes">UART printf debugging: reuse your UART TX to send debug data to the PC terminal. This is a real industry technique — hardware printf.</aside>
+    <aside class="notes">UART printf is the closest thing to gdb you have on an FPGA. Students often don't think to use it; it transforms debug from guessing to observing.</aside>
 </section>
 
 <section>
-    <h2>Today&rsquo;s Plan</h2>
-    <table style="font-size:0.75em;">
+    <h2>Today's Plan</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Time</th><th>Activity</th><th>Deliverable</th></tr></thead>
         <tbody>
-            <tr><td><strong>Now–0:15</strong></td><td>This briefing (done!)</td></tr>
-            <tr><td><strong>0:15–0:45</strong></td><td>Individual check-ins (I come to you)</td></tr>
-            <tr><td><strong>0:45–2:00</strong></td><td>Build time (I&rsquo;m on call)</td></tr>
-            <tr><td><strong>2:00–2:15</strong></td><td>Status round (30 sec each)</td></tr>
-            <tr><td><strong>2:15–2:30</strong></td><td>Buffer / overflow debugging</td></tr>
+            <tr><td>0:00 - 0:30</td><td>Briefing + spec review</td><td>Understanding</td></tr>
+            <tr><td>0:30 - 0:45</td><td>Step 1: Blink</td><td>LED on board</td></tr>
+            <tr><td>0:45 - 1:15</td><td>Step 2: Skeleton top</td><td>All modules instantiated, compiles</td></tr>
+            <tr><td>1:15 - 2:30</td><td>Step 3: Bring up each sub-module</td><td>Each works in isolation</td></tr>
+            <tr><td>2:30 - 3:15</td><td>Step 4: Integrate pairs</td><td>Pairs work together</td></tr>
+            <tr><td>3:15 - 3:45</td><td>Step 5: Full system</td><td>End-to-end demo</td></tr>
+            <tr><td>3:45 - 4:00</td><td>Submission + reflection</td><td>Submitted</td></tr>
         </tbody>
     </table>
-    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
-        Something must work on hardware by tomorrow.
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Checkpoint discipline:</strong> every 30 minutes, pause. Ask: &ldquo;what's my last known-good state?&rdquo; If you can't name one recently, that's the signal to back up. Checkpoints feel slow; they save you when something breaks.
     </div>
-    <aside class="notes">15 minutes of briefing, then build time. Status round at 2pm is public. Something must work on hardware by tomorrow.</aside>
+    <aside class="notes">The 30-minute checkpoint is the rhythm. Students who don't pause spiral into worse states. Students who pause maintain their footing.</aside>
 </section>
 
 <section>
-    <h2>Homework for Tonight</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>1.</strong> Finish the minimum viable demo. Something must work on hardware.</p>
-        <p class="fragment"><strong>2.</strong> Prepare your block diagram (hand-drawn is fine if clear).</p>
-        <p class="fragment"><strong>3.</strong> Run your testbenches one final time.</p>
-        <p class="fragment"><strong>4.</strong> Synthesize and check timing. Know your LUT/FF count and Fmax.</p>
-        <p class="fragment"><strong>5.</strong> Prepare a 1-minute reflection: what surprised you?</p>
+    <h2>What You're Submitting</h2>
+    <ul style="font-size:0.76em;">
+        <li class="fragment"><strong>RTL files</strong> — your top-level + any new sub-modules. Existing library modules referenced, not duplicated.</li>
+        <li class="fragment"><strong>Testbench</strong> — at least one self-checking testbench showing end-to-end function.</li>
+        <li class="fragment"><strong>Build log</strong> — <code>make stat</code> output showing LUT/DFF usage and <code>make place</code> output showing Fmax. Annotate which metric was your binding constraint.</li>
+        <li class="fragment"><strong>Brief reflection</strong> — 1-2 paragraphs: what worked, what broke, what you'd change given another hour.</li>
+    </ul>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Grading philosophy:</strong> graded on <em>working-ness</em>, not ambition. A smaller design that fully works beats a grander one that half-works. Integration discipline over feature count.
     </div>
-    <aside class="notes">Five things for tonight. The minimum viable demo is non-negotiable. Everything else helps your presentation quality.</aside>
+    <aside class="notes">Explicit grading philosophy — discipline &gt; ambition. Students often misallocate effort chasing features when basic function is uncertain. Lead with working.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#8E6BBF;">🤖</span> AI During Build Day</h2>
+    <p style="font-size:0.76em;">Today's AI rules (re-statement of Day 14.2 principles):</p>
+    <div class="two-col" style="margin-top:0.4em;">
+        <div class="col panel panel-good">
+            <h3 style="font-size:0.95em;">✓ Use AI for</h3>
+            <ul style="font-size:0.7em;">
+                <li>Boilerplate testbenches for modules you've already defined</li>
+                <li>Syntax reminders (&ldquo;what's the SVA syntax for N-cycle delay?&rdquo;)</li>
+                <li>Error message diagnosis (&ldquo;iverilog says X at line Y, what does that mean?&rdquo;)</li>
+                <li>Code review (&ldquo;look at my FSM and tell me what might go wrong&rdquo;)</li>
+            </ul>
+        </div>
+        <div class="col panel panel-bad">
+            <h3 style="font-size:0.95em;">❌ Don't use AI for</h3>
+            <ul style="font-size:0.7em;">
+                <li>Writing the whole design from the spec — that's your work</li>
+                <li>&ldquo;Does this work on the Go Board?&rdquo; — AI doesn't know; check the hardware</li>
+                <li>Pretending its passing testbench means anything without you running it</li>
+                <li>Substitute for reading your synthesis report</li>
+            </ul>
+        </div>
+    </div>
+    <aside class="notes">AI rules hold on build day. Use it to accelerate mechanics; own the intent and the observation.</aside>
+</section>
+
+<section>
+    <h2>Key Reminders</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Incremental &gt; monolithic. Small working system beats big broken one.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Revert on failure. Change one thing. Re-test. Discipline wins.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;UART printf is your on-silicon debugger. Use it early, not late.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;30-minute checkpoint: &ldquo;what's my last known-good state?&rdquo;</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">At any point in the day, you should have a working system. Today's success is not feature count — it's the discipline that gets you to working silicon.</div>
 </section>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <h2 style="color:#FFC904;font-size:1.8em;">Go Build.</h2>
-        <p style="color:#E8E8E4;font-size:0.9em;margin-top:1em;">I&rsquo;ll start check-ins in 2 minutes.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Now Build</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Good luck. Ship something.</h2>
+        <div style="max-width:780px;margin:1.5em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ INSTRUCTOR'S NOTE</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">In four weeks you've gone from &ldquo;never written an AND gate in Verilog&rdquo; to &ldquo;integrating a multi-module system on real silicon with SystemVerilog.&rdquo; That transition is what senior design expects. Today is proof of concept — both of the design, and of you. I'll see you tomorrow for reflection.</p>
+        </div>
     </div>
-    <aside class="notes">End of briefing. Start circulating for check-ins.</aside>
 </section>
 
 </div></div>
@@ -147,4 +235,5 @@ end</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

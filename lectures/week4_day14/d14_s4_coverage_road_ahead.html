@@ -1,109 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 14.4: Coverage &amp; the Road Ahead — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>.quiz-answer{background:#E8F5E9;border:1px solid #2E7D32;border-radius:6px;padding:0.6em 0.8em;margin-top:0.4em;font-size:0.7em;}</style>
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14.4: Coverage &amp; The Road Ahead — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Verification, AI-Driven Testing &amp; PPA Analysis</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">Coverage &amp; the Road Ahead</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Advanced Verification &amp; Road Ahead</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Coverage &amp; The Road Ahead</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label">Assertions</span>
-        <span class="seg-label">AI Verification</span>
-        <span class="seg-label">PPA Methodology</span>
-        <span class="seg-label active">Coverage &amp; Road Ahead</span>
-    </div>
-    <aside class="notes">The final pre-class video. Coverage concepts, then a roadmap of where the skills you've built lead next.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Assertions</span><span class="seg-label">AI Verification</span><span class="seg-label">PPA</span><span class="seg-label active">Road Ahead</span></div>
+    <aside class="notes">Video 4 of 4 for Day 14. Closing the verification loop with coverage, then looking forward at where the field goes next.</aside>
 </section>
 
 <section>
-    <h2>Functional Coverage: Are You Done Testing?</h2>
-    <p style="font-size:0.82em;">Simulation can show bugs exist. It can never prove they don't. <strong>Coverage</strong> measures how much of the design space you've exercised.</p>
-    <pre class="synth"><code class="language-systemverilog">// SystemVerilog coverage constructs (conceptual — not supported in iverilog)
-covergroup alu_cov @(posedge clk);
-    cp_opcode: coverpoint opcode {
-        bins add = {3'b000}; bins sub = {3'b001};
-        bins bw_and = {3'b010}; bins bw_or = {3'b011};
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Coverage is how verification teams answer the tape-out question: <em>&ldquo;are we done?&rdquo;</em> Tier-1 chip companies hold tape-out readiness reviews where coverage closure is a gating metric — 100% code coverage, 98%+ functional coverage, all cover points hit. No coverage closure, no tape-out. The DV engineer's semester ends at 100% on the coverage dashboard.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your testbenches have been measured by &ldquo;does it pass?&rdquo; Today asks the harder question: &ldquo;have I exercised every state and transition?&rdquo; Plus we take a final look at the landscape — formal, UVM, HLS, open silicon — and what a hardware career looks like in 2026 and beyond.</p>
+        </div>
+    </div>
+    <aside class="notes">Coverage is the tape-out gate. Without it, &ldquo;done&rdquo; is a feeling. With it, &ldquo;done&rdquo; is a measurement.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;All Tests Passed&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;My testbench has 50 test cases. All 50 pass. The design works.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">50 passing tests say 50 scenarios work. They say nothing about the <em>other</em> scenarios you didn't write. The FSM might have 12 states and only 7 got exercised. Lines 42-56 of your RTL might never have been executed in any test. That untested code could contain anything — bugs, paths to unexpected states, dead code. Coverage measures what you actually touched.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Coverage tools instrument your code and count: which lines ran? which branches both directions? which FSM states were reached? which transitions fired? If a metric says 80%, 20% of your code is <em>provably untested</em>. That's the gap a bug can live in.
+    </div>
+    <aside class="notes">Passing tests ≠ thorough tests. Coverage is how you know the difference. &ldquo;All tests pass&rdquo; is meaningful only when coverage is closed.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Two Kinds of Coverage</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Type</th><th>Measures</th><th>Tool gives it to you</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Code coverage</strong></td><td>Which lines / branches / toggles / FSM transitions were executed</td><td>Automatic — simulator instruments the RTL</td></tr>
+            <tr><td><strong>Functional coverage</strong></td><td>Which <em>scenarios you care about</em> were exercised (e.g., &ldquo;FIFO full while RX active&rdquo;)</td><td>You declare cover points; tool counts</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Code coverage is the <em>floor</em> — if you haven't hit 100%, you have untested code. Functional coverage is the <em>ceiling</em> — even at 100% code coverage, you might not have tested the scenarios that matter for your product. Real DV teams track both.
+    </div>
+    <aside class="notes">Two axes. Code coverage = syntactic completeness. Functional coverage = semantic completeness. Both matter.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Cover Points in SystemVerilog</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Declare scenarios you care about
+covergroup uart_cg @(posedge clk);
+    // Did we see each FSM state?
+    state_cov: coverpoint r_state {
+        bins idle  = {TX_IDLE};
+        bins start = {TX_START};
+        bins data  = {TX_DATA};
+        bins stop  = {TX_STOP};
     }
-    cp_a_range: coverpoint a {
-        bins zero = {0}; bins mid = {[1:254]}; bins max = {255};
+
+    // Did we transmit each byte value?
+    byte_cov: coverpoint i_data iff (i_valid) {
+        bins zero      = {8'h00};
+        bins all_ones  = {8'hFF};
+        bins typical   = {[1:254]};
     }
-    cx_full: cross cp_opcode, cp_a_range;  // 4 × 3 = 12 bins
-endgroup</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Tool note:</strong> Icarus Verilog doesn't support <code>covergroup</code>. In today's lab, you'll analyze coverage <em>manually</em> — which is the harder and more valuable skill.
+
+    // Cross: which byte in which state?
+    state_x_byte: cross state_cov, byte_cov;
+endgroup
+
+uart_cg cov_instance = new();</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Each run reports coverage: &ldquo;state_cov 4/4 (100%), byte_cov 2/3 (67%), cross 8/12 (67%).&rdquo; Gaps tell you which tests to add: you've never sent 8'h00 in TX_STOP state, which is probably fine but worth verifying. The <em>cross</em> is where most interesting bugs live.
     </div>
-    <aside class="notes">Coverage is how you answer "am I done testing?" Iverilog can't do automatic coverage, so you'll do it manually — which actually teaches you to think about the design space, not just collect numbers.</aside>
+    <aside class="notes">Cross coverage is where real bugs live. &ldquo;All states × all bytes&rdquo; reveals the corners no individual coverage hit would surface.</aside>
 </section>
 
 <section>
-    <h2>Verification Maturity: Where You Are Now</h2>
-    <div style="font-size:0.75em;">
-        <table>
-            <tr><th>Level</th><th>Technique</th><th>You?</th></tr>
-            <tr><td>1</td><td>Waveform inspection</td><td style="color:#2E7D32;">✓ Day 4</td></tr>
-            <tr><td>2</td><td>Self-checking directed tests</td><td style="color:#2E7D32;">✓ Day 6</td></tr>
-            <tr><td>3</td><td>AI-scaffolded testbenches</td><td style="color:#2E7D32;">✓ Days 6, 8, 12</td></tr>
-            <tr><td>4</td><td>Assertion-enhanced</td><td style="color:#2E7D32;">✓ Today (Seg 1)</td></tr>
-            <tr class="fragment"><td>5</td><td>Constrained random + coverage analysis</td><td style="color:var(--ucf-gold);">→ Today's lab</td></tr>
-            <tr class="fragment"><td>6</td><td>UVM methodology</td><td style="color:#888;">Next course</td></tr>
-            <tr class="fragment"><td>7</td><td>Formal verification</td><td style="color:#888;">Advanced topic</td></tr>
-        </table>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Is This Enough Coverage?</h2>
+    <p style="font-size:0.78em;">Your UART echo-server testbench reports:</p>
+    <ul style="font-size:0.72em;">
+        <li>Code coverage: 97% lines, 92% branches, 100% toggles</li>
+        <li>FSM state coverage: 100% (all states reached)</li>
+        <li>FSM transition coverage: 85% (some transitions never fired)</li>
+        <li>Functional covergroup: 78%</li>
+    </ul>
+    <p style="font-size:0.72em;">Question: is this ready to ship, or what do you investigate first?</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Answer:</strong> Not ready. The 15% uncovered FSM transitions are the red flag — even though all states were reached, some paths between them never fired. These are typically error-handling transitions (timeout, overflow, reset-mid-frame). Start there: look at which transitions are missing, write tests that force them. <em>Missing transitions is where silicon bugs hide.</em> The 3% uncovered lines (if they're error branches) are probably the same story.
     </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Levels 1–5 are what you'll use in the final project. Levels 6–7 are where the department's Verification &amp; Validation course picks up.
-    </div>
-    <aside class="notes">You've gone from waveform staring to assertion-enhanced constrained-random testing in two weeks. That's Level 5 of a 7-level maturity scale. Levels 6-7 are career-level skills that build directly on what you've learned here.</aside>
+    <aside class="notes">Transition coverage &gt; state coverage in diagnostic power. &ldquo;We reached S_ERROR&rdquo; is fine; &ldquo;we reached S_ERROR from every predecessor&rdquo; is thorough. Students learn to look at transition coverage first.</aside>
 </section>
 
 <section>
-    <h2>Where These Skills Lead</h2>
-    <div style="font-size:0.78em;">
-        <p class="fragment"><strong>UVM (Universal Verification Methodology):</strong> Your constraint specs → UVM sequences. Your AI-generated TBs → UVM test library. Your assertions → SVA property specifications.</p>
-        <p class="fragment"><strong>Formal verification:</strong> Mathematically prove properties hold for <em>all</em> possible inputs. Tools: SymbiYosys (open-source), JasperGold, VC Formal (commercial).</p>
-        <p class="fragment"><strong>AI in professional V&amp;V:</strong> Industry uses AI for TB scaffolding, regression debugging, coverage analysis, and assertion generation — the same workflow you've practiced, at scale.</p>
-        <p class="fragment"><strong>Interfaces &amp; modport</strong> (brief): SV <code>interface</code> bundles signals; <code>modport</code> defines views. Reduces port-map boilerplate. Stretch exercise in today's lab.</p>
+    <h2>Where the Field Is Going</h2>
+    <div style="font-size:0.72em;">
+        <p class="fragment"><strong>Formal verification</strong> — proves assertions hold for <em>all</em> inputs, not just simulated ones. Industry adoption is climbing as tools get cheaper (SymbiYosys on the open side; Jasper/VC Formal on commercial). Your assertion-writing skill ports directly.</p>
+        <p class="fragment"><strong>UVM (Universal Verification Methodology)</strong> — the industry standard for building reusable testbench environments. Object-oriented SV. Overkill for small designs; essential for large teams.</p>
+        <p class="fragment"><strong>High-Level Synthesis (HLS)</strong> — writes RTL from C/C++/SystemC. Productivity win for data-path designs (filters, vision accelerators). Growing, but RTL is not going away.</p>
+        <p class="fragment"><strong>Open-source silicon</strong> — Skywater 130nm PDK, OpenROAD, OpenLane, Google's MPW shuttle program. You can now <em>tape out your own chip for free</em> (small area). This was impossible 5 years ago. Revolutionary for education and hobbyists.</p>
+        <p class="fragment"><strong>AI-assisted design</strong> — not just verification (Day 14.2) but RTL generation, debugging, floorplanning. Still maturing; watch closely.</p>
     </div>
-    <aside class="notes">Quick tour of where the skills you've built go next. UVM, formal, AI-assisted V&V, interfaces — all build directly on the foundation from this course. The department's V&V course covers UVM and formal in depth.</aside>
+    <aside class="notes">Five trends. Students should know the vocabulary even if they won't touch each one immediately. Open-source silicon is genuinely new and exciting.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>HDL Careers in 2026 and Beyond</h2>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Role</th><th>What they do</th><th>HDL skill matters because</th></tr></thead>
+        <tbody>
+            <tr><td>Digital Designer</td><td>Write RTL for CPU / GPU / accelerator blocks</td><td>Obvious — this is the job</td></tr>
+            <tr><td>Design Verification (DV)</td><td>Write testbenches, assertions, cover points</td><td>Your assertions + UVM + coverage skill</td></tr>
+            <tr><td>FPGA Engineer</td><td>Embedded systems, signal processing, prototyping</td><td>Go Board / Lattice / Xilinx flow knowledge</td></tr>
+            <tr><td>Physical Designer</td><td>Place-and-route, timing closure</td><td>You read synthesis/P&R reports already</td></tr>
+            <tr><td>Hardware Security</td><td>Side-channel analysis, secure HDL patterns</td><td>CDC/timing knowledge → attack surface understanding</td></tr>
+            <tr><td>Compiler Engineer</td><td>HLS, ML accelerators, domain-specific silicon</td><td>HDL fluency to reason about compiler output</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Note:</strong> Every role above treats HDL as a literacy, not a specialty. Even software-leaning roles (compiler, ML infra) benefit from knowing how the silicon is built.
+    </div>
+    <aside class="notes">HDL as literacy. Even if you don't become a pure RTL designer, the knowledge pays dividends in adjacent roles. Make this point clearly.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Given my UART design and testbench, suggest cover points (functional coverage) that would catch scenarios I might have missed.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI proposes cover points for your UART.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: FSM state × byte value cross, reset-during-transmit, back-to-back frames, parity errors.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI gives cross-coverage + bins. Weak AI lists flat state coverage only.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Cross-coverage is the mark of a mature coverage plan. Look for it.</p></div>
+    </div>
+    <aside class="notes">Cross-coverage is the mark of mature verification thinking. If AI only suggests flat coverage, ask explicitly for crosses.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Coverage = how you answer &ldquo;are we done?&rdquo; Not a feeling; a measurement.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Code coverage = syntactic floor. Functional coverage = semantic ceiling.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Cross coverage is where interesting bugs live.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Your HDL skill opens doors to 6+ career tracks, not just &ldquo;digital designer.&rdquo;</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">All tests pass ≠ thorough. Coverage says you exercised the design, not just ran it.</div>
 </section>
 
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
     <div style="font-size:0.82em;">
-        <p><strong>Q1:</strong> What does <code>assert (o_tx == 1'b1) else $error("TX not idle");</code> do that <code>if (!o_tx) $display("Error")</code> doesn't?</p>
-        <div class="fragment quiz-answer">Assertions are standardized (tools count/filter/report uniformly), have severity levels, can be globally enabled/disabled, and are recognized by formal verification tools. <code>if</code>-statements provide none of these benefits.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> Write a constraint spec (2–3 lines) for testing a UART TX module with AI.</p>
-        <div class="fragment quiz-answer">"Test UART TX at 115200 baud with $urandom_range for data bytes. Send at least 20 frames including 0x00, 0xFF, and alternating 0xAA/0x55. Verify each frame has correct start bit (0), 8 data bits LSB-first, and stop bit (1). Self-checking: compare TX output timing against CLKS_PER_BIT."</div>
+        <p><strong>Q1:</strong> Your code coverage is 100%. Can you ship?</p>
+        <div class="fragment quiz-answer">Not necessarily. 100% code coverage means every line executed, but scenario coverage may be missing. Imagine a UART that transmitted every <em>line</em> of code during simple tests but never had back-to-back frames. Functional coverage is the complement you still need to check.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What's the difference between state coverage and transition coverage for an FSM?</p>
+        <div class="fragment quiz-answer">State coverage: each state was reached. Transition coverage: each <em>edge</em> in the state diagram was traversed. Transition is stronger — reaching S_IDLE from S_RUN is different from reaching S_IDLE from S_ERROR. Error-path transitions are the ones testbenches typically miss.</div>
     </div>
 </section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check (cont.)</h2>
     <div style="font-size:0.82em;">
-        <p><strong>Q3:</strong> Your PPA table shows adding parity costs 6 LUTs. Is this "expensive"? How do you decide?</p>
-        <div class="fragment quiz-answer">6 LUTs = 0.5% of the iCE40 HX1K (1,280 total). On this FPGA, it's negligible. But "expensive" depends on context: if you're already at 90% utilization, every LUT matters. The analysis paragraph should state the absolute cost AND the relative cost.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> Name the three FPGA PPA proxies and their measurement tools.</p>
-        <div class="fragment quiz-answer">Performance → Fmax (<code>nextpnr --freq</code>). Area → LUTs/FFs/EBR (<code>yosys stat</code>). Power → toggle rate × capacitance (conceptual on iCE40). These proxy the ASIC metrics: critical path delay, gate count/die area, and dynamic+static power.</div>
+        <p><strong>Q3:</strong> What is formal verification, in one sentence?</p>
+        <div class="fragment quiz-answer">Mathematically proving that assertions hold for <em>every possible input sequence</em>, rather than just the ones a simulator happens to stimulate. Useful when the input space is too large for simulation to cover (a 32-bit input has 4 billion values).</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> You know Verilog/SV and FPGA flow. Which career paths are open to you besides &ldquo;RTL designer&rdquo;?</p>
+        <div class="fragment quiz-answer">Design verification (DV), FPGA engineer, physical design, hardware security research, compiler/HLS engineer, EDA tools developer, embedded systems, accelerator / ML hardware design, open-source silicon contributor. HDL is literacy — it opens doors across the entire silicon stack.</div>
     </div>
 </section>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 14 · The Capstone Verification Session</p>
-        <p style="color:#888;font-size:0.6em;margin-top:1em;">Today: assertions + parity extension + AI constraint TB + PPA analysis.<br>All four cross-cutting threads converge.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 14 · Transition to Capstone</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Day 15: Build Day</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">The capstone integration — your library, on silicon</p>
+        <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have <em>every tool</em>: RTL fluency, SystemVerilog, assertions, coverage, PPA discipline. Day 15 is when you use them. The briefing covers the #1 failure mode of integration projects, the incremental discipline that avoids it, common late-stage panics and their fixes, and UART printf-debugging as your primary silicon telemetry tool. Then you build.</p>
+        </div>
     </div>
 </section>
 
@@ -112,5 +207,6 @@ endgroup</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>Reveal.initialize({ hash:true, slideNumber:'c/t', showSlideNumber:'all', width:1280, height:720, margin:0.04, transition:'slide', plugins:[RevealHighlight,RevealNotes] });</script>
-</body></html>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body>
+</html>

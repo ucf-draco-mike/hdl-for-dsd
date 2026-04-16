@@ -1,82 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13.2: logic — One Type — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13.2: The logic Type — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog Transition</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The <code>logic</code> Type</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Why SV?</span>
-        <span class="seg-label active">logic Type</span>
-        <span class="seg-label ">always_ff/comb</span>
-        <span class="seg-label ">enum/struct/pkg</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 13.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Why SV</span><span class="seg-label active">logic type</span><span class="seg-label">always_*</span><span class="seg-label">enum/struct/package</span></div>
+    <aside class="notes">Video 2 of 4. One type. Replaces both wire and reg. End of a whole category of bugs.</aside>
 </section>
 
 <section>
-    <h2>The <code>wire</code> / <code>reg</code> Problem</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;font-size:0.75em;">
-        <div style="background:#FFEBEE;padding:0.5em 0.8em;border-radius:6px;">
-            <p><strong>Verilog confusion:</strong></p>
-            <p><code>reg</code> does NOT mean register</p>
-            <p><code>wire</code> does NOT mean just a wire</p>
-            <p>You must decide <em>before coding</em></p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Open-source: every SV project on GitHub uses <code>logic</code>. PicoRV32, Ibex, CORE-V, BlackParrot, RocketChip — not a <code>reg</code> declaration in sight. Commercial: Intel's, AMD's, and Apple's design style guides <em>mandate</em> <code>logic</code> for all new code. The <code>wire</code>/<code>reg</code> distinction is strictly maintenance-mode in modern flows.</p>
         </div>
-        <div class="fragment" style="background:#E8F5E9;padding:0.5em 0.8em;border-radius:6px;">
-            <p><strong>SystemVerilog fix:</strong></p>
-            <p><code>logic</code> = one type for both</p>
-            <p>Works with <code>assign</code> or <code>always</code></p>
-            <p>Decision made <em>by usage</em></p>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">From Day 13 on, all new code uses <code>logic</code>. Your Week 1-3 library is optionally modernized (simple find/replace: <code>wire</code> → <code>logic</code>, <code>reg</code> → <code>logic</code>, except in module ports where the distinction is irrelevant). Your Day 14 assertions assume SV style.</p>
         </div>
     </div>
-    <aside class="notes">Verilog's wire/reg distinction confuses everyone because reg doesn't mean register. SystemVerilog's logic type eliminates this entirely — one type, usage determines behavior.</aside>
+    <aside class="notes">100% adoption in modern codebases. <code>wire</code>/<code>reg</code> is a legacy pair — familiar but superseded. Time to retire them.</aside>
 </section>
-<section>
-    <h2><code>logic</code> in Practice</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Verilog — you must choose wire vs. reg
-input  wire       i_clk;
-output reg  [7:0] o_data;  // is this a register? Maybe not!
-wire   [3:0] w_sum;
 
-<span class="fragment">// SystemVerilog — logic everywhere
-input  logic       i_clk;
-output logic [7:0] o_data;  // no misleading "reg" keyword
-logic  [3:0] sum;</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>One restriction:</strong> <code>logic</code> can only have <strong>one driver</strong>. Multi-driver buses (rare in FPGA) still use <code>wire</code>. This catches accidental multi-driver bugs.
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;<code>reg</code> Means Register&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>reg</code> declarations become flip-flops. <code>wire</code> declarations become combinational logic. The type tells me the hardware.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">The <code>reg</code> keyword has <em>nothing to do with registers</em>. It's a <strong>procedural assignment target</strong> — a variable you can assign inside <code>always</code>, <code>initial</code>, or <code>task</code> blocks. Whether it becomes a flip-flop, a latch, or combinational logic depends entirely on the <code>always</code> block that drives it. <code>reg</code> is a confusing name for &ldquo;assignable variable.&rdquo;</p>
+        </div>
     </div>
-    <aside class="notes">logic replaces both wire and reg. One restriction: single driver only. That's actually a feature — catches accidental multi-driver bugs that Verilog would silently resolve.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> <code>reg</code> inside <code>always @(*)</code> → combinational. <code>reg</code> inside <code>always @(posedge clk)</code> → flip-flop. The keyword <em>does not decide</em>. The block decides. <code>logic</code> drops the misleading name and acknowledges: &ldquo;any 4-state signal, the synthesis tool figures out the hardware.&rdquo;
+    </div>
+    <aside class="notes">The most persistent Verilog confusion. <code>reg</code> is NOT a register. It's a procedural assignment target. The name is historical baggage from Verilog's 1984 origins. <code>logic</code> is the honest replacement.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Verilog-2001 vs SystemVerilog</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
+        <div style="background:#fff8e1;padding:0.6em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">VERILOG-2001</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">module counter (
+    input  wire       clk, rst,
+    output reg  [7:0] count    // reg in port
+);
+    // internal:
+    wire [7:0] next_count;
+    reg        load_done;
+
+    always @(posedge clk)
+        if (rst) count &lt;= 0;
+        else     count &lt;= next_count;
+
+    assign next_count = count + 1'b1;
+endmodule</code></pre>
+        </div>
+        <div style="background:#f0f8ff;padding:0.6em;border-radius:6px;border:2px solid #2E86AB;">
+            <p style="color:#2E86AB;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">SYSTEMVERILOG</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">module counter (
+    input  logic       clk, rst,
+    output logic [7:0] count
+);
+    logic [7:0] next_count;
+    logic       load_done;
+
+    always_ff @(posedge clk)
+        if (rst) count &lt;= 0;
+        else     count &lt;= next_count;
+
+    assign next_count = count + 1'b1;
+endmodule</code></pre>
+        </div>
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Exactly the same hardware. The SV version is <em>shorter</em> and <em>uniform</em>. Every signal is <code>logic</code>, regardless of whether it's driven by an <code>always</code> block or a continuous assignment. The synthesis tool figures out the rest.
+    </div>
+    <aside class="notes">Same synthesis result, different source. Uniform type = fewer decisions, less syntax pressure, less bug surface.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Conversion Rules</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Verilog-2001</th><th>SystemVerilog</th><th>When</th></tr></thead>
+        <tbody>
+            <tr><td><code>wire</code></td><td><code>logic</code></td><td>Always, except for specific bidirectional/tri-state uses</td></tr>
+            <tr><td><code>reg</code></td><td><code>logic</code></td><td>Always</td></tr>
+            <tr><td><code>wire [7:0]</code></td><td><code>logic [7:0]</code></td><td>Always</td></tr>
+            <tr><td><code>wire signed</code></td><td><code>logic signed</code></td><td>Always</td></tr>
+            <tr><td><code>wire [31:0] arr [0:15]</code></td><td><code>logic [31:0] arr [0:15]</code></td><td>Always — same semantics</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>The only exception:</strong> <code>logic</code> supports only <strong>single-driver</strong> semantics. If a signal has multiple drivers (tri-state bus, bidirectional I/O, or parallel combinational drivers), use <code>wire</code> or the 4-state bus types (<code>tri</code>, <code>wand</code>, <code>wor</code>). For 99% of RTL you'll write, single-driver is what you want — and <code>logic</code> actually <em>catches</em> accidental multiple drivers as a warning.
+    </div>
+    <aside class="notes">Single-driver is a feature. Multiple drivers in RTL is almost always a bug (someone connected two always blocks to the same signal). logic catches it; wire doesn't.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Modernize This Snippet</h2>
+    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">module uart_tx_ctrl (
+    input  wire        clk, rst, start,
+    input  wire  [7:0] data,
+    output reg         tx_busy,
+    output wire        tx_line
+);
+    reg  [3:0] state;
+    reg  [9:0] shifter;
+    wire       bit_tick;
+    reg  [7:0] count;
+    // ...
+endmodule</code></pre>
+    <p style="font-size:0.78em;">Rewrite the declarations in SV style.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <pre style="font-size:0.88em;"><code class="language-verilog">module uart_tx_ctrl (
+    input  logic       clk, rst, start,
+    input  logic [7:0] data,
+    output logic       tx_busy, tx_line
+);
+    logic [3:0] state;
+    logic [9:0] shifter;
+    logic       bit_tick;
+    logic [7:0] count;
+    // ...
+endmodule</code></pre>
+        Every type becomes <code>logic</code>. No decision fatigue. The synthesis tool infers flops, combinational logic, or wires based on <em>how</em> each signal is driven — not on how it's declared.
+    </div>
+    <aside class="notes">Mechanical conversion. No thinking required. The shift is from &ldquo;decide type for each signal&rdquo; to &ldquo;type is always logic, let tool handle it.&rdquo;</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Modernize Your Debouncer</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes — Week 2 module, SV-ified</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week4_day13/ex2_sv_migrate/
+cp ../../week2_day05/ex4_debounce/*.v .
+sed -i 's/\\bwire\\b/logic/g; s/\\breg\\b/logic/g' debounce.v
+mv debounce.v debounce.sv
+iverilog -g2012 -o sim tb_debounce.v debounce.sv
+./sim</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: stable 1 passes through
+PASS: stable 0 passes through
+PASS: 1-cycle glitch filtered
+PASS: bouncing settles after window
+=== 8 passed, 0 failed ===
+
+# same hardware, same cell count</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">A 3-character <code>sed</code> modernizes the whole file. Your Week 1-3 library can be SV-ified in minutes. The testbench still passes because behavior is identical.</p>
+    </div>
+    <aside class="notes">[Terminal] Show the sed, compile, run, still passes. Emphasize: migration is cheap, behavior is preserved, but code is now modern.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> The 4-State Value System (Unchanged)</h2>
+    <p style="font-size:0.76em;"><code>logic</code> keeps Verilog's 4-state value system: <code>0</code>, <code>1</code>, <code>X</code>, <code>Z</code>. You can still track uninitialized state (<code>X</code>) and high-impedance (<code>Z</code>) — nothing semantic changes.</p>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Value</th><th>Meaning</th><th>Common in</th></tr></thead>
+        <tbody>
+            <tr><td><code>0</code></td><td>Logic low</td><td>Everything</td></tr>
+            <tr><td><code>1</code></td><td>Logic high</td><td>Everything</td></tr>
+            <tr><td><code>X</code></td><td>Unknown / uninitialized</td><td>Simulation of uninitialized FFs, X-propagation bugs</td></tr>
+            <tr><td><code>Z</code></td><td>High-impedance (floating)</td><td>Tri-state buses, inout ports</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Note:</strong> If you need strictly 2-state (no X or Z) for a testbench counter or loop index, use <code>bit</code>, <code>byte</code>, <code>int</code>, <code>shortint</code>, <code>longint</code>. These are SV additions that skip the 4-state overhead in simulation (faster sim). For RTL, stick with <code>logic</code>.
+    </div>
+    <aside class="notes">4-state is preserved. For testbench counters and loop variables, 2-state types (bit, int) are faster to simulate. Never use int for synthesis — always use logic.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;I converted my Verilog to SystemVerilog by replacing wire and reg with logic. My testbench now fails with 'X' values on signals that used to work. What's wrong?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI diagnoses a post-migration X-value bug.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: multiple drivers on a logic signal (allowed for wire, warned for logic).</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI mentions single-driver rule. Weak AI flails.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">The X-on-logic symptom is a classic multi-driver catch. AI that knows the single-driver rule diagnoses fast.</p></div>
+    </div>
+    <aside class="notes">The classic migration bug. A signal that worked as wire with (accidental) multiple drivers becomes X-valued as logic. That's a FEATURE — it caught a pre-existing bug. AI with SV knowledge will catch this immediately.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>logic</code> replaces <code>wire</code> and <code>reg</code>. One type for everything.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Eliminates the &ldquo;<code>reg</code> doesn&rsquo;t mean register&rdquo; confusion.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Single-driver restriction catches multi-driver bugs at compile time.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Use <code>wire</code> only for tri-state or multi-driver buses (rare).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>logic</code> replaces both <code>wire</code> and <code>reg</code>. Use it for all RTL signals.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>reg</code> never meant &ldquo;register.&rdquo; The name was always misleading.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>logic</code> is single-driver — this catches multi-driver bugs at elaboration.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Keeps Verilog's 4-state (0, 1, X, Z) semantics. 2-state types (bit, int) are for TB only.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Intent-Based Always Blocks</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Telling the compiler what you mean — and having it check.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">One keyword, zero ambiguity. If it's a signal, it's <code>logic</code>.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Intent-Based <code>always_*</code></h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've used <code>always @(*)</code> and <code>always @(posedge clk)</code> all semester. Video 3 replaces them with <code>always_comb</code>, <code>always_ff</code>, and <code>always_latch</code>: variants that <em>forbid the wrong thing</em> at compile time. Same hardware, fewer bugs, better error messages.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -84,4 +239,5 @@ logic  [3:0] sum;</span></code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

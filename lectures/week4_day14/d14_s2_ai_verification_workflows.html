@@ -1,125 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 14.2: AI-Driven Verification Workflows — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14.2: AI Verification Workflows — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Verification, AI-Driven Testing &amp; PPA Analysis</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">AI-Driven Verification Workflows</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Advanced Verification &amp; Road Ahead</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">AI-Assisted Verification Workflows</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~11 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label">Assertions</span>
-        <span class="seg-label active">AI Verification</span>
-        <span class="seg-label">PPA Methodology</span>
-        <span class="seg-label">Coverage &amp; Road Ahead</span>
-    </div>
-    <aside class="notes">This segment ties together the AI verification thread you've been building since Day 6. We move from reviewing AI output to writing constraint specifications that drive AI testbench generation.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Assertions</span><span class="seg-label active">AI Verification</span><span class="seg-label">PPA</span><span class="seg-label">Road Ahead</span></div>
+    <aside class="notes">Video 2 of 4. All semester you've seen &ldquo;Check the Machine&rdquo; sidebars. Today we systematize that into a workflow: AI as verification co-pilot.</aside>
 </section>
 
 <section>
-    <h2>The Verification Productivity Stack</h2>
-    <div style="font-size:0.78em;">
-        <p class="fragment"><span style="color:#888;">Level 1:</span> <strong>Manual directed tests</strong> — you write every stimulus value (Day 4)</p>
-        <p class="fragment"><span style="color:#888;">Level 2:</span> <strong>Self-checking TBs</strong> — automated pass/fail, expected vs. actual (Day 6)</p>
-        <p class="fragment"><span style="color:#888;">Level 3:</span> <strong>AI-scaffolded TBs</strong> — AI generates boilerplate; you review + correct (Days 6, 8, 12)</p>
-        <p class="fragment"><span style="color:#888;">Level 4:</span> <strong>Assertion-enhanced</strong> — executable specs catch bugs at source (today, Segment 1)</p>
-        <p class="fragment" style="color:var(--ucf-gold);font-weight:600;"><span style="color:#888;">Level 5:</span> <strong>Constraint-based + coverage-driven</strong> — define the input space, measure what you've tested</p>
-    </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        You've climbed from Level 1 to Level 4 over the past two weeks. Today's lab takes you to Level 5.
-    </div>
-    <aside class="notes">This is the verification maturity scale. Students are now at Level 4. The jump to Level 5 is about defining the input space formally (constraints) and measuring what you've tested (coverage).</aside>
-</section>
-
-<section>
-    <h2>Constraint-Based Stimulus Generation</h2>
-    <p style="font-size:0.82em;">Instead of listing specific test values, <strong>define the legal input space</strong>:</p>
-    <pre class="synth"><code class="language-verilog">// Not this (directed):
-a = 8'd15; b = 8'd7; opcode = 3'b000;  // one specific test
-
-// This (constrained random):
-a = $urandom_range(0, 2**WIDTH - 1);
-b = $urandom_range(0, 2**WIDTH - 1);
-opcode = $urandom_range(0, 4);         // all valid opcodes</code></pre>
-    <div class="fragment" style="font-size:0.82em;">
-        <p><strong>Bounded random:</strong> <code>$urandom_range(min, max)</code> generates values within legal ranges.</p>
-        <p><strong>Constraints:</strong> Relationships between signals — "if opcode is ADD, ensure at least 10 overflow cases."</p>
-    </div>
-    <aside class="notes">Directed tests check specific cases you thought of. Constrained random explores the space you defined. It finds bugs you didn't think to test for — the ones that matter most.</aside>
-</section>
-
-<section>
-    <h2>Writing a Constraint Specification</h2>
-    <p style="font-size:0.82em;">The spec is what you give the AI. Be precise:</p>
-    <pre class="synth"><code class="language-plaintext" style="font-size:0.9em;">Module: alu (input [7:0] a, b; input [2:0] opcode; output [7:0] result)
-Operations: ADD(000), SUB(001), AND(010), OR(011), XOR(100)
-
-Test at least 100 random cases per opcode.
-For ADD/SUB: ensure at least 10 cases each of:
-  - no overflow, overflow, zero result, max result
-For AND/OR/XOR: include all-zeros, all-ones, alternating patterns.
-Use $urandom_range() for stimulus.
-Self-checking: compute expected in the testbench, compare.
-Report per-opcode pass/fail counts at end.</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Key skill:</strong> A vague spec → vague TB. A precise spec → a TB you can evaluate. The quality of the spec determines the quality of the AI output.
-    </div>
-    <aside class="notes">This is the format for your lab exercise today. Write the spec, give it to the AI, evaluate what comes back. The spec is the contract — it's what lets you judge whether the AI delivered or not.</aside>
-</section>
-
-<section>
-    <h2>What AI Gets Right vs. Wrong</h2>
-    <div class="columns">
-        <div class="col panel panel-good" style="font-size:0.75em;">
-            <h3 style="color:#2E7D32;">AI strengths</h3>
-            <p>Boilerplate and structure</p>
-            <p>Clock generation, reset sequence</p>
-            <p>Basic stimulus loops</p>
-            <p>Self-checking scaffolding</p>
-            <p>Pass/fail reporting format</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">As of 2025-2026, every major EDA vendor — Synopsys, Cadence, Siemens — ships LLM-assisted verification tooling (Synopsys Research.ai, Cadence Verisium AI, Siemens Questa Inspector). NVIDIA's ChipNeMo and Google's Verilog-LLM research have demonstrated &ldquo;AI-first&rdquo; verification flows. Industry is not asking <em>whether</em> AI helps verification but <em>how to use it responsibly</em>. Engineers who know the workflow outperform ones who don't — the productivity delta is real.</p>
         </div>
-        <div class="col panel panel-bad fragment" style="font-size:0.75em;">
-            <h3 style="color:#C62828;">AI weaknesses</h3>
-            <p>Baud-rate timing accuracy</p>
-            <p>Protocol edge cases</p>
-            <p>Tool-specific syntax (iverilog)</p>
-            <p>Overflow/signed arithmetic</p>
-            <p><strong>Actually covering the corners you asked for</strong></p>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">You've used AI tactically all semester. Today's video gives you a <em>strategy</em>: when to ask, what to ask, how to verify the output, and — critically — what AI cannot do. The goal isn't AI-free verification; it's AI-informed verification with the right amount of human judgment at the right points.</p>
         </div>
     </div>
-    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
-        The prompt/generate/review/correct workflow you've practiced is the same loop verification engineers use on production chip projects. The difference is scale; the evaluation skill is identical.
+    <aside class="notes">This is current and rapidly evolving. The skill of using AI-assisted verification well is now a hireable differentiator. Students should take this seriously.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Two Failure Modes</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:0.95em;">❌ &ldquo;AI will do it for me&rdquo;</h3>
+            <p style="font-size:0.72em;">Accept generated testbenches without review. Skip the waveform check. Trust the assertion set without asking whether it covers the intent. Result: AI-generated code passes the AI-generated tests, and nothing meaningful is verified. Both sides are guesses.</p>
+        </div>
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:0.95em;">❌ &ldquo;I'll avoid AI entirely&rdquo;</h3>
+            <p style="font-size:0.72em;">Refuse to use AI because &ldquo;real engineers&rdquo; don't need it. Spend 3 hours writing testbench boilerplate that AI produces in 30 seconds. Fall behind peers who ship in half the time. Result: same verification quality, 10× slower.</p>
+        </div>
     </div>
-    <aside class="notes">Industry context. This workflow is real. The same prompt-review-correct loop happens at Apple, Intel, AMD — just at larger scale with more sophisticated tools. The evaluation skill you're building is the one that matters.</aside>
+    <div class="fragment panel panel-good" style="margin-top:0.5em;">
+        <h3 style="color:#2E7D32;font-size:0.95em;">✓ Informed collaboration</h3>
+        <p style="font-size:0.72em;">You own the <em>intent</em>: what to verify, what the contract is, what the edge cases mean. AI handles the <em>mechanics</em>: SVA syntax, stimulus generation, boilerplate. You review outputs with the lens of &ldquo;does this match my intent?&rdquo; — not &ldquo;is this syntactically correct?&rdquo; (it usually is).</p>
+    </div>
+    <aside class="notes">Both extremes lose. &ldquo;AI-does-it-all&rdquo; produces self-satisfying garbage. &ldquo;No AI ever&rdquo; wastes hours on mechanical tasks. Informed collaboration is the productive center.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; A Good Verification Prompt</h2>
+    <div class="panel panel-neutral" style="font-size:0.72em;">
+        <p><strong>Prompt:</strong></p>
+        <p style="font-family:monospace;font-size:0.88em;background:#f8f8f8;padding:0.4em;border-radius:4px;">
+&ldquo;I have a UART TX module with ports: <code>input logic clk, rst, i_valid, input logic [7:0] i_data, output logic o_busy, o_tx_line</code>. Parameter: <code>CLKS_PER_BIT</code>. Protocol: 8N1, idle high, start bit low, LSB first, stop bit high, <code>o_busy</code> asserts during transmit.<br><br>
+Write a SystemVerilog self-checking testbench that: (1) sends 10 random bytes, (2) captures the <code>tx_line</code> waveform and decodes it byte-by-byte using a receiver model, (3) compares decoded bytes against the transmitted bytes, (4) reports pass/fail per byte.<br><br>
+Also write 5 concurrent assertions for protocol correctness. Use <code>disable iff (rst)</code>.&rdquo;</p>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Five things this prompt does right: (1) full port list, (2) parameter named, (3) protocol spec explicit, (4) acceptance criteria explicit (random bytes, decode, compare), (5) scope explicit (testbench + 5 assertions). Asking for &ldquo;a testbench for my UART&rdquo; without these would produce generic output. Specificity = quality.
+    </div>
+    <aside class="notes">Specificity is the #1 lever for AI output quality. Students see &ldquo;good prompt&rdquo; and realize how much of their past frustration with AI was vague prompting.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Verification Review Loop</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Step</th><th>Human</th><th>AI</th></tr></thead>
+        <tbody>
+            <tr><td>1. Spec intent</td><td>Write protocol, invariants, edge cases</td><td>—</td></tr>
+            <tr><td>2. Generate boilerplate</td><td>—</td><td>Testbench skeleton, asserts, stimulus</td></tr>
+            <tr><td>3. Review generated code</td><td>Check each assertion against <em>your</em> intent</td><td>—</td></tr>
+            <tr><td>4. Run, observe</td><td>Does output make sense? Waveforms match intent?</td><td>—</td></tr>
+            <tr><td>5. Ask AI to explain surprises</td><td>&ldquo;Why did X happen?&rdquo;</td><td>Diagnose</td></tr>
+            <tr><td>6. Fix based on explanation</td><td>You decide what to change</td><td>Implement the change</td></tr>
+            <tr><td>7. Coverage audit</td><td>What's missing?</td><td>Suggest uncovered cases</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together:</strong> AI handles steps 2, 5, 6-partial, 7. You handle 1, 3, 4, 6-decision. The intent-vs-mechanics split is the entire workflow.
+    </div>
+    <aside class="notes">The loop is the workflow. Humans do intent + review + decision; AI does mechanics + explanation + suggestion. Every step has a clear owner.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Which AI Output Do You Trust?</h2>
+    <p style="font-size:0.78em;">For each of these AI outputs, decide: <strong>trust and integrate</strong>, <strong>review carefully then integrate</strong>, or <strong>reject</strong>.</p>
+    <div style="font-size:0.7em;">
+        <p class="fragment">A. <em>&ldquo;Here's a testbench that generates 100 random bytes for your adder.&rdquo;</em>&ensp;<span class="fragment" style="color:#2E7D32;">→ Trust + integrate. Mechanical stimulus gen, low stakes.</span></p>
+        <p class="fragment">B. <em>&ldquo;Here's an assertion: <code>valid |-&gt; ##1 ready</code>.&rdquo;</em>&ensp;<span class="fragment" style="color:#D4A843;">→ Review carefully. Does your protocol really require ready in exactly 1 cycle? Or is it variable?</span></p>
+        <p class="fragment">C. <em>&ldquo;Your design is correct; no bugs found.&rdquo;</em>&ensp;<span class="fragment" style="color:#C62828;">→ Reject. Correctness claims need evidence, not pronouncements.</span></p>
+        <p class="fragment">D. <em>&ldquo;Here's a coverage report for your testbench.&rdquo;</em>&ensp;<span class="fragment" style="color:#C62828;">→ Reject unless tool-generated. AI can't run your simulator; it can only guess at coverage.</span></p>
+        <p class="fragment">E. <em>&ldquo;Add these 3 edge cases: all-zeros, all-ones, alternating bits.&rdquo;</em>&ensp;<span class="fragment" style="color:#2E7D32;">→ Trust + integrate. AI is excellent at edge-case suggestion.</span></p>
+    </div>
+    <aside class="notes">Calibration exercise. Students learn which outputs are mechanically sound (trust) vs. which claim correctness (reject) vs. which encode protocol decisions (review).</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What AI Cannot Do</h2>
+    <ul style="font-size:0.76em;">
+        <li class="fragment">☒ <strong>Run your simulator.</strong> It can't observe behavior. Any &ldquo;I ran it and it works&rdquo; is hallucination.</li>
+        <li class="fragment">☒ <strong>Know your specific tools.</strong> Xilinx Vivado 2024.2 vs iverilog 12.0 have different SVA support. Verify against your actual flow.</li>
+        <li class="fragment">☒ <strong>See your waveforms.</strong> It can reason about what <em>should</em> happen. It cannot tell you what <em>did</em>.</li>
+        <li class="fragment">☒ <strong>Guarantee completeness.</strong> &ldquo;I wrote 10 assertions&rdquo; does not mean 10 is enough. Coverage analysis requires tool instrumentation.</li>
+        <li class="fragment">☒ <strong>Understand your product intent.</strong> If your UART is specifically for a low-latency protocol, AI doesn't know that unless you tell it.</li>
+        <li class="fragment">☒ <strong>Catch its own mistakes.</strong> Always read the code. Always run it.</li>
+    </ul>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Rule of thumb:</strong> AI is excellent at the 80% of verification that's mechanical. The 20% that requires product judgment, observation, and discipline is still yours.
+    </div>
+    <aside class="notes">The bounds of AI capability. Knowing them is the skill. Students who are over-reliant fail on the 20% that matters most.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine (Meta-Check)</h2>
+    <p style="font-size:0.78em;">You've been asking AI &ldquo;check the machine&rdquo; all semester. Today: <em>check your checking</em>. Ask AI to critique <em>your</em> verification approach for your UART.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">&ldquo;Here is my UART testbench. What's missing?&rdquo;</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: reset, back-to-back frames, framing error, max baud, min baud — likely gaps.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">AI catches 2-4 real gaps. Accept 1-2; the rest are misalignment with your spec.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI is great at gap analysis; it finds ~70% of real gaps and suggests ~30% irrelevant ones.</p></div>
+    </div>
+    <aside class="notes">Meta-review is a high-yield AI use. Students often learn they'd missed real coverage gaps.</aside>
 </section>
 
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Define the input space with constraints, not individual vectors.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;A precise constraint spec → a reviewable AI output. Vague spec → garbage.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>$urandom_range()</code> for bounded random. Count your coverage.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;The evaluation skill transfers directly to industry verification workflows.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;You own intent. AI owns mechanics. That division is the whole workflow.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Specific prompts get specific, usable output. Vague prompts get boilerplate.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;AI cannot run your simulator or see your waveforms. Correctness claims without evidence are hallucinations.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Gap analysis — &ldquo;what am I missing?&rdquo; — is one of AI's highest-yield uses.</p>
     </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Let AI write the testbench. You decide what the testbench means.</div>
 </section>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">PPA Analysis Methodology</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Structured PPA reporting — the format for your final project.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">PPA Methodology</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~12 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Day 10 introduced PPA concepts. Day 14 Video 3 gives you the <em>methodology</em> — a structured process for measuring performance, power, and area on a real design, then using the numbers to make engineering decisions. The PPA discipline is what separates a working design from a shippable one.</p>
+        </div>
     </div>
 </section>
 
@@ -128,5 +160,6 @@ Report per-opcode pass/fail counts at end.</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>Reveal.initialize({ hash:true, slideNumber:'c/t', showSlideNumber:'all', width:1280, height:720, margin:0.04, transition:'slide', plugins:[RevealHighlight,RevealNotes] });</script>
-</body></html>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body>
+</html>

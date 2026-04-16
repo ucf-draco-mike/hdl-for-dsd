@@ -1,83 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 14.1: Assertions — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14.1: Assertions — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Verification, AI-Driven Testing &amp; PPA Analysis</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Advanced Verification &amp; Road Ahead</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Assertions — Executable Specs</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~11 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">Assertions</span>
-        <span class="seg-label ">AI Verification</span>
-        <span class="seg-label ">PPA Methodology</span>
-        <span class="seg-label ">Coverage &amp; Road Ahead</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 14.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">Assertions</span><span class="seg-label">AI Verification</span><span class="seg-label">PPA</span><span class="seg-label">Road Ahead</span></div>
+    <aside class="notes">Video 1 of 4 for Day 14. Assertions — executable contracts between you and the hardware. Watch for protocol violations continuously, fail loudly when they happen.</aside>
 </section>
 
 <section>
-    <h2>What Are Assertions?</h2>
-    <p style="font-size:0.85em;">Statements that <strong>must always be true</strong>. If ever false → simulator reports error.</p>
-    <div style="font-size:0.8em;margin-top:0.5em;">
-        <p class="fragment"><strong>Executable documentation:</strong> design rules the simulator can check</p>
-        <p class="fragment"><strong>Always-on monitors:</strong> run continuously, not just at test points</p>
-        <p class="fragment"><strong>Bug locators:</strong> exact signal + exact time of violation</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every CPU verification team at every tier-1 company lives in assertions. Modern designs have <em>more lines of assertion code than RTL</em>. An Arm A-series CPU has tens of thousands of assertions monitoring every interface, every handshake, every invariant. Formal verification tools (Jasper, VC Formal, Questa) literally prove assertions hold for all inputs — catching bugs no testbench could reach. The &ldquo;Design Verification&rdquo; engineer role exists because of this.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today you add assertions to your UART and FSM designs. Your testbench catches explicit output values; assertions catch invariant violations <em>continuously</em>. By end of Day 14.1 your UART has protocol-level checks that no amount of input variation can silently violate.</p>
+        </div>
     </div>
-    <aside class="notes">Assertions are statements that must always be true. They're executable documentation, always-on monitors, and precise bug locators. Much more powerful than if-based checks.</aside>
+    <aside class="notes">Assertion-heavy verification is an industry-dominant approach. DV (Design Verification) is a whole career track built on these techniques. Today is your introduction.</aside>
 </section>
+
 <section>
-    <h2>Immediate Assertions</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>always_ff @(posedge i_clk) begin
-    state &lt;= next_state;
-
-<span class="fragment">    // Assert: state must never be undefined
-    assert (state !== 'x)
-        else $error("State is X at time %0t", $time);</span>
-
-<span class="fragment">    // Assert: if busy, valid must not be asserted
-    assert (!(o_busy &amp;&amp; i_valid))
-        else $error("Valid during busy at %0t", $time);</span>
-end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Like an <code>if</code> check but: standardized severity, tool-countable, formally verifiable, globally toggleable.
+    <h2><span style="color:#C0392B;">⚠️</span> Testbench vs Assertion</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I already write testbenches. They check my outputs. Assertions are just a different way to do the same thing.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Testbench = &ldquo;<em>apply these inputs, check these outputs.</em>&rdquo; Narrow and specific. Assertion = &ldquo;<em>at all times, this invariant must hold.</em>&rdquo; Broad and continuous. Your testbench runs a finite sequence of test cases; assertions watch <em>every cycle of every simulation</em> and fail the moment the DUT violates the contract. They're complementary, not overlapping.</p>
+        </div>
     </div>
-    <aside class="notes">Immediate assertions: checked at a specific procedural point. Like if-checks but standardized: tools can count, filter, and report them uniformly. Also visible to formal tools.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Your testbench says &ldquo;these 16 cases pass.&rdquo; Your assertions say &ldquo;and it'll never go into an impossible state, even for cases I didn't write.&rdquo; The assertion fires the first time an unchecked case breaks the invariant.
+    </div>
+    <aside class="notes">The key distinction. Testbench = point-in-time checking. Assertion = invariant monitoring. Assertions catch bugs in test cases you never wrote.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Immediate Assertions</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module counter_with_assertions (
+    input  logic       clk, rst, en,
+    output logic [7:0] count
+);
+    always_ff @(posedge clk) begin
+        if (rst)      count &lt;= 0;
+        else if (en)  count &lt;= count + 1'b1;
+    end
+
+    // Immediate assertion — checked at the moment it's reached
+    always_ff @(posedge clk) begin
+        assert (count !== 8'hXX)
+            else $error("Counter went X-valued at time %0t", $time);
+
+        assert (count &lt; 8'hFF || rst || !en)
+            else $warning("Counter about to wrap");
+    end
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> An immediate assertion is like an <code>if</code> statement with teeth. &ldquo;<em>At this clock edge, <code>count</code> should not be X.</em>&rdquo; If it is, the simulator fires <code>$error</code> and typically halts. Lightweight. Lives inside RTL or TB. Classic uses: check for uninitialized state, check for bound violations.
+    </div>
+    <aside class="notes">Immediate assertions are simple — at this moment, this must be true. Great for X-value detection (uninitialized flops) and range checks.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Concurrent Assertions (<code>property</code>)</h2>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">// Concurrent assertion — a rule about sequences across cycles
+// "When valid asserts, ready must arrive within 10 cycles."
+property p_handshake;
+    @(posedge clk) disable iff (rst)
+        valid |-&gt; ##[1:10] ready;
+endproperty
+
+a_handshake: assert property (p_handshake)
+    else $error("Handshake violation: valid at %0t without ready", $time);
+
+// "tx_busy must go low exactly one cycle after tx_start"
+property p_start_then_busy;
+    @(posedge clk) $rose(tx_start) |=&gt; tx_busy;
+endproperty
+a_start_then_busy: assert property (p_start_then_busy);</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together — the notation:</strong>
+        <ul style="font-size:0.95em;">
+            <li><code>|-&gt;</code> (overlapping): &ldquo;if LHS, then RHS must hold <em>this</em> cycle&rdquo;</li>
+            <li><code>|=&gt;</code> (non-overlapping): &ldquo;if LHS, then RHS must hold <em>next</em> cycle&rdquo;</li>
+            <li><code>##N</code>: exactly N cycles later; <code>##[1:10]</code>: 1 to 10 cycles later</li>
+            <li><code>$rose / $fell / $stable</code>: signal edge / stability checks</li>
+            <li><code>disable iff (rst)</code>: don't check during reset</li>
+        </ul>
+    </div>
+    <aside class="notes">SVA (SystemVerilog Assertions) syntax. Compact, expressive. One property captures a multi-cycle protocol rule that would take dozens of testbench lines.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Write an Assertion for UART TX</h2>
+    <p style="font-size:0.78em;">Your Day 11 UART TX has signals <code>i_valid</code>, <code>o_busy</code>, and <code>o_tx_line</code>. Write a concurrent assertion: <em>&ldquo;Once the TX asserts busy, <code>tx_line</code> must stay low for exactly <code>CLKS_PER_BIT</code> cycles (the start bit).&rdquo;</em></p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <pre style="font-size:0.85em;"><code class="language-verilog">property p_start_bit_length;
+    @(posedge clk) disable iff (rst)
+        $rose(o_busy) |=&gt; (!o_tx_line) [*CLKS_PER_BIT];
+endproperty
+a_start_bit: assert property (p_start_bit_length)
+    else $error("Start bit was not %0d cycles long", CLKS_PER_BIT);</code></pre>
+        <strong>What it says:</strong> when <code>o_busy</code> rises, the next CLKS_PER_BIT cycles must have <code>o_tx_line == 0</code>. If the TX breaks the start-bit timing (e.g., off-by-one in the counter), the assertion fires immediately. The bug is caught even if no testbench case happened to measure the start bit.
+    </div>
+    <aside class="notes">[*N] is the repetition operator: &ldquo;this condition holds for N consecutive cycles.&rdquo; Perfect for bit-length enforcement. Students should see how one property catches a whole class of timing bugs.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Assert-Driven Bug Hunt</h2>
-    <p style="margin-top:0.5em;">Add assertions to UART TX, then intentionally break the stop bit — watch the assertion fire</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day14_ex01_uart_tx_assertions.sv</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Assert-Driven Bug Hunt</aside>
+    <h2 style="color:#FFC904;">Assert-Driven Bug Hunt</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~6 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week4_day14/ex1_assertions/
+# DUT with off-by-one bug injected
+make sim    # testbench alone might not notice
+# now add assertions:
+iverilog -g2012 -o sim tb.sv uart_tx.sv \\
+    uart_assertions.sv
+./sim       # assertion fires immediately</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Without assertions:
+  Test PASSES (by luck)
+
+With assertions:
+  ** ASSERT FAIL **
+  a_start_bit at time 2172:
+  Start bit was not 217 cycles
+  long (was 216)
+  $error halt</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ THE INSIGHT</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">The off-by-one bug produced a 216-cycle start bit instead of 217. The testbench didn't measure bit-length and passed. The assertion caught it instantly with exact context (which cycle, which value). This is the case for assertions in one demo.</p>
+    </div>
+    <aside class="notes">[Terminal] Ideal demo — same DUT, same testbench, one passes without assertions, one fails with. The bug exists either way, but only assertions surface it. Memorable.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Assertions &amp; Formal Verification</h2>
+    <p style="font-size:0.76em;">An assertion is a contract. A simulator <em>checks</em> it against the stimulus you provide. A <strong>formal tool</strong> goes further: it <em>proves</em> the assertion holds for <em>every possible input sequence</em> — or produces a counterexample.</p>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Tool</th><th>What it does</th><th>Cost</th></tr></thead>
+        <tbody>
+            <tr><td>iverilog / Verilator + SVA</td><td>Checks assertions during simulation</td><td>Open source, free</td></tr>
+            <tr><td>Cadence Jasper / Synopsys VC Formal</td><td>Formally proves assertions over all inputs</td><td>Commercial, expensive</td></tr>
+            <tr><td>SymbiYosys / Yices</td><td>Open-source formal verification</td><td>Free, smaller scale</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Why this matters:</strong> Writing assertions is the <em>prerequisite</em> for formal verification. If you can't state your intent as SVA, formal tools can't help you. Even at industry, many teams start with simulation-only SVA, then graduate critical modules to formal — the same assertions work for both.
+    </div>
+    <aside class="notes">Assertion-writing skill is portable: simulation first, formal later. Same syntax. Industry path from junior → senior DV engineer goes through this.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;For my UART TX with CLKS_PER_BIT parameter, write 5 concurrent assertions that verify protocol correctness — start bit timing, data bit stability, stop bit, busy/valid handshake, and no back-to-back frames without a gap.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI writes a UART assertion suite.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 5 properties with <code>|-&gt;</code>, <code>|=&gt;</code>, <code>[*N]</code>, disable iff rst.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI writes named properties + disable-iff. Weak AI writes only immediate <code>assert()</code> inside tb.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI is fluent in SVA. Excellent accelerator for verification engineers.</p></div>
+    </div>
+    <aside class="notes">SVA writing is an AI strength. Well-structured, idiomatic patterns. Use AI heavily here; review every property carefully.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Assertions = executable specs. Must always be true.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Immediate: checked at a point. <code>assert (cond) else $error(...)</code></p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Severity levels: <code>$info</code>, <code>$warning</code>, <code>$error</code>, <code>$fatal</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Unlike <code>if</code>-checks: standardized, countable, formally verifiable.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Assertions are executable specifications. Testbenches check specific cases; assertions monitor invariants.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Immediate (<code>assert()</code>) for single-cycle checks; concurrent (<code>property ... assert property</code>) for multi-cycle rules.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;SVA operators: <code>|-&gt;</code> same cycle, <code>|=&gt;</code> next cycle, <code>##N</code> N cycles, <code>[*N]</code> N repeats.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Same syntax powers formal verification. Assertion-writing is a career-long skill.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Concurrent Assertions</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Multi-cycle protocol checking — assert property.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">A testbench proves it works for N cases. Assertions prove it never violates the contract.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">AI-Assisted Verification Workflows</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~11 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've seen &ldquo;Check the Machine&rdquo; sidebars all semester — moments where AI assists specific tasks. Video 2 turns that into a <em>workflow</em>: how to use LLMs as a verification co-pilot for generating testbenches, assertions, and stimulus. The real skill isn't asking AI — it's knowing what to verify independently and what to trust.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -85,4 +219,5 @@ end</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

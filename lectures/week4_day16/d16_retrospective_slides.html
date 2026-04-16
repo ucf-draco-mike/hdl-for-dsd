@@ -1,130 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 16: Course Retrospective — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 16: Reflection &amp; Next Steps — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 16 · Course Wrap</span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 16 · Course Retrospective</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Reflection &amp; Next Steps</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Accelerated HDL for Digital System Design</p>
+    <p class="subtitle" style="color:#E8E8E4;">Where we've been · where you're going · ~30 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <aside class="notes">After the demos — retrospective and where to go from here.</aside>
+    <aside class="notes">Final day. Celebrate what was built, inventory the toolkit, point at next steps. Keep the tone proud but forward-looking.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Four Weeks Ago</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">Day 1 &mdash; Where you started</h3>
+            <p style="font-size:0.75em;">Verilog was probably a concept. Digital logic might have been textbook. The Go Board was unfamiliar. &ldquo;iverilog,&rdquo; &ldquo;Yosys,&rdquo; and &ldquo;nextpnr&rdquo; were strings of letters. You had never watched your code turn into transistors in a place-and-route report.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">Day 16 &mdash; Where you are</h3>
+            <p style="font-size:0.75em;">You've built 10+ RTL modules, composed them into protocols, integrated them into a capstone system on real silicon. You read synthesis reports, write testbenches, critique AI output, choose optimizations with Pareto intuition, and write SystemVerilog that industry would recognize. You speak the language.</p>
+        </div>
+    </div>
+    <aside class="notes">Bookend the course. Four weeks is short; the transformation is large. Frame it honestly — this is remarkable.</aside>
 </section>
 
 <section>
     <h2>What You Built in 4 Weeks</h2>
-    <div style="font-size:0.75em;">
-        <p class="fragment"><strong>Week 1:</strong> Combinational + sequential fundamentals. First LED blink from HDL.</p>
-        <p class="fragment"><strong>Week 2:</strong> Counters, shift registers, debounce, FSMs, hierarchy, testbenches. Verified module library.</p>
-        <p class="fragment"><strong>Week 3:</strong> Memory, timing/PLL, UART TX + RX, SPI. &ldquo;HELLO&rdquo; on the PC terminal.</p>
-        <p class="fragment"><strong>Week 4:</strong> SystemVerilog, assertions, coverage. Complete demonstrated system.</p>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Week</th><th>Theme</th><th>Major deliverables</th></tr></thead>
+        <tbody>
+            <tr><td><strong>1</strong></td><td>Foundations</td><td>Combinational &amp; sequential primitives; first testbench; first synthesis; first blink on Go Board</td></tr>
+            <tr><td><strong>2</strong></td><td>Building blocks</td><td>FSMs, counters, debouncer, synchronizers, shift registers, FIFOs — the pieces everything else is built from</td></tr>
+            <tr><td><strong>3</strong></td><td>Memory &amp; Protocols</td><td>ROM/RAM, BRAM, timing/numerics/PPA, UART TX &amp; RX, SPI, IP integration &mdash; talking to the outside world</td></tr>
+            <tr><td><strong>4</strong></td><td>SV &amp; Verification</td><td>SystemVerilog (logic, always_*, enum, struct, package), assertions, AI workflows, PPA methodology, coverage, capstone</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Through-line:</strong> Week 1 primitives became Week 2 building blocks became Week 3 protocols became Week 4 integrated systems. Each week's work <em>reused</em> the previous week's. That compounding is what engineering discipline looks like.
     </div>
-    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
-        From &ldquo;what is an FPGA?&rdquo; to a complete, verified, hardware-demonstrated system. In 16 sessions.
-    </div>
-    <aside class="notes">Recap the journey. From zero HDL to a complete system in 16 sessions. That's a real accomplishment.</aside>
+    <aside class="notes">The arc from primitives → blocks → protocols → systems. Each week is a level of composition. This is the pattern of engineering growth.</aside>
 </section>
 
 <section>
     <h2>Your Module Library</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;font-size:0.7em;">
-        <div style="background:#E3F2FD;padding:0.5em 0.8em;border-radius:6px;">
-            <p style="font-weight:700;color:#1565C0;">Combinational</p>
-            <p>mux, decoder, hex_to_7seg, ALU</p>
+    <p style="font-size:0.76em;">Take inventory. You own these modules. Each is yours — parameterized, tested, synthesizable, ready to reuse.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.3em;">
+        <div style="background:#f0f8ff;padding:0.5em;border-radius:6px;border:1px solid #2E86AB;">
+            <p style="color:#2E86AB;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">Combinational</p>
+            <ul style="font-size:0.66em;margin:0;padding-left:1.2em;">
+                <li>full adder, ripple adder</li>
+                <li>multiplexer (parametric)</li>
+                <li>7-segment decoder</li>
+                <li>priority encoder</li>
+                <li>ALU (shift/logic/arith)</li>
+            </ul>
         </div>
-        <div style="background:#E8F5E9;padding:0.5em 0.8em;border-radius:6px;">
-            <p style="font-weight:700;color:#2E7D32;">Sequential</p>
-            <p>DFF, counter_mod_n, shift_reg, debounce</p>
+        <div style="background:#fff8e1;padding:0.5em;border-radius:6px;border:1px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">Sequential primitives</p>
+            <ul style="font-size:0.66em;margin:0;padding-left:1.2em;">
+                <li>D flip-flop, register file</li>
+                <li>mod-N counter (parametric)</li>
+                <li>debouncer</li>
+                <li>sync_2ff synchronizer</li>
+                <li>PISO / SIPO shifters</li>
+            </ul>
         </div>
-        <div style="background:#FFF8E1;padding:0.5em 0.8em;border-radius:6px;">
-            <p style="font-weight:700;color:#E65100;">FSMs</p>
-            <p>traffic_light, button_FSM, uart_tx, uart_rx</p>
+        <div style="background:#f0fff0;padding:0.5em;border-radius:6px;border:1px solid #27AE60;">
+            <p style="color:#27AE60;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">Memory &amp; storage</p>
+            <ul style="font-size:0.66em;margin:0;padding-left:1.2em;">
+                <li>sync ROM (readmemh)</li>
+                <li>sync RAM (single-port)</li>
+                <li>FIFO (parameterized)</li>
+                <li>BRAM-backed storage</li>
+            </ul>
         </div>
-        <div style="background:#F3E5F5;padding:0.5em 0.8em;border-radius:6px;">
-            <p style="font-weight:700;color:#7B1FA2;">Infrastructure</p>
-            <p>ROM, RAM, PLL, loopback, pattern_sequencer</p>
+        <div style="background:#fff0f5;padding:0.5em;border-radius:6px;border:1px solid #8E6BBF;">
+            <p style="color:#8E6BBF;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">Protocols</p>
+            <ul style="font-size:0.66em;margin:0;padding-left:1.2em;">
+                <li>UART TX (parametric baud)</li>
+                <li>UART RX (16× oversampling)</li>
+                <li>SPI master (configurable mode)</li>
+                <li>capstone integrator</li>
+            </ul>
         </div>
     </div>
-    <p class="fragment" style="font-size:0.8em;margin-top:0.5em;">Every module has a testbench. Every module is reusable. This is how real design teams work.</p>
-    <aside class="notes">Your module library. Every module tested, every module reusable. This is industry practice.</aside>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>This is a real portfolio.</strong> Put it on GitHub. Seriously. A well-documented Verilog/SV repo with testbenches and synthesis reports is hiring gold — more valuable than the GPA box on a resume. Employers pay attention to what you've built.
+    </div>
+    <aside class="notes">Push this library to GitHub. This is legitimate professional portfolio material. Hiring managers notice.</aside>
 </section>
 
 <section>
     <h2>Skills You Gained</h2>
-    <div style="font-size:0.75em;">
-        <p class="fragment"><strong>Design:</strong> Combinational, sequential, FSM, hierarchy, parameterization</p>
-        <p class="fragment"><strong>Verification:</strong> Self-checking TBs, assertions, coverage awareness</p>
-        <p class="fragment"><strong>Communication:</strong> UART TX/RX, SPI concepts, IP integration</p>
-        <p class="fragment"><strong>Tools:</strong> Icarus, Yosys, nextpnr, GTKWave — full open-source flow</p>
-        <p class="fragment"><strong>SystemVerilog:</strong> logic, always_ff/comb, enum, struct, package, assertions</p>
-        <p class="fragment"><strong>Engineering practice:</strong> Incremental integration, UART debugging, timing analysis</p>
-    </div>
-    <aside class="notes">Six categories of skills. Design, verification, communication protocols, tools, SystemVerilog, and engineering practice.</aside>
+    <ul style="font-size:0.74em;">
+        <li class="fragment"><strong>RTL fluency</strong> — you write Verilog/SystemVerilog that synthesizes to what you intend.</li>
+        <li class="fragment"><strong>Testbench discipline</strong> — self-checking testbenches, PASS/FAIL format, waveform inspection.</li>
+        <li class="fragment"><strong>Hardware intuition</strong> — mapping HDL to flops, LUTs, BRAM; reading synthesis reports.</li>
+        <li class="fragment"><strong>Debugging craft</strong> — waveform analysis, UART printf, assertion-driven diagnosis, checkpoint discipline.</li>
+        <li class="fragment"><strong>PPA literacy</strong> — measuring performance, area, power; navigating tradeoffs; reading Pareto curves.</li>
+        <li class="fragment"><strong>Integration discipline</strong> — incremental composition, IP integration checklist, clock/reset/signaling awareness.</li>
+        <li class="fragment"><strong>Assertion-based verification</strong> — SVA, cover points, functional coverage mindset.</li>
+        <li class="fragment"><strong>AI-assisted engineering</strong> — informed collaboration: you own intent, AI assists mechanics.</li>
+    </ul>
+    <aside class="notes">Eight skill categories. Students often don't realize how broad their new toolkit is. Name every one.</aside>
 </section>
 
 <section>
     <h2>Where to Go From Here</h2>
-    <div style="font-size:0.75em;">
-        <p class="fragment"><strong>FPGA Engineering:</strong> Larger FPGAs (Artix-7, ECP5), Vivado/Quartus, higher-speed I/O, DDR memory</p>
-        <p class="fragment"><strong>ASIC Design:</strong> Standard cell flow, timing closure, DFT, physical design</p>
-        <p class="fragment"><strong>Verification:</strong> UVM, constrained random, formal verification (SVA, model checking)</p>
-        <p class="fragment"><strong>Hardware Security:</strong> Side-channel analysis, fault injection, logic locking, trojan detection</p>
-        <p class="fragment"><strong>Embedded Systems:</strong> RISC-V soft cores, SoC integration, Linux on FPGA</p>
-        <p class="fragment"><strong>Open-Source Ecosystem:</strong> Amaranth HDL, LiteX, SymbiFlow, OpenTitan</p>
+    <div style="font-size:0.72em;">
+        <p class="fragment"><strong>Senior design projects (UCF):</strong> Robotics control, accelerator ASICs, embedded vision — any project with a hardware block. Your module library covers the I/O; add domain logic on top.</p>
+        <p class="fragment"><strong>Graduate study:</strong> Computer architecture (EEL 5707), VLSI design (EEL 5771), hardware security (EEL 5779), advanced FPGA (CDA 5937). You're prepared for any of these.</p>
+        <p class="fragment"><strong>Industry internships:</strong> FPGA engineer at defense primes (L3Harris, Northrop, Raytheon in Orlando); chip companies (Intel, AMD, Nvidia, Apple); verification engineer is a broad entry path.</p>
+        <p class="fragment"><strong>Open-source silicon:</strong> Google Skywater MPW shuttles (free tape-outs!), OpenROAD, Tiny Tapeout program — you can now design a real ASIC for zero dollars.</p>
+        <p class="fragment"><strong>Hobbyist path:</strong> Build a game console. Recreate a retro CPU (6502, Z80). Build a music synthesizer. Your RTL skills + Go Board + YouTube = endless weekends.</p>
+        <p class="fragment"><strong>Research:</strong> UCF's DRACO Lab (hardware security), ECE departments at top research universities. Your assertion + coverage skill maps directly to DV research.</p>
     </div>
-    <aside class="notes">Six pathways. Tailor this to your audience — CompE students heading toward chip design, security research, embedded, or software.</aside>
+    <aside class="notes">Six concrete paths. UCF-specific where possible. Plenty of options, each enabled by the course.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Resources for the Next Step</h2>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Resource</th><th>What it's for</th></tr></thead>
+        <tbody>
+            <tr><td><strong>hdlbits.01xz.net</strong></td><td>Free Verilog/SV exercise library — graded automatically. Best single practice resource.</td></tr>
+            <tr><td><strong>ZipCPU blog (zipcpu.com)</strong></td><td>Dan Gisselquist's deep Verilog tutorials. Formal verification, bus design, testbench craft.</td></tr>
+            <tr><td><strong>Project F (projectf.io)</strong></td><td>FPGA graphics and retrocomputing projects. Excellent intermediate-to-advanced examples.</td></tr>
+            <tr><td><strong>lowRISC, CHIPS Alliance</strong></td><td>Open-source SoC projects. Read real production RTL. See how professionals structure codebases.</td></tr>
+            <tr><td><strong>Arrow-supported iCE40 boards</strong></td><td>Your Go Board's big sibling — Lattice Radiant + yosys-nextpnr for slightly larger designs.</td></tr>
+            <tr><td><strong>Tiny Tapeout (tinytapeout.com)</strong></td><td>$50 gets your Verilog turned into a real silicon chip via shuttle. Incredible educational value.</td></tr>
+            <tr><td><strong>This course's repo</strong></td><td>Stays on GitHub. Reference it anytime. Fork it and keep building.</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">Curated list. Every resource verified high-quality. Students asked for &ldquo;where to go next&rdquo; — this is the answer.</aside>
 </section>
 
 <section>
-    <h2>Resources</h2>
-    <div style="font-size:0.75em;">
-        <p><strong>Learning:</strong></p>
-        <p style="margin-left:1em;">fpga4fun.com · nandland.com · zipcpu.com/blog · asic-world.com</p>
-        <p style="margin-top:0.5em;"><strong>Tools:</strong></p>
-        <p style="margin-left:1em;">Yosys · nextpnr · Verilator · Icarus Verilog · GTKWave</p>
-        <p style="margin-top:0.5em;"><strong>Communities:</strong></p>
-        <p style="margin-left:1em;">r/FPGA · 1BitSquared Discord · Lattice forums · RISC-V Foundation</p>
-        <p style="margin-top:0.5em;"><strong>Books:</strong></p>
-        <p style="margin-left:1em;">Harris &amp; Harris, <em>Digital Design and Computer Architecture</em></p>
-        <p style="margin-left:1em;">Cummings papers on clock domain crossing and coding guidelines</p>
+    <h2>A Few Honest Notes</h2>
+    <div style="font-size:0.74em;">
+        <p class="fragment"><strong>This course was accelerated.</strong> A normal Digital System Design course is 14 weeks; you did 16 days. That means some topics got brief treatment — arbitration, CDC fundamentals, memory hierarchies, buses and arbitration, interconnect standards (AXI, AHB, Wishbone). If any of these appear in senior design or a job interview, you'll need to supplement.</p>
+        <p class="fragment"><strong>You will forget things.</strong> The Verilog syntax, the synthesis report format, the SVA operators — these will fade without use. That's fine. What you won't forget is the <em>shape</em> of the problem: what a testbench should do, what a module should look like, what a good commit looks like. That's the durable part.</p>
+        <p class="fragment"><strong>The field is moving.</strong> AI-assisted design, open-source silicon, HLS, formal verification — the ground is shifting under the discipline. Your foundation is solid, but stay curious. What you learned in 2026 is the starting point, not the endpoint.</p>
+        <p class="fragment"><strong>You belong.</strong> Hardware is an old, sometimes gatekept discipline. You showed up, did the work, built the thing. That makes you part of it. Don't let anyone tell you otherwise.</p>
     </div>
-    <aside class="notes">Resources for continued learning. Books, websites, communities, and tools.</aside>
+    <aside class="notes">Honesty time. What wasn't covered, what will fade, what's shifting, what's earned. Students need to hear this. &ldquo;You belong&rdquo; is the whole point of ending with a retrospective.</aside>
 </section>
 
 <section>
     <h2>Course Feedback</h2>
-    <div style="font-size:0.85em;text-align:center;">
-        <p>What worked well?</p>
-        <p class="fragment">What would you change?</p>
-        <p class="fragment">What surprised you?</p>
-        <p class="fragment">What do you wish we&rsquo;d covered?</p>
+    <p style="font-size:0.78em;">Anonymous feedback shapes future offerings of this course. Please take 5 minutes at the URL distributed separately to answer:</p>
+    <ol style="font-size:0.74em;">
+        <li>Which day/topic helped you most? Least?</li>
+        <li>Was the pace right, too fast, or too slow for each week?</li>
+        <li>Which labs genuinely advanced your understanding?</li>
+        <li>Was the AI integration (&ldquo;Check the Machine&rdquo;) useful, distracting, or neutral?</li>
+        <li>Anything you wished we covered but didn't?</li>
+        <li>Anything you wish we spent less time on?</li>
+        <li>Would you recommend this course to a peer? Why?</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>Your feedback changes the course.</strong> Week 2's debouncer lab exists because of last year's feedback. Week 4 added AI workflows because students asked. Every cohort shapes the next.
     </div>
-    <div class="fragment callout" style="font-size:0.8em;margin-top:1em;">
-        Please fill out the anonymous feedback form before you leave today.
+    <aside class="notes">Feedback is real. It shapes next year. Emphasize honest answers over polite ones.</aside>
+</section>
+
+<section>
+    <h2>Final Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;You built a real module library. Put it on GitHub, keep building it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Your skills cover 6+ career paths. You're not locked into &ldquo;designer.&rdquo;</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The foundation is solid. The details will fade; the shape won't.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Stay curious. The field is moving; keep moving with it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">⑤</span>&ensp;You belong here.</p>
     </div>
-    <aside class="notes">Anonymous written feedback. Four questions. Collect before they leave.</aside>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">In 4 weeks you learned a language, built a library, and put logic on silicon. That's real engineering — own it.</div>
 </section>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#E8E8E4;font-size:0.9em;margin-top:1em;">Keep building. Keep learning. Keep tinkering.</p>
-        <p style="color:#888;font-size:0.7em;margin-top:2em;">The open-source toolchain you learned was built by volunteers<br>who believed this technology should be accessible to everyone.</p>
-        <p style="color:#FFC904;font-size:0.8em;margin-top:1em;">Pay it forward.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Course</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Thank You &mdash; Now Go Build</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">UCF ECE · DRACO Lab · Dr. Mike Borowczak</p>
+        <div style="max-width:820px;margin:1.5em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ ONE LAST THING</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">The people who ship hardware aren't the ones who know the most. They're the ones who get to <em>working</em> and keep iterating. You showed up for 16 days, made things work, learned to debug when they didn't. That's the skill that compounds. Keep using it. See you out there.</p>
+        </div>
     </div>
-    <aside class="notes"> Encourage them to try one more project within a week. Pay it forward.</aside>
 </section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealNotes]});</script>
-</body></html>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body>
+</html>

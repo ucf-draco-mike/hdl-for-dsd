@@ -1,74 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 13.1: Why SystemVerilog? — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 13.1: Why SystemVerilog — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog for Design</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog Transition</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Why SystemVerilog?</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~8 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">Why SV?</span>
-        <span class="seg-label ">logic Type</span>
-        <span class="seg-label ">always_ff/comb</span>
-        <span class="seg-label ">enum/struct/pkg</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 13.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">Why SV</span><span class="seg-label">logic type</span><span class="seg-label">always_*</span><span class="seg-label">enum/struct/package</span></div>
+    <aside class="notes">Video 1 of 4 for Day 13. Twelve days of pure Verilog behind you. Time to learn the superset you'll actually write in your career.</aside>
 </section>
 
 <section>
-    <h2>The Evolution</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>Verilog (IEEE 1364)</strong> — 1995, updated 2001. The foundation you know.</p>
-        <p class="fragment"><strong>SystemVerilog (IEEE 1800)</strong> — 2005, latest 2017. A <strong>superset</strong> of Verilog.</p>
-        <p class="fragment">Every legal Verilog file is legal SystemVerilog. You can <strong>mix them freely</strong>.</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every modern ASIC and FPGA tool shop writes SystemVerilog, not Verilog. Intel, AMD, Apple, NVIDIA, Qualcomm — SV has been the industry default for design since ~2010 and for verification since ~2005 (UVM). A job posting that says &ldquo;Verilog experience&rdquo; means SV; nobody starts a new project in Verilog-2001 anymore. Learning SV isn't an add-on — it's the lingua franca.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Days 13-14 transition you from the Verilog subset you've been using to the SV superset you'll need. Everything you've written compiles unchanged — SV is backwards-compatible. The new features reduce bug surface, improve readability, and unlock verification capabilities you can't get in Verilog at all.</p>
+        </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
-        Same hardware, better language. Today: design features. Tomorrow: verification features.
-    </div>
-    <aside class="notes">SystemVerilog is a superset of Verilog. Every Verilog file is valid SV. Today we add design safety features; tomorrow, verification power.</aside>
+    <aside class="notes">The transition isn't a reset — it's a lift. Your Week 1-3 modules are already valid SV. Today adds new tools; the old ones still work.</aside>
 </section>
+
 <section>
-    <h2>What SV Adds for Design</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong><code>logic</code></strong> — replaces <code>wire</code> and <code>reg</code></p>
-        <p class="fragment"><strong><code>always_ff</code>, <code>always_comb</code></strong> — compiler-enforced intent</p>
-        <p class="fragment"><strong><code>enum</code></strong> — type-safe FSM states</p>
-        <p class="fragment"><strong><code>struct packed</code></strong> — grouped signals with dot notation</p>
-        <p class="fragment"><strong><code>package</code></strong> — shared types across modules</p>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;SV Is a Different Language&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;SystemVerilog is a different language. I need to relearn HDL. My Week 1-3 Verilog will be deprecated.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">SV is a <strong>superset</strong> of Verilog-2001. Every piece of Verilog you've written is already valid SV. The IEEE 1800 standard (SV) <em>subsumes</em> IEEE 1364 (Verilog). You're not switching languages — you're opening up new features in the same language. It's like going from ES5 to ES2020 JavaScript: the old still works, the new is available when you need it.</p>
+        </div>
     </div>
-    <div class="fragment" style="font-size:0.75em;margin-top:0.5em;color:#888;">
-        Toolchain: <code>iverilog -g2012</code> for sim, <code>yosys read_verilog -sv</code> for synthesis.
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> <code>iverilog -g2012</code> compiles your existing Verilog and also accepts all SV features. One compiler. One language family. The transition is mostly about learning when to <em>use</em> SV features, not about abandoning Verilog.
     </div>
-    <aside class="notes">Five key design features: logic type, intent-based always blocks, enum, struct, package. All synthesizable. Use iverilog -g2012 and yosys -sv.</aside>
+    <aside class="notes">SV is Verilog + more. No replace, only add. Your muscle memory is preserved. This reframe eliminates the &ldquo;I have to relearn everything&rdquo; anxiety.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Evolution Timeline</h2>
+    <table style="font-size:0.72em;margin-top:0.3em;">
+        <thead><tr><th>Year</th><th>Standard</th><th>Key additions</th></tr></thead>
+        <tbody>
+            <tr><td>1984</td><td>Gateway Verilog</td><td>Original language from Gateway Design Automation</td></tr>
+            <tr><td>1995</td><td>IEEE 1364-1995</td><td>First IEEE standard — &ldquo;Verilog-95&rdquo;</td></tr>
+            <tr><td>2001</td><td>IEEE 1364-2001</td><td>ANSI port lists, <code>generate</code>, <code>$clog2</code> — what you've been writing</td></tr>
+            <tr><td>2005</td><td>IEEE 1800-2005</td><td>First SystemVerilog — <code>logic</code>, <code>always_ff</code>, assertions, classes</td></tr>
+            <tr><td>2009 / 2012 / 2017 / 2023</td><td>IEEE 1800 revisions</td><td>Incremental refinements; modern default is SV-2017</td></tr>
+        </tbody>
+    </table>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Verilog's last major revision was 2001 — over two decades ago. SV has become the de facto HDL standard. Modern tools default to SV; most open-source Verilog repos are actually SV. By writing Verilog-2001, you've been writing the <em>stable base</em> of the language. Now you're learning the modern vocabulary.
+    </div>
+    <aside class="notes">Verilog froze in 2001; everything since is SystemVerilog. Calling it &ldquo;Verilog&rdquo; in casual industry speak is harmless — everyone knows what's meant.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; What SV Adds for Design</h2>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Feature</th><th>Solves this problem</th><th>Covered in</th></tr></thead>
+        <tbody>
+            <tr><td><code>logic</code> type</td><td><code>wire</code> vs <code>reg</code> confusion</td><td>13.2</td></tr>
+            <tr><td><code>always_ff</code>, <code>always_comb</code>, <code>always_latch</code></td><td>Accidental latch inference</td><td>13.3</td></tr>
+            <tr><td><code>enum</code></td><td><code>localparam</code> FSM state list verbosity</td><td>13.4</td></tr>
+            <tr><td><code>typedef</code>, <code>struct</code>, <code>packed</code>/<code>unpacked</code></td><td>Bundled signal groups</td><td>13.4</td></tr>
+            <tr><td><code>package</code></td><td>Sharing type/constant across files</td><td>13.4</td></tr>
+            <tr><td><code>interface</code></td><td>Port-list explosion for protocols</td><td>(mentioned)</td></tr>
+            <tr><td><code>assert</code> / <code>assume</code> / <code>cover</code></td><td>Executable specifications</td><td>14.1</td></tr>
+            <tr><td>Classes + UVM</td><td>Reusable object-oriented verification</td><td>(preview)</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together:</strong> Every row maps to a bug you've either hit or seen in this course. SV didn't invent features just to be fancy — it codified 20 years of lessons learned on real chips. The features you'll use this week fix the most common Verilog pitfalls.
+    </div>
+    <aside class="notes">Every SV feature earned its place. These came from post-mortems on silicon bugs. SV isn't syntactic sugar — it's bug prevention baked into the language.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Which Bug Would SV Have Caught?</h2>
+    <pre class="mistake" style="font-size:0.66em;"><code class="language-verilog">always @(*) begin
+    if (sel)
+        out = a;     // missing else — infers a latch silently
+end</code></pre>
+    <p style="font-size:0.78em;">Which SV feature would have prevented this bug at compile time?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>always_comb</code>. Replace <code>always @(*)</code> with <code>always_comb</code> and the compiler <em>flags the latch inference</em> as a warning or error — the block is declared combinational, and latches aren't combinational, so the tool complains. Same logic, different declared intent, bug caught.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Why this matters:</strong> <em>Intent-based coding.</em> <code>always @(*)</code> means &ldquo;execute whenever inputs change,&rdquo; which permits latches as a side effect. <code>always_comb</code> means &ldquo;I want combinational logic,&rdquo; which forbids them. Saying what you want lets the tool check whether you got it.
+    </div>
+    <aside class="notes">The central insight of SV design: declare your intent, let the tool check you. Every SV always_* variant forbids the wrong thing at compile time. This is the philosophy behind everything in Day 13.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Tool Support Looks Like</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">$ iverilog -g2012 -o sim my_design.sv  # SV-2012 mode
+
+# always_comb with latch: compiler complains
+my_design.sv:14: warning: always_comb process inferred latch for 'out'
+
+# always_ff with multiple clocks: error
+my_design.sv:22: error: always_ff process sensitive to multiple edges
+
+# logic type: no wire/reg bugs possible
+my_design.sv: [no warnings about assignment-from-always-to-wire]</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> The SV compiler isn't just permissive — it's <em>stricter</em>, in the ways that matter. Classic Verilog permits all manner of ambiguity (is <code>out</code> a wire or reg? what does <code>always @(posedge clk or sel)</code> synthesize to?). SV asks you to declare intent, then enforces it. Stricter where ambiguity bites, looser where Verilog was needlessly pedantic.
+    </div>
+    <aside class="notes">Stricter in the right places. Compilers catch more bugs at compile time → fewer surprises in simulation → fewer surprises in silicon.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Convert this Verilog-2001 module to idiomatic SystemVerilog-2012. Use logic, always_ff, always_comb, enum for states, and typedef as appropriate.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI modernizes Verilog-2001 to SV-2012.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: wire/reg → logic; <code>always @(*)</code> → <code>always_comb</code>; <code>always @(posedge clk)</code> → <code>always_ff</code>; state localparams → <code>enum</code>.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses <code>typedef enum</code> and <code>logic</code> consistently. Weak AI leaves wire/reg mixed in.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI is excellent at mechanical Verilog→SV conversion. Great for modernizing legacy code.</p></div>
+    </div>
+    <aside class="notes">Modernization is AI's sweet spot — well-defined mechanical transformation. Great way to batch-modernize your library between weeks.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;SystemVerilog is a <strong>superset</strong> of Verilog — mix freely.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Design features catch bugs Verilog silently accepts.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;In industry, SV has largely replaced Verilog for new designs.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Toolchain: <code>iverilog -g2012</code>, <code>yosys read_verilog -sv</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;SystemVerilog is a <em>superset</em> of Verilog. Your Week 1-3 code already works.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Modern industry writes SV, not Verilog-2001. It has been standard for 20 years.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Every SV design feature maps to a class of Verilog bugs it prevents.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Intent-based declarations (<code>always_comb</code>, <code>always_ff</code>) let tools check your intent.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;"><code>logic</code> — One Type to Rule Them All</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~10 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Eliminating the wire/reg confusion forever.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Say what you want. Let the tool prove you got it.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The <code>logic</code> Type</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Every student this semester has written <code>reg</code> where they meant <code>wire</code> (or vice versa) at least once. Video 2 introduces <code>logic</code> — one type that replaces both, removes the confusion entirely, and prevents a category of bugs that plagues Verilog-2001 code.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -76,4 +169,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

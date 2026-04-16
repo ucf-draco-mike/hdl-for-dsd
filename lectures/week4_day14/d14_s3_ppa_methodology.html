@@ -1,109 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 14.3: PPA Analysis Methodology — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 14.3: PPA Methodology — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Verification, AI-Driven Testing &amp; PPA Analysis</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">PPA Analysis Methodology</h1>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Advanced Verification &amp; Road Ahead</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">PPA Methodology</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label">Assertions</span>
-        <span class="seg-label">AI Verification</span>
-        <span class="seg-label active">PPA Methodology</span>
-        <span class="seg-label">Coverage &amp; Road Ahead</span>
-    </div>
-    <aside class="notes">This segment gives you the exact format for PPA reporting in your final project. We'll build a comparison table live, discuss ASIC context, and walk through design-space exploration.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Assertions</span><span class="seg-label">AI Verification</span><span class="seg-label active">PPA</span><span class="seg-label">Road Ahead</span></div>
+    <aside class="notes">Video 3 of 4. PPA as a methodology — structured process for measuring and improving your design's performance, power, and area.</aside>
 </section>
 
 <section>
-    <h2>FPGA PPA Report Template</h2>
-    <p style="font-size:0.82em;">This is what your final project PPA report should look like:</p>
-    <table style="font-size:0.68em;margin-top:0.3em;">
-        <tr><th>Module</th><th>Configuration</th><th>LUTs</th><th>FFs</th><th>EBR</th><th>Fmax (MHz)</th><th>% HX1K</th></tr>
-        <tr class="fragment"><td>UART TX</td><td>PARITY_EN=0</td><td>48</td><td>22</td><td>0</td><td>62.3</td><td>3.8%</td></tr>
-        <tr class="fragment"><td>UART TX</td><td>PARITY_EN=1</td><td>54</td><td>23</td><td>0</td><td>60.1</td><td>4.2%</td></tr>
-        <tr class="fragment"><td>Counter</td><td>WIDTH=8</td><td>10</td><td>8</td><td>0</td><td>185</td><td>0.8%</td></tr>
-        <tr class="fragment"><td>Counter</td><td>WIDTH=32</td><td>38</td><td>32</td><td>0</td><td>112</td><td>3.0%</td></tr>
-        <tr class="fragment"><td>Multiplier</td><td>Comb 8×8</td><td>62</td><td>0</td><td>0</td><td>38.5</td><td>4.8%</td></tr>
-        <tr class="fragment"><td>Multiplier</td><td>Seq 8×8</td><td>35</td><td>28</td><td>0</td><td>95.2</td><td>2.7%</td></tr>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every chip has PPA goals before design starts. &ldquo;4 GHz @ 50W @ 50 mm²&rdquo; is the sentence that opens an Apple CPU spec. The design process is then a <em>structured hunt</em> against those numbers: measure, optimize the worst metric, re-measure, decide when good enough. At Intel, this is formalized as the &ldquo;PPA dashboard&rdquo; tracked weekly; at AMD, it's the &ldquo;area/power/frequency budget&rdquo;; at every company, it's a methodology, not a vibe.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Day 10 PPA intro gave you the triangle. Today's methodology video makes it actionable: the three-step loop (measure → identify bottleneck → optimize), the reports you actually read, and the tradeoffs that matter for your capstone integration.</p>
+        </div>
+    </div>
+    <aside class="notes">PPA is a methodology, not a feeling. Industry treats it as a measurable, iterative discipline. Students should too.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;Optimize Everything&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I'll make the design as fast, as small, and as low-power as I can.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">You can't optimize all three. They are in active tension. The methodology is: <strong>measure all three, find the binding constraint, push on <em>only</em> that one</strong>. If your design is area-limited (won't fit on the iCE40 HX1K), don't chase Fmax. If you're meeting Fmax with 70% utilization, don't aggressively shrink — you'll hurt timing. PPA is navigation, not optimization.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Every optimization trades one metric against another. Pipelining adds Fmax but costs area. Operator sharing saves area but costs Fmax. Clock gating saves power but complicates timing analysis. There are no free wins. The methodology helps you pick which trade to make.
+    </div>
+    <aside class="notes">The core lesson. PPA is navigation, not unbounded optimization. Every push-one increase-another tradeoff has to match what your product needs.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Three-Step PPA Loop</h2>
+    <ol style="font-size:0.78em;">
+        <li class="fragment"><strong>Measure.</strong> Run synthesis + place-and-route. Collect: cell count (SB_LUT4, SB_DFF, SB_CARRY totals), max frequency (from nextpnr report), and toggle-rate-weighted activity estimate (for power).</li>
+        <li class="fragment"><strong>Identify the binding constraint.</strong>
+            <ul style="font-size:0.92em;">
+                <li>Fmax below target? &rarr; <em>timing-critical</em></li>
+                <li>Cell count near device max? &rarr; <em>area-critical</em></li>
+                <li>Battery life below target? &rarr; <em>power-critical</em></li>
+                <li>None binding? &rarr; you're done; ship.</li>
+            </ul>
+        </li>
+        <li class="fragment"><strong>Optimize the constraint.</strong> Apply targeted transformations: pipelining for timing, operator sharing for area, clock gating for power. Re-measure after each transformation.</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> The loop is boring, but boringness is the point. Each pass is small, measured, and reversible. The opposite — &ldquo;let me rewrite this big chunk to be faster&rdquo; — often breaks other things. Measure small changes.
+    </div>
+    <aside class="notes">Incremental, measured, reversible. The opposite of a big rewrite. Professional PPA work is deeply incremental.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Reading a Real Report</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">$ make stat &amp;&amp; make place
+=== Synthesis (Yosys → iCE40) ===
+  SB_LUT4:      487   (38% of HX1K's 1280 LUTs)
+  SB_DFF:       124
+  SB_CARRY:     42
+  SB_RAM40_4K:  2 of 16 used
+  Total cells:  653
+
+=== Placement + Routing (nextpnr) ===
+  Device: iCE40 HX1K-TQ144
+  Utilization: LUTs 38%, DFFs 9%, BRAM 12%
+  Max frequency: 43.2 MHz (target: 25 MHz) ✓
+  Critical path: 23.1 ns
+      SB_IO (i_data[0]) → 5.2 ns
+      SB_LUT4 (datapath[0]_cmp) → 7.4 ns
+      SB_CARRY chain (18 stages) → 8.9 ns
+      SB_DFF (result[31]) → 1.6 ns</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together — diagnosis:</strong> Fmax = 43.2 MHz, target = 25 MHz → <em>timing is fine, not the constraint.</em> LUT utilization = 38% → <em>area is fine.</em> The design ships as-is. If the target had been 100 MHz, that 18-stage carry chain would be the bottleneck — split it into 2 stages with a pipeline register, and Fmax roughly doubles. <em>Measure → identify → target.</em>
+    </div>
+    <aside class="notes">Real reports tell you where to look. The critical path always shows what to optimize. Students learn to read these rather than fear them.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Pick the Optimization</h2>
+    <p style="font-size:0.78em;">Your UART + FIFO echo design reports:</p>
+    <ul style="font-size:0.72em;">
+        <li>Fmax: 48 MHz (target: 25 MHz)</li>
+        <li>Utilization: LUTs 72% of HX1K, DFFs 45%</li>
+        <li>You want to double the FIFO depth from 16 to 32</li>
+    </ul>
+    <p style="font-size:0.72em;">Question: which metric is most likely to block the change, and what's the mitigation?</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Answer:</strong> <em>Area.</em> At 72% LUT utilization, doubling FIFO depth pushes area toward 85-90% — nextpnr will start struggling to place, and timing may degrade. Mitigation: use BRAM (<code>SB_RAM40_4K</code>) instead of LUT-based FIFO. One 4 Kbit block can hold a 32-deep × 8-wide FIFO with zero LUTs. This is the textbook case for moving from distributed to block memory.
+    </div>
+    <aside class="notes">The BRAM move is the canonical capacity optimization on iCE40. Free storage that you've already paid for. Students often miss this because they default to LUT-based FIFO.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">PPA Sweep: Pipelining an Adder</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~6 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week4_day14/ex3_ppa/
+for p in 0 1 2 4; do
+  make clean
+  make all PIPE=$p
+  grep 'Max freq\\|Cells' logs/report.txt
+done
+python scripts/plot_ppa.py logs/*.txt</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PIPE=0: 44 MHz,  98 cells
+PIPE=1: 82 MHz, 132 cells
+PIPE=2: 121 MHz, 167 cells
+PIPE=4: 143 MHz, 245 cells
+# Fmax vs cells — diminishing
+# returns past PIPE=2</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ THE PARETO FRONTIER</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Plot Fmax vs. cells — you get a classic Pareto curve. Beyond PIPE=2 the curve flattens: you're spending more area for less speed. The <em>knee</em> of the curve is almost always the right answer. This is what an engineer means by &ldquo;I found the sweet spot.&rdquo;</p>
+    </div>
+    <aside class="notes">[Plot] The Pareto curve with the knee visible. Students see it — this is how professionals pick design points. Not &ldquo;the fastest&rdquo; or &ldquo;the smallest&rdquo; but the knee.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Top-5 FPGA PPA Moves (Memorize These)</h2>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Goal</th><th>Move</th><th>Cost</th></tr></thead>
+        <tbody>
+            <tr><td>↑ Fmax</td><td>Add pipeline register in critical path</td><td>+1 flop / stage, +1 cycle latency</td></tr>
+            <tr><td>↑ Fmax</td><td>Use <code>SB_CARRY</code> chain instead of generic LUTs for adders</td><td>Already automatic; check synthesis</td></tr>
+            <tr><td>↓ Area</td><td>Move FIFOs/ROMs to <code>SB_RAM40_4K</code> BRAM</td><td>Only works for ≥8×8 storage</td></tr>
+            <tr><td>↓ Area</td><td>Share operators across mutually exclusive uses</td><td>Extra muxes, possible Fmax hit</td></tr>
+            <tr><td>↓ Power</td><td>Clock-gate idle logic</td><td>Requires careful timing; iCE40 tricky</td></tr>
+        </tbody>
     </table>
-    <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Numbers are illustrative.</strong> You'll fill in real numbers from <code>yosys stat</code> and <code>nextpnr</code> in today's lab. HX1K has 1,280 LUTs.
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Why this matters:</strong> These five cover 80% of the cases you'll see in senior design and capstone projects. Not every FPGA has the same primitives, but the <em>category</em> of moves is universal.
     </div>
-    <aside class="notes">This table format is what we'll build in class and what your final project needs. The numbers here are illustrative — your lab will produce real ones.</aside>
+    <aside class="notes">Memorizable list. These are what mentors tell you first in a timing-closure session. Students who know them navigate problems; students who don't try random rewrites.</aside>
 </section>
 
-<section>
-    <h2>The Analysis Paragraph</h2>
-    <p style="font-size:0.82em;">Numbers alone aren't enough. Each module needs a <strong>brief trade-off discussion</strong>:</p>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <em>"Adding parity to the UART TX costs 6 additional LUTs (+12%) and 1 FF, with a 2.2 MHz reduction in Fmax. For applications requiring error detection on a noisy channel, this is a negligible cost. For designs already tight on the HX1K, the feature can be disabled via PARITY_EN=0 with zero overhead thanks to generate-if elimination."</em>
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Here's my synthesis report: 72% LUT usage, Fmax 28 MHz, target 50 MHz. My critical path is a 32-bit ripple adder. Give me 3 optimization strategies ordered by expected Fmax gain per area cost.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI ranks PPA moves by ROI.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: pipeline (cheapest), carry-select (middle), Kogge-Stone (expensive).</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI gives expected Fmax numbers + area deltas. Weak AI just lists moves without quantification.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Good optimization advice has <em>numbers</em> attached. Without them it's just opinions.</p></div>
     </div>
-    <div class="fragment" style="font-size:0.82em;margin-top:0.5em;">
-        <p><strong>Structure:</strong> What changed → how much it costs → when you'd make this choice</p>
-        <p>This is the paragraph format for your final project.</p>
-    </div>
-    <aside class="notes">This is the analysis quality we're looking for. Not just numbers — interpretation. What changed, how much it costs, and when you'd make this choice. One paragraph per module comparison.</aside>
-</section>
-
-<section>
-    <h2>Design-Space Exploration</h2>
-    <p style="font-size:0.82em;">Sweep a parameter and plot the results:</p>
-    <pre class="synth"><code class="language-bash"># Sweep counter width from 4 to 32
-for W in 4 8 16 32; do
-    echo "WIDTH=$W:"
-    yosys -q -p "read_verilog -DWIDTH=$W counter.v; synth_ice40 -top counter; stat" \
-        2>&1 | grep "cells\|SB_LUT"
-done</code></pre>
-    <div class="fragment" style="font-size:0.82em;">
-        <p><strong>Plot the curve:</strong> Does area scale linearly? Quadratic? Sublinear?</p>
-        <p><strong>Find the knee:</strong> Where does Fmax start to drop? That's your design constraint.</p>
-    </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Recall Day 10:</strong> Adders scale linearly, multipliers scale quadratically. The same analysis applies to every parameterized module in your project.
-    </div>
-    <aside class="notes">This is the same approach from Day 10, now applied systematically. Sweep your project's parameters, record the curves. This goes in the PPA report.</aside>
-</section>
-
-<section>
-    <h2>ASIC Context</h2>
-    <div style="font-size:0.78em;">
-        <p class="fragment"><strong>Gate count vs. LUT count:</strong> ASIC area is measured in gate equivalents or µm². A 2-input gate is physically smaller than a 4-input gate — unlike FPGA LUTs which are all the same size.</p>
-        <p class="fragment"><strong>Wire delay dominance:</strong> In advanced ASIC nodes (28nm and below), wire delay often exceeds gate delay. Place-and-route matters enormously.</p>
-        <p class="fragment"><strong>Liberty files &amp; standard cells:</strong> ASIC synthesis uses technology libraries (.lib) that describe the delay, area, and power of each cell type. Your <code>yosys stat</code> is the FPGA analog.</p>
-        <p class="fragment"><strong>OpenROAD/OpenLane:</strong> Takes the same Verilog, synthesizes to SKY130 standard cells, and gives real ASIC PPA metrics. The habits you're building transfer directly.</p>
-    </div>
-    <aside class="notes">Brief ASIC context. The key message: the PPA analysis skills you're building with yosys stat transfer directly to ASIC design. The tools change, the thinking doesn't.</aside>
+    <aside class="notes">Numbers-vs-opinions is the calibration. AI that says &ldquo;expect ~1.5× Fmax gain for 30% area increase&rdquo; is useful. AI that says &ldquo;pipelining helps&rdquo; has just reminded you of something you already knew.</aside>
 </section>
 
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;PPA report = comparison table + analysis paragraph per module.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Numbers alone aren't enough. Explain <em>what changed, how much, and why it matters.</em></p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Design-space exploration: sweep parameters, find the scaling curve and the knee.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;FPGA PPA habits transfer to ASIC. <code>yosys stat</code> → Liberty-based synthesis.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;PPA is navigation, not unbounded optimization. Measure, identify binding constraint, target.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Every optimization trades one metric against another. No free wins.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The Pareto curve's <em>knee</em> is almost always the right answer.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Five moves (pipeline, carry chain, BRAM, operator sharing, clock gating) cover most cases.</p>
     </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Optimize the binding constraint. Measure. Stop at the knee.</div>
 </section>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Coverage &amp; the Road Ahead</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">How do you know when testing is done? And where to go from here.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Coverage &amp; The Road Ahead</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've learned the <em>tools</em> of verification. Video 4 addresses the <em>completeness</em> question: how do you know you've verified enough? Coverage analysis answers this. And then we look at where the field is going — formal verification, UVM, HLS, open-source silicon, and what HDL careers look like in 2026 and beyond.</p>
+        </div>
     </div>
 </section>
 
@@ -112,5 +205,6 @@ done</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>Reveal.initialize({ hash:true, slideNumber:'c/t', showSlideNumber:'all', width:1280, height:720, margin:0.04, transition:'slide', plugins:[RevealHighlight,RevealNotes] });</script>
-</body></html>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body>
+</html>
