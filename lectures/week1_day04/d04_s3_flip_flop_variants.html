@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4.3: Flip-Flop Variants — Accelerated HDL for Digital System Design</title>
+    <title>Day 4.3: Flip-Flop Variants [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,81 +11,203 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 4 · Sequential Logic Fundamentals
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 4 · Sequential Logic Fundamentals</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Flip-Flop Variants</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Clocks & Edges</span>
-        <span class="seg-label ">Nonblocking</span>
-        <span class="seg-label active">FF Variants</span>
-        <span class="seg-label ">Counters</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 4.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Clocks &amp; Edges</span><span class="seg-label">Nonblocking</span><span class="seg-label active">FF Variants</span><span class="seg-label">Counters</span></div>
+    <aside class="notes">Video 3 of 4. Real designs use flip-flops with reset and enable. Today's patterns appear in 99% of all production RTL.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>D Flip-Flop with Synchronous Reset</h2>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every production flip-flop has at least <strong>reset</strong>, and usually <strong>enable</strong>. ARM processor cores? Synchronous-reset D-flops. Intel's Xeon CPUs? Same pattern. The &ldquo;bare&rdquo; D-flop from Video 1 exists only in textbooks — real silicon comes with accessories.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every FSM (Day 7) uses reset to enter an initial state. Every counter (Video 4 today) uses reset + enable. Every protocol engine (Days 11-12) uses both. This pattern is now yours, for every remaining lab.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Historical note:</strong> The sync/async reset debate has split ASIC teams for 30 years. Modern consensus (post ~2010): <strong>synchronous reset is the safer default</strong>. We'll use it throughout the course.
+    </div>
+    <aside class="notes">Sync vs async reset is a genuine tradeoff. Async has advantages (instant reset, smaller gates) but creates static timing analysis complications. Modern FPGA flows prefer sync. We teach what you'll see at work.</aside>
+</section>
+
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Missing <code>else</code>? Not a Latch Anymore.</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Day 3 told me missing <code>else</code> = latch. So I need to add an <code>else</code> to every <code>if</code> in my sequential block too, right?&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">In <code>always @(posedge clk)</code>, a flip-flop is <em>already</em> storage. When a path leaves the output unassigned, the flop simply <strong>holds its current value</strong> — no new latch gets inferred. &ldquo;Missing else&rdquo; means &ldquo;don't update this cycle,&rdquo; which is exactly what enables do.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>Consequence:</strong> The clock enable pattern <code>if (en) q &lt;= d;</code> with no <code>else</code> is idiomatic, correct, and produces an <code>SB_DFFE</code> (D-flop with clock enable) on iCE40. Would be catastrophic in combinational; is the right thing in sequential.
+    </div>
+    <aside class="notes">Critical distinction from Day 3. Latch inference only happens in combinational blocks. In sequential blocks, &ldquo;hold&rdquo; is the native behavior — that's literally what a flop does. This trips up students who over-apply the Day 3 rule.</aside>
+</section>
+
+<!-- I Do: sync reset -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; D Flip-Flop with Synchronous Reset</h2>
     <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
     if (i_reset)
-        r_q <= 1'b0;       // reset on next clock edge
+        r_q &lt;= 1'b0;       // reset on next clock edge
     else
-        r_q <= i_d;         // normal capture
+        r_q &lt;= i_d;         // normal capture
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.8em;">
-        <strong>Synchronous reset:</strong> checked only on the clock edge. Keeps timing predictable. Preferred for iCE40.
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>My thinking:</strong> Synchronous reset checks <code>i_reset</code> only on the clock edge. It takes effect at the next rising edge, not immediately. This is the default pattern for iCE40 and most modern FPGA flows. The flop's reset input is tied into the clock domain, which keeps timing analysis tractable.
     </div>
     <aside class="notes">Synchronous reset: checked on the clock edge. Reset takes effect on the next rising edge, not immediately. Preferred for iCE40 and most modern FPGA flows.</aside>
 </section>
+
+<!-- I Do: clock enable -->
 <section>
-    <h2>With Clock Enable</h2>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; With Clock Enable</h2>
     <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
     if (i_reset)
-        r_q <= 1'b0;
+        r_q &lt;= 1'b0;
     else if (i_enable)      // only update when enabled
-        r_q <= i_d;
+        r_q &lt;= i_d;
     // else: r_q holds — no latch! (this is sequential)
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
+    <div class="fragment callout" style="font-size:0.72em;">
         The missing <code>else</code> is <strong>NOT a latch</strong> in sequential logic. Flip-flops inherently hold their value. Only <code>always @(*)</code> has the latch problem.
     </div>
-    <aside class="notes">Add enable as another condition. The missing else is NOT a latch in sequential — flip-flops inherently hold. Only always-star has the latch problem.</aside>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>iCE40 primitive:</strong> this synthesizes to <code>SB_DFFE</code> — D-flop with built-in clock enable. Same silicon cost as a plain <code>SB_DFF</code>; the enable is &ldquo;free&rdquo; on this FPGA family.
+    </div>
+    <aside class="notes">Add enable as another condition. The missing else is NOT a latch in sequential — flip-flops inherently hold. Only always-star has the latch problem. The SB_DFFE primitive has a built-in enable so clock-enable logic doesn't cost extra LUTs on iCE40.</aside>
 </section>
+
+<!-- We Do: sync vs async -->
 <section>
-    <h2>Sync vs. Async Reset</h2>
-    <div class="two-col" style="margin-top:0.5em;">
-        <div class="col panel panel-good">
-            <h3>Synchronous (preferred)</h3>
-            <pre class="synth"><code class="language-verilog">always @(posedge clk)
-  if (reset) q <= 0;
-  else       q <= d;</code></pre>
-            <p style="font-size:0.65em;">Clean timing. Works well with iCE40.</p>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sync vs Async Reset</h2>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-good" style="padding:0.5em;">
+            <h3 style="font-size:0.9em;">Synchronous (preferred)</h3>
+            <pre style="font-size:0.62em;"><code class="language-verilog">always @(posedge clk)
+  if (reset) q &lt;= 0;
+  else       q &lt;= d;</code></pre>
+            <p style="font-size:0.68em;">Clean timing. Works well with iCE40. Reset acts only on clock edges.</p>
         </div>
-        <div class="col panel panel-neutral">
-            <h3>Asynchronous</h3>
-            <pre class="synth"><code class="language-verilog">always @(posedge clk
+        <div class="col panel panel-neutral" style="padding:0.5em;">
+            <h3 style="font-size:0.9em;">Asynchronous</h3>
+            <pre style="font-size:0.62em;"><code class="language-verilog">always @(posedge clk
          or posedge reset)
-  if (reset) q <= 0;
-  else       q <= d;</code></pre>
-            <p style="font-size:0.65em;">Resets immediately. Used in some ASIC flows.</p>
+  if (reset) q &lt;= 0;
+  else       q &lt;= d;</code></pre>
+            <p style="font-size:0.68em;">Resets immediately on reset assertion. Used in some ASIC flows.</p>
         </div>
     </div>
-    <aside class="notes">Synchronous: cleaner, preferred for this course and most FPGA work. Asynchronous: resets immediately, used in some ASIC flows.</aside>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Trade-off:</strong> Async reset is instant — useful for powering up safely before clocks are stable. But deassertion needs to be synchronized to avoid metastability. Sync reset needs a running clock to take effect. Pick sync unless you have a specific reason not to.
+    </div>
+    <aside class="notes">Sync is the default in this course. Async has specialized uses (powerup, clock-failure detection). Async deassertion synchronizers are a whole topic — you'll see it again in Day 5 and in any real SoC.</aside>
 </section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Build the Flop</h2>
+    <p style="font-size:0.78em;">Write a 4-bit register with: synchronous reset to <code>4'b0</code>, clock enable on <code>en</code>, input <code>d</code>, output <code>q</code>.</p>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Answer:</strong>
+        <pre style="font-size:0.72em;"><code class="language-verilog">reg [3:0] r_q;
+always @(posedge clk) begin
+    if (reset)
+        r_q &lt;= 4'b0;
+    else if (en)
+        r_q &lt;= d;
+end
+assign q = r_q;</code></pre>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Synthesis target:</strong> 4× <code>SB_DFFE</code> cells (one per bit). Zero LUTs. Total area: 0.3% of iCE40 HX1K. This is the workhorse pattern you'll use constantly.
+    </div>
+    <aside class="notes">60 seconds. Watch for students who forget the nonblocking. Watch for students who add an else with q &lt;= q — that's legal but unnecessary (and confuses synthesizers into sometimes not inferring SB_DFFE).</aside>
+</section>
+
+<!-- LIVE DEMO -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Reset + Enable Register in Action</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day04/ex3_reg_with_rst_en/
+make sim
+make wave
+make stat   # count SB_DFFE vs SB_DFF</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: reset → q=0
+PASS: en=0, d=X → q unchanged
+PASS: en=1, d=5 → q=5
+PASS: en=1, d=9 → q=9
+PASS: reset → q=0 again
+=== 12 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Signals: <code>clk · reset · en · d[3:0] · q[3:0]</code>. Set <code>d</code> and <code>q</code> to hex. Toggle <code>en</code> to see <code>q</code> freeze; toggle <code>reset</code> to see <code>q</code> snap to 0. The shape of the <code>q</code> waveform — stairsteps when <code>en=1</code>, plateaus when <code>en=0</code> — is the clock-enable signature.
+        </p>
+    </div>
+    <aside class="notes">[Run make wave] The plateaus during en=0 are the hold behavior — no latch, just a flop retaining its value. Reset snaps to 0 on the next posedge.</aside>
+</section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog reg_4bit_rst_en.v; synth_ice40; stat" -q
+
+=== reg_4bit_rst_en ===
+   Number of wires:                  8
+   Number of cells:                  4
+     SB_DFFESR                       4    ← 4 flops with Enable + Sync Reset
+     SB_LUT4                         0    ← zero LUTs — built-in!</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>Zero LUTs.</strong> The iCE40 DFFESR primitive has built-in enable and synchronous reset inputs. The whole &ldquo;if reset, clear; else if en, update&rdquo; pattern fits in the flop itself — no extra gates needed. This is why Yosys prefers this coding pattern.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>iCE40 flop variants available:</strong> <code>SB_DFF</code>, <code>SB_DFFE</code> (w/ enable), <code>SB_DFFR</code> (async reset), <code>SB_DFFSR</code> (sync reset), <code>SB_DFFER</code>, <code>SB_DFFESR</code>... and their &ldquo;set&rdquo; variants. The tool picks the right one based on your code.
+    </div>
+    <aside class="notes">This is a clean win — coding the standard pattern costs zero LUTs because the FPGA has hard-macro support for it. Deviating from the pattern (using LUTs to build enable logic) wastes area.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Why is this OK in <code>always @(posedge clk)</code> but NOT in <code>always @(*)</code>?&rdquo;</em></p>
+    <pre style="font-size:0.65em;"><code class="language-verilog">if (en) q &lt;= d;   // no else</code></pre>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI about the sequential vs combinational distinction.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: flop already stores, so missing else means &ldquo;hold current value&rdquo; — fine.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Good AI distinguishes: in sequential, &ldquo;hold&rdquo; maps to existing flop; in combinational, it maps to a new latch.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">The Day 3 &ldquo;no missing else&rdquo; rule does NOT apply in sequential blocks. Context matters.</p></div>
+    </div>
+    <aside class="notes">Important nuance. Over-applying the Day 3 rule leads to bloated sequential code with redundant else clauses. The rule is context-sensitive.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
@@ -94,29 +216,27 @@ end</code></pre>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Enable: adds another condition — <code>else if (en)</code></p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Prefer synchronous, active-high reset on iCE40.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Counters &amp; Clock Division</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~13 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">From 25 MHz to a visible blink — your first real sequential design.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Flops hold by default. &ldquo;Missing else&rdquo; in sequential = &ldquo;don't update this cycle.&rdquo;</div>
 </section>
 
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Counters &amp; Clock Division</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~14 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Combine today's flip-flop pattern with a simple increment and you have a <strong>counter</strong> &mdash; the most-used sequential building block. And the first practical use: turning 25 MHz into a 1 Hz LED blink you can see. Video 4 builds it end-to-end, and flashes it to the Go Board.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

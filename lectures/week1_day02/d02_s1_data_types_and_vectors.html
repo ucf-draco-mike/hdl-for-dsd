@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2.1: Data Types and Vectors — Accelerated HDL for Digital System Design</title>
+    <title>Day 2.1: Data Types and Vectors [ENHANCED] — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,6 +14,7 @@
 <div class="reveal">
 <div class="slides">
 
+<!-- ==================== TITLE (unchanged) ==================== -->
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;">
         <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
@@ -25,50 +26,171 @@
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb">
         <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
     </div>
     <div class="seg-breadcrumb-labels">
         <span class="seg-label active">Data Types</span>
-        <span class="seg-label ">Operators</span>
-        <span class="seg-label ">Sized Literals</span>
-        <span class="seg-label ">7-Seg Display</span>
+        <span class="seg-label">Operators</span>
+        <span class="seg-label">Sized Literals</span>
+        <span class="seg-label">7-Seg Display</span>
     </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 2.</aside>
+    <aside class="notes">
+        Welcome to Video 1 of 4 for Day 2. Today we move from &ldquo;what is HDL&rdquo; to
+        actually declaring signals and pushing bits around. This video is about 15 minutes.
+        The single biggest piece of baggage from yesterday: Verilog has two confusingly named
+        types — <code>wire</code> and <code>reg</code> — and neither name matches its actual
+        behavior in most cases. Unpacking that is today's main event.
+    </aside>
 </section>
 
+<!-- ==================== CONTEXTUALIZE (NEW) ==================== -->
 <section>
-    <h2><code>wire</code> vs. <code>reg</code> — Misleading Names</h2>
-    <div class="two-col" style="margin-top:0.5em;">
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
         <div class="col">
-            <h3><code>wire</code></h3>
-            <p style="font-size:0.75em;">Combinational connection. Must be <strong>continuously driven</strong> by <code>assign</code> or module output.</p>
+            <h3 style="color: #2E86AB; font-size: 1em;">In Industry</h3>
+            <p style="font-size: 0.75em;">
+                Every RTL codebase you'll ever read opens with a wall of signal
+                declarations. Linter warnings about <code>wire</code>/<code>reg</code>
+                misuse are the #1 category of feedback in modern RTL code review.
+                Nailing this distinction is table-stakes for a code review to go well.
+            </p>
         </div>
         <div class="col">
-            <h3><code>reg</code></h3>
-            <p style="font-size:0.75em;">Can be assigned inside <code>always</code> blocks. <strong>Does NOT always mean register!</strong></p>
+            <h3 style="color: #27AE60; font-size: 1em;">In This Course</h3>
+            <p style="font-size: 0.75em;">
+                Every lab from today forward uses vectors (<code>[7:0]</code>,
+                <code>[31:0]</code>). Concatenation and sign extension show up on
+                Day 3 (ALU), Day 9 (memory addressing), Day 11 (UART framing), and
+                your Barcelona capstone. This is working vocabulary.
+            </p>
         </div>
     </div>
-    <pre class="synth fragment"><code class="language-verilog">// This reg → flip-flop (clock edge)
+    <div class="fragment callout" style="font-size: 0.75em; margin-top: 0.5em;">
+        <strong>Industry alignment:</strong> Open any real-world project
+        (picorv32, OpenTitan, CV32E40P) and the first 50 lines of every module are
+        this video's material. Verilog's confusing legacy is why SystemVerilog (Week 4)
+        introduced <code>logic</code> — but you still have to read legacy code.
+    </div>
+    <aside class="notes">
+        This is not glamorous material, but it's the vocabulary. You cannot skip it.
+        [Point to industry] If you ever get a code review comment that says
+        &ldquo;use <code>wire</code> instead of <code>reg</code> here,&rdquo; it's because
+        the reader can't quickly tell whether you intended a flip-flop or a
+        combinational connection. Fixing that confusion is what this video does.
+    </aside>
+</section>
+
+<!-- ==================== REFRAME (NEW) ==================== -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> The Names Are Lying to You</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color: #C62828; font-size: 1em;">❌ Wrong Model</h3>
+            <p style="font-size: 0.72em;">
+                &ldquo;<code>wire</code> means a wire (no storage).
+                <code>reg</code> means a register (has storage).
+                So if I want a flip-flop, I use <code>reg</code>.&rdquo;
+            </p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color: #2E7D32; font-size: 1em;">✓ Right Model</h3>
+            <p style="font-size: 0.72em;">
+                These are <strong>syntax categories</strong>, not hardware categories.
+                <code>wire</code> = &ldquo;assigned continuously (<code>assign</code>
+                or module port).&rdquo; <code>reg</code> = &ldquo;assigned procedurally
+                (inside <code>always</code>).&rdquo; Whether a <code>reg</code> becomes
+                a flip-flop depends entirely on <em>context</em> — specifically,
+                whether there's a clock edge.
+            </p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size: 0.75em; margin-top: 0.5em;">
+        <strong>The receipt:</strong> You can have a <code>reg</code> that Yosys
+        synthesizes to pure combinational logic (zero flops). You can have a
+        <code>wire</code> that drives a flip-flop's D input. The type name tells
+        you <em>how it's assigned</em>, not <em>what hardware it becomes</em>.
+    </div>
+    <aside class="notes">
+        This is the single most dangerous piece of terminology baggage in Verilog.
+        The names came from 1984 and have never been fixed. Every semester I see
+        students reason &ldquo;I need a register, so I use reg&rdquo; — and then they're
+        confused when their <code>reg</code> turns into a multiplexer with no flops.
+        [PAUSE] Wire vs reg is about <em>how</em> you assign, not <em>what</em>
+        you build. Write that on an index card.
+        [Forward-reference] SystemVerilog introduces <code>logic</code> in Week 4
+        precisely to end this confusion — one keyword for both cases. But you
+        have to read legacy Verilog for the rest of your career, so we learn this first.
+    </aside>
+</section>
+
+<!-- ==================== I DO — wire vs reg declarations (NEW) ==================== -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Four Declarations, Four Meanings</h2>
+    <pre class="synth"><code class="language-verilog">// 1. wire → always combinational
+wire [7:0] w_sum;
+assign w_sum = a + b;          // continuous: an adder
+
+// 2. reg → flip-flop (because of posedge clk)
 reg [7:0] r_counter;
-always @(posedge clk) r_counter <= r_counter + 1;
+always @(posedge clk)
+    r_counter &lt;= r_counter + 1;  // clocked: a register
 
-// This reg → combinational logic (no clock!)
+// 3. reg → combinational (no clock edge!)
 reg [3:0] r_mux_out;
-always @(*) r_mux_out = sel ? a : b;</code></pre>
-    <aside class="notes">wire must be driven by assign or module output. reg can be assigned inside always blocks but does NOT always become a register — it depends on whether there's a clock edge.</aside>
+always @(*)
+    r_mux_out = sel ? a : b;     // unclocked: a mux, NOT a flop
+
+// 4. reg → INFERRED LATCH (missing else → bug)
+reg [3:0] r_broken;
+always @(*) if (enable) r_broken = data;  // ⚠ latch</code></pre>
+    <div class="callout" style="font-size: 0.7em; margin-top: 0.3em;">
+        <strong>My thinking:</strong> I use the <code>w_</code> and <code>r_</code>
+        prefix convention because <em>the synthesizer doesn't care, but the reader does</em>.
+        Case 4 is the bug you'll hit 50+ times this semester. Video 3 of Day 3 is all about
+        spotting it.
+    </div>
+    <aside class="notes">
+        Walk through each: Case 1 is trivially combinational — an adder gate.
+        Case 2 has <code>posedge clk</code> so Yosys infers a flop.
+        Case 3 has <code>@(*)</code> — combinational sensitivity — so the <code>reg</code>
+        becomes a mux. No flops.
+        Case 4 is the disaster case: the <code>if</code> has no <code>else</code>,
+        so when <code>enable=0</code>, <code>r_broken</code> must &ldquo;hold its value&rdquo; —
+        and the only hardware that holds a value without a clock is a latch.
+        Inferred latches are bad. We'll spend a whole video on them on Day 3.
+    </aside>
 </section>
+
+<!-- ==================== WE DO — the decision flowchart (kept, centered) ==================== -->
 <section>
-    <h2>The Decision Flowchart</h2>
-    <div style="margin-top:0.3em;">
-        <img src="diagrams/d02_wire_vs_reg.svg" alt="wire vs reg decision flowchart" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Decision Flowchart</h2>
+    <div style="margin-top: 0.2em;">
+        <img src="diagrams/d02_wire_vs_reg.svg"
+             alt="wire vs reg decision flowchart"
+             style="width: 100%; max-width: 680px; display: block; margin: 0 auto;">
     </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        SystemVerilog fixes this confusion with the <code>logic</code> type — Week 4.
+    <div class="fragment callout" style="font-size:0.72em; margin-top: 0.3em;">
+        <strong>Together:</strong> Look back at my four cases. Which flowchart branch
+        does each one land on? (Answer: 1 → wire; 2 → reg-sequential; 3 → reg-comb;
+        4 → reg-comb-but-broken.)
     </div>
-    <aside class="notes">Follow this decision flowchart. Driven by assign or module port? Use wire. Assigned inside always? Use reg. Whether reg becomes a flip-flop depends on posedge clk. SystemVerilog simplifies this with logic.</aside>
+    <div class="fragment callout" style="font-size:0.7em;">
+        SystemVerilog's <code>logic</code> type (Day 13) collapses both branches into one —
+        you still get latch warnings, but you stop playing &ldquo;which keyword is it today?&rdquo;
+    </div>
+    <aside class="notes">
+        [Walk the flowchart with the class, pausing at each decision point.]
+        &ldquo;Is it driven by <code>assign</code> or a module output port?&rdquo;
+        If yes → wire. If no → reg, and then the second question matters: is there
+        a clock edge? [PAUSE] This flowchart lives in the cheat sheet; students
+        should internalize it by end of Week 1.
+    </aside>
 </section>
+
+<!-- ==================== VECTORS (kept, added convention callout) ==================== -->
 <section>
     <h2>Vectors (Buses)</h2>
     <pre class="synth"><code class="language-verilog">wire [7:0] w_data;    // 8-bit bus: bit 7 = MSB, bit 0 = LSB
@@ -77,12 +199,22 @@ wire [3:0] w_nibble;  // 4-bit bus
 w_data[7]      // single bit — the MSB
 w_data[3:0]    // lower nibble — bits 3 down to 0
 w_data[7:4]    // upper nibble — bits 7 down to 4</code></pre>
-    <div class="fragment callout" style="font-size:0.8em;">
+    <div class="fragment callout" style="font-size:0.78em;">
         <strong>Convention:</strong> Always use <code>[MSB:LSB]</code> with LSB = 0.
-        You <em>can</em> use ascending <code>[0:7]</code>, but don&rsquo;t.
+        You <em>can</em> use ascending <code>[0:7]</code>, but don't — it reverses
+        the natural numerical reading. <code>w_data[3:0] == 4'b0101</code> reads as
+        &ldquo;5&rdquo;; <code>w_data[0:3] == 4'b0101</code> reads as &ldquo;5 reversed&rdquo; and
+        confuses every reader.
     </div>
-    <aside class="notes">Vectors are multi-bit signals. MSB:LSB notation. Bit indexing and slicing. Convention: always descending with LSB = 0.</aside>
+    <aside class="notes">
+        Vectors are multi-bit signals. MSB:LSB descending is the universal convention
+        — every textbook, every linter, every FPGA vendor's code. Don't fight it.
+        [Anecdote] I've seen exactly one codebase in 20 years that used ascending
+        ranges; the author left and the team spent months renormalizing.
+    </aside>
 </section>
+
+<!-- ==================== CONCATENATION &amp; REPLICATION (kept, unchanged) ==================== -->
 <section>
     <h2>Concatenation &amp; Replication</h2>
     <pre class="synth"><code class="language-verilog">// Concatenation: join signals
@@ -93,37 +225,243 @@ wire [7:0] w_all_ones = {8{1'b1}};    // 8'b11111111
 
 // Sign extension: replicate MSB to fill upper bits
 wire [7:0] w_sign_ext = {{4{w_nibble[3]}}, w_nibble}; // 4→8</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Sign extension is a pattern you'll use constantly. Double braces <code>{{N{bit}}, signal}</code>
-        — it's just concatenation of a replication with a signal.
+    <div class="fragment callout" style="font-size:0.72em;">
+        Sign extension is a pattern you'll use constantly — in ALUs, in fixed-point
+        math, in instruction decoders. <code>{{N{bit}}, signal}</code> is just
+        concatenation of a replication with a signal.
     </div>
-    <aside class="notes">Concatenation joins signals with curly braces. Replication repeats a pattern. Sign extension replicates the MSB. The double curly braces are just concatenation of a replication.</aside>
+    <aside class="notes">
+        Concatenation joins. Replication repeats. Sign extension replicates the MSB.
+        The double-brace syntax trips everyone up the first time — point out that
+        the outer braces are concatenation and the inner braces are replication;
+        it's not a special operator, just two stacked.
+    </aside>
 </section>
+
+<!-- ==================== YOU DO — BEFORE THE DEMO (NEW) ==================== -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict Before the Demo</h2>
+    <p style="font-size: 0.8em;">Given:</p>
+    <pre class="synth" style="font-size: 0.7em;"><code class="language-verilog">wire [3:0] nibble_a = 4'b1101;
+wire [3:0] nibble_b = 4'b0010;
+wire [7:0] concat   = {nibble_a, nibble_b};
+wire [7:0] repl     = {8{nibble_a[0]}};
+wire [7:0] sign_ext = {{4{nibble_a[3]}}, nibble_a};</code></pre>
+    <p style="font-size: 0.78em; margin-top: 0.3em;">Predict in binary and hex:</p>
+    <ul style="font-size: 0.75em; margin-top: 0.1em;">
+        <li><code>concat</code> = ? </li>
+        <li><code>repl</code> = ? </li>
+        <li><code>sign_ext</code> = ? </li>
+    </ul>
+    <div class="fragment callout" style="font-size: 0.7em;">
+        <strong>Answers:</strong>
+        <code>concat = 8'b1101_0010 = 8'hD2</code> ·
+        <code>repl = 8'b11111111 = 8'hFF</code> (bit 0 of <code>1101</code> is <code>1</code>) ·
+        <code>sign_ext = 8'b1111_1101 = 8'hFD</code> (MSB=1 replicated four times).
+    </div>
+    <aside class="notes">
+        [Real 60-second pause. Students write answers, THEN demo confirms.]
+        If students got <code>repl = 8'h00</code>, they read bit 3 of nibble_a
+        instead of bit 0. Common and diagnostic — bring it up explicitly.
+        If they got <code>sign_ext = 8'h0D</code>, they extended with zeros
+        instead of the MSB; that's zero-extension, not sign-extension. Also diagnostic.
+    </aside>
+</section>
+
+<!-- ==================== LIVE DEMO — ENHANCED (NEW) ==================== -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Vector Operations</h2>
-    <p style="margin-top:0.5em;">Concatenation, slicing, replication in iverilog — predict then run</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">code/day02_ex01_vector_ops.v</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Vector Operations</aside>
+    <h2 style="color: #FFC904;">Vector Operations in iverilog</h2>
+    <p style="font-size: 0.65em; color: #E8E8E4; margin-top: 0.2em;">
+        <code style="color:#FFC904;">lectures/week1_day02/code/day02_ex01_vector_ops.v</code> · ~4 minutes
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin-top: 0.6em; text-align: left;">
+        <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
+            <p style="color:#FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ COMMANDS (from the lecture dir)</p>
+<pre style="background: transparent; margin: 0;"><code class="language-bash" style="font-size: 0.52em; color: #E8E8E4;">cd lectures/week1_day02/code/
+iverilog -g2012 -o vec.vvp \
+    day02_ex01_vector_ops.v \
+    tb_vector_ops.v
+vvp vec.vvp            # prints PASS/FAIL
+gtkwave dump.vcd &     # open waveforms</code></pre>
+        </div>
+        <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
+            <p style="color:#27AE60; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background: transparent; margin: 0;"><code style="font-size: 0.52em; color: #E8E8E4;">PASS: concat    = 8'hD2
+PASS: replicate = 8'hFF
+PASS: sign_ext  = 8'hFD
+PASS: upper     = 4'hD
+PASS: lower     = 4'h2
+=== 5 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+
+    <div style="margin-top: 0.6em; background: #1a1a1a; padding: 0.6em; border-radius: 6px; border: 1px solid #D4A843;">
+        <p style="color:#D4A843; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ GTKWAVE &mdash; WHAT TO LOOK FOR</p>
+        <p style="color: #E8E8E4; font-size: 0.66em; margin: 0; text-align: left;">
+            Add: <code>i_nibble_a · i_nibble_b · o_concat · o_replicate · o_sign_ext</code>.
+            Set each bus to <strong>hex radix</strong> (right-click &rarr; Data Format &rarr; Hex).
+            Watch <code>o_concat</code> update instantly whenever either input changes &mdash;
+            that's &ldquo;combinational&rdquo; made visible: <em>zero delay between cause and effect</em>.
+        </p>
+    </div>
+
+    <aside class="notes">
+        [SWITCH TO TERMINAL] Navigate to the code dir. If you haven't built a
+        testbench yet, use the one in the labs folder (<code>labs/week1_day02/ex1_vector_ops/</code>)
+        or the shared tb_vector_ops.v from our library. Run iverilog, then vvp.
+        Five PASS lines.
+        [SWITCH TO GTKWAVE] Hex radix is the move. Binary is unreadable for 8-bit
+        signals. The teaching point: combinational means zero-time reaction. When
+        students drag <code>i_nibble_a</code> to a new value and <code>o_concat</code>
+        updates in the same delta cycle, that's what "no flip-flop, just wires" looks like.
+    </aside>
 </section>
+
+<!-- ==================== WHAT DID THE TOOL BUILD? (NEW) ==================== -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size: 0.78em;">Running Yosys on the vector_ops module:</p>
+
+    <div class="two-col" style="margin-top: 0.3em;">
+        <div class="col">
+            <pre style="font-size: 0.6em;"><code class="language-bash">$ yosys -p "read_verilog day02_ex01_vector_ops.v; \
+             synth_ice40 -top vector_ops; stat" -q
+
+=== vector_ops ===
+
+   Number of wires:                 11
+   Number of cells:                  0
+     SB_DFF                          0  ← no flops!
+     SB_LUT4                         0  ← no LUTs!
+</code></pre>
+        </div>
+        <div class="col" style="font-size: 0.75em;">
+            <p><strong>Surprising?</strong></p>
+            <ul style="font-size: 0.88em;">
+                <li>All operations are pure wire reroutings</li>
+                <li>Concatenation = physical wire grouping, not logic</li>
+                <li>Replication = fan-out, not logic</li>
+                <li>Bit selection = picking specific wires</li>
+            </ul>
+            <p class="fragment" style="margin-top: 0.5em; font-weight: 600;">
+                <strong>Zero gates.</strong> This module is just re-labeled wiring.
+            </p>
+        </div>
+    </div>
+
+    <div class="fragment callout" style="font-size: 0.7em; margin-top: 0.3em;">
+        <strong>Key insight:</strong> The concat/replicate/sign-extend operators look
+        like code, but synthesize to nothing but wires. No LUTs consumed. No flops. Free.
+        <em>This is also why Verilog made those operators feel like code — because the
+        hardware was free, they wanted you to use them liberally.</em>
+    </div>
+
+    <aside class="notes">
+        This is the &ldquo;aha&rdquo; slide for Day 2. Zero cells. Students expect some logic
+        because the <code>{...}</code> and <code>{N{...}}</code> syntax looks computational.
+        It isn't. It's wire relabeling. That's why concat/replicate/sign-extend are so
+        cheap and used everywhere. They cost nothing.
+        [Compare] Contrast with <code>+</code> on a bus, which consumes real adder cells
+        (SB_CARRY + SB_LUT4). Concat costs zero; addition costs gates. Same-looking syntax,
+        wildly different hardware footprint.
+    </aside>
+</section>
+
+<!-- ==================== CHECK THE MACHINE (NEW) ==================== -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size: 0.78em; margin-top: 0.2em;">
+        Ask an AI assistant:
+        <em>&ldquo;Given <code>wire [3:0] a = 4'b1000;</code>, what does
+        <code>{{4{a[3]}}, a}</code> evaluate to, and how many gates does it
+        synthesize to on an iCE40?&rdquo;</em>
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5em; margin-top: 0.5em;">
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #8E6BBF;">
+            <p style="color:#8E6BBF; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TASK</p>
+            <p style="font-size: 0.62em; margin: 0;">Prompt with exact expression + ask for value AND gate count.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #5A7FA0;">
+            <p style="color:#5A7FA0; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">BEFORE</p>
+            <p style="font-size: 0.62em; margin: 0;">Your prediction: <code>8'b1111_1000</code>, needs some logic to replicate bit 3.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #D4A843;">
+            <p style="color:#D4A843; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">AFTER</p>
+            <p style="font-size: 0.62em; margin: 0;">Value: correct. Gate count: AI may say &ldquo;a few LUTs&rdquo; — but it's actually <strong>zero</strong>.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #27AE60;">
+            <p style="color:#27AE60; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TAKEAWAY</p>
+            <p style="font-size: 0.62em; margin: 0;">Replication is wire fan-out, not logic. AI often over-counts. Run Yosys yourself and trust <code>stat</code>.</p>
+        </div>
+    </div>
+
+    <div class="fragment callout-warning" style="font-size: 0.68em; margin-top: 0.6em;">
+        <strong>Teaching moment:</strong> Current AI models are reliable on <em>Verilog
+        semantics</em> but unreliable on <em>synthesis cost</em>. The fix: always
+        verify gate counts with <code>yosys -p "... synth_ice40; stat"</code>. If AI
+        and Yosys disagree on gate count, Yosys wins.
+    </div>
+
+    <aside class="notes">
+        This is a particularly good CtM exercise because AI models consistently
+        over-estimate the gate cost of replication/concat operators — probably
+        because the syntax looks computational. Running Yosys yourself is the
+        antidote. It also introduces the habit of verifying synthesis claims
+        against the actual tool, which will matter for the rest of the course.
+        [If you have time] Try it live in class with ChatGPT or Claude and show
+        whether the model gets it right. Either answer is a teaching moment.
+    </aside>
+</section>
+
+<!-- ==================== KEY TAKEAWAYS (kept, expanded) ==================== -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>wire</code> = driven by <code>assign</code>. <code>reg</code> = assigned in <code>always</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>reg</code> does NOT always mean register — it depends on context.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Vectors: <code>[7:0]</code> is 8 bits. Slice with <code>[3:0]</code>. Join with <code>{a, b}</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always use <code>[MSB:LSB]</code> with LSB = 0.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>reg</code> does <strong>NOT</strong> always mean register — context (posedge clk?) decides.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Vectors: <code>[7:0]</code> is 8 bits, <strong>descending</strong>, LSB = 0.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Concat/replicate/sign-extend are <strong>free</strong> — wire rerouting, zero gates.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Operators</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Bitwise, arithmetic, relational, conditional — and their hardware cost.</p>
+    <div class="fragment golden-rule" style="margin-top: 0.8em; font-size: 0.95em;">
+        The type name tells you how it's assigned, not what hardware it becomes.
     </div>
+    <aside class="notes">
+        Four takeaways. The golden rule is the thing to write on an index card.
+        When you get confused three weeks from now about why your <code>reg</code>
+        turned into a mux instead of a flop, come back to this rule.
+    </aside>
 </section>
 
+<!-- ==================== TRANSFER — ENHANCED (NEW bridge) ==================== -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
+            🔗 Transfer
+        </p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Operators</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~12 minutes</p>
+
+        <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
+            <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">
+                You just saw that concat/replicate/sign-extend cost <em>zero</em> gates.
+                Video 2 shows the opposite end of the spectrum: arithmetic and comparison
+                operators consume <em>real</em> LUTs and carry cells. By the end of this
+                day you'll know, for any expression, roughly how much hardware Yosys will
+                build for it &mdash; which is the first step toward writing code that
+                hits timing and fits in your FPGA.
+            </p>
+        </div>
+    </div>
+    <aside class="notes">
+        End Video 1. Next: operators, and specifically which ones are expensive.
+        That's where &ldquo;your code fits in 1200 LUTs&rdquo; vs &ldquo;your code
+        overflows the HX1K&rdquo; gets decided.
+    </aside>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>

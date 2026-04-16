@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4.1: Clocks and Edge-Triggered Behavior — Accelerated HDL for Digital System Design</title>
+    <title>Day 4.1: Clocks &amp; Edges [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,33 +11,57 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 4 · Sequential Logic Fundamentals
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 4 · Sequential Logic Fundamentals</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Clocks &amp; Edges</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">Clocks & Edges</span>
-        <span class="seg-label ">Nonblocking</span>
-        <span class="seg-label ">FF Variants</span>
-        <span class="seg-label ">Counters</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 4.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">Clocks &amp; Edges</span><span class="seg-label">Nonblocking</span><span class="seg-label">FF Variants</span><span class="seg-label">Counters</span></div>
+    <aside class="notes">Video 1 of 4 for Day 4. We move from combinational to sequential. Time enters the picture — and so does memory.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every digital chip built since 1970 runs on clocks. Your phone's SoC has 50+ clock domains running at frequencies from 32 kHz to 3 GHz. Clock distribution is a whole specialty — PLLs, clock trees, skew analysis. Today is your first formal introduction to the concept that governs all modern digital design: <strong>Register Transfer Level</strong>.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every sequential lab from here uses a clock. Day 4 counter. Day 5 debouncer. Day 6 testbench stimulus. Day 7 FSM. Day 11 UART. Day 14 assertions. Get the clock mental model right today and everything downstream falls into place.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Career tag:</strong> &ldquo;Synchronous design&rdquo; isn't one methodology among many — it's <em>the</em> methodology. Everything you'll build in school or at a company is synchronous. Asynchronous design exists but is specialized (resets, clock-domain crossings, GALS systems).
+    </div>
+    <aside class="notes">RTL is the abstraction level of nearly all modern design. Synchronous is the default. Clocks are the heartbeat that makes everything tractable — without them, static timing analysis doesn't work.</aside>
+</section>
+
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> The Clock Doesn't Drive Your Code</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;The clock is like a loop counter. Every time the clock ticks, the <code>always @(posedge clk)</code> block runs once, statement by statement.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">The clock is a <strong>capture signal</strong>. On each rising edge, every flip-flop simultaneously snapshots its D input. Between edges, combinational logic churns continuously — settling on what will become the next D values. The code <em>describes the structure</em>; the clock just says &ldquo;snapshot now.&rdquo;</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A 100-line <code>always @(posedge clk)</code> block doesn't take 100× longer to &ldquo;run&rdquo; than a 1-line one. All flops capture in parallel. The length of the block affects <em>routing</em> and <em>area</em>, not <em>time</em>.
+    </div>
+    <aside class="notes">Biggest mental-model shift of the course. The clock isn't a loop. It's a synchronizer — a moment-in-time when the circuit transitions. Everything between edges is pure combinational settling.</aside>
+</section>
+
+<!-- The clock signal -->
 <section>
     <h2>The Clock: Heartbeat of Sequential Logic</h2>
     <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
@@ -46,42 +70,150 @@ clk  ────┘   └───┘   └───┘   └───┘   └
          ↑       ↑       ↑       ↑
      posedge  posedge  posedge  posedge
     </pre>
-    <p style="font-size:0.8em;">On each <strong>positive edge</strong>, every flip-flop captures its input. Between edges, combinational logic computes next values.</p>
-    <p class="fragment" style="font-size:0.8em;">This is <strong>Register Transfer Level (RTL)</strong> — the fundamental abstraction.</p>
-    <aside class="notes">Sequential logic adds time. On each positive edge, every flip-flop simultaneously captures its input. Between edges, combinational logic computes next values. This is RTL design.</aside>
+    <p style="font-size:0.78em;">On each <strong>positive edge</strong>, every flip-flop captures its input. Between edges, combinational logic computes next values.</p>
+    <p class="fragment" style="font-size:0.78em;">This is <strong>Register Transfer Level (RTL)</strong> — the fundamental abstraction of synchronous design.</p>
+    <aside class="notes">Sequential logic adds the time axis. On each positive edge, every flip-flop simultaneously captures its input. Between edges, combinational logic computes next values.</aside>
 </section>
+
+<!-- The Go Board's clock -->
 <section>
-    <h2>The Go Board&rsquo;s Clock</h2>
-    <div style="font-size:0.85em;">
+    <h2>The Go Board's Clock</h2>
+    <div style="font-size:0.82em;">
         <p class="fragment"><strong>Frequency:</strong> 25 MHz crystal oscillator (pin 15)</p>
         <p class="fragment"><strong>Period:</strong> 1 / 25,000,000 = <strong>40 ns</strong></p>
-        <p class="fragment"><strong>Problem:</strong> 25 MHz is far too fast for human eyes</p>
-        <p class="fragment"><strong>Solution:</strong> Clock divider — our first sequential design!</p>
+        <p class="fragment"><strong>Problem:</strong> 25 MHz is far too fast for human eyes (persistence of vision kicks in around 24-60 Hz).</p>
+        <p class="fragment"><strong>Solution:</strong> Clock divider — your first real sequential design!</p>
     </div>
-    <div class="fragment callout" style="font-size:0.8em;">
-        To blink an LED at 1 Hz, count <strong>25,000,000</strong> clock cycles. That requires a flip-flop — which requires <code>always @(posedge clk)</code>.
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.3em;">
+        To blink an LED at 1 Hz, count <strong>25,000,000</strong> clock cycles between toggles. That requires a flip-flop — which requires <code>always @(posedge clk)</code>.
     </div>
-    <aside class="notes">Go Board has 25 MHz clock. 40 ns period. Way too fast to see. To blink at 1 Hz we count 25 million cycles.</aside>
+    <aside class="notes">25 MHz is fast, 40 ns period. Way too fast for eyes. Clock division is the canonical first-sequential design problem. Video 4 today builds it end-to-end.</aside>
 </section>
+
+<!-- I Do: fundamental pattern -->
 <section>
-    <h2>The Fundamental Sequential Pattern</h2>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Fundamental Sequential Pattern</h2>
     <pre class="synth"><code class="language-verilog">always @(posedge i_clk) begin
-    r_q <= r_d;    // D flip-flop: capture on rising edge
+    r_q &lt;= r_d;    // D flip-flop: capture on rising edge
 end</code></pre>
-    <div class="fragment" style="margin-top:0.5em;">
-        <div class="two-col">
-            <div class="col panel panel-good">
-                <h3>What it does</h3>
-                <p style="font-size:0.7em;">On <strong>every rising edge</strong>, <code>r_q</code> captures <code>r_d</code>. Between edges, <code>r_q</code> holds its value.</p>
-            </div>
-            <div class="col panel panel-neutral">
-                <h3>What it creates</h3>
-                <p style="font-size:0.7em;">A D flip-flop — the basic 1-bit memory element of synchronous design.</p>
-            </div>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-good">
+            <h3 style="font-size:0.9em;">What it does</h3>
+            <p style="font-size:0.72em;">On <strong>every rising edge</strong>, <code>r_q</code> captures <code>r_d</code>. Between edges, <code>r_q</code> holds.</p>
+        </div>
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:0.9em;">What it creates</h3>
+            <p style="font-size:0.72em;">A D flip-flop — the 1-bit memory element of synchronous design. On iCE40: an <code>SB_DFF</code> primitive.</p>
         </div>
     </div>
-    <aside class="notes">The fundamental pattern. Always at posedge clk, reg gets value with nonblocking. This is a D flip-flop — 1-bit memory, the building block of all sequential logic.</aside>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Three mandatory elements: <code>posedge clk</code> in the sensitivity list, <code>reg</code>-declared LHS, <code>&lt;=</code> for the assignment. Miss any of the three and you've written something that isn't a synchronous flip-flop.
+    </div>
+    <aside class="notes">The fundamental pattern. Memorize the three elements: posedge clk, reg LHS, &lt;= for assignment. Every sequential construct in the course builds from this.</aside>
 </section>
+
+<!-- We Do -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; What's Missing?</h2>
+    <pre class="mistake"><code class="language-verilog">// Three attempts at a D flip-flop. Which work?
+// Attempt 1:
+always @(posedge clk) q = d;
+
+// Attempt 2:
+always @(clk) q &lt;= d;
+
+// Attempt 3:
+always @(*) q &lt;= d;</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        <strong>(1)</strong> Works mechanically but uses blocking <code>=</code> — OK for a single register, but catastrophic if the block grows. Don't write this.
+        <strong>(2)</strong> Triggers on <em>any</em> transition of clk (both edges) — synthesis warns, behavior unpredictable. Wrong.
+        <strong>(3)</strong> Combinational sensitivity with nonblocking — pointless and produces a latch. Very wrong.
+    </div>
+    <aside class="notes">Common failed variations. The correct pattern is non-negotiable. Attempt 1 is the most tempting because it looks &ldquo;cleaner&rdquo; — but it's a Day 3 rule violation waiting to cause a bug.</aside>
+</section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Waveform</h2>
+    <p style="font-size:0.78em;">Given <code>d</code> toggles at 10 MHz and clk is 25 MHz, sketch <code>q</code>:</p>
+    <pre style="font-family:monospace;font-size:0.7em;background:none;box-shadow:none;border:none;color:#333;text-align:left;">clk ─┐_┌─┐_┌─┐_┌─┐_┌─┐_┌─┐_┌─┐_┌─
+d   ──────┐___________┌─────────
+q   ?</pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>q</code> updates on each <em>posedge clk</em>, capturing whatever <code>d</code> was a <em>few picoseconds before</em> the edge. Since <code>d</code> isn't synchronized to clk, <code>q</code> may sample either high or low depending on exact alignment. This is a <strong>metastability hazard</strong> — covered in detail on Day 5.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Lesson:</strong> A clocked register only updates on the clock's edge, but the <em>value</em> it captures depends on whether the input was stable at that moment. Sampling an asynchronous input is dangerous — Day 5 shows the synchronizer pattern that fixes it.
+    </div>
+    <aside class="notes">Good teaser for Day 5 metastability. The q waveform depends on unseen timing relationships — this is the first hint that asynchronous inputs are problematic.</aside>
+</section>
+
+<!-- LIVE DEMO -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">One-Flop, Two-Flop in GTKWave</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day04/ex1_dff/
+make sim       # iverilog testbench
+make wave      # GTKWave
+make stat      # yosys synth_ice40</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: d=1 → q=1 after edge
+PASS: d=0 → q=0 after edge
+PASS: q stays through many
+  cycles when d stable
+=== 8 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Add <code>clk · d · q</code>. Look for: <code>q</code> transitions happen <em>right after</em> each posedge of <code>clk</code>, never between edges. The step-function shape is the visual signature of synchronous design.
+        </p>
+    </div>
+    <aside class="notes">[Run make wave] Show the step pattern. q only changes at clock edges. This is what sequential logic <em>looks</em> like in GTKWave.</aside>
+</section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog dff.v; synth_ice40 -top dff; stat" -q
+
+=== dff ===
+   Number of wires:                  4
+   Number of cells:                  1
+     SB_DFF                          1    ← one flip-flop, finally!
+     SB_LUT4                         0
+</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>First flop of the course.</strong> Until today, every module synthesized to 0 <code>SB_DFF</code>s. Now we have one. This is the first hardware primitive that remembers — the building block of every sequential design you'll write.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>iCE40 primitive:</strong> <code>SB_DFF</code> is a positive-edge-triggered D flip-flop with synchronous set/reset capability. There are ~1200 of them on the HX1K. That's your &ldquo;state budget&rdquo; for any design.
+    </div>
+    <aside class="notes">First SB_DFF of the course. Celebrate it. The iCE40 HX1K has 1280 of these — that's your memory budget for all your designs.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;In Verilog, why does <code>always @(posedge clk) q &lt;= d;</code> create a flip-flop, but <code>always @(*) q &lt;= d;</code> does not?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI: why the sensitivity list determines the storage.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: posedge = edge-triggered storage = flop. @(*) = level-sensitive = combinational or latch.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI mentions edge-trigger semantics explicitly. Weak AI says &ldquo;because of the clock&rdquo; without explaining why.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">The sensitivity list is structural: it describes the <em>kind</em> of hardware to build.</p></div>
+    </div>
+    <aside class="notes">This CtM distinguishes models that memorized &ldquo;posedge = flop&rdquo; from models that understand <em>why</em>. The &ldquo;why&rdquo; is edge-triggered vs level-triggered storage.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
@@ -90,29 +222,27 @@ end</code></pre>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Go Board: 25 MHz. To make visible events, divide the clock.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;This is <strong>RTL</strong> — the design abstraction used everywhere.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Nonblocking Assignment</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Why <= matters — and what goes wrong without it.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Between edges: combinational settles. On the edge: flops capture. Repeat forever.</div>
 </section>
 
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Nonblocking Assignment</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~12 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You used <code>&lt;=</code> in the D-flop example without really understanding why. Video 2 makes it rigorous with a side-by-side waveform demo: same shift-register code, one with <code>=</code> and one with <code>&lt;=</code>, and you'll <em>see</em> the blocking version collapse.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

@@ -3,156 +3,314 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2.4: The 7-Segment Display — Accelerated HDL for Digital System Design</title>
+    <title>Day 2.4: 7-Segment Display [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 2 · Combinational Building Blocks
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 2 · Combinational Building Blocks</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The 7-Segment Display</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Data Types</span>
-        <span class="seg-label ">Operators</span>
-        <span class="seg-label ">Sized Literals</span>
-        <span class="seg-label active">7-Seg Display</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 2.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Data Types</span><span class="seg-label">Operators</span><span class="seg-label">Sized Literals</span><span class="seg-label active">7-Seg Display</span></div>
+    <aside class="notes">Video 4 of 4. Your first real peripheral. Everything we've built in Day 1 and Day 2 culminates here: you press buttons on the Go Board, and a real 7-segment digit lights up.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>7-Segment Display Basics</h2>
-    <div style="margin-top:0.3em;">
-        <img src="diagrams/d02_seven_segment.svg" alt="7-segment display with labeled segments a-g" style="width:100%;max-width:500px;display:block;margin:0 auto;">
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">The hex-to-7seg decoder is the canonical &ldquo;Hello, World!&rdquo; of digital design. It shows up in interview whiteboard problems, FPGA vendor demos, and the first chapter of every HDL textbook. Master it and you've crossed the threshold from theory to real hardware.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Active-low logic, case statements, pin mapping — all three concepts land today. The <code>case</code> pattern shows up again in Day 3 (ALU), Day 7 (FSMs), Day 11 (UART state logic). Pin mapping with <code>.pcf</code> files is every lab from now on.</p>
+        </div>
     </div>
-    <div class="fragment callout-warning" style="font-size:0.75em;">
-        <strong>Go Board:</strong> segments are <strong>active low</strong>. <code>0</code> = segment ON, <code>1</code> = segment OFF.
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>First real peripheral:</strong> By the end of today's lab, your Verilog code will drive pins that drive LEDs that form a digit that a human can read. That's the full stack: RTL &rarr; synthesis &rarr; place-and-route &rarr; bitstream &rarr; flash &rarr; photons.
     </div>
-    <aside class="notes">A 7-segment display has segments labeled a through g. On the Go Board, segments are active low — 0 means ON.</aside>
+    <aside class="notes">This is the moment students go from abstract to real. Make it feel big. The seven-segment display is the canonical first output peripheral for a reason — it exercises every layer of the toolchain.</aside>
 </section>
+
+<!-- REFRAME -->
 <section>
-    <h2>Hex-to-7-Segment Mapping</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module hex_to_7seg (
+    <h2><span style="color:#C0392B;">⚠️</span> Active-Low: When 0 Means ON</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Of course <code>1</code> means ON. Drive the pin high to turn the segment on.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">On the Go Board, segments are wired as <strong>common-anode active-low</strong>. The LED's anode is tied to VCC; your FPGA pin pulls the cathode low to turn it on. <code>0</code> = ON. <code>1</code> = OFF. The comment block in every decoder file reminds you of this. Read it before you code.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The failure mode:</strong> Students write the logical (active-high) version, flash the board, and see an &ldquo;inverted&rdquo; or &ldquo;solid&rdquo; display. The fix is always to flip every bit. Adding <code>~</code> once is better than rewriting every case.
+    </div>
+    <aside class="notes">Active-low is the #1 Day 2 lab failure. Students expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
+</section>
+
+<!-- Segment map diagram -->
+<section>
+    <h2>7-Segment Display: Segment Map</h2>
+    <div style="margin-top:0.3em;">
+        <img src="diagrams/d02_seven_segment.svg" alt="7-segment display with labeled segments a-g" style="width:100%;max-width:450px;display:block;margin:0 auto;">
+    </div>
+    <div class="two-col" style="font-size:0.72em;margin-top:0.3em;">
+        <div class="col">
+            <p><strong>Convention:</strong> <code>{a,b,c,d,e,f,g}</code> MSB→LSB</p>
+            <p>a = top, then clockwise: b, c, d, e, f, g = middle</p>
+        </div>
+        <div class="col">
+            <p><strong>Go Board wiring:</strong> <code>0 = ON, 1 = OFF</code></p>
+            <p>So &ldquo;0&rdquo; digit = <code>7'b0000001</code> (all segments on except g)</p>
+        </div>
+    </div>
+    <aside class="notes">Seven segments labeled a-g. Our convention: MSB-first concatenation, {a,b,c,d,e,f,g}. Active-low means a digit's bit pattern has zeros where segments are on.</aside>
+</section>
+
+<!-- I Do -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Derive &ldquo;3&rdquo; From Scratch</h2>
+    <div class="two-col">
+        <div class="col">
+            <p style="font-size:0.72em;">Digit &ldquo;3&rdquo; lights segments: <strong>a, b, c, d, g</strong>.</p>
+            <p style="font-size:0.72em;">Segments OFF: <strong>e, f</strong>.</p>
+            <pre style="font-size:0.7em;"><code>Order:  a b c d e f g
+Active: 1 1 1 1 0 0 1   ← logical
+Pins:   0 0 0 0 1 1 0   ← active-low (flipped)</code></pre>
+        </div>
+        <div class="col">
+            <pre class="synth" style="font-size:0.75em;"><code class="language-verilog">case (i_hex)
+    // ...
+    4'h3: o_seg = 7'b0000110;
+    //             abcdefg
+    //             0000110 = ON:abcd,g OFF:e,f
+    // ...
+endcase</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>My process:</strong> For each digit I (1) draw the digit on paper, (2) mark which segments glow, (3) write the logical pattern, (4) invert every bit for active-low. Doing step 3 first prevents bugs — it's easier to think positively then flip once.
+    </div>
+    <aside class="notes">Derive one digit from scratch in front of the class. Don't just show the table — let them see the derivation. Active-low flip is the whole game.</aside>
+</section>
+
+<!-- We Do -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Fill in &ldquo;5&rdquo; and &ldquo;A&rdquo;</h2>
+    <pre class="synth"><code class="language-verilog">case (i_hex)
+    4'h5: o_seg = 7'b???????;  // segments: a, c, d, f, g (ON)
+    4'hA: o_seg = 7'b???????;  // segments: a, b, c, e, f, g (ON)
+endcase</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Answers:</strong>
+        <code>4'h5 = 7'b0100100</code> (ON:a,c,d,f,g → logical 1011011 → active-low 0100100).
+        <code>4'hA = 7'b0001000</code> (ON:a,b,c,e,f,g → logical 1110111 → active-low 0001000).
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Common bug:</strong> forgetting <code>default:</code>. If <code>i_hex</code> somehow carries X, you infer a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
+    </div>
+    <aside class="notes">[Pause 60 seconds] The hex &ldquo;A&rdquo; is tricky because it's capital-A, not lowercase. Seven-segment &ldquo;B&rdquo; is usually lowercase-b (because capital-B is indistinguishable from 8). Calligraphy varies.</aside>
+</section>
+
+<!-- Full decoder -->
+<section>
+    <h2>The Full Decoder</h2>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module hex_to_7seg (
     input  wire [3:0] i_hex,
-    output reg  [6:0] o_seg    // {a,b,c,d,e,f,g}
+    output reg  [6:0] o_seg     // {a,b,c,d,e,f,g} active-low
 );
 always @(*) begin
-    case (i_hex)         //     abcdefg
+    case (i_hex)             //     abcdefg
         4'h0: o_seg = 7'b0000001;  // 0
         4'h1: o_seg = 7'b1001111;  // 1
         4'h2: o_seg = 7'b0010010;  // 2
         4'h3: o_seg = 7'b0000110;  // 3
-<span class="fragment">        4'h4: o_seg = 7'b1001100;  // 4-7
-        4'h5: o_seg = 7'b0100100;
-        4'h6: o_seg = 7'b0100000;
-        4'h7: o_seg = 7'b0001111;</span>
-<span class="fragment">        4'h8: o_seg = 7'b0000000;  // 8-F
-        4'h9: o_seg = 7'b0000100;
-        4'hA: o_seg = 7'b0001000;
-        4'hB: o_seg = 7'b1100000;
-        4'hC: o_seg = 7'b0110001;
-        4'hD: o_seg = 7'b1000010;
-        4'hE: o_seg = 7'b0110000;
-        4'hF: o_seg = 7'b0111000;</span>
-        default: o_seg = 7'b1111111; // all off
+        4'h4: o_seg = 7'b1001100;  // 4
+        4'h5: o_seg = 7'b0100100;  // 5
+        4'h6: o_seg = 7'b0100000;  // 6
+        4'h7: o_seg = 7'b0001111;  // 7
+        4'h8: o_seg = 7'b0000000;  // 8 (all ON)
+        4'h9: o_seg = 7'b0000100;  // 9
+        4'hA: o_seg = 7'b0001000;  // A
+        4'hB: o_seg = 7'b1100000;  // b (lower)
+        4'hC: o_seg = 7'b0110001;  // C
+        4'hD: o_seg = 7'b1000010;  // d (lower)
+        4'hE: o_seg = 7'b0110000;  // E
+        4'hF: o_seg = 7'b0111000;  // F
+        default: o_seg = 7'b1111111;  // all OFF (safety)
     endcase
 end
 endmodule</code></pre>
-    <aside class="notes">Complete hex to 7-segment decoder. This uses a case statement inside always-star — we cover that syntax in detail tomorrow.</aside>
+    <aside class="notes">Full table. Default for safety — not because a 4-bit value can go out of range, but because habit matters. If this were a 5-bit input with only 16 valid codes, the default would be load-bearing.</aside>
 </section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Before the Demo</h2>
+    <p style="font-size:0.78em;">Predict (don't peek at the table):</p>
+    <ol style="font-size:0.72em;">
+        <li>Does this module use any flip-flops?</li>
+        <li>Approximately how many LUTs does Yosys build?</li>
+        <li>If you accidentally write <code>o_seg = 7'b1111111</code> for <code>4'h0</code>, what will you see?</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        (1) <strong>No flops</strong> — pure combinational (no clock). (2) <strong>~7 LUTs</strong> — one per output bit, each implementing a 4-input boolean function. (3) Press the &ldquo;0&rdquo; switch combo, see nothing light up — display stays blank. Easy visual diagnostic for active-low confusion.
+    </div>
+    <aside class="notes">The &ldquo;no flops&rdquo; prediction is the key concept check. If a student predicts flops, they haven't internalized that <code>always @(*)</code> is combinational.</aside>
+</section>
+
+<!-- LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Build hex_to_7seg</h2>
-    <p style="margin-top:0.5em;">From empty file → working decoder on the Go Board</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">case statement + segment mapping → test all 16 digits</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Build hex_to_7seg</aside>
-</section>
-<section>
-    <h2>Sneak Preview: Hierarchy</h2>
-    <pre class="synth"><code class="language-verilog">// In your top module, INSTANTIATE the decoder:
-hex_to_7seg display1 (
-    .i_hex  (w_some_value),     // named port connection
-    .o_seg  (w_segments)
-);</code></pre>
-    <div class="callout" style="font-size:0.8em;margin-top:1em;">
-        Modules instantiate other modules — like chips on a circuit board.
-        Always use <strong>named port connections</strong>.
+    <h2 style="color:#FFC904;">Flash the Decoder to the Go Board</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes &mdash; real hardware</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day02/ex4_seven_segment/
+make sim      # iverilog testbench
+make wave     # GTKWave — confirm all 16 digits
+make prog     # yosys → nextpnr → iceprog
+# Board flashes: you're on hardware now.</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED RESULT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: all 16 digits verified
+=== 16 passed, 0 failed ===
+
+[make prog]
+Yosys 0.36 → synth_ice40
+nextpnr-ice40 → hx1k vq100
+icepack → iceprog
+FPGA programmed OK.</code></pre>
+        </div>
     </div>
-    <aside class="notes">Hierarchy preview: instantiate modules with named port connections. Never positional. We cover this properly on Day 8.</aside>
+
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ ON THE BOARD</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Set switches SW1-SW4 to encode a hex digit (binary, LSB=SW1). Watch the leftmost 7-segment display change. Try: <code>0000</code> shows &ldquo;0,&rdquo; <code>1111</code> shows &ldquo;F,&rdquo; <code>1010</code> shows &ldquo;A.&rdquo;
+        </p>
+    </div>
+    <aside class="notes">[Run make prog] The first time students see their code drive real LEDs is the crossover moment. Let it breathe. Let them try all 16 digits. [If broken] 90% of the time: active-low bug. Flip all the bit patterns.</aside>
 </section>
+
+<!-- WHAT DID THE TOOL BUILD? -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col">
+            <pre style="font-size:0.6em;"><code class="language-bash">$ yosys -p "read_verilog hex_to_7seg.v; \
+    synth_ice40 -top hex_to_7seg; stat" -q
+
+=== hex_to_7seg ===
+
+   Number of wires:                  8
+   Number of cells:                  7
+     SB_DFF                          0
+     SB_LUT4                         7
+</code></pre>
+        </div>
+        <div class="col" style="font-size:0.72em;">
+            <p><strong>7 LUT4s — one per output bit:</strong></p>
+            <ul style="font-size:0.88em;">
+                <li>Each output is a 4-input boolean function (the 16-entry case)</li>
+                <li>LUT4 has exactly 4 inputs — perfect match</li>
+                <li>No flops: combinational</li>
+                <li>Total area: 0.5% of the iCE40 HX1K</li>
+            </ul>
+            <p class="fragment" style="margin-top:0.4em;font-weight:600;">This is the optimal implementation. The LUT4 was practically <em>designed</em> for this problem.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Historical footnote:</strong> 4-input LUTs became standard because real-world combinational logic (like this decoder) rarely needs more than 4 input variables per output bit. Your decoder just proved the design heuristic.
+    </div>
+    <aside class="notes">This is a satisfying &ldquo;tool matches problem&rdquo; moment. 16-entry case on 4-bit input produces exactly 4-input boolean functions, which LUT4s implement directly. No decomposition needed.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Generate a hex-to-7-segment decoder in Verilog for the Nandland Go Board.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a complete decoder module.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: AI will produce a case statement. Key question: will it be active-low?</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Many AIs produce the <em>active-high</em> version silently — ignoring the &ldquo;Go Board&rdquo; hint. Test: flash it.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI-generated HDL needs hardware-specific validation. Always flash-test.</p></div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.5em;">
+        <strong>Teaching moment:</strong> AI is confident and often right on textbook problems. But &ldquo;active-low for Go Board&rdquo; is the kind of detail it may miss. This is the board-specific knowledge you bring that AI doesn't.
+    </div>
+    <aside class="notes">Demonstrates that AI-generated HDL is a starting point, not a finished product. Board-specific details — active-low, pin mapping, reset polarity — are where AI gets it wrong.</aside>
+</section>
+
+<!-- Key takeaways (kept, enhanced) -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;7-segment displays map 4-bit hex to 7 segment enables.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Go Board segments are <strong>active low</strong> (0 = ON).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The <code>case</code> statement (tomorrow) is the natural way to express this.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Modules instantiate other modules — hierarchy is key.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;7-segment: 4-bit hex in, 7-bit segment pattern out.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Go Board is <strong>active-low</strong>: 0 = ON, 1 = OFF.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Each output bit is a 4-input function → maps to one SB_LUT4.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always include <code>default</code>. Always flash-test, don't just sim.</p>
     </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Simulation is confidence. Hardware is truth. You're on hardware now.</div>
 </section>
+
+<!-- Pre-class quiz (kept from original) -->
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <p style="font-size:0.75em;color:#888;">Pause and try each question before revealing the answer.</p>
-    <div style="font-size:0.85em;">
+    <p style="font-size:0.75em;color:#888;">Pause and try each before revealing.</p>
+    <div style="font-size:0.82em;">
         <p><strong>Q1:</strong> Does <code>reg</code> always synthesize to a register?</p>
         <div class="fragment quiz-answer">No. <code>reg</code> in <code>always @(*)</code> = combinational. Only <code>reg</code> in <code>always @(posedge clk)</code> becomes a flip-flop.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> What is <code>4'hF</code> in binary?</p>
-        <div class="fragment quiz-answer">4-bit binary <code>1111</code> (decimal 15). The <code>4'</code> specifies 4 bits, <code>h</code> = hex.</div>
-    </div>
-    <aside class="notes">Pause and think before advancing.</aside>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> What does <code>assign y = sel ? a : b;</code> synthesize to?</p>
-        <div class="fragment quiz-answer">A 2-to-1 multiplexer. <code>sel=1</code> → <code>a</code>, <code>sel=0</code> → <code>b</code>.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> What&rsquo;s the difference between <code>&amp;</code> and <code>&amp;&amp;</code>?</p>
-        <div class="fragment quiz-answer"><code>&amp;</code> is bitwise (per-bit, same width result). <code>&amp;&amp;</code> is logical (1-bit true/false). <code>4'b1010 &amp; 4'b0101 = 4'b0000</code> but <code>4'b1010 &amp;&amp; 4'b0101 = 1'b1</code>.</div>
-    </div>
-    <aside class="notes">Questions 3 and 4.</aside>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 2 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What is <code>4'hF</code> in binary, and why can't you just write <code>15</code>?</p>
+        <div class="fragment quiz-answer"><code>4'b1111</code>. Writing bare <code>15</code> makes it a 32-bit value, causing silent width mismatches on assignment.</div>
     </div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> On the Go Board, how do you turn segment <code>a</code> ON?</p>
+        <div class="fragment quiz-answer">Drive the corresponding pin to <code>0</code>. Active-low: 0 = ON, 1 = OFF.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> If your decoder's <code>case</code> is missing <code>default</code>, what happens?</p>
+        <div class="fragment quiz-answer">For a 4-bit input all 16 codes are covered, so no latch inferred in practice. But the <em>habit</em> of including <code>default</code> protects you in larger designs — always include it.</div>
+    </div>
+</section>
+
+<!-- End of Week 1 prep -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 2</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Procedural Combinational Logic</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 3 · always @(*), if/else, case, and the latch trap</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You just used <code>always @(*)</code> and <code>case</code> without really understanding them. Day 3 is the formal treatment — including <em>the latch problem</em>, the #1 silent bug in combinational RTL. By tomorrow's end you'll recognize latch-inducing patterns on sight, and know three independent ways to prevent them.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

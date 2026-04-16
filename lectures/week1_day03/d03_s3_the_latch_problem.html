@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.3: The Latch Problem — Accelerated HDL for Digital System Design</title>
+    <title>Day 3.3: The Latch Problem [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,114 +11,267 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 3 · Procedural Combinational Logic
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The Latch Problem</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">always @(*)</span>
-        <span class="seg-label ">if/else & case</span>
-        <span class="seg-label active">Latch Problem</span>
-        <span class="seg-label ">Block vs Nonblock</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 3.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">always @(*)</span><span class="seg-label">if/else &amp; case</span><span class="seg-label active">Latch Problem</span><span class="seg-label">Block vs Nonblock</span></div>
+    <aside class="notes">Video 3 of 4. The most dangerous combinational bug in Verilog — and three independent ways to prevent it. After this video you should recognize latch-inducing patterns on sight.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>What Is an Unintentional Latch?</h2>
-    <p style="font-size:0.85em;">If a signal in <code>always @(*)</code> is <strong>not assigned in every path</strong>, the synthesizer must preserve its old value.</p>
-    <p class="fragment" style="font-size:0.85em;">The only combinational element that &ldquo;remembers&rdquo; is a <strong>latch</strong>.</p>
-    <div class="fragment callout-danger" style="font-size:0.8em;">
-        Latches are almost never what you want. They cause timing hazards, are hard to test, and FPGA tools handle them poorly.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">&ldquo;Zero inferred latches&rdquo; is a line item on virtually every FPGA/ASIC design checklist. Synopsys DC, Xilinx Vivado, and Intel Quartus all emit <strong>latch warnings</strong> — which senior engineers treat as errors. Static timing analysis tools <em>can't</em> reliably analyze a design with latches, so they break your sign-off flow.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every Day 3+ lab checks for latch warnings during <code>make stat</code>. If Yosys reports &ldquo;inferred latch,&rdquo; your grader sees it. This video is your insurance policy: three independent techniques, each of which alone prevents the bug.</p>
+        </div>
     </div>
-    <aside class="notes">If a signal isn't assigned in every path, synthesizer infers a latch. Latches cause timing hazards and are almost never what you want.</aside>
+    <aside class="notes">Latches aren't &ldquo;wrong&rdquo; in isolation — they're valid hardware. But <em>inferring</em> them from code that was meant to be combinational almost always means a bug. The industry convention is: if you want a latch, write it explicitly. If you accidentally get one, that's a latch bug.</aside>
 </section>
+
+<!-- REFRAME -->
 <section>
-    <h2>How Latches Are Inferred</h2>
-    <pre class="mistake"><code class="language-verilog">always @(*) begin
-    if (sel)
-        y = a;
-    // NO else! When sel=0, y must keep old value → LATCH
+    <h2><span style="color:#C0392B;">⚠️</span> When Memory Sneaks In</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I didn't write <code>posedge clk</code>, so there's no memory in my <code>always @(*)</code> block. Whatever I forgot to assign just stays undefined.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Any signal that <strong>must retain a value</strong> through some path of your logic needs <em>storage</em>. If your <code>always @(*)</code> doesn't assign the output on some path, the synthesizer infers a <strong>level-sensitive latch</strong> to hold the prior value. No clock required &mdash; the latch watches your condition signal.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The failure mode:</strong> Latches work in simulation. They pass many testbenches. But they create <em>unclocked storage</em> — glitches on the condition signal propagate to the output, and static timing analyzers refuse to sign off. The bug hides until tapeout.
+    </div>
+    <aside class="notes">Key misconception: &ldquo;no clock = no memory.&rdquo; Latches are memory without a clock. They're triggered by <em>levels</em>, not edges, which makes them glitch-sensitive. Modern synchronous design principles forbid them.</aside>
+</section>
+
+<!-- What is an inferred latch -->
+<section>
+    <h2>The Recipe for an Inferred Latch</h2>
+    <pre class="mistake"><code class="language-verilog">// Missing else → latch on y
+always @(*) begin
+    if (sel) y = a;
+    // when sel=0: y must "hold" its previous value → LATCH
 end</code></pre>
-    <pre class="mistake fragment"><code class="language-verilog">always @(*) begin
+    <pre class="mistake fragment"><code class="language-verilog">// Missing default + missing case → latch
+always @(*) begin
+    case (opcode)
+        2'b00: y = a;
+        2'b01: y = b;
+        // 2'b10 and 2'b11 not assigned → LATCH
+    endcase
+end</code></pre>
+    <div class="fragment callout-danger" style="font-size:0.7em;">
+        <strong>The rule:</strong> If there exists <em>any</em> combination of inputs where your output is not assigned, the synthesizer <em>must</em> infer storage — it has no choice. Your &ldquo;intent&rdquo; doesn't matter; the tool can't read minds.
+    </div>
+    <aside class="notes">The synthesizer is doing exactly what the spec says: the signal must hold its value on paths where it isn't assigned. The only hardware that does that is a latch (level-sensitive storage). It's not a bug in the synthesizer — it's a bug in your code.</aside>
+</section>
+
+<!-- I Do: three fixes -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Three Ways to Prevent Latches</h2>
+    <div class="two-col">
+        <div class="col panel panel-good">
+            <h3 style="font-size:0.85em;color:#2E7D32;">1. Default at top</h3>
+            <pre style="font-size:0.62em;"><code class="language-verilog">always @(*) begin
+    y = 4'b0;   // default FIRST
+    if (sel) y = a;
+    // no latch!
+end</code></pre>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="font-size:0.85em;color:#2E7D32;">2. Complete if/else</h3>
+            <pre style="font-size:0.62em;"><code class="language-verilog">always @(*) begin
+    if (sel) y = a;
+    else     y = 4'b0;
+end</code></pre>
+        </div>
+    </div>
+    <div class="panel panel-good" style="margin-top:0.3em;">
+        <h3 style="font-size:0.85em;color:#2E7D32;">3. default in case</h3>
+        <pre style="font-size:0.62em;"><code class="language-verilog">always @(*) begin
+    case (opcode)
+        2'b00: y = a;
+        2'b01: y = b;
+        default: y = 4'b0;
+    endcase
+end</code></pre>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>My preference:</strong> Option 1 (default at top). It's the most defensive — it covers both <code>if</code>-without-<code>else</code> and missing-case in one line. I put it in every single <code>always @(*)</code> block I write.
+    </div>
+    <aside class="notes">Any one of the three fixes works on any one bug. But a default-at-top is a universal fix. Adopt it as a habit and you're immune.</aside>
+</section>
+
+<!-- We Do -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Latch Hunt</h2>
+    <p style="font-size:0.78em;">Which of these <code>always @(*)</code> blocks will infer a latch?</p>
+    <pre style="font-size:0.65em;"><code class="language-verilog">// Block A
+always @(*) begin
+    if (en) y = a;
+    else    y = 0;
+end
+// Block B
+always @(*) begin
+    case (sel)
+        2'b00: y = a;
+        2'b11: y = b;
+    endcase
+end
+// Block C
+always @(*) begin
+    y = 0;
+    if (en) y = a;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong> <strong>A: NO latch</strong> (complete if/else). <strong>B: YES latch</strong> (cases 2'b01 and 2'b10 not covered → y holds). <strong>C: NO latch</strong> (default at top).
+    </div>
+    <aside class="notes">60-second pause. The pattern matters more than exhaustive proof. When students can scan a block and spot &ldquo;is every output assigned on every path?&rdquo; they're safe.</aside>
+</section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Warning</h2>
+    <p style="font-size:0.78em;">You synthesize this code. What exact warning do you expect from Yosys?</p>
+    <pre class="mistake"><code class="language-verilog">always @(*) begin
     case (opcode)
         2'b00: result = a + b;
         2'b01: result = a - b;
-        // 2'b10, 2'b11 missing → LATCH on result
     endcase
 end</code></pre>
-    <aside class="notes">Two classic patterns: if without else, and incomplete case. Both cause latch inference.</aside>
-</section>
-<section>
-    <h2>Three Prevention Techniques</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>① Default assignment</strong> (recommended):</p>
-        <pre class="synth fragment"><code class="language-verilog">always @(*) begin
-    y = 4'b0000;         // assign FIRST, override later
-    if (enable) y = data;  // no latch — default covers else
-end</code></pre>
-        <p class="fragment"><strong>② Complete if/else:</strong></p>
-        <pre class="synth fragment"><code class="language-verilog">always @(*) begin
-    if (enable) y = data; else y = 4'b0000;
-end</code></pre>
-        <p class="fragment"><strong>③ default in case:</strong></p>
-        <pre class="synth fragment"><code class="language-verilog">    case (sel) ... default: y = 4'b0; endcase</code></pre>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Expected:</strong> <code>Warning: Latch inferred for signal \result\ in process...</code>
+        Followed by: list of conditions under which the signal is not assigned (opcodes <code>2'b10</code> and <code>2'b11</code>). Some synthesizers also report the estimated latch gate count.
     </div>
-    <div class="fragment golden-rule" style="font-size:0.9em;">Best practice: use ① AND ③. Belt and suspenders.</div>
-    <aside class="notes">Three techniques: default assignment at top, complete if/else, default in case. Best practice: use technique 1 AND 3 together.</aside>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Habit:</strong> grep your synthesis logs for &ldquo;latch&rdquo; or &ldquo;inferred&rdquo; every run. One hit = one bug to fix.
+    </div>
+    <aside class="notes">Students should memorize what a latch warning <em>looks like</em>. If you've never seen one, you won't recognize it when the tool emits it next month.</aside>
 </section>
+
+<!-- LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Latch Hunting</h2>
-    <p style="margin-top:0.5em;">Write buggy code → synthesize → see Yosys latch warning → fix it</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">The most important debugging skill in combinational Verilog</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Latch Hunting</aside>
+    <h2 style="color:#FFC904;">Inducing &amp; Fixing a Latch</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day03/ex3_latch_demo/
+# 1. Buggy version:
+make stat 2&gt;&amp;1 | grep -i 'latch\|infer'
+# 2. Fix: add 'default:' line
+sed -i 's|endcase|  default: y = 0;\n  endcase|' buggy.v
+# 3. Re-synth:
+make stat 2&gt;&amp;1 | grep -i 'latch\|infer'</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"># BEFORE fix:
+Warning: Latch inferred for
+  signal `\y' in process
+  $proc$.../buggy.v:6$1
+
+# AFTER fix:
+(no warnings)
+SB_DFF           0
+SB_LUT4          2</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            The warning disappears. Cell count drops. The fix is <em>one line of code</em> and saves you hours of timing-closure debugging later.
+        </p>
+    </div>
+    <aside class="notes">[Terminal] Run the buggy version, see the warning. Apply the fix. Re-run, warning gone. This is the kind of quick edit/recheck cycle that builds latch-hunting muscle memory.</aside>
 </section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">Same module, buggy vs fixed:</p>
+    <div class="two-col">
+        <div class="col panel panel-bad" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#C62828;">Buggy (latch)</h3>
+            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFFE      4   ← level-sensitive
+SB_LUT4      8
+Warning: latch inferred</code></pre>
+            <p style="font-size:0.68em;">Yosys uses <code>SB_DFFE</code> with level trigger — a faux-latch. Timing-unsafe.</p>
+        </div>
+        <div class="col panel panel-good" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#2E7D32;">Fixed (no latch)</h3>
+            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFF       0   ← no storage
+SB_LUT4      4
+(no warnings)</code></pre>
+            <p style="font-size:0.68em;">Pure combinational. Smaller area, faster timing, clean STA.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>iCE40 note:</strong> iCE40 actually has no true latch primitive — Yosys builds latches out of LUTs and enables, which are even worse than real latches. Always fix them.
+    </div>
+    <aside class="notes">Twist: iCE40 silicon has no latch cell, so Yosys synthesizes the latch behavior from flops and LUTs — larger and slower than a &ldquo;proper&rdquo; latch would be. Another reason to never infer them.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Paste this buggy code and ask AI: <em>&ldquo;Will this infer a latch on iCE40? If so, give me three different fixes.&rdquo;</em></p>
+    <pre style="font-size:0.65em;"><code class="language-verilog">always @(*)
+    if (enable) out = data;</code></pre>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI: latch? What fixes?</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 3 fixes — default at top, explicit else, rewrite with assign.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Good AI identifies the latch and suggests all 3. Weak AI may miss the default-at-top pattern.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Latch-hunting is a well-solved problem; AI is actually reliable here. Use it as a second pair of eyes.</p></div>
+    </div>
+    <aside class="notes">Actually one of the CtM exercises where AI is usually reliable, because latch patterns are well-documented in training data. Good counter-example: AI <em>can</em> be helpful for RTL review.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Incomplete paths in <code>always @(*)</code> → unintentional latch.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Default assignment at the top of every block = best prevention.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Always include <code>default</code> in <code>case</code>, even when enumeration is complete.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Yosys warns about latches — <strong>read the warnings</strong>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;A latch appears when any input combination leaves an output unassigned.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Three fixes: default at top, complete if/else, case with default.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Default at top is universal — use it always.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Grep synthesis logs for &ldquo;latch&rdquo; every session. Zero tolerance.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Blocking vs. Nonblocking</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~6 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">The two assignment operators — and when to use each.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Every output, every path, every time. If you don't assign it, the tool stores it.</div>
 </section>
 
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Blocking vs. Nonblocking</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~6 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've seen <code>=</code> (blocking) inside every <code>always @(*)</code> so far. Tomorrow we introduce <code>&lt;=</code> (nonblocking) for sequential logic. Video 4 previews the rule: <code>=</code> for combinational, <code>&lt;=</code> for sequential, never mix. Day 4 will prove <em>why</em>, but you need the rule in memory before you get there.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.1: The always @(*) Block — Accelerated HDL for Digital System Design</title>
+    <title>Day 3.1: The always @(*) Block [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,76 +11,221 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 3 · Procedural Combinational Logic
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The always @(*) Block</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">always @(*)</span>
-        <span class="seg-label ">if/else & case</span>
-        <span class="seg-label ">Latch Problem</span>
-        <span class="seg-label ">Block vs Nonblock</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 3.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">always @(*)</span><span class="seg-label">if/else &amp; case</span><span class="seg-label">Latch Problem</span><span class="seg-label">Block vs Nonblock</span></div>
+    <aside class="notes">Video 1 of 4 for Day 3. You used <code>always @(*)</code> yesterday without really understanding it. Today we formalize it.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>Why Procedural Blocks?</h2>
-    <p style="font-size:0.85em;"><code>assign</code> works for simple expressions, but complex logic — multi-way decisions, large lookup tables — becomes unwieldy.</p>
-    <p class="fragment" style="font-size:0.85em;">The <code>always</code> block gives us <code>if/else</code>, <code>case</code>, and other procedural constructs.</p>
-    <aside class="notes">Assign gets unwieldy for complex logic. The always block gives us if/else and case.</aside>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Procedural combinational blocks are where the <em>decision logic</em> of every digital system lives. ALU opcode decoders, address decoders, instruction decoders, bus arbiters — all <code>always @(*)</code> blocks with case statements or nested ifs. Read any CPU's RTL and half of it looks like today's material.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 3 ALU. Day 7 FSM output logic (Block 3). Day 11 UART state-to-output. Day 14 assertion fire-logic. Every remaining day builds on <code>always @(*)</code>. Get the syntax clean now and you're set for the rest of the course.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Career tag:</strong> Clean, latch-free combinational RTL is the single most-reviewed code type in any FPGA/ASIC shop. This video is literally the style guide senior engineers read your code against.
+    </div>
+    <aside class="notes">Decoders, arbiters, control path — all procedural combinational. Today's material is load-bearing for the rest of the course and directly maps to what you'll see in code review at your first RTL job.</aside>
 </section>
+
+<!-- REFRAME -->
 <section>
-    <h2>Sensitivity Lists</h2>
+    <h2><span style="color:#C0392B;">⚠️</span> <code>always</code> Is Not a Loop</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>always</code> sounds like <code>while(true)</code>. The block runs forever, executing its statements top-to-bottom, over and over.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">An <code>always @(*)</code> block <em>describes</em> a piece of combinational logic that <strong>re-evaluates whenever any input changes</strong>. The statements inside aren't &ldquo;executed&rdquo; — they're analyzed once by the synthesizer, producing a fixed chunk of gates that exist simultaneously on the chip.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>Consequence:</strong> Writing <code>for</code> or <code>while</code> loops inside <code>always @(*)</code> doesn't mean runtime iteration — it means the synthesizer unrolls the loop and builds parallel copies of the loop body as hardware.
+    </div>
+    <aside class="notes">Biggest naming trap in Verilog. &ldquo;Always&rdquo; evokes loops. The construct is actually a declarative description of combinational or sequential logic. The compiler reads it once, statically, and builds gates.</aside>
+</section>
+
+<!-- Why procedural blocks -->
+<section>
+    <h2>Why Procedural Blocks Exist</h2>
+    <p style="font-size:0.8em;"><code>assign</code> works great for simple expressions:</p>
+    <pre class="synth" style="font-size:0.78em;"><code class="language-verilog">assign y = (sel == 2'b00) ? a :
+           (sel == 2'b01) ? b :
+           (sel == 2'b10) ? c : d;   // 4:1 mux — nested ternary gets unreadable fast</code></pre>
+    <p style="font-size:0.8em;">But multi-way decisions become unreadable. The same logic with <code>always @(*)</code>:</p>
+    <pre class="synth" style="font-size:0.78em;"><code class="language-verilog">always @(*) begin
+    case (sel)
+        2'b00: y = a;
+        2'b01: y = b;
+        2'b10: y = c;
+        2'b11: y = d;
+    endcase
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">Same hardware. Much clearer intent. <code>always @(*)</code> gives us <code>if/else</code>, <code>case</code>, and procedural constructs for complex combinational logic.</div>
+    <aside class="notes">Two equivalent ways to express the same mux. The case version is clearer for anything beyond 2 or 3 alternatives. Same hardware synthesizes from both — just better for human readers.</aside>
+</section>
+
+<!-- Sensitivity lists (kept) -->
+<section>
+    <h2>Sensitivity Lists: Use <code>@(*)</code></h2>
     <pre class="mistake"><code class="language-verilog">// Manual list — DON'T do this
 always @(a or b or sel)
     if (sel) y = a; else y = b;</code></pre>
     <pre class="synth fragment"><code class="language-verilog">// Wildcard — ALWAYS do this for combinational
 always @(*)
     if (sel) y = a; else y = b;</code></pre>
-    <div class="fragment callout-danger" style="font-size:0.75em;">
-        Forget a signal in a manual list: simulation won&rsquo;t update but synthesis WILL. Your simulation lies. Use <code>@(*)</code> — no exceptions.
+    <div class="fragment callout-danger" style="font-size:0.72em;">
+        Forget a signal in a manual list: simulation won't update when that signal changes, but synthesis <em>will</em> still build the logic correctly. Your simulation silently disagrees with your hardware. Use <code>@(*)</code> — no exceptions.
     </div>
-    <aside class="notes">Manual sensitivity lists cause sim-synth mismatch. Always use @star for combinational. No exceptions.</aside>
+    <aside class="notes">Manual sensitivity lists are a legacy 1990s footgun. @* auto-includes every RHS signal. SystemVerilog's always_comb goes further by also checking for latches at elaboration.</aside>
 </section>
-<section>
-    <h2><code>reg</code> Inside <code>always</code> — Still Not a Register</h2>
-    <pre class="synth"><code class="language-verilog">reg [3:0] r_result;  // declared as reg...
-always @(*)          // ...but combinational (no clock)!
-    r_result = a + b;  // → synthesizes to an ADDER, not a register</code></pre>
-    <div class="callout" style="font-size:0.8em;">
-        <strong>Rule:</strong> <code>wire</code> with <code>assign</code>. <code>reg</code> with <code>always</code>. Whether it becomes a real register depends on <code>posedge clk</code>.
-    </div>
-    <aside class="notes">Reg in always-star is still combinational. The always-star means 're-evaluate whenever anything changes' — same as assign, just using procedural syntax.</aside>
-</section>
-<section>
-    <h2>Combinational <code>always</code> Pattern</h2>
-    <pre class="synth"><code class="language-verilog">reg [3:0] r_out;        // output declared as reg
 
-always @(*) begin       // re-evaluate on ANY input change
-    r_out = 4'b0000;    // ← DEFAULT ASSIGNMENT (latch prevention!)
+<!-- I Do -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Combinational Pattern</h2>
+    <pre class="synth"><code class="language-verilog">reg [3:0] r_out;        // declared reg (assigned in always)
+
+always @(*) begin        // wildcard sensitivity
+    r_out = 4'b0000;     // ← DEFAULT at top — prevents latches
     if (sel)
         r_out = i_data;
 end</code></pre>
-    <div class="fragment golden-rule" style="font-size:0.9em;">
-        Always start with a default assignment. Always use <code>@(*)</code>. Always use <code>begin/end</code> for multi-line blocks.
+    <div class="callout" style="font-size:0.72em;">
+        <strong>My thinking:</strong> Four rules, every time: (1) <code>reg</code> declaration, (2) <code>always @(*)</code>, (3) default assignment first, (4) <code>begin/end</code> for multi-line. The default at top is what keeps you out of latch territory — we prove why in Video 3.
     </div>
-    <aside class="notes">The pattern: reg output, always @star, begin, default assignment first, then your logic. Default assignment prevents latches — we'll see why in Segment 3.</aside>
+    <aside class="notes">The four rules. Write them on your palm. Default at top is the single most important latch-prevention technique — and it's a one-line habit that costs nothing.</aside>
 </section>
+
+<!-- We Do -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Spot the Problem</h2>
+    <pre class="mistake"><code class="language-verilog">// What's wrong here?
+always @(posedge sel) begin
+    y = a &amp; b;
+end
+
+always @(a, b)
+    y = a | b;
+
+always @(*) begin
+    if (sel) y = a;
+    // where's the else?
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        (1) <code>posedge sel</code> makes this <em>sequential</em> — infers a flip-flop on a level signal, disaster for combinational intent.
+        (2) Manual list is fine here (both sigs listed), but use <code>@(*)</code> for consistency.
+        (3) Missing <code>else</code> → &ldquo;hold value when sel=0&rdquo; → inferred latch. We dive into this in Video 3.
+    </div>
+    <aside class="notes">[Ask the class what's wrong] Three different bug patterns. (1) is the weirdest — treating a level signal as a clock edge. (2) is stylistic. (3) is the gateway to the latch problem video.</aside>
+</section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Hardware</h2>
+    <pre class="synth"><code class="language-verilog">reg [3:0] r_result;
+always @(*) begin
+    r_result = a;
+    if (sel_b) r_result = b;
+    if (sel_c) r_result = c;
+    if (sel_d) r_result = d;
+end</code></pre>
+    <p style="font-size:0.78em;">Predict:</p>
+    <ol style="font-size:0.72em;">
+        <li>What hardware does Yosys build? (Flops? LUTs? Mux tree?)</li>
+        <li>If <code>sel_b = sel_c = 1</code> and others 0, what's the output?</li>
+        <li>Is this priority-encoded or parallel?</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Answers:</strong> (1) Three 2:1 muxes in series (a priority chain) — no flops. (2) <code>c</code> — the later <code>if</code> overrides the earlier one. (3) <strong>Priority</strong> — later statements win when multiple are true, in reverse of <code>if/else if</code>. This is exactly why we prefer <code>case</code> or <code>if/else if</code> for clarity.
+    </div>
+    <aside class="notes">Tricky one. Sequential if-ifs (not if-else-if) produce a priority chain where <em>later</em> statements win, because each statement unconditionally reassigns. Students frequently confuse this pattern. Cover it early.</aside>
+</section>
+
+<!-- LIVE DEMO -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">always @(*) vs assign &mdash; Same Hardware</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day03/ex_mux_compare/
+make sim      # test both versions
+make wave     # GTKWave
+# Both modules: identical
+diff &lt;(yosys -qp "read_verilog mux_assign.v; \
+        synth_ice40; stat" 2&gt;&amp;1) \
+     &lt;(yosys -qp "read_verilog mux_always.v; \
+        synth_ice40; stat" 2&gt;&amp;1)</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: all 8 mux tests
+=== 8 passed, 0 failed ===
+
+# diff output:
+(empty — identical LUT counts)
+
+Both: 4 SB_LUT4, 0 SB_DFF</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Two completely different code styles synthesize to <em>exactly the same hardware</em>. Use whichever is clearer for the problem. <code>assign</code> for one-liners, <code>always @(*)</code> for multi-way decisions.
+        </p>
+    </div>
+    <aside class="notes">[Terminal] Run both. [diff] Empty. [Point] Syntax is a style choice. Hardware doesn't care.</aside>
+</section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">A 4-bit 4:1 mux written with <code>always @(*)</code> and <code>case</code>:</p>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog mux4_always.v; synth_ice40 -top mux4; stat" -q
+
+=== mux4 ===
+   Number of wires:                  5
+   Number of cells:                  4
+     SB_DFF                          0     ← still no flops (reg doesn't mean flop!)
+     SB_LUT4                         4     ← one LUT per output bit</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Re-confirm:</strong> <code>reg [3:0] r_y</code> + <code>always @(*)</code> + <code>case</code> → zero flops. The <code>reg</code> keyword is syntactic: whether it becomes a flip-flop depends entirely on the sensitivity list. No <code>posedge clk</code>, no flops.
+    </div>
+    <aside class="notes">Re-hammer the Day 2 lesson with a concrete example. reg + always@* = combinational. Seeing 0 flops in stat output is the receipt.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Rewrite this <code>assign</code>-based mux as an <code>always @(*)</code> block. Will it synthesize to the same hardware?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI to translate assign→always. Ask about hardware.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: same hardware, different syntax. Good AI says &ldquo;identical LUT count.&rdquo;</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Some models incorrectly say always blocks &ldquo;add latency&rdquo; or &ldquo;need a clock&rdquo; — false.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">If AI says always adds latency, it's confused between <code>@(*)</code> and <code>@(posedge)</code>.</p></div>
+    </div>
+    <aside class="notes">Diagnostic CtM. AI models that got trained on mixed sequential/combinational examples sometimes conflate them. Good test.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
@@ -89,29 +234,27 @@ end</code></pre>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Default assignment at the top prevents latches.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always use <code>begin/end</code> for multi-line blocks.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">if/else and case</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Priority chains, parallel muxes, and casez for don't-care matching.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">always is not a loop. It's a description of a chunk of gates.</div>
 </section>
 
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">if/else and case</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~14 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Now that you have the container (<code>always @(*)</code>), we need the decision constructs that go inside: <code>if/else</code>, <code>case</code>, and <code>casez</code>. Here's the subtlety: <code>if/else</code> synthesizes to a <em>priority chain</em>, <code>case</code> to a <em>parallel mux</em>. Same abstract logic, different gates, different timing. Video 2 shows you when to use which.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2.2: Operators — Accelerated HDL for Digital System Design</title>
+    <title>Day 2.2: Operators [ENHANCED] — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,110 +11,233 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 2 · Combinational Building Blocks
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 2 · Combinational Building Blocks</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Operators</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~14 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Data Types</span>
-        <span class="seg-label active">Operators</span>
-        <span class="seg-label ">Sized Literals</span>
-        <span class="seg-label ">7-Seg Display</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 2.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Data Types</span><span class="seg-label active">Operators</span><span class="seg-label">Sized Literals</span><span class="seg-label">7-Seg Display</span></div>
+    <aside class="notes">Welcome to Video 2 of 4 for Day 2. Operators. Every one of them has a hardware cost — some are free, some are expensive, and writing code that fits on an FPGA starts with knowing which is which.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>Operator Reference</h2>
-    <table style="font-size:0.65em;">
-        <thead><tr><th>Category</th><th>Operators</th><th>Hardware Cost</th></tr></thead>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">The first performance review on any RTL codebase is an operator audit: where are the multiplies? The dividers? The wide comparators? These drive area, timing, and power. Senior designers read code and see gates.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Day 3 ALU uses <code>+</code>, <code>-</code>, <code>&amp;</code>, <code>|</code>. Day 9 memory addressing uses comparators. Day 11 UART uses reduction operators for parity. Every lab after today uses this vocabulary.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Industry alignment:</strong> &ldquo;Write area-efficient RTL&rdquo; appears on almost every FPGA/ASIC job posting. That literally means: know which operators are cheap and which are expensive. This video is step 1.
+    </div>
+    <aside class="notes">Senior RTL engineers read code and see gates. By the end of this video, you should too. Multiplies, dividers, wide comparators, barrel shifters — these are the expensive patterns. Most everything else is nearly free.</aside>
+</section>
+
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Syntax Does Not Equal Cost</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;One operator = one operation. <code>a + b</code> and <code>a &amp; b</code> look the same, so they cost the same.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Each operator has a <strong>hardware footprint</strong>. <code>&amp;</code> on 32 bits = 32 LUTs. <code>+</code> on 32 bits = 32 LUTs + 32 carry cells (a ripple chain with real delay). <code>*</code> on 32 bits = hundreds of LUTs or a dedicated DSP block.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.75em;">
+        <strong>The receipt:</strong> An iCE40 HX1K has 1280 LUTs total. One 32-bit multiply can consume 10% of your chip. Two of them and you've spent more area on arithmetic than on your actual design.
+    </div>
+    <aside class="notes">
+        Every operator has a cost. Syntax looks similar; hardware is wildly different. The single biggest leap you can take this week: stop seeing operators as abstract math and start seeing them as gate footprints.
+    </aside>
+</section>
+
+<!-- Operator table (kept from original) -->
+<section>
+    <h2>The Operator Cost Table</h2>
+    <table style="font-size:0.6em;">
+        <thead><tr><th>Category</th><th>Operators</th><th>Hardware Cost</th><th>On iCE40 HX1K</th></tr></thead>
         <tbody>
-            <tr class="fragment"><td>Bitwise</td><td><code>&amp;</code> <code>|</code> <code>^</code> <code>~</code> <code>~^</code></td><td>1 LUT per bit</td></tr>
-            <tr class="fragment"><td>Logical</td><td><code>&amp;&amp;</code> <code>||</code> <code>!</code></td><td>Reduction + 1 LUT</td></tr>
-            <tr class="fragment"><td>Arithmetic</td><td><code>+</code> <code>-</code> <code>*</code></td><td>Adder/multiplier chains</td></tr>
-            <tr class="fragment"><td>Relational</td><td><code>==</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td>Comparator logic</td></tr>
-            <tr class="fragment"><td>Shift</td><td><code>&lt;&lt;</code> <code>&gt;&gt;</code></td><td>Free if constant shift</td></tr>
-            <tr class="fragment"><td>Conditional</td><td><code>? :</code></td><td>Multiplexer</td></tr>
-            <tr class="fragment"><td>Reduction</td><td><code>&amp;</code> <code>|</code> <code>^</code> (unary)</td><td>Tree of gates</td></tr>
+            <tr><td>Bitwise</td><td><code>&amp;</code> <code>|</code> <code>^</code> <code>~</code></td><td>1 LUT per bit</td><td>Cheap</td></tr>
+            <tr><td>Logical</td><td><code>&amp;&amp;</code> <code>||</code> <code>!</code></td><td>Reduction + 1 LUT</td><td>Cheap</td></tr>
+            <tr><td>Reduction (unary)</td><td><code>&amp;</code> <code>|</code> <code>^</code></td><td>Tree of LUTs</td><td>Cheap (log N)</td></tr>
+            <tr><td>Arithmetic +/-</td><td><code>+</code> <code>-</code></td><td>Adder chain (carry)</td><td>Moderate (N LUTs + N SB_CARRY)</td></tr>
+            <tr><td>Arithmetic *</td><td><code>*</code></td><td>Multiplier tree</td><td><strong>Expensive</strong> (~N<sup>2</sup> LUTs)</td></tr>
+            <tr><td>Relational</td><td><code>==</code> <code>&lt;</code> <code>&gt;</code></td><td>Comparator</td><td>Moderate</td></tr>
+            <tr><td>Shift (constant)</td><td><code>&lt;&lt; 3</code></td><td>Rewiring only</td><td><strong>Free</strong></td></tr>
+            <tr><td>Shift (variable)</td><td><code>&lt;&lt; n</code></td><td>Barrel shifter</td><td><strong>Expensive</strong></td></tr>
+            <tr><td>Conditional</td><td><code>? :</code></td><td>2:1 mux</td><td>Cheap (1 LUT)</td></tr>
         </tbody>
     </table>
-    <aside class="notes">Complete operator table with hardware cost. Bitwise: one LUT per bit. Arithmetic: adder chains. Constant shifts are free — just rewiring. Conditional builds a mux.</aside>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Mental shortcut:</strong> Bitwise/logical/reduction/conditional = cheap. Arithmetic +/- = moderate. Multiply / variable-shift / wide comparators = expensive. Constant shifts = free.
+    </div>
+    <aside class="notes">
+        Print this table. Put it on your wall. &ldquo;Cheap&rdquo; means it fits easily. &ldquo;Expensive&rdquo; means you should check your utilization. Multiply is particularly nasty without DSP blocks — iCE40 HX1K has no hard multipliers, so <code>*</code> gets built out of LUTs.
+    </aside>
 </section>
+
+<!-- I Do -->
 <section>
-    <h2>Bitwise vs. Logical — Critical Distinction</h2>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Bitwise vs Logical</h2>
     <pre class="synth"><code class="language-verilog">wire [3:0] a = 4'b1010;
 wire [3:0] b = 4'b0101;
 
-wire [3:0] w_bitwise = a &amp; b;    // = 4'b0000 (bit-by-bit)
-wire       w_logical = a &amp;&amp; b;   // = 1'b1    (both nonzero → true)</code></pre>
-    <div class="fragment callout-danger" style="font-size:0.8em;">
-        <code>&amp;</code> produces a result the <strong>same width</strong> as operands.<br>
-        <code>&amp;&amp;</code> always produces <strong>1 bit</strong> (true/false).
+wire [3:0] w_bitwise = a &amp; b;    // = 4'b0000 (per-bit AND)
+wire       w_logical = a &amp;&amp; b;   // = 1'b1 (both nonzero → true)</code></pre>
+    <div class="callout" style="font-size:0.72em;">
+        <strong>My thinking:</strong> Single <code>&amp;</code> operates on every bit independently, result same width as operands. Double <code>&amp;&amp;</code> treats each operand as a boolean (any bit set = true), result always 1 bit. Mixing them up is a classic bug — especially with C/Java muscle memory.
     </div>
-    <aside class="notes">Bitwise ampersand: operates on each bit, result same width. Logical double-ampersand: treats entire value as true/false, always 1-bit result.</aside>
+    <aside class="notes">Single & per-bit. Double && treats whole value as true/false. Common student bug: use && when they meant &. The compiler doesn't catch it because both are valid in context.</aside>
 </section>
+
+<!-- We Do -->
 <section>
-    <h2>The Conditional Operator: Your Multiplexer</h2>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Conditional Mux</h2>
     <pre class="synth"><code class="language-verilog">// 2:1 mux
 assign y = sel ? a : b;
 
-// 4:1 mux (nested)
-assign y = sel[1] ? (sel[0] ? d : c)
-                  : (sel[0] ? b : a);</code></pre>
-    <p class="fragment" style="font-size:0.8em;">This is the hardware mux — your most-used combinational construct.</p>
-    <aside class="notes">The conditional operator IS the multiplexer in Verilog. Nested conditionals build larger muxes. This is your most-used combinational construct.</aside>
+// 4:1 mux — fill in:
+assign y = sel[1] ? ( sel[0] ? /* ? */ : /* ? */ )
+                  : ( sel[0] ? /* ? */ : /* ? */ );</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Answer:</strong> <code>sel[1] ? (sel[0] ? d : c) : (sel[0] ? b : a)</code>. Selects: <code>00→a, 01→b, 10→c, 11→d</code>. Yosys will build 3 muxes in a tree — 2 at the first level, 1 at the root.
+    </div>
+    <aside class="notes">
+        [Leave blanks for 30 seconds] The 4:1 nested ternary is the pattern you'll use constantly. Each nested <code>?:</code> is one mux. Yosys sees the tree and maps to iCE40 mux primitives.
+    </aside>
 </section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict Operator Costs</h2>
+    <p style="font-size:0.78em;">For each expression on 8-bit buses, rank by iCE40 LUT cost (low/med/high):</p>
+    <ol style="font-size:0.72em;">
+        <li><code>assign x = a &amp; b;</code></li>
+        <li><code>assign x = a + b;</code></li>
+        <li><code>assign x = a * b;</code></li>
+        <li><code>assign x = a &lt;&lt; 3;</code></li>
+        <li><code>assign x = a &lt;&lt; n;</code> (where <code>n</code> is a 3-bit wire)</li>
+        <li><code>assign x = (a &gt; 8'd100);</code></li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Ranking (cheap→expensive):</strong>
+        (4) FREE · (1) ~8 LUTs · (6) ~4 LUTs · (2) ~8 LUTs + 8 carry · (5) ~24 LUTs barrel · (3) ~50-80 LUTs multiply.
+    </div>
+    <aside class="notes">
+        60-second prediction. Discuss: constant shift is pure rewiring. Variable shift needs a barrel shifter — a stack of muxes. Multiply is the killer on a small iCE40.
+    </aside>
+</section>
+
+<!-- Enhanced LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Building a 4:1 Mux</h2>
-    <p style="margin-top:0.5em;">Conditional operator chain → synthesis → Yosys <code>show</code></p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">Nested ternary → see the mux tree in Yosys</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Building a 4:1 Mux</aside>
-</section>
-<section>
-    <h2>Reduction Operators</h2>
-    <pre class="synth"><code class="language-verilog">wire [7:0] w_data = 8'b10110100;
+    <h2 style="color:#FFC904;">Building a 4:1 Mux + Cost Comparison</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
 
-wire w_any  = |w_data;   // OR  all bits → 1 (any bit set?)
-wire w_all  = &amp;w_data;   // AND all bits → 0 (all bits set?)
-wire w_par  = ^w_data;   // XOR all bits → 0 (even parity)</code></pre>
-    <div class="fragment callout" style="font-size:0.8em;">
-        Unary operators collapse a vector to a single bit. Parity check (<code>^</code>) is a common use case.
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day02/ex2_mux_hierarchy/
+make sim                    # iverilog + vvp
+make wave                   # GTKWave
+make stat                   # yosys synth_ice40</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: 2:1 mux sel=0 → b
+PASS: 2:1 mux sel=1 → a
+PASS: 4:1 mux sel=00 → a
+PASS: 4:1 mux sel=11 → d
+=== 16 passed, 0 failed ===</code></pre>
+        </div>
     </div>
-    <aside class="notes">Reduction operators collapse a vector to one bit. Unary OR: any bit set. Unary AND: all bits set. Unary XOR: parity. XOR parity is used in error detection.</aside>
+
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE &mdash; WHAT TO LOOK FOR</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Signals: <code>sel · a · b · c · d · y</code>. Set all to hex. Watch <code>y</code> react <em>instantly</em> (delta cycle) to any change on <code>sel</code> or the data inputs — that's the signature of pure combinational logic.
+        </p>
+    </div>
+    <aside class="notes">
+        [Terminal] cd to ex2. make sim → 16 PASS lines. [GTKWave] Change sel, watch y track. Instant. No clock. [make stat] Point out: 4:1 mux on 4-bit buses is about 4 LUTs (one per bit of output).
+    </aside>
 </section>
+
+<!-- WHAT DID THE TOOL BUILD? -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">Three 8-bit modules, side by side:</p>
+    <table style="font-size:0.68em;margin-top:0.3em;">
+        <thead><tr><th>Module</th><th>Body</th><th>SB_LUT4</th><th>SB_CARRY</th><th>Verdict</th></tr></thead>
+        <tbody>
+            <tr><td><code>bitwise_and</code></td><td><code>y = a &amp; b;</code></td><td>8</td><td>0</td><td>Cheap</td></tr>
+            <tr><td><code>adder</code></td><td><code>y = a + b;</code></td><td>8</td><td>8</td><td>Moderate</td></tr>
+            <tr><td><code>multiplier</code></td><td><code>y = a * b;</code></td><td><strong>~80</strong></td><td>~24</td><td><strong>Expensive</strong></td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Generate yourself:</strong> <code>yosys -p "read_verilog op_compare.v; synth_ice40; stat" -q</code>. Edit the module, rerun stat. Watch the numbers change with code.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Mental math:</strong> The iCE40 HX1K has 1280 LUTs. A single 8×8 multiply eats ~6% of the chip. A 32×32 multiply eats... not possible on an HX1K without tricks.
+    </div>
+    <aside class="notes">
+        The 10× cost ratio between adder and multiplier is worth internalizing. Students who don't know this write multiplies everywhere and then can't figure out why their design won't fit.
+    </aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Rank these on iCE40 LUT cost: <code>a+b</code>, <code>a*b</code>, <code>a&lt;&lt;3</code>, <code>a&lt;&lt;n</code>, <code>a==b</code>, all 16-bit.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask for LUT cost ranking on 16-bit operands.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: constant shift free → <code>==</code> cheap → <code>+</code> mod → barrel shift exp → <code>*</code> most.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">AI ordering usually correct. Absolute counts often 2× off — verify with Yosys.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI gives good ordinal rankings. Trust the ranking. Verify absolute numbers with stat.</p></div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.5em;">
+        <strong>Rule:</strong> For area-sensitive designs, Yosys <code>stat</code> is ground truth. AI estimates are useful for early rough sizing.
+    </div>
+    <aside class="notes">Good CtM because AI is often <em>ordinally</em> right but <em>quantitatively</em> off. Reinforces: use AI for intuition, use tools for decisions.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Bitwise (<code>&amp;</code>) = per-bit, same width. Logical (<code>&amp;&amp;</code>) = 1-bit result.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>? :</code> is the mux operator — your primary combinational tool.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Constant shifts are free (rewiring). Multiplication is expensive.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Reduction operators collapse vectors to 1 bit.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Bitwise (<code>&amp;</code>) = per-bit. Logical (<code>&amp;&amp;</code>) = 1-bit true/false.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>? :</code> is the mux. Nest for wider muxes.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Constant shifts are <strong>free</strong>. Variable shifts are <strong>expensive</strong>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Multiply costs ~N² LUTs. Always check utilization.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Sized Literals &amp; Width Matching</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~8 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Why unsized literals cause bugs — and how to prevent them.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Every operator has a hardware price tag. Read the receipts.</div>
 </section>
 
+<!-- Enhanced Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Sized Literals &amp; Width Matching</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You just saw that 8+8 can cost 8 LUTs + 8 carry cells. But <em>what's the bit-width of the result?</em> 8? 9? Here's a puzzle: <code>4'd15 + 4'd1</code> gives 0, not 16 — unless you size the result correctly. Video 3 shows you why, and how to stop silent overflow bugs.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -122,12 +245,7 @@ wire w_par  = ^w_data;   // XOR all bits → 0 (even parity)</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
+Reveal.initialize({ hash:true, slideNumber:'c/t', showSlideNumber:'all', width:1280, height:720, margin:0.04, transition:'slide', plugins:[RevealHighlight, RevealNotes] });
 </script>
 </body>
 </html>

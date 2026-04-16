@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4.2: Nonblocking Assignment — Accelerated HDL for Digital System Design</title>
+    <title>Day 4.2: Nonblocking Assignment [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,66 +11,185 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 4 · Sequential Logic Fundamentals
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 4 · Sequential Logic Fundamentals</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Nonblocking Assignment</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Clocks & Edges</span>
-        <span class="seg-label active">Nonblocking</span>
-        <span class="seg-label ">FF Variants</span>
-        <span class="seg-label ">Counters</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 4.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Clocks &amp; Edges</span><span class="seg-label active">Nonblocking</span><span class="seg-label">FF Variants</span><span class="seg-label">Counters</span></div>
+    <aside class="notes">Video 2 of 4. We proved the rule on Day 3; today we show the waveform that makes it unforgettable.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>The Problem: A Two-Stage Pipeline</h2>
-    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in sequential
-always @(posedge clk) begin
-    b = a;    // b gets a's value NOW
-    c = b;    // c gets b's NEW value (= a!) — both same!
-end</code></pre>
-    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in sequential
-always @(posedge clk) begin
-    b <= a;   // scheduled: b ← a(current)
-    c <= b;   // scheduled: c ← b(current)
-end           // at end: b=a(old), c=b(old) — proper pipeline!</code></pre>
-    <aside class="notes">With blocking: c gets the new value of b, which is already a. Both end up the same — pipeline is destroyed. With nonblocking: both see pre-update values, proper pipeline behavior.</aside>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Nonblocking assignment is the basis of every synchronous pipeline in existence — every CPU, every networking switch, every GPU. When Intel simulates a Xeon CPU, every flop in the design uses <code>&lt;=</code>. When TSMC verifies their standard-cell library, every registered output uses <code>&lt;=</code>.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 5 shift registers live or die by <code>&lt;=</code>. Day 7 FSM state transitions demand <code>&lt;=</code>. Your Day 11 UART framing pipeline is 6 <code>&lt;=</code> deep. The rule is absolute — today's job is to build deep intuition via waveforms.</p>
+        </div>
+    </div>
+    <aside class="notes">The simulator scheduling semantics that make <code>&lt;=</code> work are standardized in IEEE 1364 / 1800 — it's not a quirk, it's the core of synchronous RTL semantics.</aside>
 </section>
+
+<!-- REFRAME -->
 <section>
-    <h2>Nonblocking: How It Works</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>Step 1:</strong> Evaluate ALL right-hand sides using <strong>current</strong> values</p>
-        <p class="fragment"><strong>Step 2:</strong> <strong>Schedule</strong> all updates (don&rsquo;t apply yet)</p>
-        <p class="fragment"><strong>Step 3:</strong> Apply all updates <strong>simultaneously</strong> at end of timestep</p>
+    <h2><span style="color:#C0392B;">⚠️</span> The Assignments Don't Actually Happen Yet</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>&lt;=</code> is just assignment. Maybe with a slight delay? The variables get their new values as the lines execute.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;"><code>&lt;=</code> is <strong>not assignment at all</strong> — it's <em>scheduling</em>. Each <code>&lt;=</code> line says &ldquo;at the end of this timestep, please update the LHS to this value.&rdquo; All the RHS expressions are evaluated using <strong>pre-edge</strong> values. Only after the whole block finishes do the updates apply — all at once, atomically.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> This is <em>exactly</em> how real flip-flops behave. Every flop in your design captures its D input at the same physical moment (the clock edge). No flop sees another flop's new value until after the edge. Nonblocking assignment models this precisely.
+    </div>
+    <aside class="notes">The key insight: <code>&lt;=</code> is scheduling semantics, not assignment. The simulator has a two-phase update model for each timestep — evaluate everything, then commit. This is the digital equivalent of database transaction isolation.</aside>
+</section>
+
+<!-- I Do: the three-step semantics -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Nonblocking: How It Works</h2>
+    <div style="font-size:0.85em;margin-top:0.5em;">
+        <p class="fragment"><strong>Step 1:</strong> On the clock edge, evaluate <em>all</em> RHS expressions using <strong>current</strong> (pre-edge) values.</p>
+        <p class="fragment"><strong>Step 2:</strong> <strong>Schedule</strong> all updates. Nothing has changed yet.</p>
+        <p class="fragment"><strong>Step 3:</strong> Apply all scheduled updates <strong>simultaneously</strong> at the end of the timestep.</p>
     </div>
     <div class="fragment callout" style="font-size:0.8em;margin-top:0.5em;">
-        This models real hardware: all flip-flops capture their D inputs simultaneously on the clock edge. No flip-flop &ldquo;sees&rdquo; another&rsquo;s new value.
+        This is exactly what real hardware does: all flip-flops capture their D inputs at the same physical instant. No flop &ldquo;sees&rdquo; another flop's new value until after the edge.
     </div>
-    <aside class="notes">Three steps: evaluate all RHS, schedule all updates, apply simultaneously. This models real hardware where all FFs capture simultaneously.</aside>
+    <aside class="notes">Three steps: evaluate all RHS, schedule all updates, apply simultaneously. This models real hardware where all FFs capture simultaneously. The scheduling-vs-assignment distinction is what makes pipelines work correctly.</aside>
 </section>
+
+<!-- We Do -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Two-Stage Pipeline</h2>
+    <pre class="mistake"><code class="language-verilog">// WRONG: blocking
+always @(posedge clk) begin
+    b = a;    // b gets a immediately
+    c = b;    // c gets the NEW b (= a!)
+end
+// Result: b=a, c=a — no pipeline at all</code></pre>
+    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking
+always @(posedge clk) begin
+    b &lt;= a;   // scheduled: b ← a(current)
+    c &lt;= b;   // scheduled: c ← b(current)
+end
+// Result: b=a(old), c=b(old) — proper 2-stage pipeline</code></pre>
+    <aside class="notes">Canonical example. Blocking collapses the pipeline — both registers end up with the same value. Nonblocking preserves the pipeline. Same code structure, totally different behavior.</aside>
+</section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Trace Four Cycles</h2>
+    <p style="font-size:0.78em;">Given <code>a</code> toggles 1,0,1,0,1,… each cycle. Starting values: <code>b=c=0</code>. Trace <code>b, c</code> for 4 edges using <strong>nonblocking</strong>:</p>
+    <pre style="font-size:0.72em;"><code class="language-verilog">always @(posedge clk) begin
+    b &lt;= a;
+    c &lt;= b;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong>
+        <code>cycle 1: a=1 → b=1, c=0</code>
+        <code>cycle 2: a=0 → b=0, c=1</code>
+        <code>cycle 3: a=1 → b=1, c=0</code>
+        <code>cycle 4: a=0 → b=0, c=1</code>
+        Notice: <code>c</code> is <code>a</code> delayed by 2 cycles. That's the pipeline signature.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>With blocking:</strong> <code>b=a</code>, then <code>c=b=a</code> every cycle — <code>c</code> matches <code>a</code> with zero delay. Pipeline collapsed.
+    </div>
+    <aside class="notes">Two-cycle delay is the hallmark of a correctly-operating 2-stage pipeline. If your waveform shows <code>c</code> tracking <code>a</code> with zero delay, you've hit the blocking bug.</aside>
+</section>
+
+<!-- LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Blocking vs Nonblocking Side-by-Side</h2>
-    <p style="margin-top:0.5em;">Two shift registers: one with =, one with &lt;= — compare waveforms</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day04_ex03_shift_register_demo.v → GTKWave comparison</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Blocking vs Nonblocking Side-by-Side</aside>
+    <h2 style="color:#FFC904;">Blocking vs Nonblocking Side-by-Side</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day04/ex2_pipeline_demo/
+# Two modules: pipe_blocking, pipe_nonblocking
+make sim
+make wave   # loads saved .gtkw</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">BLOCKING:
+  t=10 a=1 b=1 c=1
+  t=20 a=0 b=0 c=0
+  (b and c always match a)
+
+NONBLOCKING:
+  t=10 a=1 b=1 c=0
+  t=20 a=0 b=0 c=1
+  (c lags by 1 cycle)</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Two traces stacked. Blocking: <code>a, b, c</code> all change together on each edge (pipeline collapsed). Nonblocking: staircase pattern — <code>a</code> leads, <code>b</code> follows by 1, <code>c</code> follows by 2. This is the pipeline <em>visible</em>.
+        </p>
+    </div>
+    <aside class="notes">This is the &ldquo;aha&rdquo; moment. The staircase pattern in GTKWave is what a pipeline looks like. Zero delay between all three signals = collapsed. Two cycles of delay = correct 2-stage pipeline.</aside>
 </section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <div class="two-col">
+        <div class="col panel panel-bad" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#C62828;">Blocking</h3>
+            <pre style="font-size:0.6em;"><code class="language-bash">$ yosys ... blocking.v
+SB_DFF:      1    ← ONE flop
+SB_LUT4:     0
+
+(synthesizer proves b==c
+ and optimizes away.
+ Result: input → 1 flop → output)</code></pre>
+        </div>
+        <div class="col panel panel-good" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#2E7D32;">Nonblocking</h3>
+            <pre style="font-size:0.6em;"><code class="language-bash">$ yosys ... nonblocking.v
+SB_DFF:      2    ← TWO flops
+SB_LUT4:     0
+
+(proper 2-stage pipeline)</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Hardware doesn't lie.</strong> The blocking version synthesizes to fewer flops because the synthesizer correctly sees that stages are redundant. Your 4-deep pipeline became a 1-stage wire with latency. Timing-closure nightmare downstream.
+    </div>
+    <aside class="notes">The tool output tells the whole story. Blocking → flops disappear. Nonblocking → correct pipeline depth. The synthesizer is doing exactly what you asked — the problem is that you asked for the wrong thing.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Explain, using the term 'active event queue', why nonblocking assignments prevent race conditions in sequential Verilog.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI about simulator event queue semantics.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: NBA events go to an NBA region that fires after the active region, ensuring atomic commit.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI explains the active→NBA→inactive regions. Weak AI just says &ldquo;it's delayed.&rdquo;</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">This is IEEE 1364 §5 material. The reference for anyone who wants deep scheduling knowledge.</p></div>
+    </div>
+    <aside class="notes">Challenging CtM. Good AI models should know the simulator stratified event queue concept. Weaker models handwave. Great diagnostic.</aside>
+</section>
+
+<!-- Golden rules -->
 <section>
     <h2>The Golden Rules</h2>
     <div class="golden-rule" style="font-size:1em;">
@@ -78,8 +197,10 @@ end           // at end: b=a(old), c=b(old) — proper pipeline!</code></pre>
         <code>&lt;=</code> &ensp;in&ensp; <code>always @(posedge clk)</code> &ensp;— sequential<br><br>
         <strong>Never mix. Never break this rule.</strong>
     </div>
-    <aside class="notes">Memorize this. Blocking for combinational. Nonblocking for sequential. Never mix. This rule will serve you for your entire hardware design career.</aside>
+    <aside class="notes">This rule governs every sequential design you'll write for the rest of your career. Memorize it. Don't fight it. The tools and the silicon agree on this one.</aside>
 </section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
@@ -88,29 +209,27 @@ end           // at end: b=a(old), c=b(old) — proper pipeline!</code></pre>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>=</code> in sequential blocks destroys pipeline behavior.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;The rule is absolute: <code>=</code> for <code>@(*)</code>, <code>&lt;=</code> for <code>@(posedge)</code>.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Flip-Flop Variants</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~10 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Reset, enable, and the patterns you'll use in every design.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Nonblocking is not delayed assignment. It's simulated simultaneity.</div>
 </section>
 
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Flip-Flop Variants</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">The bare D-flop is rare in practice. Real designs have <strong>reset</strong> (to initialize state), <strong>enable</strong> (to conditionally update), and choices about <strong>synchronous</strong> vs <strong>asynchronous</strong> reset. Video 3 covers the patterns you'll see in 99% of production RTL.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

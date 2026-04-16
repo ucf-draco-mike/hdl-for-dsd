@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.2: if/else and case — Accelerated HDL for Digital System Design</title>
+    <title>Day 3.2: if/else and case [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,118 +11,244 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 3 · Procedural Combinational Logic
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">if/else and case</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~14 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">always @(*)</span>
-        <span class="seg-label active">if/else & case</span>
-        <span class="seg-label ">Latch Problem</span>
-        <span class="seg-label ">Block vs Nonblock</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 3.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">always @(*)</span><span class="seg-label active">if/else &amp; case</span><span class="seg-label">Latch Problem</span><span class="seg-label">Block vs Nonblock</span></div>
+    <aside class="notes">Video 2 of 4. Two decision constructs that look equivalent but synthesize to different hardware topologies.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2><code>if/else</code> → Priority Chain</h2>
-    <pre class="synth"><code class="language-verilog">always @(*) begin
-    if (a)       y = 4'd1;
-    else if (b)  y = 4'd2;
-    else if (c)  y = 4'd3;
-    else         y = 4'd0;  // always have a final else!
-end</code></pre>
-    <div class="fragment callout" style="font-size:0.8em;">
-        <code>if/else</code> implies <strong>priority</strong>: first match wins. Synthesizes to a chain of muxes. Earlier conditions get faster paths.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">The <code>if/else</code> vs <code>case</code> decision shows up every time you write a priority encoder vs a mux. CPU instruction decoders use <code>case</code>. Interrupt controllers use <code>if/else</code> (priority order matters). Bus arbiters often use <code>casez</code> with don't-cares. Each synthesizes to physically different topologies.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 3 ALU: <code>case</code> on opcode. Day 7 FSM: <code>case</code> on state. Day 9 memory: <code>if/else</code> for address decoding. Day 11 UART framing: <code>case</code> on state. The pattern recurs across nearly every lab.</p>
+        </div>
     </div>
-    <aside class="notes">if/else creates a priority chain. First condition that matches wins. This synthesizes to a chain of muxes where earlier conditions get shorter paths.</aside>
+    <aside class="notes">Decision logic is ubiquitous. The right choice between if/else and case is diagnostic of senior vs junior RTL engineers.</aside>
 </section>
+
+<!-- REFRAME -->
 <section>
-    <h2><code>case</code> → Parallel Mux</h2>
+    <h2><span style="color:#C0392B;">⚠️</span> Same Logic, Different Hardware</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>if/else</code> and <code>case</code> are interchangeable. I'll pick whichever reads nicer.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;"><code>if/else if/else</code> is <strong>priority-encoded</strong>: earlier conditions have shorter combinational paths — first match wins. <code>case</code> is <strong>parallel</strong>: all branches compared simultaneously, no priority. Different topologies, different timing, different LUT counts on wide cases.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>Consequence:</strong> If <em>priority matters</em> (interrupt sources, error masking), use <code>if/else if</code>. If alternatives are <em>mutually exclusive</em> (opcode decode, state decode), use <code>case</code> — the parallel topology is usually faster.
+    </div>
+    <aside class="notes">Semantic equivalence ≠ hardware equivalence. This is a subtle but important distinction and one that shows up in timing-sensitive designs. Priority chains have N-deep mux paths; parallel cases have log-N-deep mux trees.</aside>
+</section>
+
+<!-- I Do: if/else -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; <code>if/else if</code> = Priority Chain</h2>
+    <pre class="synth"><code class="language-verilog">always @(*) begin
+    if      (a) y = 4'd1;   // highest priority
+    else if (b) y = 4'd2;
+    else if (c) y = 4'd3;
+    else        y = 4'd0;   // final else prevents latch
+end</code></pre>
+    <p style="font-size:0.72em;margin-top:0.3em;">Synthesized structure:</p>
+    <pre style="font-family:monospace;font-size:0.62em;background:none;box-shadow:none;border:none;color:#333;text-align:left;">   a → MUX ─┬─────────────── y
+            │
+   b → MUX ─┘
+            │
+   c → MUX ─┘</pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Each <code>else if</code> adds a mux to the chain. Signal <code>a</code> reaches <code>y</code> through 1 mux; signal <code>c</code> through 3. On wide chains (8+ priorities), the deepest path becomes a timing bottleneck.
+    </div>
+    <aside class="notes">Priority is physical. Top-of-chain signals are fast; bottom-of-chain signals are slow. If <code>c</code> is your critical signal, restructure so <code>c</code> is at the top.</aside>
+</section>
+
+<!-- I Do: case -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; <code>case</code> = Parallel Mux</h2>
     <pre class="synth"><code class="language-verilog">always @(*) begin
     case (opcode)
-        2'b00: result = a + b;
-        2'b01: result = a - b;
-        2'b10: result = a &amp; b;
-        2'b11: result = a | b;
-        default: result = 4'b0;  // always include default!
+        2'b00: result = a + b;      // ADD
+        2'b01: result = a - b;      // SUB
+        2'b10: result = a &amp; b;      // AND
+        2'b11: result = a | b;      // OR
+        default: result = 4'b0;     // always include default
     endcase
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.8em;">
-        <code>case</code> implies <strong>parallel</strong> comparison: all alternatives are equal priority. Synthesizes to a wide mux.
+    <p style="font-size:0.72em;margin-top:0.3em;">Synthesized structure:</p>
+    <pre style="font-family:monospace;font-size:0.62em;background:none;box-shadow:none;border:none;color:#333;text-align:left;">      a+b ─┐
+      a-b ─┤
+      a&b ─┤ → 4:1 MUX → result
+      a|b ─┘     ↑
+              opcode</pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Every branch is equally accessible. All four results compute in parallel, then the opcode picks one. Fixed delay regardless of which branch is selected.
     </div>
-    <aside class="notes">Case creates a parallel multiplexer — all alternatives have equal priority. Always include a default clause.</aside>
+    <aside class="notes">Mutually-exclusive case synthesizes to a balanced mux tree — roughly log(N) delay rather than linear. This is the speed win over if-else chains for wide decisions.</aside>
 </section>
+
+<!-- We Do: casez -->
 <section>
-    <h2><code>casez</code> — Don&rsquo;t-Care Matching</h2>
-    <pre class="synth"><code class="language-verilog">// Priority encoder using casez
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>casez</code> for Don't-Cares</h2>
+    <pre class="synth"><code class="language-verilog">// Priority encoder for a 4-bit request bus
 always @(*) begin
     casez (i_req)
-        4'b1???: o_grant = 3'd4;  // MSB has highest priority
+        4'b1???: o_grant = 3'd4;   // MSB wins
         4'b01??: o_grant = 3'd3;
         4'b001?: o_grant = 3'd2;
         4'b0001: o_grant = 3'd1;
         default: o_grant = 3'd0;
     endcase
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <code>?</code> means &ldquo;don&rsquo;t care&rdquo; in <code>casez</code>. Perfect for priority encoders and address decoders.
-        Use <code>casez</code>, never <code>casex</code> (which hides X-propagation bugs).
+    <p style="font-size:0.78em;">What if <code>i_req = 4'b1011</code>? Which grant wins?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>3'd4</code>. The MSB is 1, so the first pattern matches — the <code>?</code>s in bits 2:0 are don't-care. Even though bit 0 is also 1, it never gets inspected. This is exactly priority-encoder semantics.
     </div>
-    <aside class="notes">casez allows don't-care matching with question mark. Great for priority encoders. Use casez, never casex.</aside>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Use <code>casez</code>, never <code>casex</code>.</strong> <code>casex</code> also treats <code>X</code> as wildcard, which can hide simulation bugs where X propagation should trigger a failure. Almost every modern lint rule bans <code>casex</code>.
+    </div>
+    <aside class="notes">casez is a classic priority encoder idiom. The first matching pattern wins. Good for bus arbitration, interrupt prioritization, address decoding with variable bit widths.</aside>
 </section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Hardware</h2>
+    <p style="font-size:0.78em;">An 8-way decoder implemented two ways. Which is faster on iCE40?</p>
+    <div class="two-col">
+        <div class="col">
+            <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Version A: case
+case (sel)
+  3'd0: y = i0;
+  3'd1: y = i1;
+  ...
+  3'd7: y = i7;
+endcase</code></pre>
+        </div>
+        <div class="col">
+            <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Version B: if/else if
+if      (sel==0) y = i0;
+else if (sel==1) y = i1;
+...
+else if (sel==7) y = i7;</code></pre>
+        </div>
+    </div>
+    <p style="font-size:0.78em;">Predict: LUT count? Critical path depth?</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Answer:</strong> Version A (case) synthesizes to a balanced mux tree, ~3 LUT levels deep. Version B (if/else) can synthesize to a 7-deep priority chain — slower by ~2× on wide decoders. Yosys sometimes optimizes B into a tree when it proves conditions are mutually exclusive, but don't rely on it — use <code>case</code> when you mean &ldquo;parallel.&rdquo;
+    </div>
+    <aside class="notes">Depth matters for timing. 3 levels vs 7 levels on a critical path can be the difference between hitting your clock and not. The lesson: write intent clearly; let the tool optimize, but don't hide your intent from it.</aside>
+</section>
+
+<!-- LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>ALU with case Statement</h2>
-    <p style="margin-top:0.5em;">Build a 4-operation ALU: ADD, SUB, AND, OR</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day03_ex03_alu_4bit.v — case-based opcode decode</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: ALU with case Statement</aside>
+    <h2 style="color:#FFC904;">4-bit ALU with <code>case</code></h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day03/ex3_alu/
+make sim      # exhaustive per opcode
+make wave
+make stat</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: ADD  5+3  = 8
+PASS: SUB  5-3  = 2
+PASS: AND  F&amp;A  = A
+PASS: OR   5|A  = F
+=== 16 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Signals: <code>opcode · a · b · result</code>. Set <code>opcode</code> to enum display (2'b00=ADD, 2'b01=SUB, 2'b10=AND, 2'b11=OR). Watch <code>result</code> switch instantly as <code>opcode</code> changes — parallel mux in action.
+        </p>
+    </div>
+    <aside class="notes">[Terminal] Run the 4-op ALU. [GTKWave] Show the opcode-driven switch. Zero latency — this is combinational. Reinforces Day 1/Day 2 lessons.</aside>
 </section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog alu_4bit.v; synth_ice40 -top alu; stat" -q
+
+=== alu ===
+   Number of wires:                 14
+   Number of cells:                 20
+     SB_CARRY                        4    ← adder carry chain (for ADD/SUB)
+     SB_DFF                          0
+     SB_LUT4                        16    ← 4 per operation × 4 operations</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>The math:</strong> Each of the 4 operations produces 4 output bits = 16 LUTs. The adder/subtractor share 4 carry cells. Total: 20 cells for a 4-bit, 4-op ALU. Scales linearly with operand width and operation count.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Scaling check:</strong> 32-bit 8-op ALU ≈ 32×8 = 256 LUTs + 32 carry. Still fits the iCE40 HX1K easily — until you try to add a multiplier.
+    </div>
+    <aside class="notes">Show the breakdown. Each op contributes 4 LUTs (4 output bits). Add+sub share carry. This is the kind of mental math that makes RTL writers good estimators.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Explain the timing difference between an 8-way if/else-if and an 8-way case in Verilog after synthesis.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask about timing difference, 8-way.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: case is O(log N) depth, if/else is O(N). Difference grows with width.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">AI should mention &ldquo;priority chain&rdquo; and &ldquo;mux tree.&rdquo; If it says they're equivalent, model is weak.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Verify: synth both, compare depth reports from <code>opt_expr -fine</code>.</p></div>
+    </div>
+    <aside class="notes">Quality check. AI that says &ldquo;equivalent&rdquo; is thinking about semantic equivalence, not hardware. Push for physical details.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>if/else</code> = priority chain. <code>case</code> = parallel mux.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Use <code>case</code> when alternatives are equal; <code>if/else</code> when priority matters.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>casez</code> allows don&rsquo;t-care matching with <code>?</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;<strong>Always include <code>default</code></strong> in <code>case</code> statements.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>casez</code> for don't-cares (never <code>casex</code>).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always include <code>default</code> (habit) and a final <code>else</code> (safety).</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">The Latch Problem</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">The most dangerous bug in combinational Verilog — and three ways to prevent it.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Write your intent. The synthesizer can only optimize what you told it you wanted.</div>
 </section>
 
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The Latch Problem</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~12 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've noticed I keep saying &ldquo;always include a final else&rdquo; and &ldquo;always include default.&rdquo; Video 3 is the why. The consequence of skipping either is an <strong>inferred latch</strong> &mdash; the single most dangerous silent bug in combinational RTL. You'll learn to spot it, prevent it three different ways, and hunt for it in existing code.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

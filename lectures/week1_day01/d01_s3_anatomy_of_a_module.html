@@ -53,6 +53,42 @@
     <aside class="notes">Every Verilog design is composed of modules. A module is a self-contained hardware block with defined inputs and outputs. Think of it as a chip on a circuit board. You define what goes in — the input pins — what comes out — the output pins — and what happens inside — the behavior. This diagram shows a module called led_driver with inputs on the left, outputs on the right, and the assign statement that defines its behavior in the center.</aside>
 </section>
 
+<!-- REFRAME: MODULE AS CHIP (not function) -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> If You're Thinking Like a Programmer&hellip;</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color: #C62828; font-size: 1em;">❌ Wrong Model</h3>
+            <p style="font-size: 0.72em;">
+                &ldquo;<code>input</code> and <code>output</code> are like function parameters.
+                Data &lsquo;flows in&rsquo; through <code>input</code> ports when I
+                &lsquo;call&rsquo; the module.&rdquo;
+            </p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color: #2E7D32; font-size: 1em;">✓ Right Model</h3>
+            <p style="font-size: 0.72em;">
+                Module ports are <strong>physical pins</strong> on a chip-shaped
+                abstraction. <code>input</code> ports are pins pulled by external wires;
+                <code>output</code> ports are pins driven by internal logic. There's no
+                &ldquo;call&rdquo; — the module is always active, like a DIP package soldered
+                onto a board.
+            </p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size: 0.75em; margin-top: 0.5em;">
+        <strong>Consequence:</strong> There's no return value. Every value the module
+        produces comes out of a named <code>output</code> port. Multi-output modules
+        are the norm, not the exception.
+    </div>
+    <aside class="notes">
+        The &ldquo;module as chip&rdquo; mental model is load-bearing for the whole course.
+        When students later instantiate a module inside another module, they need
+        to think of it as placing a chip on a board — named wires run between ports.
+        The function-call metaphor fails badly at hierarchy (Day 8).
+    </aside>
+</section>
+
 <!-- THE TEMPLATE -->
 <section>
     <h2>The Module Template</h2>
@@ -197,6 +233,38 @@ endmodule</code></pre>
     <aside class="notes">[SWITCH TO EDITOR] Now let's build day01_ex02_button_logic.v — a module with four concurrent assign statements, each implementing a different gate. Direct pass-through, NOT, AND, XOR. The point: all four assignments describe hardware that exists simultaneously. [TYPE IT OUT, emphasize that order doesn't matter]</aside>
 </section>
 
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size: 0.78em; margin-top: 0.2em;">
+        Ask an AI assistant:
+        <em>&ldquo;What happens if I declare a signal as <code>output reg</code> but
+        then drive it with an <code>assign</code> statement outside the module?&rdquo;</em>
+    </p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5em; margin-top: 0.5em;">
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #8E6BBF;">
+            <p style="color:#8E6BBF; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TASK</p>
+            <p style="font-size: 0.62em; margin: 0;">Ask about mixing <code>output reg</code> with external <code>assign</code>.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #5A7FA0;">
+            <p style="color:#5A7FA0; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">BEFORE</p>
+            <p style="font-size: 0.62em; margin: 0;">Predict: &ldquo;Compile error&rdquo;? &ldquo;Silent bug&rdquo;? What's the failure mode?</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #D4A843;">
+            <p style="color:#D4A843; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">AFTER</p>
+            <p style="font-size: 0.62em; margin: 0;">Correct answer: external <code>assign</code> to an <code>output reg</code> is a Verilog error. iverilog catches this.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #27AE60;">
+            <p style="color:#27AE60; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TAKEAWAY</p>
+            <p style="font-size: 0.62em; margin: 0;">Compile first, trust the compiler second, verify third. Use <code>iverilog -Wall</code> always.</p>
+        </div>
+    </div>
+    <aside class="notes">
+        Key habit to build early: use <code>-Wall</code>. Verilog's compile warnings
+        catch a surprising number of design bugs if you actually read them.
+    </aside>
+</section>
+
 <!-- KEY TAKEAWAYS -->
 <section>
     <h2>Key Takeaways</h2>
@@ -221,15 +289,24 @@ endmodule</code></pre>
     <aside class="notes">Recap. One: modules are the fundamental building block with inputs, outputs, and behavior. Two: assign creates a permanent wire — not a one-time computation. Three: use ANSI-style ports and our naming conventions. Four: don't forget the semicolon after the port list. One more video to go — a quick digital logic refresher.</aside>
 </section>
 
-<!-- BRIDGE -->
+<!-- BRIDGE (ENHANCED TRANSFER) -->
 <section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Digital Logic Refresher</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 1, Video 4 of 4 · ~8 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">
-            Gates → Verilog. The concepts you already know, in a new language.
+    <div style="text-align: center;">
+        <p style="color: #FFC904; font-size: 0.7em; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+            🔗 Transfer
         </p>
+        <h2 style="color: #FFFFFF; font-size: 1.8em;">Digital Logic Refresher</h2>
+        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Day 1, Video 4 of 4 · ~8 minutes</p>
+        <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
+            <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">
+                You now have the module skeleton. Video 4 reminds you what goes
+                <em>inside</em> &mdash; the combinational gates (AND, OR, XOR, MUX)
+                you'll combine to build every combinational circuit in this course.
+                If this material feels dusty from a prior class, that's fine: think of
+                it as calibrating the vocabulary we'll use for Weeks 1 and 2.
+            </p>
+        </div>
     </div>
     <aside class="notes">Last video for Day 1: a targeted digital logic refresher. We're not re-teaching gates and truth tables — you already know those. We're showing you how those concepts map directly to Verilog. See you in the next video.</aside>
 </section>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2.3: Sized Literals &amp; Width Matching — Accelerated HDL for Digital System Design</title>
+    <title>Day 2.3: Sized Literals &amp; Width Matching [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -11,100 +11,219 @@
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 2 · Combinational Building Blocks
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 2 · Combinational Building Blocks</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Sized Literals &amp; Width Matching</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~8 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Data Types</span>
-        <span class="seg-label ">Operators</span>
-        <span class="seg-label active">Sized Literals</span>
-        <span class="seg-label ">7-Seg Display</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 2.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Data Types</span><span class="seg-label">Operators</span><span class="seg-label active">Sized Literals</span><span class="seg-label">7-Seg Display</span></div>
+    <aside class="notes">Video 3 of 4 for Day 2. This topic looks like syntactic fussiness but it's the #1 source of silent bugs in student Verilog. By the end you'll never write a naked <code>0</code> or <code>1</code> again.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>Sized Literals</h2>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every corporate Verilog lint rule includes &ldquo;no unsized literals.&rdquo; Mentor Verissimo, Spyglass, Verilator — all of them flag this. &ldquo;Explicit width&rdquo; is the most common lint rule in existence. Why? Because the failure mode is <em>silent data loss</em>.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Day 3 ALU result width matters. Day 4 counter rollover depends on it. Day 9 address math fails silently if widths mismatch. Day 11 UART baud-rate counters — same. This one skill protects you across the whole course.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>Career tag:</strong> A senior engineer scanning your code can tell in 10 seconds whether you size your literals. If you don't, you're still thinking in software. If you do, you're thinking in bits.
+    </div>
+    <aside class="notes">Corporate lint rules for a reason. The failure mode — silent overflow, silent truncation — is the worst kind of bug: your simulation passes because the testbench happens to avoid the edge case.</aside>
+</section>
+
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Numbers Without Widths Are Booby Traps</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Writing <code>0</code> or <code>1</code> is just like in C — the compiler figures out the width from context.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Unsized literals in Verilog default to <strong>32 bits</strong> (not &ldquo;whatever fits&rdquo;). Width mismatches are <em>silently zero-extended or truncated</em>. Your simulation might pass. Your synthesis might pass. Your waveform will lie.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> <code>wire [3:0] x = 4'b1111 + 1;</code> — the <code>1</code> is 32 bits. The addition is 32-bit. The assignment truncates. Result: <code>x = 0</code>. iverilog warns if you use <code>-Wall</code> (and almost nobody does by default).
+    </div>
+    <aside class="notes">This is the &ldquo;why&rdquo; moment. Students coming from C think unsized integers are sized by inference. Verilog says: nope, they're all 32-bit. And silent width conversions on assignment are where the bugs live.</aside>
+</section>
+
+<!-- I Do -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Sized-Literal Format</h2>
     <pre class="synth"><code class="language-verilog">// Format: &lt;width&gt;'&lt;base&gt;&lt;value&gt;
-4'b1010     // 4-bit binary
-8'hFF       // 8-bit hex (= 8'd255 = 8'b11111111)
-4'd9        // 4-bit decimal
-1'b0        // single bit zero — USE THIS, not just 0
-32'd0       // 32-bit zero</code></pre>
-    <div class="fragment callout-danger" style="font-size:0.8em;">
-        Unsized literals like <code>0</code>, <code>1</code>, <code>42</code> default to <strong>32 bits</strong>.
-        This causes silent width mismatches.
-    </div>
-    <aside class="notes">Sized literals specify width and base explicitly. Unsized literals default to 32 bits — this causes width mismatch bugs.</aside>
-</section>
-<section>
-    <h2>Width Mismatch Bugs</h2>
-    <pre class="mistake"><code class="language-verilog">wire [3:0] w_a = 4'b1010;
-wire [3:0] w_b = 4'b0101;
-wire [3:0] w_sum = w_a + w_b;  // 10 + 5 = 15 → 4'b1111 ✓
+4'b1010          // 4 bits, binary
+8'hFF            // 8 bits, hex (= 8'd255 = 8'b11111111)
+4'd9             // 4 bits, decimal
+1'b0             // single bit zero
+32'd0            // 32-bit zero (explicit)
+16'hABCD         // 16 bits, hex
 
-// But what about overflow?
-wire [3:0] w_c = 4'b1111;  // 15
-wire [3:0] w_d = 4'b0001;  //  1
-wire [3:0] w_bad = w_c + w_d; // 16 → 4'b0000 — OVERFLOW!</code></pre>
-    <div class="fragment">
-    <pre class="synth"><code class="language-verilog">// Fix: make the result one bit wider
-wire [4:0] w_good = w_c + w_d; // = 5'b10000 ✓</code></pre>
+// Underscores for readability (ignored by tools):
+32'h1234_5678    // 32-bit hex, easier to read
+8'b1011_0010     // 8-bit binary grouped by nibble</code></pre>
+    <div class="callout" style="font-size:0.72em;">
+        <strong>My habit:</strong> Always specify width. Always use hex for multi-bit constants unless I'm encoding a specific bit pattern (then binary). Underscores every 4 bits for anything 8+ bits wide.
     </div>
-    <aside class="notes">Width mismatches cause silent data loss. 4-bit + 4-bit can overflow. The fix: make the result one bit wider to capture the carry.</aside>
+    <aside class="notes">Width-base-value. The three parts are non-optional in any professional codebase. Underscores are a readability trick — they're ignored by the parser but dramatically improve human scannability.</aside>
 </section>
+
+<!-- We Do -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Spot the Width Bug</h2>
+    <pre class="mistake"><code class="language-verilog">wire [3:0] w_a = 4'b1010;     // 10
+wire [3:0] w_b = 4'b0110;     //  6
+wire [3:0] w_sum = w_a + w_b; // expect 16 → ???
+wire [3:0] w_doubled = w_a &lt;&lt; 1; // expect 20 → ???</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Answers (reveal after discussion):</strong> <code>w_sum = 4'b0000 = 0</code> (silent overflow: 16 doesn't fit in 4 bits). <code>w_doubled = 4'b0100 = 4</code> (MSB shifted off). The simulation &ldquo;works&rdquo; — it just gives wrong answers.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Fix:</strong> <code>wire [4:0] w_sum = w_a + w_b;</code> — widen the result by one bit to catch the carry. For multiplication, widen by 2N bits.
+    </div>
+    <aside class="notes">Students nearly always predict 16. Wait for a hand. The truncation is silent — no warning without -Wall — and the testbench might not catch it if the values never exceed 15.</aside>
+</section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict, Then Verify</h2>
+    <p style="font-size:0.78em;">For each expression, what value does <code>x</code> hold?</p>
+    <pre class="synth" style="font-size:0.72em;"><code class="language-verilog">// 1.
+wire [3:0] x1 = 4'd5 + 4'd12;
+// 2.
+wire [4:0] x2 = 4'd5 + 4'd12;
+// 3.
+wire [7:0] x3 = 8'hFF + 1;
+// 4.
+wire [7:0] x4 = 8'hFF + 8'd1;</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        (1) <code>4'b0001 = 1</code> — 17 truncated to 4 bits.
+        (2) <code>5'b10001 = 17</code> — widened to 5 bits, correct.
+        (3) <code>8'h00 = 0</code> — the literal <code>1</code> is 32-bit, addition is 32-bit (256), truncated to 8-bit.
+        (4) <code>8'h00 = 0</code> — same 8+8 overflow. At least this one is explicit. Fix: make result 9 bits.
+    </div>
+    <aside class="notes">The interesting comparison is (3) vs (4). Both truncate. But (4) is explicit — a reader can see the 8-bit addition. (3) is a booby trap — the <code>1</code> looks innocent. Always prefer (4).</aside>
+</section>
+
+<!-- LIVE DEMO (enhanced) -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Width Mismatch Warnings</h2>
-    <p style="margin-top:0.5em;">Yosys synthesis warnings from real width bugs</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">iverilog -Wall → see the warnings your code produces</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Width Mismatch Warnings</aside>
+    <h2 style="color:#FFC904;">Width Mismatch &mdash; Compiler &amp; Synthesis Warnings</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day02/ex3_width_bugs/
+iverilog -g2012 -Wall -o sim.vvp width_bugs.v
+vvp sim.vvp
+yosys -p "read_verilog width_bugs.v; \
+    synth_ice40" 2&gt;&amp;1 | grep -i 'warn'</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">width_bugs.v:12: warning:
+  Operand of 32-bit width added to
+  4-bit result; truncation occurs.
+
+Warning: Result of addition to
+  4-bit signal ignores upper bits.</code></pre>
+        </div>
+    </div>
+
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Without <code>-Wall</code>, iverilog is silent by default. Run any sim with <code>-Wall</code> once per session. Warnings that mention &ldquo;truncation,&rdquo; &ldquo;width,&rdquo; or &ldquo;widen&rdquo; are almost always real bugs. Treat them as errors.
+        </p>
+    </div>
+    <aside class="notes">[Terminal] Compile with -Wall. Point to the warning line numbers. [Yosys] Run synth_ice40 and grep for warn — yosys is louder than iverilog about this. Teaching point: turn on -Wall forever.</aside>
 </section>
+
+<!-- WHAT DID THE TOOL BUILD? -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">Same code, with and without the width fix:</p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-bad" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#C62828;">Buggy</h3>
+            <pre style="font-size:0.65em;"><code class="language-verilog">wire [3:0] x = a + b;
+// → 4 LUTs + 4 carry
+// → result wraps at 16</code></pre>
+        </div>
+        <div class="col panel panel-good" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#2E7D32;">Fixed</h3>
+            <pre style="font-size:0.65em;"><code class="language-verilog">wire [4:0] x = a + b;
+// → 5 LUTs + 4 carry
+// → result 0..30 accurately</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Cost of correctness:</strong> one extra LUT. That's it. There is almost never a good reason to undersize a sum or product — the hardware savings are trivial compared to the debugging time saved.
+    </div>
+    <aside class="notes">One of the cleanest &ldquo;cheap to be correct&rdquo; lessons in the course. Widening by 1 bit costs 1 LUT. Silent overflow costs hours.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;In Verilog, what is the bit-width of <code>1</code>? What about <code>8'd1</code>? What about <code>1'b1</code>?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI about widths of three literal forms.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: <code>1</code> = 32 bits. <code>8'd1</code> = 8 bits. <code>1'b1</code> = 1 bit. All = value 1.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Good AI gets this right. Some models say <code>1</code> is 1-bit — <em>wrong</em>. That model is unreliable for Verilog.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Quick diagnostic: if AI says <code>1</code> is 1 bit, switch models.</p></div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.5em;">
+        <strong>Authoritative reference:</strong> IEEE 1364-2005 §4.1: unsized numbers are at least 32 bits. This is why <code>32'd1</code> and bare <code>1</code> behave identically in most expressions.
+    </div>
+    <aside class="notes">Good diagnostic test for AI models. If it says unsized <code>1</code> is 1-bit, the model is confused about Verilog vs. C. Use a different model for HDL work.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<strong>Always size your literals:</strong> <code>4'd1</code>, not <code>1</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;N-bit + N-bit can produce N+1 bits — size outputs accordingly.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Use <code>iverilog -Wall</code> and read Yosys warnings.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Unsized literals are <strong>32 bits</strong>, not &ldquo;auto-sized.&rdquo;</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Always size your literals: <code>4'd1</code>, not <code>1</code>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;N+N addition needs N+1 bits of result to avoid overflow.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Use <code>iverilog -Wall</code> every session. Read the warnings.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">The 7-Segment Display</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~10 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">From hex digit to glowing segments — your first real peripheral.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If the width isn't written down, you're guessing. Hardware doesn't guess.</div>
 </section>
 
+<!-- Enhanced Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The 7-Segment Display</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Time to put it all together. Video 4 builds a <strong>hex-to-7-segment decoder</strong> &mdash; your first real peripheral. It uses vectors (from Video 1), case statements (preview of Day 3), sized literals (from this video), and actually lights up your Go Board. This is the first moment where you'll see your code become real, glowing hardware.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

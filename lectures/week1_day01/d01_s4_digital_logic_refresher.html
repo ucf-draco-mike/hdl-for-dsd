@@ -46,6 +46,37 @@
     <aside class="notes">Last video for Day 1. About 8 minutes. This is a targeted refresher — not a re-teach. If any of this feels unfamiliar, review your digital logic notes before class.</aside>
 </section>
 
+<!-- CONTEXTUALIZE: WHY WE REFRESH -->
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
+        <div class="col">
+            <h3 style="color: #2E86AB; font-size: 1em;">Why Refresh?</h3>
+            <p style="font-size: 0.75em;">
+                You saw gates in a prior class. This refresher is calibration: we're
+                making sure we use the same names, truth tables, and symbols for
+                the rest of the course. If we say &ldquo;priority encoder&rdquo; in Week 2
+                and half the class hears something different, debugging becomes
+                impossible.
+            </p>
+        </div>
+        <div class="col">
+            <h3 style="color: #27AE60; font-size: 1em;">What's Different This Time</h3>
+            <p style="font-size: 0.75em;">
+                Now we're looking at gates through the lens of &ldquo;what Verilog
+                builds.&rdquo; The <code>&amp;</code> operator is an AND gate. The ternary
+                <code>?:</code> is a mux. Every construct in the rest of the course
+                will map back to the primitives in this video.
+            </p>
+        </div>
+    </div>
+    <aside class="notes">
+        The refresher feels dusty but it's load-bearing. When I say &ldquo;let's build
+        a priority encoder&rdquo; on Day 3, I need everyone to picture the same thing.
+        This video locks that vocabulary.
+    </aside>
+</section>
+
 <!-- PREREQUISITES CHECKLIST -->
 <section>
     <h2>What You Must Have Cold</h2>
@@ -142,6 +173,41 @@ always @(posedge clk)
     <aside class="notes">You already know the hardware from your digital logic courses. Gates, Boolean algebra, truth tables, flip-flops — all of that is prerequisite knowledge. This course teaches you the language to describe it. Verilog is the bridge between the logic you know and the real hardware you're about to program.</aside>
 </section>
 
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size: 0.78em; margin-top: 0.2em;">
+        Ask an AI assistant:
+        <em>&ldquo;Given a 3-input multiplexer truth table, write the minimal Verilog
+        using <code>assign</code> and the conditional operator. Then tell me how
+        many LUT4s it will take on an iCE40.&rdquo;</em>
+    </p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5em; margin-top: 0.5em;">
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #8E6BBF;">
+            <p style="color:#8E6BBF; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TASK</p>
+            <p style="font-size: 0.62em; margin: 0;">Mux design from truth table + predict LUT count.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #5A7FA0;">
+            <p style="color:#5A7FA0; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">BEFORE</p>
+            <p style="font-size: 0.62em; margin: 0;">Predict: 3-input mux has 3 data + 2 select = 5 inputs. Doesn't fit 1 LUT4. So 2+.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #D4A843;">
+            <p style="color:#D4A843; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">AFTER</p>
+            <p style="font-size: 0.62em; margin: 0;">Verify with: <code>yosys -p "read_verilog mux.v; synth_ice40; stat"</code>.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #27AE60;">
+            <p style="color:#27AE60; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TAKEAWAY</p>
+            <p style="font-size: 0.62em; margin: 0;">AI can write correct Verilog. AI cannot always predict exact LUT count. Tool wins.</p>
+        </div>
+    </div>
+    <aside class="notes">
+        Reinforces: AI is great for syntax, less reliable for resource estimation.
+        Always verify with the actual tool. Also note: iCE40 LUT4s have 4 inputs,
+        so a 3-select mux requires logic decomposition — a good teaching point
+        about FPGA primitives.
+    </aside>
+</section>
+
 <!-- ═══════════════════════════════════════════════════════ -->
 <!-- EMBEDDED PRE-CLASS QUIZ (Enhancement #9)               -->
 <!-- ═══════════════════════════════════════════════════════ -->
@@ -200,16 +266,25 @@ assign y1 = a & b;</code></pre>
     <aside class="notes">Question 4: assign creates a permanent physical connection. Not a one-time computation. It continuously reflects — like a soldered wire. Question 5: order does not matter. Both gates exist simultaneously. Swapping produces identical hardware. That's the whole point of Video 1. If question 3 felt hard, re-watch Video 3 before class. Getting the module template into muscle memory will save you a lot of time in lab. See you in class!</aside>
 </section>
 
-<!-- END CARD -->
+<!-- END CARD (ENHANCED END-OF-DAY TRANSFER) -->
 <section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 1 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">
-            Bring your laptop. Make sure your toolchain is installed.<br>
-            You'll get your Go Board and program it for the first time today.
+    <div style="text-align: center;">
+        <p style="color: #FFC904; font-size: 0.7em; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
+            🔗 End of Day 1
         </p>
+        <h2 style="color: #FFFFFF; font-size: 1.8em;">Tomorrow: Data Types &amp; Operators</h2>
+        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Day 2 · Combinational Building Blocks</p>
+        <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
+            <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">
+                You now have the <em>mental model</em>: Verilog describes concurrent
+                hardware, two tools consume it (synthesis vs simulation), and modules
+                are chips with named pins. Day 2 gives you the <em>working vocabulary</em>
+                &mdash; how to declare signals and combine them. By end of Day 2 you'll
+                decode a hex digit to a 7-segment display on the Go Board. Real hardware.
+                Real output. Tomorrow.
+            </p>
+        </div>
     </div>
     <aside class="notes">That's all four pre-class videos for Day 1. Bring your laptop to class with the toolchain installed — Yosys, nextpnr, Icarus Verilog, GTKWave. You'll get your Go Board and program it for the first time today. See you in class!</aside>
 </section>

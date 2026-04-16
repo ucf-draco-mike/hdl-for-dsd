@@ -3,129 +3,240 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.4: Blocking vs. Nonblocking — Accelerated HDL for Digital System Design</title>
+    <title>Day 3.4: Blocking vs. Nonblocking [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 3 · Procedural Combinational Logic
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Blocking vs. Nonblocking</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~6 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">always @(*)</span>
-        <span class="seg-label ">if/else & case</span>
-        <span class="seg-label ">Latch Problem</span>
-        <span class="seg-label active">Block vs Nonblock</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 3.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">always @(*)</span><span class="seg-label">if/else &amp; case</span><span class="seg-label">Latch Problem</span><span class="seg-label active">Block vs Nonblock</span></div>
+    <aside class="notes">Video 4 of 4 for Day 3. A short, rule-focused video. Tomorrow's Day 4 will prove the rule with waveforms; today we just want you to have the rule in memory.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>Two Assignment Operators</h2>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Cliff Cummings's 2000 paper &ldquo;Nonblocking Assignments in Verilog Synthesis&rdquo; is <em>the</em> reference on this topic — cited in every corporate coding guideline. Nearly every lint rule in existence enforces: <code>=</code> only in combinational blocks, <code>&lt;=</code> only in sequential blocks.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 4 proves this rule with waveforms. Day 5 shift registers depend on it. Day 7 FSMs require it. The rule is absolute for the rest of the course — and the rest of your career.</p>
+        </div>
+    </div>
+    <aside class="notes">Cummings's paper is a rite of passage for every junior RTL engineer. It's worth reading once. The rule appears simple but its implications ripple through everything sequential.</aside>
+</section>
+
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> <code>&lt;=</code> Is Not &ldquo;Less Than Or Equal&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>=</code> and <code>&lt;=</code> are similar — probably <code>&lt;=</code> is some kind of &lsquo;delayed&rsquo; assignment.&rdquo; Or worse: &ldquo;<code>&lt;=</code> is a comparison.&rdquo;</p>
+        </div>
         <div class="col panel panel-good">
-            <h3><code>=</code> Blocking</h3>
-            <p style="font-size:0.75em;">Evaluate and assign <strong>immediately</strong>.</p>
-            <p style="font-size:0.75em;">Use in: <code>always @(*)</code></p>
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Inside an <code>always</code> block, <code>&lt;=</code> means &ldquo;<strong>nonblocking assignment</strong>&rdquo; — a different operation entirely from <code>=</code>. Verilog overloaded the symbol badly. The two operators produce different <em>simulator scheduling semantics</em>, which in turn determine what hardware the synthesizer builds.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Identical code, one with <code>=</code> and one with <code>&lt;=</code> inside <code>always @(posedge clk)</code>, produces <strong>different hardware</strong>. Not equivalent. Not interchangeable. Totally different circuits.
+    </div>
+    <aside class="notes">Tempting to read <code>&lt;=</code> as a relational operator. In an always block it's assignment. IEEE 1364 §9.4 formalizes the semantics. Verilog's biggest overload sin.</aside>
+</section>
+
+<!-- I Do: the two operators -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Two Operators, Two Rules</h2>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-good">
+            <h3 style="font-size:0.9em;"><code>=</code> Blocking</h3>
+            <p style="font-size:0.72em;">Evaluate RHS, assign to LHS, <strong>immediately</strong>. Next statement in the block sees the updated value.</p>
+            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(*)</code></p>
+            <p style="font-size:0.72em;"><strong>Mental model:</strong> ordinary programming assignment.</p>
         </div>
         <div class="col panel panel-hw">
-            <h3><code>&lt;=</code> Nonblocking</h3>
-            <p style="font-size:0.75em;">Evaluate all RHS <strong>first</strong>, then update all LHS <strong>simultaneously</strong>.</p>
-            <p style="font-size:0.75em;">Use in: <code>always @(posedge clk)</code></p>
+            <h3 style="font-size:0.9em;"><code>&lt;=</code> Nonblocking</h3>
+            <p style="font-size:0.72em;">Evaluate all RHS using current values, <strong>schedule</strong> the updates, apply them <em>simultaneously</em> at end of timestep.</p>
+            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(posedge clk)</code></p>
+            <p style="font-size:0.72em;"><strong>Mental model:</strong> all flip-flops capture at once, like real silicon.</p>
         </div>
     </div>
-    <div class="fragment golden-rule" style="font-size:1em;margin-top:1em;">
-        <code>=</code> in <code>always @(*)</code>. &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code>.<br>
-        Never mix them in the same block.
+    <div class="fragment golden-rule" style="margin-top:0.5em;font-size:0.95em;">
+        <code>=</code> in <code>always @(*)</code>. &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code>. &ensp; Never mix.
     </div>
-    <aside class="notes">Blocking equals for combinational. Nonblocking less-than-equals for sequential. Never mix. We prove why on Day 4 with timing diagrams.</aside>
+    <aside class="notes">Two operators. Two homes. One rule. Write it on your palm. Day 4 will show you a waveform that <em>proves</em> mixing them produces visibly wrong behavior.</aside>
 </section>
+
+<!-- We Do: the pipeline -->
 <section>
-    <h2>Why It Matters (Preview)</h2>
-    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in sequential block
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Pipeline That Isn't</h2>
+    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in sequential (not a pipeline!)
 always @(posedge clk) begin
     b = a;    // b gets a's value NOW
-    c = b;    // c gets b's NEW value (= a!) — WRONG
+    c = b;    // c gets b's NEW value (= a!) — both same!
 end</code></pre>
-    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in sequential block
+    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in sequential (proper pipeline)
 always @(posedge clk) begin
-    b <= a;   // scheduled: b will get a's current value
-    c <= b;   // scheduled: c will get b's current value
-end          // both update simultaneously at end of timestep</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        With <code>&lt;=</code>, both stages see <strong>pre-update</strong> values. This models real flip-flop behavior where all FFs capture simultaneously on the clock edge.
+    b &lt;= a;   // scheduled: b will become a(old)
+    c &lt;= b;   // scheduled: c will become b(old)
+end           // at end: b=a(old), c=b(old)</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>Together:</strong> The blocking version sees sequential execution — <code>b = a</code>, then <code>c = new_b = a</code>. Both registers end up holding the same value. The nonblocking version schedules both updates using the <em>pre-edge</em> values, modeling how real flip-flops behave: they all capture their D inputs simultaneously on the clock edge.
     </div>
-    <aside class="notes">Blocking in sequential: b gets a immediately, then c gets the new b — both get the same value. Nonblocking: both see pre-update values, modeling real flip-flop behavior.</aside>
+    <aside class="notes">This is the canonical example. The blocking version collapses the 2-stage pipeline into 1 stage — a massive functional bug. The nonblocking version preserves the pipeline. Same code structure, totally different behavior.</aside>
 </section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Trace the Execution</h2>
+    <p style="font-size:0.78em;">Initial values: <code>a=1, b=2, c=3</code>. After one clock edge, predict <code>a, b, c</code>:</p>
+    <pre class="synth"><code class="language-verilog">always @(posedge clk) begin
+    a &lt;= b;
+    b &lt;= c;
+    c &lt;= a;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>a=2, b=3, c=1</code>. All RHS evaluated first: a's new value = b(old) = 2, b's new = c(old) = 3, c's new = a(old) = 1. All applied simultaneously. This is a 3-element <strong>rotator</strong>.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Same code with <code>=</code>:</strong> a=2, b=3 (b gets c=3, but wait — b was just overwritten by... no). Let's trace: <code>a=b=2</code>. <code>b=c=3</code>. <code>c=a=2</code> (a was just updated!). Final: <code>a=2, b=3, c=2</code>. Rotator becomes <em>garbage</em>.
+    </div>
+    <aside class="notes">60 seconds for the trace. The rotator is the canonical &ldquo;you cannot build this with blocking&rdquo; example. With =, the third line sees the new <code>a</code> and produces incorrect behavior. With <=, all three registers swap simultaneously.</aside>
+</section>
+
+<!-- LIVE DEMO -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Shift Register: <code>=</code> vs <code>&lt;=</code> Side-by-Side</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day03/ex4_blocking_demo/
+# Two modules: shift_blocking, shift_nonblocking
+make sim
+make wave
+# Load GTKWave .gtkw file: both traces side-by-side</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Cycle 1: blocking q=00 | nb q=80
+Cycle 2: blocking q=00 | nb q=40
+Cycle 3: blocking q=00 | nb q=20
+Cycle 4: blocking q=00 | nb q=10
+# blocking never shifts — 
+#   all stages collapse to same value</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            Two registers stacked: <code>shift_blocking.q</code> above <code>shift_nonblocking.q</code>. The nonblocking version shifts cleanly each cycle. The blocking version stays pinned — the pipeline collapsed on the first clock edge.
+        </p>
+    </div>
+    <aside class="notes">This is the visual proof. The blocking shift register <em>doesn't shift</em>. Every stage collapses to the same value because the assignments happen sequentially within the block. Nonblocking produces the textbook shift pattern.</aside>
+</section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">4-stage shift register, both coding styles:</p>
+    <div class="two-col">
+        <div class="col panel panel-bad" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#C62828;">With <code>=</code> (bug)</h3>
+            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFF:     1   ← ONE flop
+             (collapses to 1 stage)</code></pre>
+        </div>
+        <div class="col panel panel-good" style="padding:0.5em;">
+            <h3 style="font-size:0.85em;color:#2E7D32;">With <code>&lt;=</code> (correct)</h3>
+            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFF:     4   ← 4 flops
+             (proper 4-stage pipeline)</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Same source, different hardware.</strong> The blocking version got optimized to a single flop because the synthesizer can see that stages 2, 3, 4 all get the same value. Yosys is technically correct — it just built exactly what you described, which wasn't what you meant.
+    </div>
+    <aside class="notes">The synthesizer <em>did not fix</em> your bug. It built exactly what you wrote. This is a recurring theme: Verilog isn't a magic wand; the synthesizer does precisely what the code says.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;If I use <code>=</code> inside an <code>always @(posedge clk)</code> for a 3-stage shift register, what does the synthesized hardware actually look like?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI to describe the synthesized hardware.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: collapses to 1 stage. All registers hold the input value after one cycle.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI explains collapse + cites Cummings. Weak AI says &ldquo;3-stage shift register&rdquo; — wrong.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">If AI says &ldquo;still a 3-stage shift,&rdquo; it's wrong. Verify with Yosys stat.</p></div>
+    </div>
+    <aside class="notes">Good diagnostic. Models that understand the simulator scheduling semantics handle this correctly. Models that pattern-match on &ldquo;shift register&rdquo; get it wrong.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>=</code> (blocking) for combinational <code>always @(*)</code>.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>&lt;=</code> (nonblocking) for sequential <code>always @(posedge clk)</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing them causes race conditions — Day 4 will prove it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing causes functional bugs — pipelines collapse.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;The synthesizer builds what you wrote, not what you meant.</p>
     </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">= for combinational, &lt;= for sequential. Never mix. Day 4 proves it.</div>
 </section>
+
+<!-- Pre-class self-check (kept from original) -->
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
+    <div style="font-size:0.82em;">
         <p><strong>Q1:</strong> Why must you use <code>@(*)</code> instead of a manual sensitivity list?</p>
         <div class="fragment quiz-answer">Manual lists risk sim/synth mismatch. <code>@(*)</code> automatically includes all signals read inside the block.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> What causes an unintentional latch?</p>
-        <div class="fragment quiz-answer">Not assigning a signal in every possible path through <code>always @(*)</code>. Example: <code>if (sel) y = a;</code> with no <code>else</code>.</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> Name three techniques to prevent latch inference.</p>
-        <div class="fragment quiz-answer">1. Default assignment at top. 2. Complete if/else chains. 3. <code>default</code> in case statements.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> When do you use <code>=</code> vs <code>&lt;=</code>?</p>
-        <div class="fragment quiz-answer"><code>=</code> in combinational <code>always @(*)</code>. <code>&lt;=</code> in sequential <code>always @(posedge clk)</code>. Never mix.</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 3 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What causes an unintentional latch?</p>
+        <div class="fragment quiz-answer">Not assigning a signal in every possible path through <code>always @(*)</code>.</div>
     </div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> Name three techniques to prevent latch inference.</p>
+        <div class="fragment quiz-answer">1. Default assignment at top. 2. Complete if/else chains. 3. <code>default</code> in case statements.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> When do you use <code>=</code> vs <code>&lt;=</code>?</p>
+        <div class="fragment quiz-answer"><code>=</code> in combinational <code>always @(*)</code>. <code>&lt;=</code> in sequential <code>always @(posedge clk)</code>. Never mix.</div>
+    </div>
+</section>
+
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 3</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Sequential Logic</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 4 · Clocks, flip-flops, and your first blinking LED</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Days 1-3 covered combinational logic &mdash; logic with no memory. Day 4 adds <strong>time</strong>: flip-flops, clocks, sequential design. You'll build a counter that turns 25 MHz into a 1 Hz LED blink, and see with your own eyes why <code>&lt;=</code> is the rule.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

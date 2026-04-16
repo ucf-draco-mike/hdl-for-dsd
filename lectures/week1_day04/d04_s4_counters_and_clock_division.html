@@ -3,102 +3,220 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4.4: Counters and Clock Division — Accelerated HDL for Digital System Design</title>
+    <title>Day 4.4: Counters &amp; Clock Division [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 4 · Sequential Logic Fundamentals
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 4 · Sequential Logic Fundamentals</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Counters &amp; Clock Division</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~13 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~14 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Clocks & Edges</span>
-        <span class="seg-label ">Nonblocking</span>
-        <span class="seg-label ">FF Variants</span>
-        <span class="seg-label active">Counters</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 4.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Clocks &amp; Edges</span><span class="seg-label">Nonblocking</span><span class="seg-label">FF Variants</span><span class="seg-label active">Counters</span></div>
+    <aside class="notes">Video 4 of 4 for Day 4 — and the capstone of Week 1. Combine everything we've built: combinational logic, flip-flops, clocks, reset. Build a counter that turns 25 MHz into a visible 1 Hz blink on your Go Board.</aside>
 </section>
 
+<!-- CONTEXTUALIZE -->
 <section>
-    <h2>The Free-Running Counter</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>reg [7:0] r_count;
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Counters are <em>everywhere</em>. UART baud-rate generators. SPI clock dividers. Refresh counters in DRAM. Frame counters in video pipelines. PWM period counters. Watchdog timers. A typical SoC has hundreds of them. Mastering the counter pattern means mastering a quarter of all digital design.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 5: debouncer uses a counter. Day 7: FSM timers use counters. Day 11: UART baud generator is a counter. Day 12: SPI shift-clock divider is a counter. This pattern will be reused more than any other for the rest of the semester.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
+        <strong>First end-to-end design:</strong> Today you take your Verilog from written code all the way to blinking LEDs on physical hardware. That's the full stack: RTL → synthesis → place &amp; route → bitstream → FPGA → photons. It's a big moment.
+    </div>
+    <aside class="notes">Counters are the workhorse. Every lab from here forward uses at least one. They're also the canonical first real sequential design — a milestone that matters.</aside>
+</section>
 
-always @(posedge i_clk)
-    r_count <= r_count + 1;
-<span class="fragment">
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> A Counter Is Not a Loop</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I'll write <code>for (i=0; i&lt;N; i++) count++;</code> and it will count. The clock makes it loop.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">A counter is a <strong>flop</strong> whose D input is its own Q plus one. Each clock edge captures that new value. The &ldquo;counting&rdquo; happens in time (cycle by cycle), not in code. There's no loop — the hardware is a single adder feeding a single register, cycling forever.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> An N-bit counter uses N flops + N LUT/carry cells. Fixed footprint. Counts to 2<sup>N</sup>-1 then rolls over to 0. The count value changes each cycle because the <em>clock</em> keeps firing, not because the code &ldquo;runs.&rdquo;
+    </div>
+    <aside class="notes">The counter is the cleanest example of how RTL differs from software. Feedback loop: Q+1 → D → Q → Q+1 → ... Each clock edge captures the next value. The pattern is in the <em>structure</em>, not the <em>execution</em>.</aside>
+</section>
+
+<!-- I Do: free-running counter -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Free-Running Counter</h2>
+    <pre class="synth"><code class="language-verilog">reg [7:0] r_count;
+
+always @(posedge i_clk) begin
+    if (i_reset) r_count &lt;= 8'b0;
+    else         r_count &lt;= r_count + 1'b1;
+end
+
 // Cycle 0:   r_count = 8'h00
 // Cycle 1:   r_count = 8'h01
 // ...
 // Cycle 255: r_count = 8'hFF
-// Cycle 256: r_count = 8'h00  ← rollover!</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        8-bit counter rolls over every 256 cycles. N-bit counter: every 2<sup>N</sup> cycles.
+// Cycle 256: r_count = 8'h00  ← rollover!</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>My thinking:</strong> Three elements: the reg declaration (storage), the posedge sensitivity (trigger), the <code>r_count + 1</code> feedback (increment). The rollover is free — 8-bit arithmetic wraps at 256 with no extra logic. That's why N-bit counters cycle through 2<sup>N</sup> values.
     </div>
-    <aside class="notes">Free-running counter increments each clock and rolls over at maximum. 8-bit = 256 cycles. N-bit = 2^N cycles.</aside>
+    <aside class="notes">The canonical counter. Notice the <code>1'b1</code> literal — not <code>1</code>. Sized literals habit from Day 2 still applies. N-bit counter wraps at 2^N — that's just integer overflow treated as a feature.</aside>
 </section>
+
+<!-- We Do: clock division -->
 <section>
-    <h2>Clock Division: 25 MHz → 1 Hz</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// 25 MHz → 1 Hz blink: count 25,000,000 per half-period
-// log₂(25000000) ≈ 25 bits
-<span class="fragment">reg [24:0] r_counter;
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Clock Division: 25 MHz → 1 Hz</h2>
+    <pre class="synth"><code class="language-verilog">// 25 MHz → 1 Hz blink: toggle every 12,500,000 cycles
+// (1 Hz period = 1s = 2 half-periods of 500 ms each)
+// log₂(12500000) ≈ 24 bits
+
+reg [23:0] r_counter;
 reg        r_led;
 
 always @(posedge i_clk) begin
-    if (r_counter == 25_000_000 - 1) begin
-        r_counter <= 0;
-        r_led     <= ~r_led;    // toggle
+    if (i_reset) begin
+        r_counter &lt;= 0;
+        r_led     &lt;= 1'b0;
+    end else if (r_counter == 24'd12_499_999) begin
+        r_counter &lt;= 0;
+        r_led     &lt;= ~r_led;    // toggle
     end else begin
-        r_counter <= r_counter + 1;
+        r_counter &lt;= r_counter + 1'b1;
     end
-end</span>
-<span class="fragment">assign o_led1 = r_led;</span></code></pre>
-    <aside class="notes">Count to 25 million, toggle LED, reset counter. 25-bit counter needed. This is your first real sequential design — build it in lab today.</aside>
+end
+
+assign o_led1 = r_led;</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>The math:</strong> 1 Hz means LED spends 0.5 s ON and 0.5 s OFF. In 0.5 s, a 25 MHz clock ticks 12,500,000 times. So toggle every 12.5M cycles. 24 bits hold values up to 16.7M — enough.
+    </div>
+    <aside class="notes">[Walk through the math] 1 Hz = 1 cycle per second = 0.5 s on + 0.5 s off. Each 0.5 s interval is 12.5 million 40-ns clock periods. Count to 12,499,999 (because we count 0..N-1), then toggle and reset. 24-bit counter needed.</aside>
 </section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Custom Frequency</h2>
+    <p style="font-size:0.78em;">You want a 4 Hz blink. What's the target count?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> 4 Hz = 0.125 s half-period. <code>25,000,000 × 0.125 = 3,125,000</code>. Toggle every 3,125,000 cycles → count to <code>24'd3_124_999</code>. 22 bits would also suffice (<code>2^22 = 4,194,304 &gt; 3,125,000</code>).
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Follow-up:</strong> For <em>any</em> frequency <code>F</code>, target = <code>(25_000_000 / (2*F)) - 1</code>. Parameterize with a <code>parameter</code>! (Preview of Day 8.)
+    </div>
+    <aside class="notes">60-second calculation. Encourage parameterization — a parameter CLKS_PER_HALF_PERIOD makes the module reusable at any target frequency.</aside>
+</section>
+
+<!-- LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>LED Blinker</h2>
-    <p style="margin-top:0.5em;">Build the clock divider from scratch → program Go Board</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day04_ex02_led_blinker.v → see it blink!</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: LED Blinker</aside>
+    <h2 style="color:#FFC904;">LED Blinker: Simulate → Flash → Behold</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~6 minutes &mdash; full flow</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week1_day04/ex4_led_blinker/
+make sim      # test the FSM logic
+make wave     # sanity check
+make prog     # yosys → nextpnr → iceprog
+# LED D1 now blinks at 1 Hz. Look at the board.</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: counter increments
+PASS: counter rolls over
+PASS: LED toggles @ target
+=== 8 passed, 0 failed ===
+
+# make prog:
+Yosys 0.36 → synth_ice40
+nextpnr-ice40 → hx1k
+FPGA programmed OK.</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ ON THE BOARD</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            After <code>make prog</code>, LED D1 on the Go Board blinks steadily at 1 Hz &mdash; one second on, one second off. You're seeing a 25 MHz oscillator divided down 25 million times, in real time, from Verilog you wrote.
+        </p>
+    </div>
+    <aside class="notes">[Run make prog] Let the LED blink for 10 seconds. Feel the moment. This is Week 1 capstone — students who persisted through all 16 videos now have tangible output. 25,000,000 cycles per second, fingernail-sized FPGA, your code.</aside>
 </section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog led_blinker.v; synth_ice40 -top led_blinker; stat" -q
+
+=== led_blinker ===
+   Number of wires:                 41
+   Number of cells:                 49
+     SB_CARRY                       23    ← adder carry chain for +1
+     SB_DFF                          0
+     SB_DFFESR                      25    ← 24 counter flops + 1 LED flop
+     SB_LUT4                         1    ← the terminal-count comparator</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What you're looking at:</strong> 25 flops (24 counter bits + 1 LED), 23 carry cells for the +1 adder chain, 1 LUT for the <code>== 12_499_999</code> comparator. Total: 2% of the iCE40 HX1K. Your first real design fits comfortably.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Scaling insight:</strong> A 32-bit counter would be 32 flops + 31 carry = trivially small. The iCE40 HX1K can host dozens of independent counters simultaneously — which is exactly what a multi-peripheral SoC does.
+    </div>
+    <aside class="notes">The resource count is small enough that students can mentally model it. 25 flops they can picture. 23 carry cells they've seen before. The whole design is transparent.</aside>
+</section>
+
+<!-- Quick trick: bit taps -->
 <section>
     <h2>Quick Trick: Counter Bit Taps</h2>
     <table style="margin-top:0.5em;font-size:0.7em;">
-        <thead><tr><th>Counter Bit</th><th>Approx. Frequency</th><th>Use Case</th></tr></thead>
+        <thead><tr><th>Counter Bit</th><th>Approx. Frequency (25 MHz)</th><th>Use Case</th></tr></thead>
         <tbody>
-            <tr><td>r_counter[23]</td><td>~1.5 Hz</td><td>Visible blink</td></tr>
-            <tr><td>r_counter[22]</td><td>~3 Hz</td><td>Fast blink</td></tr>
-            <tr><td>r_counter[20]</td><td>~12 Hz</td><td>Activity indicator</td></tr>
-            <tr><td>r_counter[16]</td><td>~190 Hz</td><td>Display refresh</td></tr>
+            <tr><td><code>r_counter[23]</code></td><td>~1.5 Hz</td><td>Visible blink</td></tr>
+            <tr><td><code>r_counter[22]</code></td><td>~3 Hz</td><td>Fast blink</td></tr>
+            <tr><td><code>r_counter[20]</code></td><td>~12 Hz</td><td>Activity indicator</td></tr>
+            <tr><td><code>r_counter[16]</code></td><td>~190 Hz</td><td>Display refresh</td></tr>
+            <tr><td><code>r_counter[10]</code></td><td>~12 kHz</td><td>Audio tone</td></tr>
         </tbody>
     </table>
-    <div class="callout" style="font-size:0.75em;margin-top:0.5em;">
-        <strong>Quick trick:</strong> Use MSBs of a free-running counter for approximate division. No target value needed!
+    <div class="callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>Quick trick:</strong> Use MSBs of a free-running counter for <em>approximate</em> division. Bit <code>[N]</code> of a binary counter toggles at <code>F_clk / 2^(N+1)</code>. No target-value logic needed — just wire <code>r_counter[23]</code> to the LED.
     </div>
-    <aside class="notes">Quick trick: use counter MSBs. Bit 23 at 25 MHz gives about 1.5 Hz. Not exact, but great for LEDs.</aside>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Caveat:</strong> Bit-tap division gives power-of-2 divisions only. For exact frequencies (UART baud rates, audio sample rates), you need a terminal-count comparator. Use bit-taps for LEDs; use targets for protocols.
+    </div>
+    <aside class="notes">The bit-tap trick is great for quick-and-dirty LED blinks or clock enables, but it's approximate. For UART we need exact frequencies. Different tools for different jobs.</aside>
 </section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Design a clock divider to produce a 9600 Hz output from a 25 MHz input. Write parameterized Verilog.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a 9600 Hz divider (UART-ish frequency).</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: target = 25e6/(2·9600) - 1 ≈ 1301. Counter 11 bits minimum.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Good AI parameterizes. Weak AI hardcodes the target. Watch for sized literals.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">This exact module appears in Day 11 (UART). AI can be a starting point — verify width and parameterization.</p></div>
+    </div>
+    <aside class="notes">Concrete exercise. 9600 is the canonical UART baud rate. AI should handle this well — it's everywhere in training data. Good time to emphasize: AI is a productivity multiplier when you can verify the answer yourself.</aside>
+</section>
+
+<!-- Key takeaways -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
@@ -107,49 +225,51 @@ end</span>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Clock divider: count to target, toggle, reset.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Quick trick: counter MSBs for approximate clock division.</p>
     </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Counter + comparator + toggle = any frequency you want. The pattern is yours now.</div>
 </section>
+
+<!-- Pre-class self-check (kept from original) -->
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
+    <div style="font-size:0.82em;">
         <p><strong>Q1:</strong> What happens if you use <code>=</code> instead of <code>&lt;=</code> in a sequential <code>always @(posedge clk)</code> block with two registers?</p>
         <div class="fragment quiz-answer">Both registers get the same value in one cycle because blocking assignment updates immediately. The pipeline behavior is destroyed.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> Write a D flip-flop with synchronous reset from memory.</p>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> Write a D flip-flop with synchronous reset from memory.</p>
         <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.9em;white-space:pre;line-height:1.5;">always @(posedge i_clk)
-    if (i_reset) r_q <= 1'b0;
-    else         r_q <= r_d;</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> Is a missing <code>else</code> in <code>always @(posedge clk)</code> a latch?</p>
-        <div class="fragment quiz-answer"><strong>No!</strong> Flip-flops inherently hold their value. Latch inference only occurs in <code>always @(*)</code>.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> You want ~2 Hz blink from 25 MHz. What do you count to?</p>
-        <div class="fragment quiz-answer">2 Hz = toggle every 0.25s = 6,250,000 cycles per half-period. Count to 6,249,999, then toggle and reset.</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 4 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    if (i_reset) r_q &lt;= 1'b0;
+    else         r_q &lt;= r_d;</div>
     </div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> Is a missing <code>else</code> in <code>always @(posedge clk)</code> a latch?</p>
+        <div class="fragment quiz-answer"><strong>No!</strong> Flip-flops inherently hold their value. Latch inference only occurs in <code>always @(*)</code>.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> You want ~2 Hz blink from 25 MHz. What do you count to?</p>
+        <div class="fragment quiz-answer">2 Hz = toggle every 0.25s = 6,250,000 cycles per half-period. Count to 6,249,999, then toggle and reset.</div>
+    </div>
+</section>
+
+<!-- End-of-Week-1 capstone bridge -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🎉 End of Week 1</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Next Week: Patterns &amp; Verification</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 5-8 · Counters in depth, testbenches, FSMs, hierarchy</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHAT YOU CAN DO NOW</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have the full vocabulary of single-module RTL: modules, data types, operators, combinational blocks (with latch awareness), sequential blocks (with proper nonblocking), flip-flops with reset and enable, and counters with clock division. Week 2 builds on this with: counter variations &amp; shift registers, systematic testbenches, finite state machines, and module hierarchy. By Day 8 you'll be composing multi-module designs.</p>
+        </div>
+    </div>
+    <aside class="notes">Week 1 wrap. Big moment for students who stuck with it — they now have the single-module fluency needed for the rest of the course. Week 2 adds structure and verification methodology.</aside>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>
