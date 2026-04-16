@@ -1,122 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8.2: Parameters &amp; Parameterization — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 8.2: Parameters &amp; Parameterization — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 8 · Hierarchy, Parameters &amp; Generate
-        </span>
-    </div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Parameters</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 8 · Hierarchy &amp; Reuse</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Parameters &amp; Parameterization</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Hierarchy</span>
-        <span class="seg-label active">Parameters</span>
-        <span class="seg-label ">Generate</span>
-        <span class="seg-label ">Design for Reuse</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 8.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Hierarchy</span><span class="seg-label active">Parameters</span><span class="seg-label">Generate</span><span class="seg-label">Reuse</span></div>
+    <aside class="notes">Video 2 of 4. How one module becomes dozens of different hardware instances through parameters.</aside>
 </section>
 
 <section>
-    <h2><code>parameter</code> — Configurable at Instantiation</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module counter #(
-    parameter WIDTH     = 8,
-    parameter MAX_COUNT = 255
-)(
-    input  wire                i_clk, i_reset, i_enable,
-    output reg  [WIDTH-1:0]   o_count,
-    output wire                o_done
-);
-<span class="fragment">    always @(posedge i_clk) begin
-        if (i_reset)                  o_count &lt;= 0;
-        else if (i_enable) begin
-            if (o_count == MAX_COUNT) o_count &lt;= 0;
-            else                      o_count &lt;= o_count + 1;
-        end
-    end
-    assign o_done = (o_count == MAX_COUNT);</span>
-endmodule</code></pre>
-    <pre class="synth fragment"><code class="language-verilog">// Override at instantiation
-counter #(.WIDTH(16), .MAX_COUNT(49_999)) baud_counter ( ... );</code></pre>
-    <aside class="notes">Parameters make modules configurable. Define defaults, override at instantiation with hash-dot syntax. One counter module serves many roles.</aside>
-</section>
-<section>
-    <h2><code>localparam</code> and <code>$clog2</code></h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// localparam — internal, cannot be overridden
-localparam MAX = (1 &lt;&lt; WIDTH) - 1;   // derived from parameter
-<span class="fragment">
-// $clog2 — automatic width calculation
-module timer #(parameter TICKS = 1_000_000)(
-    input wire i_clk, i_start, output reg o_done
-);
-    localparam W = $clog2(TICKS);     // auto-sized!
-    reg [W-1:0] r_count;
-    // Change TICKS → width adjusts automatically</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <code>parameter</code> = configurable from outside. <code>localparam</code> = derived/internal constant.<br>
-        <code>$clog2</code> = automatic width — eliminates manual bit-counting bugs.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every reusable IP block is parameterized. Xilinx's MicroBlaze CPU has ~40 parameters (cache size, multiplier presence, FPU presence). ARM's AMBA bus IP is parameterized in data width, burst length, ID width. Cadence, Synopsys, and ARM sell IP that's <em>essentially just Verilog modules with parameters</em> — the value is the generality. A well-parameterized module becomes a product.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your counter, shift register, debouncer, and UART modules all become parameterized today. Your Day 11 UART will support 9600/115200 baud via one parameter. Your capstone wins judges by showing parameterization — it's what distinguishes &ldquo;built a thing&rdquo; from &ldquo;built a reusable tool.&rdquo;</p>
+        </div>
     </div>
-    <aside class="notes">localparam for derived constants — can't be overridden from outside. Dollar-clog2 auto-computes bit widths. Eliminates a whole class of manual calculation bugs.</aside>
+    <aside class="notes">Parameterization is what turns a module into a reusable IP block. IP companies like ARM sell Verilog — with parameters.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Parameters Are <em>Compile-Time</em>, Not Runtime</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Parameters are inputs I can change while the chip is running. I set the width to 8, then change it to 16 at runtime.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Parameters are <strong>compile-time constants</strong>. Each <em>instance</em> of a module fixes its parameter values when it's instantiated, and the synthesis tool builds that specific instance with those specific widths. Different instances of the same module can have different parameter values — but within a single instance, the value is <em>soldered in</em>.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A parameterized 8-bit counter instance and a parameterized 16-bit counter instance produce <em>different hardware</em>. They happen to share source code.
+    </div>
+    <aside class="notes">The compile-time distinction is subtle but critical. Parameters are resolved at synthesis time. If you want a width that changes at runtime, you need two separate instances + a mux — not a parameter.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Parameterized Counter</h2>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">module counter #(
+    parameter WIDTH    = 8,          // default value
+    parameter MAX_VAL  = 2**WIDTH-1  // derived from another parameter
+) (
+    input  wire              i_clk, i_reset,
+    output reg  [WIDTH-1:0]  o_count
+);
+    always @(posedge i_clk) begin
+        if      (i_reset)           o_count &lt;= 0;
+        else if (o_count == MAX_VAL) o_count &lt;= 0;
+        else                         o_count &lt;= o_count + 1'b1;
+    end
+endmodule
+
+// Instantiation with override
+counter #(.WIDTH(12)) u_ticker (.i_clk(clk), .i_reset(rst), .o_count(tick));
+//       ^^^^^^^^^^^^  overrides default WIDTH=8 → WIDTH=12</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Three idioms. (1) <strong>Default value</strong> — <code>WIDTH=8</code> means instantiating without override still works. (2) <strong>Derived parameter</strong> — <code>MAX_VAL = 2**WIDTH-1</code> auto-updates. (3) <strong>Named override</strong> — <code>#(.WIDTH(12))</code>. Never use positional overrides; same reasoning as named ports.
+    </div>
+    <aside class="notes">Three idioms every good parameterized module uses. Defaults for ergonomic instantiation, derived parameters for consistency, named overrides for safety.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>localparam</code> and <code>$clog2</code></h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module debounce #(
+    parameter CLKS_STABLE = 500_000   // user-configurable
+) (
+    input  wire i_clk, i_reset, i_noisy,
+    output reg  o_clean
+);
+    // localparam = internal-only constant, derived from parameter
+    // Caller CANNOT override it
+    localparam COUNT_WIDTH = $clog2(CLKS_STABLE);
+
+    reg [COUNT_WIDTH-1:0] r_count;
+    // ... counter logic ...
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> <code>parameter</code> exposes a knob to the user. <code>localparam</code> is for <em>internal</em> derivations — &ldquo;this constant is computed from the parameter, don't touch it.&rdquo; <code>$clog2</code> computes the ceiling of log2 at compile time. Combined: users set CLKS_STABLE, the width auto-sizes, no manual calculation ever.
+    </div>
+    <aside class="notes">parameter vs localparam. parameter = user knob. localparam = derived constant, not overridable. $clog2 auto-sizes. These three work together to give you clean parameterized modules.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Design a Parameterized FIFO</h2>
+    <p style="font-size:0.78em;">Sketch the parameter declaration for a FIFO module. You need <em>depth</em> (how many entries) and <em>width</em> (bits per entry) as user-settable. Internal derived constants: address width, flags width.</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Sketch:</strong>
+        <pre style="font-size:0.85em;"><code class="language-verilog">module fifo #(
+    parameter DEPTH = 16,         // user: how many entries
+    parameter WIDTH = 8           // user: bits per entry
+) (
+    // ... ports ...
+);
+    localparam ADDR_W = $clog2(DEPTH);
+    localparam MAX_CNT = DEPTH;
+
+    reg [WIDTH-1:0]  memory [0:DEPTH-1];
+    reg [ADDR_W-1:0] r_wptr, r_rptr;
+    // ... logic ...
+endmodule</code></pre>
+    </div>
+    <aside class="notes">FIFO is the classic parameterized module. Depth and width as parameters gives you 8-deep×8-wide, 1024-deep×64-wide, etc., all from the same source.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Parameterized Counter</h2>
-    <p style="margin-top:0.5em;">One counter at WIDTH=8, 16, 24 — same code, different instances</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">Show Yosys resource usage at different widths</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Parameterized Counter</aside>
+    <h2 style="color:#FFC904;">One Module, Three Instances, Three Sizes</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day08/ex2_params/
+cat top_with_three_counters.v
+# 4-bit, 8-bit, 16-bit counters
+# from one counter.v file
+make sim
+make stat</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">=== top ===
+  u_cnt_4bit:  4 DFF, 3 CARRY
+  u_cnt_8bit:  8 DFF, 7 CARRY
+  u_cnt_16b:  16 DFF, 15 CARRY
+  Total cells: ~40
+=== 18 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">One <code>counter.v</code> file produced three different hardware blocks, each correctly sized. If you needed a 32-bit version, you'd add one more line — not a new file.</p>
+    </div>
+    <aside class="notes">[Terminal] One module → three different-sized instances. The key insight: this is <em>at synthesis time</em>, not runtime. Three physical counters exist on the chip.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Each Instance Is Its Own Hardware</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog top_with_three_counters.v counter.v; \
+           hierarchy -top top; synth_ice40; stat"
+
+=== counter ===
+   multiple instances — each synthesized separately
+     (instance u_cnt_4bit : WIDTH=4  → 4 DFF + 3 CARRY)
+     (instance u_cnt_8bit : WIDTH=8  → 8 DFF + 7 CARRY)
+     (instance u_cnt_16b  : WIDTH=16 → 16 DFF + 15 CARRY)
+
+=== top ===
+   Number of cells:   40   (sum of all three instances)</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> Parameters make each instance <strong>a distinct circuit</strong>. The synthesis tool instantiates the module separately for each unique parameter set. This is why parameterization is &ldquo;free&rdquo; — no runtime overhead, no multiplexing, just the right-sized hardware everywhere.
+    </div>
+    <aside class="notes">Each instance is an independent synthesis — no shared logic between different-sized counters. That's both the cost (no sharing) and the win (no runtime overhead).</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Convert this hard-coded 8-bit counter to a parameterized counter with WIDTH and MAX_VAL parameters. Use $clog2 where appropriate.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI parameterizes a fixed-width module.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: parameter block, WIDTH in port widths, $clog2 for derived.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses default values + localparam for derived. Weak AI only changes port widths.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Full parameterization = every hardcoded width replaced by parameter arithmetic.</p></div>
+    </div>
+    <aside class="notes">Good AI task. The failure mode is &ldquo;partial parameterization&rdquo; where one hardcoded width remains and breaks the abstraction.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>parameter</code> = configurable externally. <code>localparam</code> = internal/derived.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>$clog2(N)</code> auto-sizes widths — no manual bit counting.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Override with <code>#(.PARAM(value))</code> at instantiation.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Test at multiple configurations — WIDTH=8 might work but WIDTH=1 might not.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Parameters are compile-time constants, resolved per-instance.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Always provide default values. Always use named overrides.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>localparam</code> for derived constants; <code>$clog2</code> for auto-sizing.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;A well-parameterized module becomes a reusable IP block.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Generate Blocks</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Hardware replication at compile time — not a runtime loop!</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Every hardcoded number in your RTL is a parameter waiting to happen.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Generate Blocks</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~9 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Parameters change <em>one</em> instance. What if you need <em>N</em> instances — like 8 identical debouncers for 8 buttons? Video 3 introduces <code>generate</code> blocks: compile-time replication of hardware. One block of code, N physical instances, scaled by a parameter. This is how processor lane counts, cache ways, and bus widths work.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

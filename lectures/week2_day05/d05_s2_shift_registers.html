@@ -1,129 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 5.2: Shift Registers — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 5.2: Shift Registers — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 5 · Counters, Shift Registers &amp; Debouncing
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 5 · Counters, Shifters &amp; Sync</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Shift Registers</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Counter Variations</span>
-        <span class="seg-label active">Shift Registers</span>
-        <span class="seg-label ">Metastability</span>
-        <span class="seg-label ">Debouncing</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 5.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Counter Variations</span><span class="seg-label active">Shift Registers</span><span class="seg-label">Metastability</span><span class="seg-label">Debouncing</span></div>
+    <aside class="notes">Video 2 of 4 for Day 5. Shift registers: how streams of serial bits become parallel words, and vice versa. These are the pattern behind every serial protocol.</aside>
 </section>
 
 <section>
-    <h2>Shift Register Types</h2>
-    <table style="margin-top:0.5em;font-size:0.7em;">
-        <thead><tr><th>Type</th><th>In</th><th>Out</th><th>Use Case</th></tr></thead>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every serial link in a modern SoC — UART, SPI, I2C, JTAG, PCIe serdes, Ethernet PHY — has shift registers at its heart. Even high-speed SerDes (28 Gbps+) runs on parallel-in-serial-out / serial-in-parallel-out architectures internally. Mastering SIPO and PISO means mastering the innards of <em>every</em> serial protocol you'll ever touch.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 11 UART transmitter is PISO. Day 12 UART receiver is SIPO + oversampling. Day 12 SPI shifts both in and out simultaneously. Your capstone uses these patterns. Today's video is the foundation.</p>
+        </div>
+    </div>
+    <aside class="notes">SIPO = serial-in, parallel-out. PISO = parallel-in, serial-out. These are the two directions of every serial protocol. UART TX = PISO. UART RX = SIPO.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> A Shift Register Is a Pipeline of Flops</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Shifting is a software bit operation. <code>data = data &lt;&lt; 1</code> is the same in hardware.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">A shift register is an <strong>N-deep pipeline of flip-flops</strong>, each one's Q feeding the next one's D. On each clock edge, every flop loads its predecessor's value. The &ldquo;shift&rdquo; is physical — bits march through flops, one stage per clock cycle.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> An 8-bit shift register costs 8 flops. Not one shifter unit — 8 independent flops. On iCE40, 8× <code>SB_DFF</code> (~0.6% of the chip). Scales linearly with depth.
+    </div>
+    <aside class="notes">The mental model: a bucket brigade of flops, each one passing its value to the next on every clock edge. Nothing to do with <code>&lt;&lt;</code> the operator — everything to do with D→Q→D→Q feedback across flops.</aside>
+</section>
+
+<section>
+    <h2>The Four Shift Register Types</h2>
+    <table style="font-size:0.72em;margin-top:0.3em;">
+        <thead><tr><th>Type</th><th>Input</th><th>Output</th><th>Use Case</th></tr></thead>
         <tbody>
-            <tr class="fragment"><td><strong>SISO</strong></td><td>Serial</td><td>Serial</td><td>Delay line</td></tr>
-            <tr class="fragment"><td><strong>SIPO</strong></td><td>Serial</td><td>Parallel</td><td>UART RX, SPI RX</td></tr>
-            <tr class="fragment"><td><strong>PISO</strong></td><td>Parallel</td><td>Parallel</td><td>UART TX, SPI TX</td></tr>
-            <tr class="fragment"><td><strong>PIPO</strong></td><td>Parallel</td><td>Parallel</td><td>Pipeline register</td></tr>
+            <tr><td><strong>SIPO</strong></td><td>Serial (1 bit/cycle)</td><td>Parallel (N bits after N cycles)</td><td>UART RX, SPI MISO receive</td></tr>
+            <tr><td><strong>PISO</strong></td><td>Parallel (N bits loaded)</td><td>Serial (1 bit/cycle)</td><td>UART TX, SPI MOSI transmit</td></tr>
+            <tr><td><strong>SISO</strong></td><td>Serial</td><td>Serial (delayed)</td><td>Delay lines, FIFO stages</td></tr>
+            <tr><td><strong>PIPO</strong></td><td>Parallel</td><td>Parallel (shifted)</td><td>Barrel shifters, ALU shifts</td></tr>
         </tbody>
     </table>
-    <div class="fragment callout" style="font-size:0.75em;">
-        SIPO + PISO are the core of UART and SPI — you&rsquo;ll build them in Week 3.
-    </div>
-    <aside class="notes">Four shift register types. SIPO is the receiver core, PISO is the transmitter core. These are the exact building blocks for UART in Week 3.</aside>
+    <div class="callout" style="font-size:0.72em;margin-top:0.3em;"><strong>SIPO</strong> and <strong>PISO</strong> are the workhorses — every serial protocol pairs one of each at the two endpoints.</div>
+    <aside class="notes">Four types, four use cases. SIPO and PISO are the serial protocol endpoints — one on the receive side, one on the transmit side. SISO = delay line, used in filters and pipelining. PIPO = barrel shifter, used inside ALUs.</aside>
 </section>
-<section>
-    <h2>SIPO Shift Register</h2>
-    <pre class="synth"><code class="language-verilog">module shift_reg_sipo #(parameter WIDTH = 8)(
-    input  wire             i_clk, i_reset, i_shift_en,
-    input  wire             i_serial_in,
-    output wire [WIDTH-1:0] o_parallel_out
-);
-    reg [WIDTH-1:0] r_shift;
 
-    always @(posedge i_clk)
-        if (i_reset)        r_shift &lt;= 0;
-        else if (i_shift_en) r_shift &lt;= {r_shift[WIDTH-2:0], i_serial_in};
-
-    assign o_parallel_out = r_shift;
-endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        The concatenation <code>{r_shift[WIDTH-2:0], i_serial_in}</code> shifts left: old bits move up, new bit enters at LSB.
-    </div>
-    <aside class="notes">SIPO: concatenation shifts left. Old bits move toward MSB, new serial bit enters at LSB. This is the UART receiver pattern.</aside>
-</section>
 <section>
-    <h2>PISO Shift Register</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module shift_reg_piso #(parameter WIDTH = 8)(
-    input  wire             i_clk, i_reset,
-    input  wire             i_load, i_shift_en,
-    input  wire [WIDTH-1:0] i_parallel_in,
-    output wire             o_serial_out
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; SIPO (Serial-In, Parallel-Out)</h2>
+    <pre class="synth"><code class="language-verilog">module sipo_8bit (
+    input  wire       i_clk, i_reset, i_serial_in, i_shift_en,
+    output reg  [7:0] o_parallel
 );
-    reg [WIDTH-1:0] r_shift;
-<span class="fragment">
-    always @(posedge i_clk)
-        if (i_reset)         r_shift &lt;= 0;
-        else if (i_load)     r_shift &lt;= i_parallel_in;   // load wins
-        else if (i_shift_en) r_shift &lt;= {1'b0, r_shift[WIDTH-1:1]};
-</span><span class="fragment">
-    assign o_serial_out = r_shift[0];  // LSB first (UART convention)</span>
+    always @(posedge i_clk) begin
+        if (i_reset)        o_parallel &lt;= 8'b0;
+        else if (i_shift_en) o_parallel &lt;= {o_parallel[6:0], i_serial_in};
+        //                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        //                                  shift left, new bit at LSB
+    end
 endmodule</code></pre>
-    <aside class="notes">PISO: load a parallel byte, shift out one bit at a time. Load has priority over shift. LSB comes out first — matching UART convention. This IS the UART transmitter core.</aside>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Concatenation <code>{old_bits_shifted, new_bit}</code> does the shift. Every cycle the enable is high, the oldest bit falls off the MSB and the new serial bit enters at LSB. After 8 enable-active cycles, the parallel output holds the received byte.
+    </div>
+    <aside class="notes">SIPO in one line: shift-and-capture concatenation. The concat drops the top bit and slides in the new one. Clean and synthesizable. This is the exact pattern inside every UART receiver.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; PISO (Parallel-In, Serial-Out)</h2>
+    <pre class="synth"><code class="language-verilog">module piso_8bit (
+    input  wire       i_clk, i_reset, i_load, i_shift_en,
+    input  wire [7:0] i_parallel,
+    output wire       o_serial
+);
+    reg [7:0] r_shift;
+    always @(posedge i_clk) begin
+        if (i_reset)         r_shift &lt;= 8'hFF;       // idle=1 for UART
+        else if (i_load)     r_shift &lt;= i_parallel;   // load parallel byte
+        else if (i_shift_en) r_shift &lt;= {1'b1, r_shift[7:1]};  // shift right
+    end
+    assign o_serial = r_shift[0];                     // LSB first
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Load has priority over shift (you can't load and shift same cycle). <code>r_shift[0]</code> is exposed as the serial output — LSB first, matching UART convention. Shift-in bit is <code>1'b1</code> (idle state) so after N shifts, the register returns to idle.
+    </div>
+    <aside class="notes">PISO: load the byte, then shift it out LSB-first. UART is LSB-first transmission. The fill bit is 1 (UART idle state), so when you stop shifting you're automatically in the idle state. Elegant.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Trace the SIPO</h2>
+    <p style="font-size:0.78em;">Starting <code>o_parallel = 8'b00000000</code>. Serial input stream: <code>1, 0, 1, 1, 0, 0, 1, 0</code> (one bit per cycle, enable=1 every cycle).</p>
+    <p style="font-size:0.78em;">What is <code>o_parallel</code> after 8 cycles?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>8'b10110010 = 8'hB2</code>.
+        The first serial bit (<code>1</code>) ends up as MSB after 8 shifts. Last received bit (<code>0</code>) is LSB. Reading the result MSB-first gives the input stream in transmission order.
+    </div>
+    <aside class="notes">Classic SIPO trace. First bit in becomes MSB; last bit in becomes LSB. That's why serial protocols care about bit order — depending on whether the LSB or MSB is transmitted first, you read the assembled word differently.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Shift Register in GTKWave</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day05/ex2_sipo/
+make sim
+make wave
+make stat   # 8× SB_DFF</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Cycle 1: in=1, par=00000001
+Cycle 2: in=0, par=00000010
+Cycle 3: in=1, par=00000101
+...
+Cycle 8: par=10110010
+PASS: assembled 0xB2</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE — THE SIGNATURE SHAPE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Add all 8 bits of <code>o_parallel</code> separately (not as a bus). Watch them &ldquo;walk&rdquo; to the left each clock edge — new bits enter at the right (LSB), old bits climb toward the MSB and fall off. That marching pattern is what a shift register <em>looks like</em>.</p>
+    </div>
+    <aside class="notes">[GTKWave] Expand the 8-bit bus into individual bits. Watch them march. This is what a shift register looks like — and once you see it, you'll never forget it. Highly visual pattern.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog sipo_8bit.v; synth_ice40 -top sipo_8bit; stat" -q
+
+=== sipo_8bit ===
+   Number of wires:                 14
+   Number of cells:                  8
+     SB_CARRY                        0
+     SB_DFFESR                       8    ← 8 D-flops with enable + sync reset
+     SB_LUT4                         0    ← zero combinational logic!</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>Zero LUTs.</strong> The shift is pure wire routing — <code>o_parallel[6:0]</code> feeds back into bits <code>[7:1]</code>, <code>i_serial_in</code> feeds bit <code>[0]</code>. The iCE40 DFFESR has enable and sync reset built in, so even the shift enable logic fits inside the flops. Peak efficiency for this pattern.
+    </div>
+    <aside class="notes">Perfect match between the code pattern and the FPGA primitive. Zero LUTs, all flops. This is what &ldquo;write idiomatic RTL&rdquo; pays off as — zero gates consumed on what amounts to wire relabeling.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a parameterized N-bit SIPO shift register that can also shift right, with a direction select input. Predict the LUT count on iCE40.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Bidirectional parameterized SIPO.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: N flops, ~N LUTs for direction mux (1 LUT per bit selecting neighbor).</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Good AI handles parameterization. Watch for wrong concatenation direction.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Bidirectional adds a per-bit mux → doubles LUT count compared to unidirectional.</p></div>
+    </div>
+    <aside class="notes">Direction select adds a per-bit 2:1 mux. Each bit chooses between &ldquo;neighbor on left&rdquo; and &ldquo;neighbor on right.&rdquo; Concept check: AI that gets the concatenation direction wrong is pattern-matching, not reasoning.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Shift registers move data one bit per clock via concatenation.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;SIPO = serial receiver (UART RX). PISO = serial transmitter (UART TX).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Load has priority over shift — <code>if/else</code> chain enforces this.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;These are the exact building blocks for Week 3 serial protocols.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Shift registers are pipelines of flops, one per bit.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;SIPO = serial receive. PISO = serial transmit. Every protocol pairs them.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Concatenation <code>{old[N-2:0], new}</code> = shift left by one.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;N-bit shift register = N flops, zero LUTs on iCE40.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Metastability &amp; Synchronizers</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">When the physical world meets your clock — and how to handle it safely.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Serial protocols are SIPO at one end and PISO at the other. Build both well.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Metastability &amp; Synchronizers</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Serial data arrives from outside your chip — from a keyboard, sensor, or another SoC — with no relationship to your clock. Video 3 covers <strong>metastability</strong>: what happens when asynchronous signals hit a flip-flop at the wrong moment, and the 2-flop synchronizer pattern that fixes it. This is the most-ignored, highest-stakes concept in synchronous design.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

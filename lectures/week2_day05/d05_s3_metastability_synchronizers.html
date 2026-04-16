@@ -1,111 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 5.3: Metastability &amp; Synchronizers — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 5.3: Metastability &amp; Synchronizers — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 5 · Counters, Shift Registers &amp; Debouncing
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 5 · Counters, Shifters &amp; Sync</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Metastability &amp; Synchronizers</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Counter Variations</span>
-        <span class="seg-label ">Shift Registers</span>
-        <span class="seg-label active">Metastability</span>
-        <span class="seg-label ">Debouncing</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 5.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Counter Variations</span><span class="seg-label">Shift Registers</span><span class="seg-label active">Metastability</span><span class="seg-label">Debouncing</span></div>
+    <aside class="notes">Video 3 of 4. The most-ignored, highest-stakes concept in synchronous design. By the end of this video you'll know why every professional design has two flops guarding every asynchronous input.</aside>
 </section>
 
 <section>
-    <h2>The Metastability Problem</h2>
-    <p style="font-size:0.8em;">Every flip-flop has <strong>setup time</strong> and <strong>hold time</strong>. Violate either and the output enters a <strong>metastable state</strong> — neither 0 nor 1.</p>
-    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-Normal:       ____|‾‾‾‾     Clean transition
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Mars Pathfinder. The 1986 Therac-25. Multiple Xilinx errata. Intel's Pentium FDIV bug had asynchronous cousins. <strong>Real silicon has failed in the real world from inadequate synchronization.</strong> Every FPGA/ASIC design guide from Intel, Xilinx, and Lattice devotes a chapter to this. Every code review at a senior RTL shop checks for missing synchronizers on asynchronous inputs.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 5 button debouncer needs synchronizers (next video). Day 11 UART RX needs synchronizers on the incoming data line. Day 12 SPI CS needs one. Every external signal into every module for the rest of the course needs this pattern.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>Career tag:</strong> &ldquo;Explain metastability&rdquo; is the most-asked FPGA/ASIC interview question. An engineer who can't answer it doesn't get the job.
+    </div>
+    <aside class="notes">Metastability is THE concept that separates hobbyists from professionals. A hobbyist's Arduino project &ldquo;mostly works.&rdquo; A professional's FPGA design works for 10 years because every external signal is synchronized.</aside>
+</section>
 
-Metastable:   ____/‾‾‾‾     Output hovers at ~Vdd/2
-                   ↑
-             undefined — may resolve to 0 or 1
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Real Silicon Doesn't Care About Your Simulator</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Flip-flops output 0 or 1 on every clock edge. My testbench always shows clean transitions. Asynchronous inputs work fine in simulation.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Real flip-flops have <strong>setup</strong> and <strong>hold</strong> time windows around the clock edge. If an input changes <em>during</em> that window, the flop's output goes into a <strong>metastable state</strong> — neither 0 nor 1 — and may oscillate, decay slowly, or resolve randomly. <em>Simulators don't model this.</em> Your waveform will be clean while your real chip glitches once a week.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Metastability causes <em>physical failures</em> that simulation never catches. Silicon datasheets quote MTBF (mean time between failures) in the 10<sup>−9</sup> to 10<sup>−12</sup> range for unsynchronized asynchronous inputs. That's ~1 failure per week at 25 MHz without mitigation.
+    </div>
+    <aside class="notes">This is THE reframe of the course. Simulation presents an idealized world where flops snap to 0 or 1 instantly. Real silicon has tiny violation windows, and asynchronous inputs <em>will</em> hit them occasionally. The fix is the 2-flop synchronizer.</aside>
+</section>
+
+<section>
+    <h2>The Setup/Hold Window</h2>
+    <pre style="font-family:monospace;font-size:0.58em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
+           setup         hold
+            ←──►         ←──►
+  clk  ─────────┐       ┌─────────
+                └───────┘
+  D    ─────────∎─(must be stable in windows)─∎─────
+                ∎ METASTABLE ZONE if D changes here
     </pre>
-    <div class="fragment callout-danger" style="font-size:0.75em;">
-        Metastability can <strong>propagate</strong>, causing different flip-flops to see different values for the same signal.
+    <p style="font-size:0.75em;">If <code>D</code> changes <strong>during</strong> the setup/hold window, the flop's output becomes <strong>metastable</strong> — stuck between 0 and 1 — until it resolves (probabilistically).</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>iCE40 specs:</strong> t<sub>setup</sub> ≈ 0.4 ns, t<sub>hold</sub> ≈ 0.3 ns. Miss that 0.7 ns window on a 25 MHz asynchronous input: you'll hit it eventually.
     </div>
-    <aside class="notes">Setup/hold violations cause metastability — output hovers undefined. It can propagate, causing cascading failures. A real hardware failure mode.</aside>
+    <aside class="notes">Setup = how long D must be stable <em>before</em> the edge. Hold = how long D must stay stable <em>after</em> the edge. Total violation window on iCE40: 0.7 ns per clock. 25M edges per second × 0.7 ns = ~1.75% of time is a violation window. Every async signal will hit it.</aside>
 </section>
+
 <section>
-    <h2>The 2-FF Synchronizer</h2>
-    <div style="margin-top:0.3em;">
-        <img src="diagrams/d05_synchronizer.svg" alt="2-FF synchronizer schematic" style="width:100%;max-width:650px;display:block;margin:0 auto;">
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The 2-FF Synchronizer</h2>
+    <pre class="synth"><code class="language-verilog">module sync_2ff (
+    input  wire i_clk,
+    input  wire i_async,     // from external world, any timing
+    output wire o_synced     // clean, synchronous to i_clk
+);
+    reg r_meta, r_stable;
+    always @(posedge i_clk) begin
+        r_meta   &lt;= i_async;   // first flop: may go metastable
+        r_stable &lt;= r_meta;     // second flop: has a full clock period to resolve
+    end
+    assign o_synced = r_stable;
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> The first flop may go metastable — but metastability <em>resolves</em> exponentially (probabilistic decay). Given a full clock period (~40 ns on iCE40) to settle, the probability it's still metastable at the <em>second</em> flop's capture edge is astronomically small. At 25 MHz with iCE40's τ, MTBF is measured in <strong>centuries</strong>.
     </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        First FF may go metastable — but has a full clock period to resolve. Probability of the second FF also being metastable is <strong>astronomically low</strong>.
-        Cost: <strong>2 clock cycles of latency</strong>.
-    </div>
-    <aside class="notes">Two flip-flops in series. First may go metastable but has a full clock period to resolve before the second samples it. MTBF is centuries at 25 MHz. Cost: 2 cycles latency.</aside>
+    <aside class="notes">This is THE pattern. Two flops. The first one absorbs metastability; the second one gets a clean stable input. MTBF formula: exp(T_resolve / tau) × F_clock × F_async. For iCE40 at 25 MHz with T = 40 ns, MTBF is ~10^18 years. Safe enough.</aside>
 </section>
+
 <section>
-    <h2>When To Synchronize</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><span style="color:#C62828;">Must sync:</span> Button/switch inputs, external serial data, signals from other clock domains</p>
-        <p class="fragment"><span style="color:#2E7D32;">Don&rsquo;t sync:</span> Signals already in your clock domain (outputs of registers driven by the same clock)</p>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; When To Synchronize</h2>
+    <p style="font-size:0.78em;">Does this input need a synchronizer?</p>
+    <ol style="font-size:0.72em;">
+        <li>A push button wired to an FPGA pin</li>
+        <li>The output of a Day 4 counter feeding a comparator</li>
+        <li>UART RX line from a USB-serial chip</li>
+        <li>A register's output feeding an ALU</li>
+        <li>A signal from another FPGA running on a different crystal</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        <strong>(1) YES</strong> — human input, no clock relationship.
+        <strong>(2) NO</strong> — already synchronous to your clock.
+        <strong>(3) YES</strong> — external chip, different clock domain.
+        <strong>(4) NO</strong> — internal signal.
+        <strong>(5) YES</strong> — different crystal = different clock domain = async by definition.
     </div>
-    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:1em;">
-        Every signal entering your clock domain from the outside world must pass through a 2-FF synchronizer. No exceptions.
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>The rule is absolute:</strong> Every input that crosses from one clock domain into another (including &ldquo;from outside the chip&rdquo;) needs a synchronizer. No exceptions.
     </div>
-    <aside class="notes">Every external signal needs synchronization: buttons, serial data, other clock domains. Internal signals don't. This is an absolute rule.</aside>
+    <aside class="notes">Memorize the rule: if the signal and the clock don't share a common origin, synchronize. Most external inputs (buttons, serial lines) need this. Internal signals — generated by your clock — never need this.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Spot the Bug</h2>
+    <pre class="mistake"><code class="language-verilog">module reader (
+    input wire clk, async_ready, async_data,
+    output reg captured
+);
+    always @(posedge clk)
+        if (async_ready) captured &lt;= async_data;
+endmodule</code></pre>
+    <p style="font-size:0.78em;">Find the metastability bugs.</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <strong>Both</strong> inputs (<code>async_ready</code> and <code>async_data</code>) are asynchronous and feed flops directly. Need synchronizers on each. Worse: using <code>async_ready</code> as both a clock-enable and a mux select creates a risk of capturing <code>async_data</code> mid-transition even if it <em>were</em> synchronized. <strong>Fix:</strong> synchronize both signals through 2-FF synchronizers first, <em>then</em> use them.
+    </div>
+    <aside class="notes">Every external signal needs its own synchronizer. Don't share synchronizers across related signals (unless you're doing gray coding on a multi-bit bus — advanced topic). This is a common code-review bug.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Synchronizer on an Asynchronous Button</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day05/ex3_sync_2ff/
+make sim
+make wave
+make stat</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: synced follows async
+      with 2-cycle latency
+PASS: glitches on async do
+      not propagate
+=== 10 passed, 0 failed ===
+
+  SB_DFF: 2</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>i_async · r_meta · r_stable</code>. Note: <code>r_meta</code> <em>may</em> glitch in simulation (if the TB drives pulses shorter than the clock period); <code>r_stable</code> is always clean. Latency is 2 clock cycles. That's the cost of safety.</p>
+    </div>
+    <aside class="notes">The testbench intentionally drives narrow pulses to show the first flop capturing mid-transition. The second flop always presents a clean value. 2 cycles of latency is the universal cost.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog sync_2ff.v; synth_ice40 -top sync_2ff; stat" -q
+
+=== sync_2ff ===
+   Number of wires:                  4
+   Number of cells:                  2
+     SB_DFF                          2    ← exactly 2 flops, no frills
+     SB_LUT4                         0</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>Cost of safety:</strong> 2 flops per synchronized signal. On iCE40 HX1K: 0.16% of the chip per synchronizer. You can afford to synchronize every external signal — there is no reason not to.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Advanced note:</strong> Some FPGA flows add ASYNC_REG or similar synthesis attributes to ensure these two flops are kept close in silicon. For iCE40, Yosys handles placement automatically. For Xilinx, you'd add <code>(* ASYNC_REG="TRUE" *)</code> attributes.
+    </div>
+    <aside class="notes">Two flops. 0.16% of the chip. Cheap insurance against metastability failures that would otherwise happen randomly over the lifetime of your product. There is literally no excuse to not synchronize external inputs.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;I'm reading a button press directly into my Verilog state machine. Do I need a synchronizer? Calculate MTBF with and without one for a 25 MHz clock.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI about sync + MTBF.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: without sync, MTBF ~hours-days. With 2FF sync, MTBF ~centuries.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI shows the MTBF formula. Weak AI handwaves &ldquo;it's fine&rdquo; — dangerous advice.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Any AI that says &ldquo;buttons don't need synchronizers&rdquo; is wrong. Don't trust that model for RTL work.</p></div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.5em;">
+        <strong>MTBF formula:</strong> MTBF = exp(T<sub>resolve</sub> / τ) / (T<sub>window</sub> · F<sub>clock</sub> · F<sub>async</sub>). For iCE40 (τ≈200 ps), T=40 ns, F_clk=25 MHz, F_async=10 Hz button: MTBF ≈ 10<sup>15</sup> years with sync, ~1 day without.
+    </div>
+    <aside class="notes">Critical CtM. &ldquo;It works in sim&rdquo; is not an answer. &ldquo;MTBF = X years with 2FF sync&rdquo; is an answer. The quantitative framing separates engineering from superstition.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Metastability: setup/hold violation → undefined output.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;2-FF synchronizer: standard mitigation. Cost = 2 cycles latency.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Synchronize <strong>every</strong> signal entering your clock domain.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;MTBF at 25 MHz with 2-FF sync is measured in <strong>centuries</strong>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Asynchronous signals + setup/hold violations = metastability.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;The 2-FF synchronizer gives metastability time to resolve.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Every external input and clock-domain crossing needs one.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Cost: 2 flops, 2 cycles latency. Cheap insurance.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Button Debouncing</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Mechanical switches bounce — here's how to clean them up.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Every external input gets 2 flops. Every time. No exceptions.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Button Debouncing</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Synchronization handles metastability — but buttons have a <em>second</em> problem: they <strong>bounce</strong> mechanically for up to 20 ms. At 25 MHz that's 500,000 false edges per press. Video 4 combines the synchronizer you just saw with a counter-based debouncer to build the complete input pipeline you'll use everywhere.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

@@ -1,118 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 7.4: FSM Design Methodology — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 7.4: FSM Design Methodology — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 7 · Finite State Machines
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 7 · Finite State Machines</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">FSM Design Methodology</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">FSM Theory</span>
-        <span class="seg-label ">3-Block Template</span>
-        <span class="seg-label ">State Encoding</span>
-        <span class="seg-label active">Design Method</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 7.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">FSM Theory</span><span class="seg-label">3-Block Template</span><span class="seg-label">State Encoding</span><span class="seg-label active">Methodology</span></div>
+    <aside class="notes">Video 4 of 4. The process for turning a specification into a working FSM. Put into practice with a pattern detector.</aside>
 </section>
 
 <section>
-    <h2>The Methodology</h2>
-    <div style="font-size:0.85em;">
-        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">1.</span> <strong>Identify states</strong> — what distinct modes does the system have?</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">2.</span> <strong>Define transitions</strong> — what input conditions cause state changes?</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">3.</span> <strong>Assign outputs</strong> — what does each state produce?</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">4.</span> <strong>Draw the state diagram</strong> — on paper, always!</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">5.</span> <strong>Code it</strong> — translate diagram to 3-block template</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-weight:700;">6.</span> <strong>Test it</strong> — verify every transition in simulation</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every serial-protocol controller is a pattern detector for the protocol's start sequence. CAN bus, Ethernet MAC, PCIe link training, USB SOF detection — all start-of-frame detection is a pattern-matching FSM. Packet inspection hardware in network switches runs dozens of pattern-detector FSMs in parallel.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Day 11 UART RX detects the start bit using this pattern. Your Day 12 SPI detects chip select. Your capstone FSM will almost certainly be a pattern detector of some kind. Today's methodology is the template.</p>
+        </div>
     </div>
-    <aside class="notes">The systematic approach: identify states, define transitions, assign outputs, draw the diagram ON PAPER, code it using the template, test every transition.</aside>
+    <aside class="notes">Pattern detectors are the canonical FSM shape. Almost every protocol starts with one. Good choice for the capstone example because the pattern repeats across the course.</aside>
 </section>
+
 <section>
-    <h2>FSM Coding Checklist</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 1: Only <code>r_state &lt;= r_next_state</code> (no logic!)</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 2: Default <code>r_next_state = r_state</code> (first line)</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 2: <code>default</code> case → safe state</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 3: Default outputs (first lines)</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> Block 3: <code>default</code> case → safe outputs</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> <code>=</code> in Blocks 2 &amp; 3, <code>&lt;=</code> in Block 1</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> Testbench covers every transition + reset</p>
+    <h2><span style="color:#C0392B;">⚠️</span> Don't Start in the Editor</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Workflow</h3>
+            <p style="font-size:0.72em;">&ldquo;I know the problem. I'll start writing Verilog, figure out states as I go, debug in simulation. The editor IS my thinking environment.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Workflow</h3>
+            <p style="font-size:0.72em;">Draw the state diagram <strong>on paper first</strong>. Enumerate states, transitions, outputs. Validate by walking through test inputs <em>with a pencil</em>. Only then open the editor, where you apply the 3-block template to your already-correct diagram. Debugging a diagram is seconds; debugging Verilog is hours.</p>
+        </div>
     </div>
-    <aside class="notes">The FSM checklist. Go through this every time you write an FSM. Block 1: trivial. Block 2: default first, default case. Block 3: output defaults, default case. Correct assignment types. Test everything.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Every senior engineer in the industry owns a whiteboard. Every FSM starts there. The editor is where the <em>already-correct</em> design becomes code.
+    </div>
+    <aside class="notes">Paper/whiteboard first. The FSM is a design artifact that should exist before any Verilog is typed. Once you've caught your logic bugs on paper, typing the 3-block template is mechanical.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Six-Step Methodology</h2>
+    <div style="font-size:0.78em;">
+        <ol>
+            <li><strong>Identify inputs, outputs, and the sequential behavior</strong> &mdash; what does it do over time?</li>
+            <li><strong>Enumerate states</strong> &mdash; one per distinct behavior mode.</li>
+            <li><strong>Draw the state diagram on paper</strong> &mdash; transitions, conditions, outputs.</li>
+            <li><strong>Walk through test cases with a pencil</strong> &mdash; does it handle the expected inputs?</li>
+            <li><strong>Apply the 3-block template</strong> &mdash; now you're just transcribing.</li>
+            <li><strong>Write self-checking testbench</strong> &mdash; test every transition, including the error paths.</li>
+        </ol>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.5em;">
+        <strong>My thinking:</strong> Steps 1–4 happen on paper. Step 5 is mechanical. Step 6 uses last week's testbench skills to prove correctness. <strong>Time ratio: 60% design, 30% code, 10% test</strong> — beginners invert this and regret it.
+    </div>
+    <aside class="notes">Six steps. First four are design, last two are implementation and verification. Beginners spend 90% of time on code, 10% design — and always end up debugging. Reverse the ratio.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Pattern Detector for &ldquo;1011&rdquo;</h2>
+    <p style="font-size:0.78em;">Detect when the input bit stream contains <code>1011</code>. Assert <code>o_detected</code> for one cycle when the last 4 bits form the pattern. Overlapping patterns allowed.</p>
+    <pre style="font-family:monospace;font-size:0.62em;background:none;border:none;color:#333;">
+  input:   0 1 0 1 1 0 1 1 0 1 1
+  output:  0 0 0 0 1 0 0 1 0 0 1
+                   ↑       ↑     ↑
+                 match   match  match (overlapping)</pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>States (enumerate distinct histories):</strong>
+        <ul style="font-size:0.92em;">
+            <li><code>S0</code>: haven't matched anything yet</li>
+            <li><code>S1</code>: last bit was <code>1</code> (matched first bit of pattern)</li>
+            <li><code>S10</code>: last two bits were <code>10</code></li>
+            <li><code>S101</code>: last three bits were <code>101</code> — one more <code>1</code> completes the pattern</li>
+        </ul>
+    </div>
+    <aside class="notes">Walk through: each state represents &ldquo;what have we matched so far?&rdquo; S0 = nothing. S1 = first char. S10 = first two. S101 = first three. From S101, getting &lsquo;1&rsquo; is a match, &lsquo;0&rsquo; returns to... well, let's see.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> State Diagram (Completed)</h2>
+    <pre style="font-family:monospace;font-size:0.62em;background:none;border:none;color:#333;">
+         ┌─── 0 ───┐
+         ↓         │
+    ┌─ S0 ────── 1 ──→ S1
+    │    ↑              │
+    │    │              │
+    0    0              0
+    │    │              ↓
+    │    └────────── S10
+    │                   │
+    │                   1
+    │                   ↓
+    └── 0 ──── S101 ──1──→ S101 (with o_detected=1)
+                                 (and can immediately match
+                                  again in overlapping case)
+    </pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Key insight:</strong> From S101, a <code>1</code> completes the pattern AND we're now seeing <code>...11</code>, which could be the start of the next overlapping match. So from S101 + input=1, we go to <strong>S1</strong> (not S0), because we just saw <code>1</code>. This is what makes pattern detectors subtle.
+    </div>
+    <aside class="notes">The overlapping case is where pattern detectors break. From S101 + '1', you've matched — but you've also started the next potential match with the '1' you just saw. Go to S1, not S0. This nuance is why we draw the diagram before coding.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Walk the FSM</h2>
+    <p style="font-size:0.78em;">Input stream: <code>1 0 1 1 1 0 1 1</code>. What's the state trajectory and where does <code>o_detected</code> pulse?</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Trace (start in S0):</strong>
+        <pre style="font-size:0.85em;"><code>Input:  1    0    1    1    1    0    1    1
+State: S0 → S1 → S10→ S101→  ✓   → S10→ S101→  ✓
+                            S1                  S1
+                            (overlapping match!)
+o_det:  0    0    0    0    1    0    0    1</code></pre>
+    </div>
+    <aside class="notes">Two matches in this short input, including one overlap. Students commonly get this wrong on the second pass — they forget the S101 → S1 overlap transition. Walking with a pencil catches it.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Pattern Detector FSM</h2>
-    <p style="margin-top:0.5em;">Draw state diagram on paper → translate to Verilog → simulate</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">Full walkthrough: paper → code → testbench → verify all transitions</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Pattern Detector FSM</aside>
+    <h2 style="color:#FFC904;">Pattern Detector: From Diagram to Working FSM</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~6 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day07/ex4_pattern/
+cat pattern_1011.v    # 3-block from diagram
+make sim              # covers overlap cases
+make wave
+make stat</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: detects 1011
+PASS: ignores 1010
+PASS: detects overlapping 10110111
+PASS: reset → S0
+=== 16 passed, 0 failed ===
+
+  SB_DFF:  2
+  SB_LUT4: 4</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>i_bit · r_state · o_detected</code>. Watch state traverse S0→S1→S10→S101. Detection pulses are 1-cycle wide. The overlapping pattern exercises the S101→S1 transition explicitly.</p>
+    </div>
+    <aside class="notes">[Editor + terminal] Walk through: show the state diagram on screen, then the Verilog 3-block template, then run. Point out: &ldquo;the diagram and the code look identical — because the methodology made the code mechanical.&rdquo;</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2>FSM Coding Checklist</h2>
+    <ul style="font-size:0.78em;">
+        <li class="fragment">☐ State diagram drawn on paper before opening the editor</li>
+        <li class="fragment">☐ Hand-walk at least 2 test cases, including edge cases</li>
+        <li class="fragment">☐ 3 separate <code>always</code> blocks (state reg, next-state, output)</li>
+        <li class="fragment">☐ Block 1 is trivial (just DFF with reset)</li>
+        <li class="fragment">☐ Block 2: default assignment first (<code>r_next = r_state;</code>), <code>default:</code> case at end</li>
+        <li class="fragment">☐ Block 3: default output assignments for <em>every</em> output, <code>default:</code> case at end</li>
+        <li class="fragment">☐ States use <code>localparam</code>, never magic numbers</li>
+        <li class="fragment">☐ Nonblocking <code>&lt;=</code> in sequential (Block 1); blocking <code>=</code> in combinational (Blocks 2, 3)</li>
+        <li class="fragment">☐ Self-checking testbench covers <em>every transition</em>, including error paths</li>
+    </ul>
+    <aside class="notes">This checklist is the quality bar. Every box checked = passing grade FSM. Every box unchecked = bug waiting to happen.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Design an FSM that detects the pattern &lsquo;110101&rsquo; in a serial bit stream. Include the state diagram description, 3-block Verilog, and a self-checking testbench with overlapping test cases.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a complete FSM package.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 6 states + idle, 3-block Verilog, overlapping sequence tests.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI handles overlaps. Weak AI only handles non-overlapping cases — subtle bug.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Always test the overlap case. AI-written FSMs commonly miss it.</p></div>
+    </div>
+    <aside class="notes">Overlap handling is the common AI failure mode. Ask for it explicitly in testbench cases. If the AI's FSM transitions to S0 on match (instead of the appropriate overlap state), bug.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Draw the state diagram <em>before</em> writing code.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Walk test cases with a pencil. Catch bugs in diagrams, not in Verilog.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Pattern detector overlaps: new match can begin from a partial match.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Test <em>every transition</em>, including the edge cases.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Paper first. Template second. Testbench third. No shortcuts.</div>
+</section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> What are the three blocks in the 3-always-block style?</p>
-        <div class="fragment quiz-answer">1. State Register (sequential, just a FF). 2. Next-State Logic (combinational). 3. Output Logic (combinational — Moore: f(state) only).</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> What is the critical first line in Block 2 and why?</p>
-        <div class="fragment quiz-answer"><code>r_next_state = r_state;</code> — prevents latch inference and means "stay in current state by default."</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> Moore vs. Mealy — which do we default to and why?</p>
-        <div class="fragment quiz-answer">Moore — outputs depend only on state. Safer, easier to debug, cleaner timing. Mealy only for same-cycle reaction.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> Name three common FSM coding mistakes.</p>
-        <div class="fragment quiz-answer">1. No default in Block 2 → latch. 2. No output defaults in Block 3 → latches. 3. No default case → stuck in illegal state. 4. Using = in Block 1 (should be &lt;=).</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 7 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> Why is the state diagram drawn before the Verilog?</p>
+        <div class="fragment quiz-answer">Catching logic bugs on paper takes seconds; catching them in simulation takes hours. The diagram is the design; the Verilog is the transcription.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What transition happens when a pattern detector is in its near-final state and receives an input that completes an overlapping prefix?</p>
+        <div class="fragment quiz-answer">Transition to the state representing that overlapping prefix — not back to start. Overlap handling is the main place pattern FSMs go wrong.</div>
     </div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> For a 6-state FSM on iCE40, which encoding is likely more compact?</p>
+        <div class="fragment quiz-answer">Binary (3 flops vs 6 flops). But measure — at this state count the crossover is near. Run both through <code>make stat</code>.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> Name three cases your testbench must cover for a pattern detector.</p>
+        <div class="fragment quiz-answer">(1) Exact pattern match. (2) Near-miss (last bit wrong). (3) Overlapping match. Professionals also add: reset during match, prefix that looks like the start of the pattern, back-to-back matches.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 7</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Modules Within Modules</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 8 · Hierarchy, Parameters, Generate</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've built modules up to a few hundred lines. Real designs have <em>thousands</em> of lines, across dozens of files, arranged hierarchically. Day 8 teaches the three Verilog features that make this scale: <strong>module hierarchy</strong>, <strong>parameters</strong> for configurable IP, and <strong>generate blocks</strong> for array-style replication. By end of Day 8 your growing module library will become a reusable toolbox.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

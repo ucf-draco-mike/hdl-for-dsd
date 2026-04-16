@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 7.1: FSM Theory &amp; Architecture — Accelerated HDL for Digital System Design</title>
+    <title>Day 7.1: FSM Theory &amp; Architecture [ENHANCED] — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,6 +14,7 @@
 <div class="reveal">
 <div class="slides">
 
+<!-- ==================== TITLE SLIDE (unchanged) ==================== -->
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;">
         <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
@@ -21,23 +22,105 @@
         </span>
     </div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">FSM Theory &amp; Architecture</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~14 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb">
         <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
+        <div class="seg-dot"></div>
     </div>
     <div class="seg-breadcrumb-labels">
         <span class="seg-label active">FSM Theory</span>
-        <span class="seg-label ">3-Block Template</span>
-        <span class="seg-label ">State Encoding</span>
-        <span class="seg-label ">Design Method</span>
+        <span class="seg-label">3-Block Template</span>
+        <span class="seg-label">State Encoding</span>
+        <span class="seg-label">Design Method</span>
     </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 7.</aside>
+    <aside class="notes">
+        Welcome to Video 1 of 4 for Day 7 — Finite State Machines.
+        This is arguably the most important concept in the second half of this course.
+        Every protocol controller, every memory arbiter, every bus interface you will
+        design for the rest of your career is fundamentally an FSM.
+        This video is about 14 minutes. Keep a text editor open — we'll build an FSM together.
+    </aside>
 </section>
 
+<!-- ==================== CONTEXTUALIZE (NEW) ==================== -->
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
+        <div class="col">
+            <h3 style="color: #2E86AB; font-size: 1em;">In Industry</h3>
+            <p style="font-size: 0.75em;">
+                UART / SPI / I²C controllers. PCIe link trainers. Memory arbiters.
+                Cache coherence protocols. The instruction issue logic of every CPU
+                you own. When a RTL engineer says &ldquo;control path,&rdquo; they mean the FSM layer.
+            </p>
+        </div>
+        <div class="col">
+            <h3 style="color: #27AE60; font-size: 1em;">In This Course</h3>
+            <p style="font-size: 0.75em;">
+                Traffic light (today's demo) · Pattern detector (Video 4) ·
+                UART TX (Day 11) · UART RX (Day 12) · Memory test engine (Day 9) ·
+                Your <strong>Barcelona capstone</strong> traffic controller.
+                Get comfortable here &rarr; the rest of the course unlocks.
+            </p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size: 0.75em; margin-top: 0.5em;">
+        <strong>Career tag:</strong> &ldquo;FSM design&rdquo; and &ldquo;control-path verification&rdquo; appear
+        in ~90% of entry-level digital-design job postings. The FPGA/ASIC hiring bar
+        assumes you can write a clean 3-block FSM on a whiteboard in under 5 minutes.
+    </div>
+    <aside class="notes">
+        Before we touch any code, I want to ground why this matters.
+        [Point to industry column] Every serial protocol. Every memory controller.
+        Every bus interface — the control logic is an FSM. This is not a toy pattern.
+        [Point to course column] In the next four weeks alone, you'll build at least six.
+        [PAUSE] If you nail FSMs in this video, the rest of the course gets dramatically easier.
+        If you don't, you'll be fighting your own code for the next three weeks. Stay with me.
+    </aside>
+</section>
+
+<!-- ==================== REFRAME (NEW) ==================== -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> If You're Thinking Like a Programmer&hellip;</h2>
+    <div class="two-col" style="margin-top: 0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color: #C62828; font-size: 1em;">❌ Wrong Model</h3>
+            <p style="font-size: 0.7em;">
+                &ldquo;An FSM is just a big <code>switch</code> statement inside a
+                <code>while(true)</code> loop. I'll cram it all into one <code>always</code>
+                block with nested <code>if</code>s and it'll work.&rdquo;
+            </p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color: #2E7D32; font-size: 1em;">✓ Right Model</h3>
+            <p style="font-size: 0.7em;">
+                An FSM is <strong>three pieces of physical hardware</strong>:
+                a state register (flip-flops), combinational next-state logic,
+                combinational output logic. All three exist simultaneously.
+                The case statement <em>describes</em> — it does not <em>execute</em>.
+            </p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size: 0.78em; margin-top: 0.5em;">
+        <strong>Why this matters:</strong> The &ldquo;one big <code>always</code> block&rdquo;
+        instinct is the <strong>#1 source</strong> of inferred latches, race conditions,
+        and sim/synthesis mismatches in student FSMs. We'll see a real example in today's demo.
+    </div>
+    <aside class="notes">
+        [Read wrong model out loud] That instinct will produce code that looks reasonable,
+        simulates mostly fine, and then misbehaves in synthesis in ways that take hours to debug.
+        [Read right model out loud] Three physical pieces. They exist simultaneously.
+        The case statement is describing wires and gates, not sequential steps.
+        [PAUSE] If you remember nothing else from this lecture: FSM = three hardware pieces.
+        In Video 2 we'll build the template that enforces this separation — not because
+        it's stylistically nicer, but because it keeps you from lying to the synthesizer.
+    </aside>
+</section>
+
+<!-- ==================== DEFINITION (kept, tightened) ==================== -->
 <section>
     <h2>What Is a Finite State Machine?</h2>
     <p style="font-size:0.85em;">An FSM is a sequential circuit defined by:</p>
@@ -46,52 +129,360 @@
         <p class="fragment"><strong>Transitions</strong> governed by input conditions</p>
         <p class="fragment"><strong>Outputs</strong> that depend on state (and possibly inputs)</p>
     </div>
+    <p class="fragment" style="font-size: 0.78em; margin-top: 0.5em; font-style: italic;">
+        Formally: <code>M = (S, S&#8320;, &Sigma;, &delta;, &Lambda;)</code> &mdash;
+        states, start state, input alphabet, transition function, output function.
+    </p>
     <div class="fragment callout" style="font-size:0.75em;">
-        Every digital controller is an FSM: traffic lights, protocol engines, vending machines, CPU control units. This is arguably the most important design pattern in digital systems.
+        Memorize this sentence: <strong>&ldquo;State is memory. It's what we have to
+        remember about the past in order to react correctly to the future.&rdquo;</strong>
     </div>
-    <aside class="notes">An FSM has states, transitions, and outputs. Every digital controller is fundamentally an FSM. This is the most important design pattern.</aside>
+    <aside class="notes">
+        Three things: states, transitions, outputs. [PAUSE]
+        The formal notation on the bottom is what you'll see in digital logic textbooks —
+        you don't need to memorize the Greek letters, but recognize the shape of the tuple.
+        The sentence at the bottom is worth memorizing. State equals memory.
+        When a student asks me &ldquo;how do I decide what the states should be?&rdquo;
+        my answer is always: list everything the circuit needs to remember about the past.
+        Each distinct thing to remember is a state.
+    </aside>
 </section>
+
+<!-- ==================== MOORE vs MEALY (kept, enhanced with figure) ==================== -->
 <section>
     <h2>Moore vs. Mealy</h2>
-    <table style="margin-top:0.5em;font-size:0.75em;">
+    <table style="margin-top:0.5em;font-size:0.72em;">
         <thead><tr><th></th><th>Moore</th><th>Mealy</th></tr></thead>
         <tbody>
             <tr><td><strong>Outputs depend on</strong></td><td>State only</td><td>State + inputs</td></tr>
-            <tr><td><strong>Output changes</strong></td><td>On clock edge (with state)</td><td>Can change mid-state</td></tr>
-            <tr><td><strong>Timing</strong></td><td>Clean, stable</td><td>Faster reaction, possible glitches</td></tr>
+            <tr><td><strong>Output changes</strong></td><td>On clock edge (with state)</td><td>Can change mid-cycle</td></tr>
+            <tr><td><strong>Timing</strong></td><td>Clean, registered</td><td>Faster, can glitch</td></tr>
             <tr><td><strong>States needed</strong></td><td>Typically more</td><td>Typically fewer</td></tr>
+            <tr><td><strong>Debug difficulty</strong></td><td>Easy (outputs track state)</td><td>Harder (outputs ≠ state)</td></tr>
         </tbody>
     </table>
     <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Our default: Moore.</strong> Safer, easier to debug, cleaner timing. Mealy only when you need same-cycle reaction.
+        <strong>Our default: Moore.</strong> Safer, easier to debug, cleaner timing closure.
+        Use Mealy only when you <em>need</em> same-cycle reaction — and flag it in code comments.
     </div>
-    <aside class="notes">Moore outputs depend only on state — clean and stable. Mealy adds input dependence — faster but can glitch. We default to Moore.</aside>
+    <aside class="notes">
+        Moore outputs depend only on state — so they change cleanly on clock edges
+        and are stable between edges. Mealy outputs depend on inputs too — so they can
+        change in the middle of a cycle, which sounds faster but can cause glitches
+        that propagate to downstream logic. We default to Moore for safety and
+        debuggability. In GTKWave, a Moore output is always perfectly aligned with
+        r_state. A Mealy output is not — and that asymmetry is confusing until
+        you've seen it a few times.
+    </aside>
 </section>
+
+<!-- ==================== FSM BLOCK DIAGRAM (kept, enhanced caption) ==================== -->
 <section>
-    <h2>FSM Block Diagram</h2>
+    <h2>FSM Block Diagram &mdash; Three Pieces of Hardware</h2>
     <div style="margin-top:0.3em;">
-        <img src="diagrams/d07_fsm_block_diagram.svg" alt="FSM block diagram showing state register, next-state logic, output logic" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+        <img src="diagrams/d07_fsm_block_diagram.svg"
+             alt="FSM block diagram: state register feeds next-state logic and output logic; next-state logic feeds back to state register"
+             style="width:100%;max-width:700px;display:block;margin:0 auto;">
     </div>
-    <aside class="notes">The three blocks: state register (sequential), next-state logic (combinational), output logic (combinational). This maps directly to the 3-always-block coding style.</aside>
+    <div class="two-col" style="font-size: 0.7em; margin-top: 0.3em;">
+        <div class="col" style="text-align: center;">
+            <strong style="color: #1565C0;">State Register</strong><br>
+            sequential · flip-flops · <code>always @(posedge clk)</code>
+        </div>
+        <div class="col" style="text-align: center;">
+            <strong style="color: #27AE60;">Next-State &amp; Output Logic</strong><br>
+            combinational · LUTs/gates · <code>always @(*)</code>
+        </div>
+    </div>
+    <aside class="notes">
+        [Point to state register] This is the ONLY sequential piece. Flip-flops. Updated on clock edge.
+        [Point to next-state logic] Combinational. Given current state and inputs, what state should we go to next?
+        [Point to output logic] Combinational. Given current state (and maybe inputs for Mealy), what outputs do we drive?
+        Three distinct pieces of hardware → three distinct always blocks in our template.
+        One author per piece. That's the rule that keeps synthesis honest.
+    </aside>
 </section>
+
+<!-- ==================== I DO — MINIMAL FSM SKETCH (NEW) ==================== -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; A Traffic Light in 4 Lines</h2>
+    <p style="font-size: 0.8em;">Three states. Three outputs. One timer input. Here's the state diagram:</p>
+    <pre style="font-size: 0.85em; text-align: center; border: none; background: transparent; box-shadow: none;">
+<code>  ┌───────────┐ timer ┌────────────┐ timer ┌─────────┐
+  │  S_GREEN  │─────▶ │  S_YELLOW  │─────▶│  S_RED  │
+  │ o_green=1 │       │ o_yellow=1 │      │ o_red=1 │
+  └───────────┘       └────────────┘      └─────────┘
+       ▲                                        │
+       └────────────── timer ───────────────────┘</code></pre>
+    <div class="callout" style="font-size: 0.75em; margin-top: 0.3em;">
+        <strong>My thinking:</strong> I named states by <em>what they mean</em>, not by number.
+        <code>S_GREEN</code> is more useful than <code>S0</code> in a waveform trace.
+        Outputs are inside each state bubble — that's the Moore convention.
+    </div>
+    <aside class="notes">
+        State naming: S_GREEN, S_YELLOW, S_RED. Not S0, S1, S2.
+        When we open GTKWave in the demo, this naming is the difference between
+        "I see the FSM doing its thing" and "what does state value 2 mean again?"
+        Always name your states for what they mean.
+        Also notice: outputs are drawn inside the state bubbles — that's Moore.
+        In Mealy, outputs would be labels on the transition arrows.
+    </aside>
+</section>
+
+<!-- ==================== WE DO — PREDICT THE TRAJECTORY (NEW) ==================== -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Predict the Trajectory</h2>
+    <p style="font-size: 0.8em;">Given the state diagram, with <code>timer</code> asserting every 4 cycles,
+    fill in the next 12 cycles starting from <code>S_GREEN</code>:</p>
+    <pre class="synth" style="font-size: 0.75em;"><code>cycle:   0  1  2  3  4  5  6  7  8  9  10 11 12
+state:   G  G  G  G  Y  ?  ?  ?  ?  ?  ?  ?  ?
+timer:   0  0  0  1  0  0  0  1  0  0  0  1  0
+o_red:   0  0  0  0  0  ?  ?  ?  ?  ?  ?  ?  ?
+o_green: 1  1  1  1  0  ?  ?  ?  ?  ?  ?  ?  ?</code></pre>
+    <div class="fragment callout" style="font-size: 0.72em;">
+        <strong>Answer:</strong>
+        state: G,G,G,G, <strong>Y</strong>,Y,Y,Y, <strong>R</strong>,R,R,R, <strong>G</strong>.
+        o_green: 1,1,1,1,0,0,0,0,0,0,0,0,<strong>1</strong>.
+        Key observation: the state changes <em>on the clock edge after</em> <code>timer=1</code>
+        &mdash; outputs follow state, not timer. That one-cycle latency is Moore's signature.
+    </div>
+    <aside class="notes">
+        [Leave the fragment hidden for 30-60 seconds. Students work in pairs.]
+        The critical insight here is the one-cycle latency. Timer fires at cycle 3,
+        state changes at cycle 4. That's the registered output. If students wrote
+        &ldquo;state changes at cycle 3,&rdquo; they're thinking combinationally — reset that instinct now.
+    </aside>
+</section>
+
+<!-- ==================== YOU DO — BEFORE THE DEMO (NEW) ==================== -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Before We Run It</h2>
+    <p style="font-size: 0.8em;">Take 60 seconds. Without looking at code, predict:</p>
+    <ol style="font-size: 0.78em; margin-top: 0.3em;">
+        <li>How many flip-flops will Yosys use for the state register?</li>
+        <li>Will the total flop count be less than, equal to, or greater than 3?</li>
+        <li>What should the GTKWave trace of <code>r_state</code> look like if we
+            dump it as ASCII (Hint: you'll see the state names).</li>
+    </ol>
+    <div class="fragment callout" style="font-size: 0.72em;">
+        <strong>Predictions:</strong>
+        ⌈log₂(3)⌉ = <strong>2 flops</strong> (binary encoding — or 3 flops if Yosys picks one-hot).
+        · Total flops: exactly equal to state flops (no counters yet in this minimal version).
+        · Trace: <code>S_GREEN</code> (4 cycles) &rarr; <code>S_YELLOW</code> (4) &rarr;
+        <code>S_RED</code> (4), repeating.
+    </div>
+    <aside class="notes">
+        Real 60-second pause. Students predict, THEN demo.
+        The prediction-first habit is the single most important learning behavior
+        in this course. A correct prediction confirms understanding.
+        A wrong prediction is diagnostic — it pinpoints exactly what's broken in
+        your mental model. Either way, you learn. Skipping prediction and jumping
+        straight to the answer learns nothing.
+    </aside>
+</section>
+
+<!-- ==================== LIVE DEMO — ENHANCED (NEW) ==================== -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color: #FFC904;">Traffic Light FSM &mdash; Simulation + Synthesis</h2>
+    <p style="font-size: 0.65em; color: #E8E8E4; margin-top: 0.2em;">
+        <code style="color:#FFC904;">labs/week2_day07/ex1_traffic_light/</code> · ~5 minutes
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin-top: 0.6em; text-align: left;">
+        <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
+            <p style="color:#FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ COMMANDS</p>
+<pre style="background: transparent; margin: 0;"><code class="language-bash" style="font-size: 0.52em; color: #E8E8E4;">cd labs/week2_day07/ex1_traffic_light/
+make sim       # iverilog + vvp
+make wave      # GTKWave on dump.vcd
+make stat      # yosys synth_ice40 + stat</code></pre>
+        </div>
+        <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
+            <p style="color:#27AE60; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background: transparent; margin: 0;"><code style="font-size: 0.52em; color: #E8E8E4;">[@ 120ns] PASS: S_GREEN active
+[@ 280ns] PASS: S_GREEN→S_YELLOW
+[@ 440ns] PASS: S_YELLOW→S_RED
+[@ 600ns] PASS: S_RED→S_GREEN
+=== 4 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+
+    <div style="margin-top: 0.6em; background: #1a1a1a; padding: 0.6em; border-radius: 6px; border: 1px solid #D4A843;">
+        <p style="color:#D4A843; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ GTKWAVE &mdash; WHAT TO LOOK FOR</p>
+        <p style="color: #E8E8E4; font-size: 0.66em; margin: 0; text-align: left;">
+            Signal order: <code>i_clk &middot; i_rst &middot; i_timer_done &middot; r_state &middot; o_red &middot; o_yellow &middot; o_green</code>.
+            <strong>Right-click <code>r_state</code> &rarr; Data Format &rarr; ASCII</strong> to see
+            <code>S_GREEN</code> etc. instead of <code>0/1/2</code>. Watch for the
+            <strong>1-cycle delay</strong> between <code>i_timer_done</code> rising and <code>r_state</code> changing.
+        </p>
+    </div>
+
+    <aside class="notes">
+        [SWITCH TO TERMINAL] cd to the exercise directory. Run make sim.
+        Expect 4 PASS lines in sequence. If you see FAIL at the first transition,
+        check your reset — r_state needs to come out of reset in S_GREEN (or whatever
+        your initial state is), not in X.
+        [SWITCH TO GTKWAVE] First move always: right-click r_state, Data Format, ASCII.
+        Without it, students see 0/1/2 and lose the story. With it, the FSM narrates itself.
+        [If time permits] Run make stat. We'll look at that output on the next slide.
+        [WATCH FOR] One common failure: students forget the &ldquo;default: next = r_state&rdquo;
+        line in Block 2, and Yosys infers a latch. The tell is an extra LUT in stat output.
+    </aside>
+</section>
+
+<!-- ==================== WHAT DID THE TOOL BUILD? (NEW) ==================== -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size: 0.78em;">Running <code>make stat</code> on the traffic light:</p>
+
+    <div class="two-col" style="margin-top: 0.3em;">
+        <div class="col">
+            <pre style="font-size: 0.6em;"><code class="language-bash">$ yosys -p "read_verilog traffic_light.v; \
+             synth_ice40; stat" -q
+
+=== traffic_light ===
+
+   Number of wires:                  12
+   Number of cells:                   8
+     SB_DFF                           2  ← state register
+     SB_LUT4                          6  ← next-state + output
+</code></pre>
+        </div>
+        <div class="col" style="font-size: 0.75em;">
+            <p><strong>Match your prediction?</strong></p>
+            <ul style="font-size: 0.9em;">
+                <li>3 states &rarr; ⌈log₂3⌉ = <strong>2 flops ✓</strong></li>
+                <li>Yosys chose <strong>binary encoding</strong> (default for small FSMs on iCE40)</li>
+                <li>6 LUTs: ~3 for next-state case, ~3 for output decoding</li>
+            </ul>
+            <p class="fragment" style="margin-top: 0.5em;">
+                <strong>Red flag if you see:</strong> <code>≥4 flops</code>
+                (you inferred a latch — check Block 2 defaults).
+            </p>
+        </div>
+    </div>
+
+    <div class="fragment callout" style="font-size: 0.72em; margin-top: 0.3em;">
+        <strong>Generate this yourself:</strong>
+        <code>yosys -p "read_verilog traffic_light.v; synth_ice40; show -format svg -prefix fsm_synth" </code>
+        &mdash; produces <code>fsm_synth.svg</code> showing the actual gates and flops Yosys built.
+    </div>
+
+    <aside class="notes">
+        This slide is the bridge between &ldquo;I wrote Verilog&rdquo; and &ldquo;there is
+        physical hardware on a chip.&rdquo; Two flip-flops. Six LUTs. That's the entire
+        traffic light controller.
+        [Key teaching moment] Every student should be able to predict flop count from
+        state count BEFORE running synthesis. That's the mental-model check.
+        If you predict 2 and Yosys builds 2, your abstraction is intact.
+        If you predict 2 and Yosys builds 5, either the tool used one-hot (fine, not wrong)
+        or you've inferred latches (bad, needs fixing).
+        [Generation command at bottom] Students can regenerate the schematic themselves.
+        Encourage them to — seeing their own code become gates is the single biggest
+        &ldquo;oh, this is real hardware&rdquo; moment of the course.
+    </aside>
+</section>
+
+<!-- ==================== CHECK THE MACHINE (NEW) ==================== -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size: 0.78em; margin-top: 0.2em;">
+        Ask an AI assistant:
+        <em>&ldquo;Given this 3-state traffic light FSM in Verilog, what happens if I remove
+        the default assignment <code>r_next = r_state;</code> from the top of Block 2?&rdquo;</em>
+    </p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5em; margin-top: 0.5em;">
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #8E6BBF;">
+            <p style="color:#8E6BBF; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TASK</p>
+            <p style="font-size: 0.62em; margin: 0;">Paste the code to the AI with the default line removed.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #5A7FA0;">
+            <p style="color:#5A7FA0; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">BEFORE</p>
+            <p style="font-size: 0.62em; margin: 0;">Your prediction: &ldquo;Simulation still works, every state case is covered.&rdquo;</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #D4A843;">
+            <p style="color:#D4A843; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">AFTER</p>
+            <p style="font-size: 0.62em; margin: 0;">AI should flag: without <code>default</code>, the <code>case</code> incompletely assigns <code>r_next</code> in some paths → latch inferred.</p>
+        </div>
+        <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #27AE60;">
+            <p style="color:#27AE60; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TAKEAWAY</p>
+            <p style="font-size: 0.62em; margin: 0;">Yosys reports the same via <code>synth_ice40 -verbose</code>. AI catches it from code alone.</p>
+        </div>
+    </div>
+
+    <div class="fragment callout-warning" style="font-size: 0.68em; margin-top: 0.6em;">
+        <strong>Rule:</strong> AI is <em>never</em> your first step. Predict first, simulate,
+        then ask AI to explain anything surprising. If AI contradicts your simulation,
+        trust the simulation — then figure out why the AI was wrong. That's where
+        the real learning lives.
+    </div>
+
+    <aside class="notes">
+        This is the CRAFT &ldquo;Check the Machine&rdquo; beat — required every chapter in the
+        CRAFT book, and now on every day of this course.
+        The goal is not to outsource thinking. It's to use AI as a post-prediction
+        sanity check. If you can predict an outcome, simulate to confirm it, and
+        then prompt an AI and get the same answer — you've triangulated on
+        understanding. That's rigorous.
+        If AI disagrees with your simulation, 95% of the time the simulation is
+        right. But the 5% where AI was right reveals something subtle — and those
+        are the moments you actually learn something new.
+        Emphasize: predict → simulate → verify with AI. Never the other order.
+    </aside>
+</section>
+
+<!-- ==================== KEY TAKEAWAYS (kept, tightened) ==================== -->
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;FSM = states + transitions + outputs. Every controller is an FSM.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Moore (outputs = f(state)) is our default — safe, clean timing.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mealy (outputs = f(state, inputs)) — faster but can glitch.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Three blocks: state register, next-state logic, output logic.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;FSM = states + transitions + outputs. <strong>State is memory.</strong></p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Moore (outputs = <em>f</em>(state)) is our default &mdash; clean timing, easier to debug.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;FSMs are <strong>three pieces of hardware</strong>: state reg + next-state logic + output logic.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Flop count should equal ⌈log₂(states)⌉. Extra flops = latch trouble.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">The 3-Always-Block Template</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">The coding pattern you'll use for every FSM in your career.</p>
+    <div class="fragment golden-rule" style="margin-top: 0.8em; font-size: 0.95em;">
+        One <code>always</code> block per hardware piece. One hardware piece per <code>always</code> block.
     </div>
+    <aside class="notes">
+        Four takeaways. One: state is memory. Two: Moore is our default. Three: three hardware pieces.
+        Four: flop count sanity check.
+        The golden rule at the bottom is the single most useful heuristic:
+        one always block per hardware piece, one hardware piece per always block.
+        That's the rule the 3-block template enforces — which is exactly what we
+        build in Video 2. See you there.
+    </aside>
 </section>
 
+<!-- ==================== TRANSFER / UP NEXT — ENHANCED (NEW bridge) ==================== -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">
+            🔗 Transfer
+        </p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">The 3-Always-Block Template</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 7, Video 2 of 4 · ~15 minutes</p>
+
+        <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
+            <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">
+                You just saw an FSM is three hardware pieces. In Video 2 you'll learn the
+                Verilog <em>template</em> that keeps those three pieces separated &mdash; one
+                <code>always</code> block per piece. This isn't just style: it's the coding
+                pattern that prevents the #1 FSM bug (inferred latches) and makes your FSMs
+                synthesize cleanly on both FPGA and ASIC targets. Every FSM you write for
+                the rest of this course (UART, memory test, capstone) uses this template.
+            </p>
+        </div>
+    </div>
+    <aside class="notes">
+        End of Video 1. You now have the mental model — three hardware pieces.
+        Video 2 gives you the coding template that enforces that separation.
+        It's the single most important coding pattern in the second half of the course.
+        Every FSM on every lab from here to the capstone uses this template.
+        See you there.
+    </aside>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>

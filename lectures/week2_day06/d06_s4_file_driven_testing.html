@@ -1,140 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 6.4: File-Driven &amp; Sequential Testing — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 6.4: File-Driven Testing — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 6 · Testbenches &amp; Simulation-Driven Development
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 6 · Verification Methodology</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">File-Driven Testing</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~13 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">TB Anatomy</span>
-        <span class="seg-label ">Self-Checking</span>
-        <span class="seg-label ">Tasks</span>
-        <span class="seg-label active">File-Driven</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 6.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Anatomy</span><span class="seg-label">Self-Checking</span><span class="seg-label">Tasks</span><span class="seg-label active">File-Driven</span></div>
+    <aside class="notes">Video 4 of 4 for Day 6. Scaling up — test vectors in external files so your testbench can run thousands of cases.</aside>
 </section>
 
 <section>
-    <h2>Loading Vectors from Files</h2>
-    <pre class="sim-only"><code class="language-verilog" data-noescape><span class="fragment">// test_vectors.txt (hex values)
-// Each line: {a, b, op, expected}
-// 3508, 7314, AC28, ...</span>
-<span class="fragment">
-reg [15:0] test_mem [0:255];
-initial $readmemh("test_vectors.txt", test_mem);</span>
-<span class="fragment">
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Real verification suites use <em>randomized</em> input generators that produce hundreds of thousands of vectors, written to files, then replayed. Golden reference models in C or Python produce expected outputs; the testbench reads both input and expected-output files, runs the DUT, and compares. This is how Apple's CPU teams validate instruction decoders — against a C reference model fed millions of generated vectors.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 11 UART bring-up uses a file of received-byte test patterns. Day 14 capstone verification leans on this pattern. Any time you have &ldquo;I need to test N cases and N is big,&rdquo; file-driven testing is the answer.</p>
+        </div>
+    </div>
+    <aside class="notes">File-driven testing is how real verification scales. You can't hand-write a million test cases — you write a generator, dump to a file, then consume the file in a loop.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Separate Test Data From Test Logic</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I'll add new test cases as new lines of Verilog in my testbench. If I need 10,000 cases I'll generate a 10,000-line testbench.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">The <strong>testbench logic</strong> (apply input, wait, check output) stays the <em>same</em>. The <strong>test data</strong> (what input, what expected output) lives in an <em>external file</em>. Your testbench loops over the file's contents. Adding new cases = editing the data file, not the Verilog.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Verilog's <code>$readmemh</code> loads hex values from a text file into a Verilog memory array at simulation start. Combined with a loop, one <code>initial</code> block runs arbitrarily many vectors.
+    </div>
+    <aside class="notes">Separation of concerns: logic in .v, data in .hex. Same principle as data-driven testing in any modern testing framework (pytest parameterize, JUnit DataProvider, etc).</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; <code>$readmemh</code> and the Test Loop</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// vectors.hex:  16 lines, 8 hex chars each = {a[7:0], b[7:0], expected_sum[8:0]}
+// 0503_0008
+// 0709_0010
+// 0F0F_001E
+//  ...
+
+reg [31:0] vec_mem [0:15];   // 16 vectors
 integer i;
-initial begin
-    // ... setup ...
-    for (i = 0; i &lt; 256; i = i + 1) begin
-        a      = test_mem[i][15:12];
-        b      = test_mem[i][11:8];
-        opcode = test_mem[i][7:4];
-        #100;
-        check_result(test_mem[i][3:0], result, i);
-    end
-end</span></code></pre>
-    <aside class="notes">readmemh loads hex values from a file. You can store hundreds of test vectors in a file and loop through them. Separates test data from testbench logic.</aside>
-</section>
-<section>
-    <h2>Sequential Testbench Pattern</h2>
-    <pre class="sim-only"><code class="language-verilog">// Clock-synchronized stimulus
-task wait_cycles;
-    input integer n;
-    integer i;
-    for (i = 0; i &lt; n; i = i + 1)
-        @(posedge clk);
-endtask
 
 initial begin
-    clk = 0; reset = 1;
-    wait_cycles(5);       // hold reset for 5 clocks
-    reset = 0;
-    wait_cycles(2);
-    enable = 1;
-    wait_cycles(100);     // let counter run
-    // ... check counter value ...
+    $readmemh("vectors.hex", vec_mem);
+
+    for (i = 0; i &lt; 16; i = i + 1) begin
+        a = vec_mem[i][31:24];
+        b = vec_mem[i][23:16];
+        #10;
+        check_eq(sum, vec_mem[i][8:0],
+                 $sformatf("vec[%0d]: %h+%h", i, a, b));
+    end
+
+    $display("=== %0d passed, %0d failed ===",
+             tests_run - tests_failed, tests_failed);
     $finish;
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        For sequential DUTs: synchronize stimulus to clock edges with <code>@(posedge clk)</code>. Use <code>wait_cycles</code> for timing.
+    <div class="callout" style="font-size:0.68em;">
+        <strong>My thinking:</strong> Pack each test vector as a single hex word (inputs + expected). <code>$readmemh</code> loads all vectors at time 0. The loop does the work — adding 1,000 more cases requires zero Verilog changes, only <code>vectors.hex</code> changes.
     </div>
-    <aside class="notes">Sequential testbenches: synchronize to clock edges. Use wait_cycles for delays. Apply inputs at clock edges, sample outputs after.</aside>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> Why are DUT inputs declared as <code>reg</code> in the testbench?</p>
-        <div class="fragment quiz-answer">You drive DUT inputs from initial/always blocks, which require <code>reg</code>. DUT outputs are driven by the module, so they&rsquo;re <code>wire</code>.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> Why <code>!==</code> instead of <code>!=</code> in testbenches?</p>
-        <div class="fragment quiz-answer"><code>!==</code> handles x/z correctly. <code>x != 0</code> → x (unknown, if-statement won&rsquo;t trigger). <code>x !== 0</code> → 1 (definite mismatch, caught!).</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> What do <code>$dumpfile</code> and <code>$dumpvars</code> do?</p>
-        <div class="fragment quiz-answer"><code>$dumpfile</code> sets the VCD output filename. <code>$dumpvars(0, tb)</code> records all signal changes at all hierarchy levels for GTKWave.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> Write a <code>task</code> that applies two inputs, waits one clock, and checks the result.</p>
-        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.85em;white-space:pre;line-height:1.4;">task apply_and_check;
-  input [3:0] in_a, in_b, expected;
-begin
-  a = in_a; b = in_b;
-  @(posedge clk); @(posedge clk);
-  if (result !== expected) fail_count++;
-end
-endtask</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 6 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
-    </div>
+    <aside class="notes">The pattern: pack each case into one hex word. Load with $readmemh. Loop. Adding cases = editing the .hex file.</aside>
 </section>
 
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Generating Vectors from Python</h2>
+    <pre style="font-size:0.68em;"><code class="language-python">#!/usr/bin/env python3
+# gen_vectors.py — produces vectors.hex for adder testbench
+import random
+
+random.seed(42)
+with open("vectors.hex", "w") as f:
+    for _ in range(1000):
+        a = random.randint(0, 255)
+        b = random.randint(0, 255)
+        s = a + b                              # golden reference in Python
+        f.write(f"{a:02X}{b:02X}_{s:04X}\n")
+print("Wrote 1000 vectors.")</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Python is your <strong>golden reference model</strong>. It produces the expected output the way you <em>know</em> it should be computed (just <code>a + b</code>). The Verilog testbench checks the DUT against Python's answers. If the DUT disagrees, the DUT is wrong — because the Python reference is trivially correct.
+    </div>
+    <aside class="notes">Python as reference model. Simple math in Python is easier to trust than the same math in Verilog. This scales to complex protocols (e.g. for UART, Python encodes frames; Verilog decodes them).</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Debug the Hex Format</h2>
+    <p style="font-size:0.78em;">Your <code>vectors.hex</code> looks like this. Your testbench reports &ldquo;all zeros, all fail.&rdquo; What's wrong?</p>
+    <pre style="font-size:0.7em;"><code># vectors.hex
+Test 1: 0503_0008
+Test 2: 0709_0010</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>$readmemh</code> doesn't parse &ldquo;Test 1:&rdquo; prefixes or colons — it expects <strong>hex digits only</strong> (with optional <code>//</code> comments and <code>_</code> as a visual separator). Fix: strip the labels, keep only the hex.
+        <pre style="font-size:0.85em;"><code>// Test 1
+0503_0008
+// Test 2
+0709_0010</code></pre>
+    </div>
+    <aside class="notes">Common first-time bug. $readmemh is strict — only hex digits, optional // comments, optional _ separators. No labels, no JSON, no CSV.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">1000-Vector Adder Test</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day06/ex4_file_driven/
+python3 gen_vectors.py      # 1000 random cases
+head -3 vectors.hex
+make sim                    # &lt; 1 second
+tail -1 logs/sim.log</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Wrote 1000 vectors.
+4F37_0086
+1CE9_0105
+...
+=== 1000 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">1000 cases, fraction of a second. Change the Python seed or bump to 10,000 — still seconds. Now change the DUT to break it (try <code>a + b + 1</code>) and watch all 1000 fail instantly.</p>
+    </div>
+    <aside class="notes">[Terminal] Show the scale: Python generates, Verilog verifies, seconds to run. Then intentionally break the DUT and watch mass failures.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Constrained vs Directed Testing</h2>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:1em;">Directed</h3>
+            <p style="font-size:0.72em;">Hand-picked specific cases. Testing known edge conditions: overflow, carry, zero, max. Small, precise. <strong>What you write by hand.</strong></p>
+        </div>
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:1em;">Constrained-Random</h3>
+            <p style="font-size:0.72em;">Randomly generated within constraints (e.g. &ldquo;both inputs 0–255&rdquo;). Catches combinations you didn't think of. Large scale. <strong>What file-driven testing enables.</strong></p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.5em;">
+        <strong>Best practice:</strong> Use <em>both</em>. Directed cases cover the specific corners you know. Constrained-random coverage catches the ones you don't. The file-driven pattern lets you mix them in one <code>.hex</code> file.
+    </div>
+    <aside class="notes">Two complementary strategies. Directed = what you know to check. Random = insurance against what you don't. Mature testbenches use both.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a Python script that generates 1000 random test vectors for a Verilog adder, and a Verilog testbench that consumes them with <code>$readmemh</code>.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Python generator + Verilog consumer.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: Python writes hex lines; Verilog packs input+expected into one memory word.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI sets a seed. Weak AI omits it — reproducibility bug.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Seeded randomness = reproducible failures. Always seed.</p></div>
+    </div>
+    <aside class="notes">Random-without-seed is a classic testing bug. &ldquo;I ran it 100 times and it passed&rdquo; is worthless if you can't rerun the exact same inputs next time. Always seed.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Separate test <em>data</em> from test <em>logic</em>.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>$readmemh</code> loads hex from file into a Verilog memory.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Python (or any language) is your golden reference.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Seed your randomness — reproducibility beats cleverness.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Directed tests catch what you know. Randomized tests catch what you don't.</div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 6</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Finite State Machines</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 7 · FSM Design &amp; The 3-Block Template</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You can now verify any design you build. Day 7 is the week's intellectual peak: <strong>finite state machines</strong>. The sequential control pattern that underlies every protocol, every controller, every CPU. You'll learn the 3-block template that makes FSMs reliable — and your self-checking testbench skills will earn their keep, because FSMs have lots of states to verify.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

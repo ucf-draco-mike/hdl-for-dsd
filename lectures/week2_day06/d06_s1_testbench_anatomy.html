@@ -1,119 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 6.1: Testbench Anatomy — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 6.1: Testbench Anatomy — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 6 · Testbenches &amp; Simulation-Driven Development
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 6 · Verification Methodology</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Testbench Anatomy</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">TB Anatomy</span>
-        <span class="seg-label ">Self-Checking</span>
-        <span class="seg-label ">Tasks</span>
-        <span class="seg-label ">File-Driven</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 6.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">Anatomy</span><span class="seg-label">Self-Checking</span><span class="seg-label">Tasks</span><span class="seg-label">File-Driven</span></div>
+    <aside class="notes">Video 1 of 4 for Day 6. We've been running testbenches all week. Today we start writing them.</aside>
 </section>
 
 <section>
-    <h2>Why Testbenches?</h2>
-    <div class="golden-rule" style="font-size:1em;">
-        You&rsquo;ve been running them all week. Now you learn to write them.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">At Intel, Apple, NVIDIA, and every serious ASIC company: <strong>verification engineering is larger than design engineering</strong>, typically 2:1 in headcount. Tapeouts are killed or shipped based on coverage metrics. &ldquo;Designed it&rdquo; is 20% of a working chip; &ldquo;proved it works&rdquo; is the other 80%. Senior verification engineers routinely out-earn senior designers.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every <code>make sim</code> you've run used a testbench someone wrote. Today you start writing them yourself. Day 6 videos 2-4 add self-checking, tasks for organization, and file-driven test vectors. By Day 14 you'll write assertions. You become the verification engineer.</p>
+        </div>
     </div>
-    <div style="font-size:0.8em;margin-top:1em;">
-        <p class="fragment">Week 1 workflow: <code>make sim</code> → read PASS/FAIL → fix → <code>make prog</code></p>
-        <p class="fragment">This week: <strong>you write the testbench</strong> — same patterns, from scratch</p>
-        <p class="fragment">A testbench is a module with <strong>no ports</strong> that drives your DUT</p>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>Career tag:</strong> &ldquo;Can you write a testbench?&rdquo; is table stakes for any RTL position. Writing <em>good</em> testbenches is what distinguishes senior from junior.
     </div>
-    <aside class="notes">You've been running testbenches since Day 1. Every time you typed make-sim and saw PASS or FAIL, a testbench was doing the work. This week, you learn to write them yourself — same patterns you've been relying on, but now you build them from scratch. A testbench is a port-less module that exercises your design under test. Let's look at the anatomy.</aside>
+    <aside class="notes">Verification is the bigger discipline in industry. Most engineers think &ldquo;I'm a designer&rdquo; and specialize on one side. In the real world, design engineers who can also verify — and verification engineers who can also design — are the most valuable people in the building.</aside>
 </section>
+
 <section>
-    <h2>Testbench Anatomy</h2>
-    <pre class="sim-only"><code class="language-verilog" data-noescape>`timescale 1ns / 1ps
-module tb_my_design;
-<span class="fragment">    reg        clk, reset;          // YOU drive DUT inputs → reg
-    reg  [3:0] a, b;
-    wire [3:0] result;              // DUT drives outputs → wire</span>
-<span class="fragment">
-    my_design uut (                 // Unit Under Test
-        .i_clk(clk), .i_reset(reset),
-        .i_a(a), .i_b(b), .o_result(result)
-    );</span>
-<span class="fragment">
-    always #20 clk = ~clk;         // 25 MHz clock (40ns period)</span>
-<span class="fragment">
-    initial begin
-        $dumpfile("tb_my_design.vcd");
-        $dumpvars(0, tb_my_design);
-        clk = 0; reset = 1; a = 0; b = 0;
-        #100; reset = 0;
-        // ... stimulus ...
-        #1000; $finish;
-    end</span>
-endmodule</code></pre>
-    <aside class="notes">Testbench template: timescale, reg for DUT inputs, wire for outputs, instantiate DUT, clock generator, dumpfile/dumpvars, initial block with stimulus, finish.</aside>
+    <h2><span style="color:#C0392B;">⚠️</span> A Testbench Is a Module. Just a Weird One.</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;A testbench is a different kind of thing — some special file with <code>$display</code> and timing. Different syntax than my design.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">A testbench is just a <strong>module with no ports</strong>. It instantiates your Design Under Test (DUT) as a sub-module, drives the DUT's inputs, reads the DUT's outputs, and compares them to expected values. Same Verilog language you've been writing all week — plus a handful of simulation-only constructs (<code>initial</code>, <code>$display</code>, <code>#delay</code>) that tools like Yosys ignore.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A testbench file typically starts <code>module tb_foo;</code> — no parentheses, no port list. It lives in the top of your simulation hierarchy, orchestrating the test from outside.
+    </div>
+    <aside class="notes">Demystification. A testbench isn't a separate language or framework — it's just a Verilog module that lives at the top of the simulation hierarchy and has no ports of its own. The simulation-only constructs (initial, $display) are the tools it uses to orchestrate the test.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Testbench Template</h2>
+    <pre class="synth" style="font-size:0.58em;"><code class="language-verilog">`timescale 1ns/1ps         // simulation resolution
+module tb_adder;            // no ports — top of sim hierarchy
+
+    // 1. Declare DUT signals
+    reg  [3:0] a, b;        // inputs to DUT → reg (driven by tb)
+    wire [4:0] sum;         // outputs from DUT → wire (read by tb)
+
+    // 2. Instantiate the DUT
+    adder dut (.i_a(a), .i_b(b), .o_sum(sum));
+
+    // 3. Clock generator (if sequential) — always block with period
+    reg clk = 0;
+    always #5 clk = ~clk;   // 10 ns period = 100 MHz
+
+    // 4. Waveform dump (for GTKWave)
+    initial begin
+        $dumpfile("tb_adder.vcd");
+        $dumpvars(0, tb_adder);
+    end
+
+    // 5. Stimulus and checks
+    initial begin
+        a = 0; b = 0;
+        #10; a = 4'd5; b = 4'd3;
+        #10; $display("5+3 = %d", sum);
+        #10; $finish;
+    end
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.68em;">
+        <strong>Five standard parts:</strong> (1) signal declarations, (2) DUT instantiation, (3) clock generator, (4) waveform dump, (5) stimulus/checks. Every testbench you ever write has these five parts.
+    </div>
+    <aside class="notes">Five parts. Memorize them. 1) Declare: inputs as reg (tb drives them), outputs as wire (tb reads them). 2) Instantiate with named ports. 3) Clock if needed. 4) Dumpfile/dumpvars for GTKWave. 5) Initial block with stimulus.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The reg/wire Rule</h2>
+    <p style="font-size:0.78em;">In a testbench, why must DUT <em>inputs</em> be declared as <code>reg</code> in the testbench?</p>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Answer:</strong> The testbench <strong>drives</strong> those signals procedurally (inside <code>initial</code>). Day 2 rule: anything assigned in an <code>always</code>/<code>initial</code> block must be declared <code>reg</code>. DUT outputs are driven <em>by the DUT</em>, so they must be <code>wire</code> on the testbench side.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Common bug:</strong> Declaring a DUT input as <code>wire</code> in the testbench. The simulator will refuse to let you assign to it. Easy fix, confusing error message.
+    </div>
+    <aside class="notes">reg vs wire returns. In the testbench, you drive the DUT's inputs (so: reg) and read its outputs (so: wire). Reversing these is one of the classic new-testbench bugs.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Simulation</h2>
+    <p style="font-size:0.78em;">At what simulation time does the third <code>$display</code> fire?</p>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">initial begin
+    #5   $display("first at t=%0t", $time);
+    #10  $display("second at t=%0t", $time);
+    #20  $display("third at t=%0t", $time);
+    $finish;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <strong>t=35</strong>. Delays are cumulative. <code>#5</code> at start → t=5 → first display. <code>#10</code> → t=15 → second. <code>#20</code> → t=35 → third. Then <code>$finish</code>.
+    </div>
+    <aside class="notes">Delays inside initial accumulate. Total time = sum of delays. Common bug: students think each delay is from t=0.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Testbench from Scratch</h2>
-    <p style="margin-top:0.5em;">Build a complete mux testbench step by step</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">Template → DUT instance → clock → stimulus → $finish</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Testbench from Scratch</aside>
+    <h2 style="color:#FFC904;">Build a Testbench from Scratch</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day06/ex1_first_tb/
+# Start from empty tb_adder.v
+# Build: decls → instantiate → clock → dump → stim
+iverilog -g2012 -o sim.vvp tb_adder.v adder.v
+vvp sim.vvp
+gtkwave tb_adder.vcd &amp;</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">VCD info: dumpfile
+  tb_adder.vcd opened
+5+3 = 8
+7+9 = 16
+15+1 = 16
+tb_adder.v:25: $finish called</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals <code>a · b · sum</code>. Watch the values change at the delays you scheduled. <strong>If you forgot <code>$dumpvars</code></strong> your waveform will be empty — the most common testbench failure mode.</p>
+    </div>
+    <aside class="notes">[Terminal] Build the testbench live. 5 parts. Compile, run, open GTKWave. Emphasize: dumpvars(0, tb_name) dumps everything. Forgetting it = empty waveform = common first bug.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">Testbenches don't synthesize &mdash; they're simulation-only:</p>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog tb_adder.v; synth_ice40 -top tb_adder" -q
+ERROR: Module `\tb_adder' is not synthesizable.
+  - contains initial block (simulation only)
+  - contains $display (simulation only)
+  - contains timing control (#10) (simulation only)</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>Expected.</strong> Testbenches use <code>initial</code>, <code>$display</code>, and <code>#delay</code> — none of which synthesize. That's the point. The testbench orchestrates the simulation; it's not meant to become hardware.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Checkpoint:</strong> Yosys being this specific about what's unsynthesizable is useful — if your DUT contains any of these constructs, you have a bug.
+    </div>
+    <aside class="notes">Important distinction: the testbench is sim-only. Day 1 Video 2 told you this; now you're writing both and seeing the split in action. If your DUT synth fails with these errors, you have sim constructs in your design code — bug.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Here's my 4-bit counter. Write a self-contained testbench that exercises reset, counts to 15, and verifies rollover.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a full testbench for your counter.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 5-part structure with reset + 16 clock cycles + rollover check.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Good AI: complete 5 parts. Weak AI misses <code>$dumpfile</code> or uses wrong reg/wire.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI is actually good at testbench boilerplate. Verify the dumpvars line exists.</p></div>
+    </div>
+    <aside class="notes">AI is reliable on TB boilerplate — lots of training data. Main things to check: dumpvars present, reg/wire correct, finish called. Productivity multiplier.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Testbench = no-port module. <code>reg</code> for DUT inputs, <code>wire</code> for outputs.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>`timescale</code>, clock gen, <code>$dumpfile/$dumpvars</code>, <code>$finish</code> — memorize the template.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Every design gets a testbench from today forward.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Simulate first. Synthesize second. Program last.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;A testbench is just a Verilog module with no ports.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Five parts: decls, DUT instance, clock, dumpfile, stimulus.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;DUT inputs → <code>reg</code> in tb. DUT outputs → <code>wire</code> in tb.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Testbenches don't synthesize — that's the whole point.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Self-Checking Testbenches</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Automated pass/fail — because eyeballing waveforms doesn't scale.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Verification is bigger than design. Today you start becoming that engineer.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Self-Checking Testbenches</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~12 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Printing values and eyeballing waveforms doesn't scale. Video 2 introduces <strong>self-checking testbenches</strong> — the PASS/FAIL pattern you've been reading all week, from the inside. By the end, every testbench you write will check itself and tell you exactly what broke.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

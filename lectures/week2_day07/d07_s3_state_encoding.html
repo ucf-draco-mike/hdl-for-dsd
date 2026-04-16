@@ -1,103 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 7.3: State Encoding — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 7.3: State Encoding — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 7 · Finite State Machines
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 7 · Finite State Machines</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">State Encoding</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~8 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">FSM Theory</span>
-        <span class="seg-label ">3-Block Template</span>
-        <span class="seg-label active">State Encoding</span>
-        <span class="seg-label ">Design Method</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 7.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">FSM Theory</span><span class="seg-label">3-Block Template</span><span class="seg-label active">State Encoding</span><span class="seg-label">Methodology</span></div>
+    <aside class="notes">Video 3 of 4. One of the few Verilog decisions that visibly changes silicon cost.</aside>
 </section>
 
 <section>
-    <h2>Encoding Options</h2>
-    <table style="margin-top:0.5em;font-size:0.7em;">
-        <thead><tr><th>Encoding</th><th>4 States</th><th>Bits</th><th>Pros</th><th>Cons</th></tr></thead>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">FPGA vendors publish encoding style guides (Xilinx UG901, Intel Quartus Handbook) that recommend <strong>one-hot</strong> for fast FPGA FSMs. ASIC flows (Synopsys DC, Cadence Genus) often pick <strong>binary</strong> for gate-count optimization. Clock-domain-crossing FSMs use <strong>Gray</strong> to prevent multi-bit transitions. The choice has measurable consequences in real silicon.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 10 PPA exercise compares the same FSM across encodings and measures LUT count, timing, and power — directly. Day 14 retrospective revisits this decision. Today you learn the three encodings and the <code>yosys stat</code> evidence that distinguishes them.</p>
+        </div>
+    </div>
+    <aside class="notes">Encoding is where Verilog meets silicon economics. Same state machine, three encodings, three different gate counts. Real choice with measurable consequences.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Three Encodings, Three Optima</h2>
+    <table style="font-size:0.7em;margin-top:0.3em;">
+        <thead>
+            <tr><th>Encoding</th><th>Bits (N states)</th><th>Example (4 states)</th><th>Best for</th></tr>
+        </thead>
         <tbody>
-            <tr class="fragment"><td><strong>Binary</strong></td><td>00,01,10,11</td><td>2</td><td>Fewest bits</td><td>More decode logic</td></tr>
-            <tr class="fragment"><td><strong>One-Hot</strong></td><td>0001,0010,0100,1000</td><td>4</td><td>Fast decode (1 LUT), FPGA favorite</td><td>More FFs</td></tr>
-            <tr class="fragment"><td><strong>Gray</strong></td><td>00,01,11,10</td><td>2</td><td>1-bit change per transition (CDC safe)</td><td>Limited use</td></tr>
+            <tr><td><strong>Binary</strong></td><td><code>$clog2(N)</code></td><td>00, 01, 10, 11</td><td>ASIC, small FPGA, many states</td></tr>
+            <tr><td><strong>One-Hot</strong></td><td><code>N</code></td><td>0001, 0010, 0100, 1000</td><td>FPGA, fast decode, few states</td></tr>
+            <tr><td><strong>Gray</strong></td><td><code>$clog2(N)</code></td><td>00, 01, 11, 10</td><td>clock-domain-crossing FSMs</td></tr>
         </tbody>
     </table>
-    <div class="fragment callout" style="font-size:0.75em;">
-        For this course: use <strong>binary</strong> with <code>localparam</code>. Yosys/nextpnr will re-encode to one-hot if beneficial. You write readable code; the tools optimize.
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>The fundamental tradeoff:</strong> <em>Binary</em> uses the fewest state flops but more decode logic. <em>One-hot</em> uses more flops but simpler decode (next-state depends on a single bit). On FPGAs with cheap flops and expensive wide-input logic, one-hot often wins. On ASICs where flops cost area, binary usually wins.
     </div>
-    <aside class="notes">Binary: fewest bits. One-hot: fast decode, FPGA-friendly. Gray: safe for clock domain crossing. We use binary with localparam — tools re-encode as needed.</aside>
+    <aside class="notes">Three encodings with three different optima. The fundamental tradeoff is state flops vs. decode logic. FPGA vs. ASIC often reverses the answer.</aside>
 </section>
-<section>
-    <h2>State Definitions</h2>
-    <pre class="synth"><code class="language-verilog">// Use localparam for state names — readable and safe
-localparam S_IDLE   = 2'd0;
-localparam S_GREEN  = 2'd1;
-localparam S_YELLOW = 2'd2;
-localparam S_RED    = 2'd3;
 
-reg [1:0] r_state, r_next_state;</code></pre>
-    <div class="fragment callout-danger" style="font-size:0.75em;">
-        <strong>Never use magic numbers</strong> in case statements. <code>2'd1</code> means nothing; <code>S_GREEN</code> is instantly clear.
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Write It With <code>localparam</code></h2>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// Use localparam for state names — never magic numbers
+localparam [1:0] S_GREEN  = 2'd0;
+localparam [1:0] S_YELLOW = 2'd1;
+localparam [1:0] S_RED    = 2'd2;
+
+reg [1:0] r_state, r_next_state;
+
+always @(*) begin
+    r_next_state = r_state;
+    case (r_state)
+        S_GREEN:  if (timer_done) r_next_state = S_YELLOW;
+        S_YELLOW: if (timer_done) r_next_state = S_RED;
+        S_RED:    if (timer_done) r_next_state = S_GREEN;
+        default:                  r_next_state = S_GREEN;
+    endcase
+end</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Write the FSM in binary encoding using <code>localparam</code> names. Don't use <code>2'd1</code> scattered in your code — the compiler lets you, but no human can read it. Yosys's <code>fsm_recode</code> pass will convert to the optimal encoding at synthesis time anyway.
     </div>
-    <aside class="notes">localparam for state names. Never use magic numbers. S_GREEN is instantly clear; 2'd1 means nothing to anyone reading your code.</aside>
+    <aside class="notes">localparam names make the code readable. Magic numbers destroy it. Yosys picks the encoding during synthesis (fsm_recode pass) — your source code just describes intent.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Convert to One-Hot</h2>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// One-hot encoding: N bits, only one high at a time
+localparam [2:0] S_GREEN  = 3'b001;
+localparam [2:0] S_YELLOW = 3'b010;
+localparam [2:0] S_RED    = 3'b100;
+
+reg [2:0] r_state, r_next_state;
+
+// Same next-state logic structure — only the encoding changed</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> Only three things changed: state width (2→3), state values (binary→one-hot), register width. The <code>case</code> structure is identical. The <strong>output logic gets faster</strong> because, e.g., <code>o_green = r_state[0]</code> — a single wire, no decoder. That's the one-hot win.
+    </div>
+    <aside class="notes">One-hot: output = single bit, no decoder needed. That's the speed advantage. Cost: N flops instead of log2(N).</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Difference</h2>
+    <p style="font-size:0.78em;">Same FSM with 8 states. Predict iCE40 cell counts for binary vs one-hot.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.3em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;">
+            <h3 style="font-size:0.8em;margin-top:0;">Binary</h3>
+            <p style="font-size:0.72em;">Flops: $clog2(8) = <strong>3</strong><br>Decode (next-state): ~4–6 LUTs<br>Output decode: ~3 LUTs per output<br><strong>Total: ~12 cells</strong></p>
+        </div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;">
+            <h3 style="font-size:0.8em;margin-top:0;">One-Hot</h3>
+            <p style="font-size:0.72em;">Flops: <strong>8</strong><br>Decode (next-state): ~8 LUTs (simpler per transition)<br>Output decode: 0 LUTs (direct bit)<br><strong>Total: ~16 cells</strong></p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Answer:</strong> One-hot uses <em>more</em> cells here (16 vs 12). But: one-hot has a shorter critical path (less decode), so it can run faster. It's a gate-count vs clock-speed tradeoff, not a strict winner.
+    </div>
+    <aside class="notes">The answer depends on what you measure. LUTs? Binary wins at 8+ states. Speed? One-hot wins. Power? Depends. This is real engineering — no single &ldquo;correct&rdquo; answer.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> The Pedagogy Is This Slide</h2>
+    <p style="font-size:0.78em;">Same traffic-light FSM. Two encodings. Side-by-side Yosys output:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;">
+            <p style="color:#5A7FA0;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">BINARY (2 bits, 3 states)</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-bash">$ yosys ... -p "synth_ice40 -nofsm-recode; stat"
+=== traffic_binary ===
+  SB_DFF:    2
+  SB_LUT4:   5
+  Total cells: 7</code></pre>
+        </div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;">
+            <p style="color:#27AE60;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">ONE-HOT (3 bits, 3 states)</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-bash">$ yosys ... -p "synth_ice40 -nofsm-recode; stat"
+=== traffic_onehot ===
+  SB_DFF:    3
+  SB_LUT4:   3
+  Total cells: 6</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>What to notice:</strong>
+        <ol style="font-size:0.95em;">
+            <li>One-hot has more flops (3 vs 2) but fewer LUTs (3 vs 5).</li>
+            <li>Total cells: one-hot <em>wins</em> on this tiny FSM (6 vs 7).</li>
+            <li>That flips at larger state counts. The crossover on iCE40 is typically 6–8 states.</li>
+            <li><strong>Run the experiment on <em>your</em> design</strong> — never guess, measure.</li>
+        </ol>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Pro note:</strong> Yosys's <code>fsm_recode</code> pass auto-re-encodes FSMs by default. Use <code>-nofsm-recode</code> to see your literal encoding, or <code>-fsm-expand</code> to force one-hot.
+    </div>
+    <aside class="notes">THIS is the pedagogy of the video. Same FSM, two encodings, different cell counts. Run both, show both, the lesson is empirical. The crossover point is what matters — it's tool-specific, design-specific, and the only way to know is to run both.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Encoding Comparison Live</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day07/ex3_encoding/
+make stat_binary
+make stat_onehot
+make stat_gray
+diff stats/*.txt</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">  BINARY:  7 cells (2F/5L)
+  ONE-HOT: 6 cells (3F/3L)
+  GRAY:    7 cells (2F/5L)
+  FMAX (approx, iCE40):
+    BINARY:  152 MHz
+    ONE-HOT: 167 MHz  ← winner
+    GRAY:    153 MHz</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">One-hot wins both area AND speed on this tiny FSM. At 3 states, the cost of 1 extra flop is dwarfed by the savings in decode LUTs. This is why FPGA vendor guides recommend one-hot for small FSMs.</p>
+    </div>
+    <aside class="notes">[Terminal] Three makes, three stats, side by side. On tiny FSMs (≤4 states) one-hot tends to win on both metrics. On larger FSMs binary catches up and eventually dominates. Measure your own.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Which state encoding is best for a 5-state FSM on an iCE40 FPGA?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for encoding recommendation.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Expected: &ldquo;depends — run both encodings, compare. Binary saves flops, one-hot saves LUTs.&rdquo;</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Weak AI gives a single answer. Strong AI says &ldquo;measure both.&rdquo;</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">There's no universal &ldquo;best&rdquo;. Measurement beats opinion.</p></div>
+    </div>
+    <aside class="notes">If AI confidently picks one encoding without saying &ldquo;measure,&rdquo; it's giving you a vendor-specific heuristic, not real engineering. Run both.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Binary encoding is our default — tools re-encode if beneficial.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>localparam</code> for state names — never magic numbers.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;One-hot is FPGA-friendly (one LUT per transition check).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Gray encoding matters for clock domain crossing (Week 3+).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Three encodings: binary (compact), one-hot (fast decode), Gray (CDC-safe).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Use <code>localparam</code> for state names. Never magic numbers.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Tradeoff: flops vs. decode LUTs. FPGAs often favor one-hot for small FSMs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Measurement beats opinion. Run <code>make stat</code> with each encoding.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">FSM Design Methodology</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~15 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Paper first, then code — the systematic way to build any FSM.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Synthesize both. Let the tool tell you which wins.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">FSM Design Methodology</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You know the template and the encoding options. Video 4 puts them into a complete <em>methodology</em>: how to go from a problem specification to a working, tested FSM. You'll see a pattern-detector example from scratch — the process you'll reuse for every FSM in the course.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

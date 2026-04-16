@@ -1,138 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 7.2: The 3-Always-Block Template — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 7.2: The Three-Block FSM Template — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 7 · Finite State Machines
-        </span>
-    </div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">3-Always-Block Template</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 7 · Finite State Machines</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The Three-Block Template</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">FSM Theory</span>
-        <span class="seg-label active">3-Block Template</span>
-        <span class="seg-label ">State Encoding</span>
-        <span class="seg-label ">Design Method</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 7.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">FSM Theory</span><span class="seg-label active">3-Block Template</span><span class="seg-label">State Encoding</span><span class="seg-label">Methodology</span></div>
+    <aside class="notes">Video 2 of 4. Yesterday you saw FSM theory — state diagrams, Moore vs Mealy. Today you learn the single Verilog pattern that implements them reliably.</aside>
 </section>
 
 <section>
-    <h2>Block 1: State Register</h2>
-    <pre class="synth"><code class="language-verilog">// Block 1 — Sequential: just a flip-flop
-always @(posedge i_clk)
-    if (i_reset)
-        r_state &lt;= S_IDLE;
-    else
-        r_state &lt;= r_next_state;</code></pre>
-    <div class="callout" style="font-size:0.75em;margin-top:0.5em;">
-        Block 1 is <strong>always</strong> this simple. No logic here — just load next state. If you&rsquo;re putting if/case in Block 1, you&rsquo;re doing it wrong.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">The 3-block template is <em>the</em> FSM convention at Intel, AMD, Qualcomm, ARM. Every Verilog style guide mandates it. Every static-analysis tool (Spyglass, Lint, Design Compiler) flags deviations. When a senior engineer reviews your code, they scan for the 3-block structure first — if it's absent, the review stops there.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every FSM from here forward uses this template. Today: traffic light. Tomorrow: pattern detector. Day 11: UART frame controller. Day 12: SPI master. Same template, different states and transitions.</p>
+        </div>
     </div>
-    <aside class="notes">Block 1 is always trivial — just a flip-flop that loads next state on clock edge. If you're putting logic here, you're doing it wrong.</aside>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>Career tag:</strong> Show a 3-block FSM in an interview and you signal &ldquo;I've been trained.&rdquo; Show a tangled 1-block FSM and you signal the opposite.
+    </div>
+    <aside class="notes">The 3-block pattern is a calling card. Industry style guides treat it as mandatory. Learn it once, use it forever.</aside>
 </section>
+
 <section>
-    <h2>Block 2: Next-State Logic</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Block 2 — Combinational: decide next state
+    <h2><span style="color:#C0392B;">⚠️</span> Why Not Write It All in One Block?</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I'll just use one big <code>always @(posedge clk)</code> that does state transitions, state register, and output logic all together. Fewer blocks = cleaner code.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Three blocks separate three different concerns: (1) <strong>state register</strong> (how state persists), (2) <strong>next-state logic</strong> (how state changes), (3) <strong>output logic</strong> (what state produces). Mixing these in one block mixes blocking/nonblocking, creates subtle latches, and makes the circuit hard to reason about. The template exists because engineers have broken FSMs every other way first.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> 1-block and 2-block FSMs appear in old textbooks. They work for trivial cases. They scale badly. They also teach habits that break at the first non-trivial design.
+    </div>
+    <aside class="notes">The 1-block temptation is real for small FSMs. It bites hard when the FSM grows. The 3-block template separates concerns and scales linearly.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Block 1: State Register</h2>
+    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// --- Block 1: state register (sequential, nonblocking) ---
+always @(posedge i_clk) begin
+    if (i_reset) r_state &lt;= S_INIT;
+    else         r_state &lt;= r_next_state;
+end</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Block 1 is <strong>always trivial</strong>. It says: &ldquo;on every clock edge, load <code>r_next_state</code> into <code>r_state</code>; on reset, go to <code>S_INIT</code>.&rdquo; That's all it ever does. If you find yourself putting <em>logic</em> here, you're doing it wrong — logic goes in Block 2.
+    </div>
+    <aside class="notes">Memorize: Block 1 is always trivial. It's a D flip-flop with reset. Nothing more. The FSM's intelligence lives in Blocks 2 and 3.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Block 2: Next-State Logic</h2>
+    <pre class="synth" style="font-size:0.63em;"><code class="language-verilog">// --- Block 2: next-state logic (combinational, blocking) ---
 always @(*) begin
-    <span style="color:#2E7D32;font-weight:700;">r_next_state = r_state;  // DEFAULT: stay put</span>
+    r_next_state = r_state;            // DEFAULT: stay in current state (prevents latches)
     case (r_state)
-        S_GREEN: begin
-            if (w_timer_done)
-                r_next_state = S_YELLOW;
-        end
-        S_YELLOW: begin
-            if (w_timer_done)
-                r_next_state = S_RED;
-        end
-        S_RED: begin
-            if (w_timer_done)
-                r_next_state = S_GREEN;
-        end
-        default: r_next_state = S_GREEN;
+        S_GREEN:  if (timer_done) r_next_state = S_YELLOW;
+        S_YELLOW: if (timer_done) r_next_state = S_RED;
+        S_RED:    if (timer_done) r_next_state = S_GREEN;
+        default:                  r_next_state = S_INIT;   // illegal-state safety
     endcase
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        The <span style="color:#2E7D32;font-weight:700;">green line</span> is critical: <code>r_next_state = r_state</code> prevents latches and handles &ldquo;stay in current state&rdquo; by default.
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together — two critical habits:</strong>
+        <ol style="font-size:0.9em;">
+            <li><strong>Default assignment <em>first</em>:</strong> <code>r_next_state = r_state;</code> — prevents latch inference and means &ldquo;if no transition fires, stay put.&rdquo;</li>
+            <li><strong><code>default</code> case at end:</strong> recovers from illegal states. For a 2-bit state with only 3 legal values, the 4th is unreachable <em>in theory</em>, but silicon glitches happen in practice.</li>
+        </ol>
     </div>
-    <aside class="notes">Block 2 computes next state. The critical first line: r_next_state = r_state. This default prevents latches and means 'if no transition fires, stay put'. Always include default case for illegal states.</aside>
+    <aside class="notes">Two habits that separate amateur from professional FSMs. Default-first prevents latches. Default-case handles the unreachable states that reality nonetheless reaches sometimes (soft errors, SEUs).</aside>
 </section>
+
 <section>
-    <h2>Block 3: Output Logic</h2>
-    <pre class="synth"><code class="language-verilog">// Block 3 — Combinational: compute outputs from state (Moore)
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Block 3: Output Logic (Moore)</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// --- Block 3: output logic (combinational, Moore: depends only on state) ---
 always @(*) begin
-    // Defaults — prevent latches
-    o_red = 1'b0; o_yellow = 1'b0; o_green = 1'b0;
+    // defaults for ALL outputs (prevents latches)
+    o_red    = 1'b0;
+    o_yellow = 1'b0;
+    o_green  = 1'b0;
+
     case (r_state)
         S_GREEN:  o_green  = 1'b1;
         S_YELLOW: o_yellow = 1'b1;
         S_RED:    o_red    = 1'b1;
-        default:  o_red    = 1'b1;  // safe default
+        default: ;  // all off
     endcase
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Moore:</strong> outputs depend only on <code>r_state</code>. Output defaults at the top prevent latches — same pattern as Day 3.
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together — the same two habits reappear:</strong> defaults at top (for <em>every</em> output, not just one), <code>default:</code> case at end. Same discipline, same reasons, same template. <strong>Moore</strong> = outputs depend only on <code>r_state</code>; <strong>Mealy</strong> = outputs also depend on inputs, but the structure stays identical.
     </div>
-    <aside class="notes">Block 3 maps state to outputs. Moore style: outputs depend only on r_state. Default assignments at top prevent latches. Same pattern as Day 3.</aside>
+    <aside class="notes">Output logic follows the same template. Defaults for every output. Case by state. Default-case for safety. Mealy variants add inputs to the condition, not additional structure.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Spot the Bug</h2>
+    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">always @(*) begin
+    case (r_state)
+        S_GREEN:  begin r_next_state = S_YELLOW; o_green = 1; end
+        S_YELLOW: begin r_next_state = S_RED;                 end
+        S_RED:    begin r_next_state = S_GREEN;  o_red   = 1; end
+    endcase
+end</code></pre>
+    <p style="font-size:0.78em;">Three bugs. Find them.</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        <ol style="font-size:0.92em;">
+            <li><strong>Combined blocks:</strong> state logic and output logic are in the same <code>always</code> block — violates the template.</li>
+            <li><strong>No defaults:</strong> <code>o_green</code>, <code>o_yellow</code>, <code>o_red</code> aren't assigned in every branch → <strong>latch inference</strong>.</li>
+            <li><strong>No <code>default:</code> case:</strong> if <code>r_state</code> takes an illegal value, <code>r_next_state</code> isn't assigned in that branch → another latch, plus no recovery.</li>
+        </ol>
+    </div>
+    <aside class="notes">Three canonical FSM bugs in one 5-line snippet. Each breaks the template in a different way. Memorable because every new student writes something like this first.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Traffic Light FSM</h2>
-    <p style="margin-top:0.5em;">Build the complete 3-block traffic light from scratch</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">GREEN → YELLOW → RED → GREEN with timer-controlled transitions</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Traffic Light FSM</aside>
+    <h2 style="color:#FFC904;">Traffic Light FSM — From Diagram to Working Chip</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~6 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day07/ex2_traffic/
+cat traffic_fsm.v    # see 3-block template
+make sim             # self-check
+make wave            # see sequence
+make stat            # check LUT count
+make prog            # flash Go Board</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: GREEN → YELLOW
+PASS: YELLOW → RED
+PASS: RED → GREEN
+PASS: reset → GREEN
+=== 12 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>r_state · o_red · o_yellow · o_green · timer_done</code>. Watch state cycle GREEN → YELLOW → RED → GREEN while outputs change in lockstep with state (pure Moore: output = f(state)).</p>
+    </div>
+    <aside class="notes">[Terminal] Walk through the file, show the 3 always blocks clearly labeled. Run sim, show waveform. On the board: green LED for GREEN state, yellow LED for YELLOW, red LED for RED. Students see state = LED one-to-one.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog traffic_fsm.v; synth_ice40 -top traffic_fsm; stat" -q
+
+=== traffic_fsm ===  (3 states, binary encoded → 2 bits)
+   Number of wires:                 10
+   Number of cells:                  7
+     SB_DFF                          2    ← 2 bits of state
+     SB_LUT4                         5    ← next-state + output decode
+</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> 2 flops for state (binary encoding uses <code>$clog2(3) = 2</code> bits). 5 LUTs for all the combinational logic (next-state + output). <strong>Seven cells total</strong> for a complete traffic-light controller. That's the efficiency of a well-written FSM on an FPGA.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Preview:</strong> Video 3 shows how changing the state encoding (one-hot vs binary) changes these numbers — one of the few Verilog choices that visibly affects silicon cost.
+    </div>
+    <aside class="notes">7 cells for a complete FSM. FPGA primitives are well-matched to FSM structure. Next video shows how encoding changes this. Yosys by default re-encodes FSMs — the -fsm_recode pass. You can disable this to see your exact encoding.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a vending-machine FSM using the 3-block template: states IDLE, COIN_IN, DISPENSE, RETURN_CHANGE. Include all defaults and default cases.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a 3-block FSM with 4 states.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 3 separate always blocks, defaults at top, default case at end.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses localparam for states + has defaults. Weak AI uses magic numbers.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">If AI skips the output defaults, it'll synth with latches. Catch it before synth does.</p></div>
+    </div>
+    <aside class="notes">Great diagnostic. AI that writes 1-block FSMs or skips defaults is producing code that would fail a code review. This is a calibration test.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Block 1 (seq): simple FF — <code>r_state &lt;= r_next_state</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Block 2 (comb): next-state logic with <code>r_next_state = r_state</code> default.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Block 3 (comb): output logic with defaults — Moore: f(state) only.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;This template works for <strong>any</strong> FSM. Memorize it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Three blocks: state register, next-state logic, output logic.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Block 1 is trivial. Block 2 defaults to &ldquo;stay.&rdquo; Block 3 defaults outputs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Every <code>case</code> has a <code>default:</code>. Every output has a default assignment.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;This template prevents the three most common FSM bugs.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">State Encoding</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~8 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Binary, one-hot, Gray — and why FPGAs prefer one-hot.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Three blocks. Always. No exceptions. No cleverness.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">State Encoding</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Your traffic light FSM had 3 states and used 2 state bits. Is that optimal? What if you used 3 bits with one-hot encoding? Video 3 shows you the tradeoff and the Yosys output that proves it. This is one of the few Verilog decisions that <em>visibly</em> changes silicon cost.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

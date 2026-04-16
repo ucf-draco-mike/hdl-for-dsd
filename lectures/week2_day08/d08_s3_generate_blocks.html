@@ -1,117 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8.3: Generate Blocks — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 8.3: Generate Blocks — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 8 · Hierarchy, Parameters &amp; Generate
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 8 · Hierarchy &amp; Reuse</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Generate Blocks</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Hierarchy</span>
-        <span class="seg-label ">Parameters</span>
-        <span class="seg-label active">Generate</span>
-        <span class="seg-label ">Design for Reuse</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 8.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Hierarchy</span><span class="seg-label">Parameters</span><span class="seg-label active">Generate</span><span class="seg-label">Reuse</span></div>
+    <aside class="notes">Video 3 of 4. Compile-time hardware replication. One block of code → N physical instances on the chip.</aside>
 </section>
 
 <section>
-    <h2><code>generate for</code> — Hardware Replication</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Debounce ALL N buttons with one generate block
-module input_pipeline #(parameter N = 4)(
-    input  wire         i_clk,
-    input  wire [N-1:0] i_buttons,
-    output wire [N-1:0] o_clean,
-    output wire [N-1:0] o_press_edge
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every wide bus in a modern SoC is a <code>generate</code> array. 64-bit adders: 64 full-adder cells generated. 8-way set-associative caches: 8 way modules generated. SIMD lanes (NEON, AVX): N parallel ALUs generated. The CPU pipeline is often N parallel execution units generated. A parameterized <code>generate</code> block is how you scale a design from a 4-core chip to a 64-core chip by changing one number.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Go Board has 4 buttons — you'll <code>generate</code> 4 debouncers instead of copy-pasting. Your Day 11 parallel-to-serial converter generates per-bit logic. Day 12 SPI uses it for variable-width word sizes. Real products scale through this feature.</p>
+        </div>
+    </div>
+    <aside class="notes">Generate is how you scale. Without it, you copy-paste — which doesn't scale, doesn't refactor, doesn't read well. With it, one parameter resizes the whole design.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> <code>generate for</code> Is Not a Software Loop</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>generate for (i=0; i&lt;N; i++)</code> is a for-loop. It executes N times during simulation, one iteration per clock.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">A <code>generate for</code> is <strong>not a runtime loop</strong>. It is <strong>compile-time replication</strong>. The synthesizer <em>unrolls</em> the loop at compile time, producing N <em>physical copies</em> of the hardware it contains. After synthesis, no loop exists. Only N parallel circuits running simultaneously.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> <code>generate for i=0..7</code> with a full-adder inside = 8 physical full-adders, all active in parallel. Like having typed 8 instantiations. Yosys literally unrolls before synthesis.
+    </div>
+    <aside class="notes">The biggest reframe of the video. Generate is unrolled at compile time. After synth, the loop is gone — only the N copies remain. This is fundamental to understanding what you're building.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Array of Debouncers</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module button_array #(
+    parameter N = 4                 // number of buttons
+) (
+    input  wire         i_clk, i_reset,
+    input  wire [N-1:0] i_buttons,  // raw noisy buttons
+    output wire [N-1:0] o_clean     // debounced clean signals
 );
-<span class="fragment">    genvar g;
+    genvar gi;                       // generate-index variable
     generate
-        for (g = 0; g &lt; N; g = g + 1) begin : gen_debounce
-            debounce #(.CLKS_TO_STABLE(250_000)) db (
-                .i_clk    (i_clk),
-                .i_bouncy (i_buttons[g]),
-                .o_clean  (o_clean[g])
+        for (gi = 0; gi &lt; N; gi = gi + 1) begin : g_btn
+            debounce #(.CLKS_STABLE(500_000)) u_deb (
+                .i_clk   (i_clk),
+                .i_reset (i_reset),
+                .i_noisy (i_buttons[gi]),
+                .o_clean (o_clean[gi])
             );
         end
-    endgenerate</span>
+    endgenerate
 endmodule</code></pre>
-    <div class="fragment callout-danger" style="font-size:0.75em;">
-        <code>generate for</code> runs at <strong>elaboration time</strong> (compile time). It creates N copies of the hardware. It is NOT a runtime loop.
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Three idioms. (1) <code>genvar gi</code> declares a compile-time loop index. (2) <code>begin : g_btn</code> names the generate scope — required, and shows up in waveforms as <code>dut.g_btn[0].u_deb</code>. (3) The inner code looks like one debouncer instantiation; the generator creates N of them.
     </div>
-    <aside class="notes">Generate-for replicates hardware at compile time. Creates N independent debouncer instances. This is NOT a runtime loop — it physically duplicates the circuit N times.</aside>
+    <aside class="notes">Standard pattern for &ldquo;array of this thing.&rdquo; Named scope is mandatory and shows up in waveforms — very important for debug navigation.</aside>
 </section>
+
 <section>
-    <h2><code>generate if</code> — Conditional Hardware</h2>
-    <pre class="synth"><code class="language-verilog">generate
-    if (USE_SYNC == 1) begin : gen_sync
-        synchronizer sync_inst (
-            .i_clk(i_clk),
-            .i_async_in(i_raw),
-            .o_sync_out(w_synced)
-        );
-    end else begin : gen_passthrough
-        assign w_synced = i_raw;  // skip sync for internal signals
-    end
-endgenerate</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <code>generate if</code> conditionally includes hardware based on a parameter. The other branch is <strong>not synthesized</strong> — zero cost.
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>generate if</code> for Conditional Hardware</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module configurable_pipe #(
+    parameter USE_SYNCHRONIZER = 1   // compile-time switch
+) (
+    input wire i_clk, i_in, output wire o_out
+);
+    generate
+        if (USE_SYNCHRONIZER) begin : g_sync
+            reg r_meta, r_stable;
+            always @(posedge i_clk) begin
+                r_meta   &lt;= i_in;
+                r_stable &lt;= r_meta;
+            end
+            assign o_out = r_stable;
+        end else begin : g_nosync
+            assign o_out = i_in;     // direct pass-through — no flops at all
+        end
+    endgenerate
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> <code>generate if</code> includes hardware <em>conditionally</em> based on parameter values. Setting <code>USE_SYNCHRONIZER=0</code> means the synthesizer builds no synchronizer — not even a wire. This is how you optimize instances that don't need certain features: internal signals skip the synchronizer, external signals get one.
     </div>
-    <aside class="notes">Generate-if conditionally includes hardware based on parameters. The unused branch is not synthesized at all. Great for optional features like synchronizers for internal vs external signals.</aside>
+    <aside class="notes">Generate if = compile-time option. Unlike an always block with a variable condition, the unused branch produces zero silicon — not &ldquo;inactive&rdquo; hardware, zero hardware. Great for feature toggles.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Generate an N-Bit Ripple Adder</h2>
+    <p style="font-size:0.78em;">Write a generate block that builds an N-bit ripple-carry adder out of N full-adder instances. Full adder has inputs <code>a, b, cin</code> and outputs <code>sum, cout</code>.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Sketch:</strong>
+        <pre style="font-size:0.85em;"><code class="language-verilog">wire [N:0] carry;
+assign carry[0] = cin;
+genvar gi;
+generate for (gi = 0; gi &lt; N; gi = gi + 1) begin : g_fa
+    full_adder u_fa (
+        .a(a[gi]), .b(b[gi]), .cin(carry[gi]),
+        .sum(sum[gi]), .cout(carry[gi+1])
+    );
+end endgenerate
+assign cout = carry[N];</code></pre>
+        The carry wire of width N+1 chains the full-adders — element <code>gi+1</code> reads what element <code>gi</code> wrote. This is the classic pattern for bit-serial structures.
+    </div>
+    <aside class="notes">Ripple carry adder is the canonical generate-for example. Notice the carry chain wire has width N+1 to accommodate the final cout. Students often get the carry wire width wrong by one.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Scaling with Generate: 4 → 16 Debouncers</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day08/ex3_generate/
+make stat N=4    # 4 debouncers
+make stat N=8
+make stat N=16   # 16 — exceeds iCE40 HX1K!
+make sim N=4     # testbench scales too</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">N=4:  160 cells (~12% HX1K)
+N=8:  320 cells (~25%)
+N=16: 640 cells (~50%)
+# scaling is exactly linear
+# — no fixed overhead</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">One Verilog file, one parameter change, three different-sized designs. The Verilog doesn't grow — only the gate count does. This is what makes generate a force multiplier.</p>
+    </div>
+    <aside class="notes">[Terminal] Same file, different N, different cell counts. Perfectly linear scaling because each debouncer is independent. This is the magic of generate: your source stays the same size, your silicon scales.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">$ yosys -p "read_verilog ... button_array.v; chparam -set N 4 button_array; \
+           synth_ice40; stat"
+
+=== button_array ===   # N=4
+   Number of cells:  160   (= 4 × ~40-cell debouncer)
+   Contains sub-instances:
+     g_btn[0].u_deb   (debounce)
+     g_btn[1].u_deb   (debounce)
+     g_btn[2].u_deb   (debounce)
+     g_btn[3].u_deb   (debounce)</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> The <strong>named generate scope</strong> (<code>g_btn</code>) appears in hierarchy output and in GTKWave signal paths. <code>tb.dut.g_btn[2].u_deb.r_count</code> is the counter of the 3rd debouncer. Without that naming, you couldn't navigate generated hardware.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Checkpoint:</strong> Generate + parameter is the &ldquo;infinite IP&rdquo; pattern. One source file serves 1, 10, 1000 instances — never rewrite, just re-instantiate.
+    </div>
+    <aside class="notes">Named scope = debuggable generate. Waveform paths include the generate index. Without naming, you can't tell one debouncer's signals from another's.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a parameterized N-bit parity generator using generate-for blocks. Include a generate-if to optionally pipeline the result.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI combines generate-for + generate-if.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: XOR tree via generate-for, optional pipeline stage via generate-if.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses <code>genvar</code>, named scopes. Weak AI forgets the named scope.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Require named scopes in your prompt. AI often forgets without explicit ask.</p></div>
+    </div>
+    <aside class="notes">AI is competent at generate-for, sometimes forgets named scopes. Always ask for them explicitly.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>generate for</code>: replicate hardware N times at compile time.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>generate if</code>: conditionally include/exclude hardware.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Both run at <strong>elaboration</strong>, not runtime — they create physical circuits.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Always name generate blocks (<code>begin : gen_name</code>) for debug clarity.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>generate for</code> = compile-time hardware replication, not a runtime loop.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>generate if</code> = conditional hardware; unused branch produces zero silicon.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Always use <code>genvar</code> and named scopes (<code>begin : g_foo</code>).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Combined with parameters, generate scales a design by changing one number.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Design for Reuse</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~6 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Your module library — building blocks for Week 3 and beyond.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If you're about to copy-paste a module N times, use generate instead.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Design for Reuse</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have all the tools: hierarchy, parameters, generate. Video 4 ties them together into a <strong>design philosophy</strong>: how to build modules someone else (or future-you) can drop into a project without reading the source. This is how your Week 1-2 modules become a permanent toolbox — and it's the skill Week 3 relies on.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

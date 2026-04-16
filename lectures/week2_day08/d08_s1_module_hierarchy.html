@@ -1,109 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8.1: Module Hierarchy Deep Dive — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 8.1: Module Hierarchy — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 8 · Hierarchy, Parameters &amp; Generate
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 8 · Hierarchy &amp; Reuse</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Module Hierarchy</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">Hierarchy</span>
-        <span class="seg-label ">Parameters</span>
-        <span class="seg-label ">Generate</span>
-        <span class="seg-label ">Design for Reuse</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 8.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">Hierarchy</span><span class="seg-label">Parameters</span><span class="seg-label">Generate</span><span class="seg-label">Reuse</span></div>
+    <aside class="notes">Video 1 of 4 for Day 8. Modules inside modules: how real designs manage complexity.</aside>
 </section>
 
 <section>
-    <h2>Hierarchy Manages Complexity</h2>
-    <pre style="font-family:monospace;font-size:0.55em;background:none;border:none;box-shadow:none;color:#333;">
-    top_button_counter
-    ├── debounce (switch 1 — reset)
-    ├── debounce (switch 2 — count)
-    ├── edge_detector (count press)
-    ├── counter_mod_n (4-bit hex counter)
-    ├── hex_to_7seg (display decoder)
-    └── heartbeat_blinker (LED1)
-    </pre>
-    <p style="font-size:0.8em;">Already 6+ modules in a simple design. A UART controller will have twice as many.</p>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Good hierarchy: each module is small enough to <strong>understand, test, and reuse independently</strong>.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">A modern SoC has millions of gates arranged in a hierarchy 10+ levels deep. The top-level module of an Apple M-series chip probably fits on one page — it instantiates ~50 major blocks (CPU clusters, GPU, memory controller, NPUs), each a module, each decomposed into sub-modules, all the way down to leaf cells. Without hierarchy, no one person could understand a chip.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 5 button pipeline: sync + debounce + edge-detect are three modules. Day 7 traffic light used a sub-module timer. Day 11 UART top has TX + RX + control as sub-modules. Day 12 SPI is the same. The pattern scales from this week to the capstone.</p>
+        </div>
     </div>
-    <aside class="notes">By Day 8, designs are complex. Good hierarchy makes each piece small enough to understand, test, and reuse independently.</aside>
+    <aside class="notes">Hierarchy isn't optional at scale. Every real design uses it. Learning to instantiate modules, connect them properly, and give them descriptive names is a fundamental skill.</aside>
 </section>
+
 <section>
-    <h2>Naming Conventions for Hierarchy</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Descriptive instance names (not u1, u2!)
-debounce #(.CLKS_TO_STABLE(250_000)) debounce_sw1 (
-    .i_clk    (i_clk),
-    .i_bouncy (i_switch1),
-    .o_clean  (w_sw1_clean)
-);
-<span class="fragment">
-// Internal wires named by purpose
-wire w_sw1_clean;    // ✓ describes what it carries
-wire w_count_pulse;  // ✓ describes its role
-wire w_data;         // ✗ too vague</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Rules:</strong> Descriptive instance names. Always named port connections. Internal wires describe purpose.
+    <h2><span style="color:#C0392B;">⚠️</span> Named Ports Are Mandatory</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;"><code>counter c1 (clk, rst, en, count);</code> &mdash; positional connection. Shorter, right?</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;"><code>counter u_cnt0 (.i_clk(clk), .i_reset(rst), .i_enable(en), .o_count(count));</code> &mdash; <strong>named</strong> port connection. If someone adds a port, swaps an order, or adds an input, positional connections silently break. Named connections fail at compile — fast, loud, fixable.</p>
+        </div>
     </div>
-    <aside class="notes">Descriptive instance names, named port connections, descriptive wire names. Never u1/u2, never positional ports, never w_data.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Every industry Verilog style guide forbids positional connections above trivial cases. Lint tools flag them. Code reviews catch them. Today's lab forbids them. Every module instance in this course uses <code>.port(signal)</code>.
+    </div>
+    <aside class="notes">Positional is a relic of 1980s Verilog. It's dangerously fragile. Named ports are a few extra characters of typing that prevent whole categories of bugs.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Instantiate a Debouncer</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Top-level module — uses debounce as a sub-module
+module button_handler (
+    input  wire i_clk, i_reset, i_btn_raw,
+    output wire o_btn_clean
+);
+    // Instantiate the debounce module by name
+    debounce #(.CLKS_STABLE(500_000)) u_debounce_sw1 (
+        .i_clk   (i_clk),
+        .i_reset (i_reset),
+        .i_noisy (i_btn_raw),
+        .o_clean (o_btn_clean)
+    );
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Three disciplines on display. (1) <strong>Descriptive instance name</strong> — <code>u_debounce_sw1</code>, not <code>u1</code>; when a signal appears in a waveform labeled <code>u_debounce_sw1.r_count</code> you know exactly what it is. (2) <strong>Parameter override</strong> — <code>#(.CLKS_STABLE(500_000))</code>. (3) <strong>Named port connection</strong> — <code>.i_clk(i_clk)</code>.
+    </div>
+    <aside class="notes">Three habits in 5 lines. Every instantiation you ever write follows this pattern. The <code>u_</code> prefix (&ldquo;underscore unit&rdquo;) is an industry naming convention — makes instance names searchable and distinguishable from signals.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Naming Conventions</h2>
+    <table style="font-size:0.72em;margin-top:0.3em;">
+        <thead><tr><th>Concept</th><th>Prefix / Pattern</th><th>Example</th></tr></thead>
+        <tbody>
+            <tr class="fragment"><td>Module input</td><td><code>i_</code></td><td><code>i_clk</code>, <code>i_data</code></td></tr>
+            <tr class="fragment"><td>Module output</td><td><code>o_</code></td><td><code>o_sum</code>, <code>o_valid</code></td></tr>
+            <tr class="fragment"><td>Module inout (rare)</td><td><code>io_</code></td><td><code>io_bus</code></td></tr>
+            <tr class="fragment"><td>Internal register</td><td><code>r_</code></td><td><code>r_state</code>, <code>r_counter</code></td></tr>
+            <tr class="fragment"><td>Internal wire</td><td><code>w_</code></td><td><code>w_sum</code>, <code>w_carry</code></td></tr>
+            <tr class="fragment"><td>Module instance</td><td><code>u_</code></td><td><code>u_debounce_sw1</code></td></tr>
+            <tr class="fragment"><td>Compile-time constant</td><td><code>ALL_CAPS</code></td><td><code>CLKS_STABLE</code>, <code>WIDTH</code></td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together:</strong> Consistent prefixes turn a waveform into a readable document. When you see <code>u_uart_rx.r_state</code>, you instantly know: this is a register inside the uart_rx instance. The conventions aren't arbitrary — they're the lowest-cost way to make signals navigable.
+    </div>
+    <aside class="notes">Naming conventions are a code-review enforced discipline. Waveforms with well-named signals are 10x faster to debug than ones with u1, u2, tmp.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Spot the Bad Hierarchy</h2>
+    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">module top (input wire clk, input wire data_in, output wire done);
+    wire x, y, z;
+    submod1 u1 (clk, data_in, x);
+    submod2 u2 (x, y);
+    submod3 u3 (clk, y, z);
+    submod4 u4 (z, done);
+endmodule</code></pre>
+    <p style="font-size:0.78em;">List the code-review issues.</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Issues:</strong>
+        <ol style="font-size:0.92em;">
+            <li><strong>Positional port connections</strong> everywhere — fragile.</li>
+            <li><strong>Meaningless instance names</strong> (<code>u1</code>, <code>u2</code>, ...) — unreadable in waveforms.</li>
+            <li><strong>Meaningless wire names</strong> (<code>x</code>, <code>y</code>, <code>z</code>) — can't tell what they carry.</li>
+            <li><strong>Module names say nothing</strong> (<code>submod1</code>) — but that's a file-naming issue.</li>
+        </ol>
+        Fix: <code>named .ports</code>, meaningful instance names (<code>u_decoder</code>, <code>u_filter</code>), wires named after what they represent (<code>w_decoded_byte</code>, <code>w_filtered_sample</code>).
+    </div>
+    <aside class="notes">This is the code-review style bug catalog in one snippet. Students internalize the fix by seeing the ugly version first.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Build a Hierarchical Design</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes — sync + debounce + edge = button_handler</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day08/ex1_hierarchy/
+ls src/              # 4 module files
+cat button_handler.v # top-level composition
+make sim
+make stat            # total for full hierarchy
+make prog</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">sync_2ff.v
+debounce.v
+edge_detect.v
+button_handler.v
+
+PASS: sync works
+PASS: bounces filtered
+PASS: 1-cycle pulses
+=== 24 passed, 0 failed ===
+
+Flattened: 42 cells
+Per-instance breakdown:
+  u_sync:    2 SB_DFF
+  u_debounce: 37 cells
+  u_edge:    1 SB_DFF + 1 LUT</code></pre>
+        </div>
+    </div>
+    <aside class="notes">[Terminal] Show the 4-file hierarchy. In waveforms, signals are prefixed by instance path: tb.dut.u_debounce.r_count. That navigation is what makes hierarchy pay off at debug time.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Hierarchy Preserved or Flattened?</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">$ yosys -p "read_verilog *.v; hierarchy -top button_handler; synth_ice40; stat"
+
+=== button_handler ===     ← top level
+   Number of cells:       42
+     $scopeinfo             3    ← hierarchy markers (retained)
+
+=== debounce ===           ← sub-module, preserved
+   Number of cells:       37
+     SB_CARRY              18
+     SB_DFFESR             20
+     ...</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> Yosys <strong>preserves hierarchy by default</strong>. The stat output shows each module's contribution separately. You can still inspect the 37-cell debouncer independently from the 3-cell sync and edge-detect. If you wanted to flatten everything into one pool for optimization, add <code>flatten</code> to the Yosys script — useful for critical-path analysis, costly to debug.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Pro tip:</strong> Keep hierarchy during simulation (navigability) and dev-stage synthesis. Flatten only when you need the absolute last 5% of area/timing from optimization passes.
+    </div>
+    <aside class="notes">Preservation is the default and correct choice during development. Flatten is a tuning step for late-stage optimization. Students should default to preservation.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;I have sync_2ff.v, debounce.v, and edge_detect.v. Write a top-level button_handler module that instantiates all three in the correct order, using named port connections and descriptive instance names.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI composes 3 modules into a top.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: wire chains from sync output → debounce input → edge input.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses named ports + <code>u_</code> instances. Weak AI uses positional.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI handles composition well if you give it the sub-module port lists.</p></div>
+    </div>
+    <aside class="notes">Composition is a good AI task. Make sure to provide port lists in the prompt. AI-generated top levels are often more consistently named than student-written ones.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Hierarchy = each module independently understandable and testable.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Descriptive instance names: <code>debounce_sw1</code>, not <code>u1</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Always named port connections — never positional.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Design top-down (architecture), implement bottom-up (test small first).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Hierarchy manages complexity. Real designs are 10+ levels deep.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Always use named port connections (<code>.port(signal)</code>), never positional.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Naming conventions: <code>i_/o_/r_/w_/u_</code>. Descriptive instance names.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Yosys preserves hierarchy by default. Flatten only for optimization.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Parameters &amp; Parameterization</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Write once, configure many — the key to reusable modules.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If a reviewer can't tell what a signal carries from its name, it's named wrong.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Parameters &amp; Parameterization</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~9 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now instantiate modules. Next: how to make the <em>same</em> module serve different roles through <strong>parameters</strong>. One counter module that's 8-bit in one place, 16-bit in another, with any CLKS_STABLE value. This is IP reuse — and it's how industry scales.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

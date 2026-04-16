@@ -1,111 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 6.3: Tasks for Organization — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 6.3: Tasks for Organization — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 6 · Testbenches &amp; Simulation-Driven Development
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 6 · Verification Methodology</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Tasks for Organization</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">TB Anatomy</span>
-        <span class="seg-label ">Self-Checking</span>
-        <span class="seg-label active">Tasks</span>
-        <span class="seg-label ">File-Driven</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 6.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Anatomy</span><span class="seg-label">Self-Checking</span><span class="seg-label active">Tasks</span><span class="seg-label">File-Driven</span></div>
+    <aside class="notes">Video 3 of 4. Refactoring lesson: how to turn sprawling stimulus-and-check into clean, readable, maintainable test cases.</aside>
 </section>
 
 <section>
-    <h2>The <code>task</code> Construct</h2>
-    <p style="font-size:0.85em;">A <code>task</code> is a reusable block — like a function but it can include <strong>time-consuming operations</strong> (<code>#</code> delays, <code>@(posedge clk)</code>).</p>
-    <pre class="sim-only fragment"><code class="language-verilog">task apply_and_check;
-    input [3:0] in_a, in_b, expected;
-    input [8*20-1:0] name;  // string
-begin
-    a = in_a; b = in_b;
-    @(posedge clk); @(posedge clk); // settle
-    if (result !== expected) begin
-        $display("FAIL: %0s — expected %h, got %h", name, expected, result);
-        fail_count = fail_count + 1;
-    end else
-        $display("PASS: %0s", name);
-    test_count = test_count + 1;
-end
-endtask</code></pre>
-    <aside class="notes">Tasks are reusable testbench procedures. Unlike functions, they can include delays and clock-edge waits. Combine stimulus and checking in one call.</aside>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Production testbenches at Apple, Qualcomm, or AMD contain hundreds of test cases. Every one is one-line call to a <code>task</code> with meaningful parameters. The top-level <code>initial</code> block reads like a test plan. When you look at a senior engineer's testbench, the test cases are scannable: you see the intent, not the boilerplate.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today's pattern applies to every testbench you write from here forward. Video 4 combines tasks with file-driven test vectors — the combination that enables the thousand-case testbenches in Day 11 UART validation.</p>
+        </div>
+    </div>
+    <aside class="notes">Tasks are the refactoring pattern that turns a beginner's testbench into a professional one. The top-level test plan becomes a sequence of one-liners.</aside>
 </section>
+
 <section>
-    <h2>Clean Test Cases</h2>
-    <pre class="sim-only"><code class="language-verilog">initial begin
-    clk = 0; reset = 1; #100; reset = 0; #100;
+    <h2><span style="color:#C0392B;">⚠️</span> Tasks Are Not Functions — And That's Why They Matter Here</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;<code>task</code> and <code>function</code> are the same thing. I'll use whichever.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">A <strong>function</strong> returns a value in zero time — no delays, no clock waits. A <strong>task</strong> can consume simulation time: <code>#delay</code>, <code>@(posedge clk)</code>, <code>wait(cond)</code>. Testbenches need both stimulus (takes time) and checks (zero time), so <strong>tasks are the right tool for test cases</strong> that combine them.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Try to call <code>#10</code> inside a function — simulator rejects it. Try to drive stimulus with a function — same. Tasks are what the spec designed for this job.
+    </div>
+    <aside class="notes">Functions = zero-time computation. Tasks = can consume time. For testbenches where you drive inputs, wait, and check outputs, you need tasks. For pure value computation (&ldquo;what's expected&rdquo;), functions are cleaner.</aside>
+</section>
 
-    // Each test is ONE readable line
-    apply_and_check(4'd3, 4'd5, 4'd8,  "ADD 3+5");
-    apply_and_check(4'd7, 4'd3, 4'd4,  "SUB 7-3");
-    apply_and_check(4'hA, 4'hC, 4'h8,  "AND A&C");
-    apply_and_check(4'hA, 4'hC, 4'hE,  "OR  A|C");
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Before: Copy-Paste Stimulus</h2>
+    <pre class="mistake" style="font-size:0.6em;"><code class="language-verilog">initial begin
+    // Test case 1: 5 + 3
+    a = 4'd5; b = 4'd3;
+    #10;
+    if (sum !== 5'd8) begin tests_failed=tests_failed+1; $display("FAIL: 5+3"); end
+    else $display("PASS: 5+3 = %d", sum);
+    tests_run = tests_run + 1;
 
-    // ... add 50 more tests with no code duplication
-    $finish;
+    // Test case 2: 7 + 9
+    a = 4'd7; b = 4'd9;
+    #10;
+    if (sum !== 5'd16) begin tests_failed=tests_failed+1; $display("FAIL: 7+9"); end
+    else $display("PASS: 7+9 = %d", sum);
+    tests_run = tests_run + 1;
+
+    // Test case 3: 15 + 15  ...
+    // 20 more cases, 5 lines each = 100 lines of almost-identical code
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Each test is one line. Easy to add more. Easy to read. Easy to maintain.
+    <div class="callout" style="font-size:0.7em;">
+        <strong>The problem:</strong> 5 lines per test case × 20 cases = 100 lines of nearly-identical code. Adding a new check (e.g. timing) means editing all 20 cases. Any student who's written this once has felt the pain.
     </div>
-    <aside class="notes">With tasks, each test case is a single readable line. This is how professional verification engineers structure testbenches.</aside>
+    <aside class="notes">The &ldquo;before&rdquo; picture. Everyone who writes a testbench longer than 3 cases ends up here. The copy-paste pattern is unsustainable — adding a new assertion means editing every case.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; After: Stimulus-and-Check Task</h2>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">task test_add;
+    input [3:0] a_in, b_in;
+    input [4:0] expected;
+    begin
+        a = a_in;
+        b = b_in;
+        #10;                  // wait for combinational settle
+        check_eq(sum, expected, $sformatf("%d + %d", a_in, b_in));
+    end
+endtask
+
+initial begin
+    test_add(4'd5,  4'd3,  5'd8);
+    test_add(4'd7,  4'd9,  5'd16);
+    test_add(4'd15, 4'd15, 5'd30);
+    test_add(4'd0,  4'd0,  5'd0);
+    test_add(4'd8,  4'd8,  5'd16);
+    $display("=== %0d passed, %0d failed ===", tests_run - tests_failed, tests_failed);
+end</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>The fix:</strong> One task, one-line call per test case. The <code>initial</code> block now reads like a test plan — each case's intent visible at a glance.
+    </div>
+    <aside class="notes">Top-level initial becomes a scannable test plan. Each line is one case. Adding a new case is adding one line. Adding a new check (e.g. check done signal) is one edit inside the task.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sequential Stimulus Task</h2>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// For a clocked DUT: drive inputs at posedge, sample after
+task apply_and_check;
+    input [7:0] d_in;
+    input       en_in;
+    input [7:0] q_expected;
+    begin
+        @(posedge clk);
+        d  = d_in;
+        en = en_in;
+        @(posedge clk);        // wait for next edge — DUT captures
+        #1;                     // slight delay to sample after edge
+        check_eq(q, q_expected, $sformatf("d=%h en=%b", d_in, en_in));
+    end
+endtask</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> The task handles clock synchronization, input driving, and output checking — three concerns in one reusable unit. Each test case is one line, and edge-alignment is centralized in one place where bugs can be found once and fixed everywhere.
+    </div>
+    <aside class="notes">Sequential testbenches need edge alignment. Putting the timing logic inside the task means there's one canonical place where it lives — not 20 copies that might accidentally drift.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Refactor This</h2>
+    <pre style="font-size:0.62em;"><code class="language-verilog">initial begin
+    rst = 1; #10; rst = 0;
+    en = 1; d = 8'hAA; @(posedge clk); #1;
+    if (q !== 8'hAA) $display("FAIL A"); else $display("PASS A");
+
+    en = 1; d = 8'h55; @(posedge clk); #1;
+    if (q !== 8'h55) $display("FAIL B"); else $display("PASS B");
+
+    en = 0; d = 8'hFF; @(posedge clk); #1;
+    if (q !== 8'h55) $display("FAIL C"); else $display("PASS C");   // hold
+end</code></pre>
+    <p style="font-size:0.78em;">Define <code>apply_and_check</code> and rewrite the three cases as one-liners.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Sketch:</strong>
+        <pre style="font-size:0.85em;"><code class="language-verilog">reset_dut();
+apply_and_check(1, 8'hAA, 8'hAA);  // load
+apply_and_check(1, 8'h55, 8'h55);  // update
+apply_and_check(0, 8'hFF, 8'h55);  // en=0: hold
+</code></pre>
+    </div>
+    <aside class="notes">Real refactor exercise. 15 lines → 4. More importantly: the 4-line version is self-documenting. &ldquo;en=0 FF hold&rdquo; is readable; the original version isn't.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Refactor a Real Testbench</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes — before/after</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day06/ex3_tasks/
+wc -l tb_before.v tb_after.v
+diff tb_before.v tb_after.v | head -40
+make sim    # both produce identical results</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"> 120 tb_before.v
+  45 tb_after.v
+
+PASS: 5+3 = 8
+PASS: 7+9 = 16
+...
+=== 20 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Same output. 63% fewer lines of code. More importantly: if a new check is needed, it's <strong>one edit in the task</strong>, not 20 edits across cases.</p>
+    </div>
+    <aside class="notes">[Terminal] Show the line-count diff. Same behavior, much smaller file. The real win comes the next time you need to add an assertion — one line changes instead of 20.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Refactor this 40-line testbench using a task so each test case becomes a single line. Also use <code>$sformatf</code> for the labels.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI to refactor to task-based.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: one task with inputs + one-line cases in initial.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses <code>$sformatf</code> for labels. Weak AI concatenates strings manually.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">AI is reliable for refactoring; easy productivity boost for any test-heavy file.</p></div>
+    </div>
+    <aside class="notes">Refactoring is a natural AI strength. Give it concrete before/after goals and it's quite reliable.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>task</code> can include delays and clock waits — unlike <code>function</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Combine stimulus + checking in one reusable task.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Result: one-line test cases that are easy to extend.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Tasks can consume time; functions cannot.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Encapsulate stimulus + check in one task per pattern.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;One-line test cases make the <code>initial</code> block a test plan.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Use <code>$sformatf</code> for dynamic test labels.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">File-Driven Testing</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~13 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Load test vectors from a file — separate data from testbench logic.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If you have copy-paste in your testbench, you have a task you haven't written yet.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">File-Driven Testing</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Tasks handle repetition of <em>structure</em>. But what if you have <em>thousands</em> of test vectors? Video 4 introduces <code>$readmemh</code> — loading test vectors from external files so your testbench can run 100,000 cases without a 100,000-line <code>initial</code> block.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

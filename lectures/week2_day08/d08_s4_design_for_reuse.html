@@ -1,117 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 8.4: Design for Reuse — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 8.4: Design for Reuse — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 8 · Hierarchy, Parameters &amp; Generate
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 8 · Hierarchy &amp; Reuse</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Design for Reuse</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~6 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes · <em>Week 2 Capstone</em></p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Hierarchy</span><span class="seg-label">Parameters</span><span class="seg-label">Generate</span><span class="seg-label active">Reuse</span></div>
+    <aside class="notes">Video 4 of 4 for Day 8. The capstone of Week 2. Ties together everything you've learned into a design philosophy.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">ARM licenses Verilog IP. Cadence and Synopsys sell Verilog IP. OpenCores distributes free Verilog IP. The IP economy exists because well-designed modules drop into other designers' projects <em>without modification</em>. Engineers' reputations in the industry are built on one thing: has your module been reused? When a module at a large company gets used by 10 different chips, its author is untouchable.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Week 1-2 module library now includes ~10 tested modules. Week 3 will build UART and SPI by combining them. Capstone and senior-design projects will reach back into this library for years. Today's practices determine whether that library is <em>usable</em> or merely <em>available</em>.</p>
+        </div>
     </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">Hierarchy</span>
-        <span class="seg-label ">Parameters</span>
-        <span class="seg-label ">Generate</span>
-        <span class="seg-label active">Design for Reuse</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 8.</aside>
+    <aside class="notes">This is the career-level takeaway. Reusable IP is the economic unit of the hardware industry. Engineers who produce it are valuable; engineers who only consume it are commodity.</aside>
 </section>
 
 <section>
     <h2>Your Growing Module Library</h2>
-    <table style="margin-top:0.5em;font-size:0.65em;">
-        <thead><tr><th>Module</th><th>Built</th><th>Parameterized?</th><th>Tested?</th></tr></thead>
+    <table style="font-size:0.7em;margin-top:0.3em;">
+        <thead><tr><th>Module</th><th>Day</th><th>Parameters</th><th>Tested?</th></tr></thead>
         <tbody>
-            <tr><td><code>hex_to_7seg</code></td><td>Day 2</td><td>—</td><td>Day 6 ✓</td></tr>
-            <tr><td><code>debounce</code></td><td>Day 5</td><td>✓ CLKS_TO_STABLE</td><td>Day 6 ✓</td></tr>
-            <tr><td><code>counter_mod_n</code></td><td>Day 5</td><td>✓ N</td><td>Day 6 ✓</td></tr>
-            <tr><td><code>edge_detector</code></td><td>Day 5</td><td>—</td><td>Day 6 ✓</td></tr>
-            <tr><td><code>synchronizer</code></td><td>Day 5</td><td>—</td><td>✓</td></tr>
-            <tr><td><code>shift_reg_piso</code></td><td>Day 5</td><td>✓ WIDTH</td><td>Day 6 ✓</td></tr>
-            <tr><td><code>fsm_template</code></td><td>Day 7</td><td>—</td><td>Day 7 ✓</td></tr>
+            <tr><td><code>sync_2ff</code></td><td>5</td><td>WIDTH</td><td>✓</td></tr>
+            <tr><td><code>debounce</code></td><td>5</td><td>CLKS_STABLE</td><td>✓</td></tr>
+            <tr><td><code>edge_detect</code></td><td>5</td><td>&mdash;</td><td>✓</td></tr>
+            <tr><td><code>mod_n_counter</code></td><td>5</td><td>N</td><td>✓</td></tr>
+            <tr><td><code>sipo_shift</code></td><td>5</td><td>WIDTH</td><td>✓</td></tr>
+            <tr><td><code>piso_shift</code></td><td>5</td><td>WIDTH</td><td>✓</td></tr>
+            <tr><td><code>traffic_fsm</code></td><td>7</td><td>&mdash;</td><td>✓</td></tr>
+            <tr><td><code>pattern_detector</code></td><td>7</td><td>PATTERN, WIDTH</td><td>✓</td></tr>
+            <tr><td><code>fifo</code></td><td>8</td><td>DEPTH, WIDTH</td><td>✓</td></tr>
+            <tr><td><code>button_array</code></td><td>8</td><td>N, CLKS_STABLE</td><td>✓</td></tr>
         </tbody>
     </table>
-    <p class="fragment" style="font-size:0.8em;">These modules get reused in Week 3 for UART and SPI.</p>
-    <aside class="notes">Your module library now has about 10 tested, reusable modules. These are the building blocks for UART in Week 3. This is real design reuse.</aside>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>These are the building blocks for Week 3.</strong> UART TX = <code>piso_shift</code> + <code>mod_n_counter</code> (baud) + FSM. UART RX = <code>sync_2ff</code> + <code>sipo_shift</code> + oversampler FSM. SPI = both + CS debounce. Everything composes.
+    </div>
+    <aside class="notes">Ten modules. Week 3 doesn't build new primitive blocks — it combines these. The investment in parameterization and testing pays off now.</aside>
 </section>
+
 <section>
-    <h2>Reuse Checklist</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Parameterized</strong> — widths, thresholds, counts are parameters</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Self-contained</strong> — no dependency on external magic numbers</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Tested</strong> — self-checking testbench at multiple configurations</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Documented</strong> — header comment with description, ports, parameters</p>
-        <p class="fragment"><span style="color:#2E7D32;">☑</span> <strong>Named</strong> — clear, descriptive file and module names</p>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;Works for Me&rdquo; vs. &ldquo;Reusable&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ &ldquo;Works for me&rdquo;</h3>
+            <p style="font-size:0.72em;">Hard-coded widths. Assumes particular clock rate. Testbench works only with &ldquo;my&rdquo; input pattern. Undocumented. Signal names reflect current project, not purpose. Sub-modules tangled with the top. <em>Only original author can use it — and only in this project.</em></p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Reusable</h3>
+            <p style="font-size:0.72em;">Parameterized over everything that varies. Clock-rate independence where possible. Testbench covers the module's contract (not a specific application). Documented inputs, outputs, behavior, timing, assumptions. Named for function. Self-contained — no external dependencies. <em>A stranger can drop it in and it works.</em></p>
+        </div>
     </div>
-    <div class="fragment golden-rule" style="font-size:0.85em;margin-top:0.5em;">
-        A module you can&rsquo;t reuse without reading its source is not reusable.
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A reusable module passes a simple test: someone who didn't write it can instantiate it correctly by reading only the module header and a short comment block. If they need to read the implementation, the module has failed at reuse.
     </div>
-    <aside class="notes">Reuse checklist: parameterized, self-contained, tested, documented, named. If you have to read the source to use it, it's not truly reusable.</aside>
+    <aside class="notes">The central distinction. &ldquo;Works for me&rdquo; modules cost hours every time someone tries to reuse them. Reusable modules pay dividends forever. This is a career-shaping habit.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Anatomy of a Reusable Module</h2>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">//-----------------------------------------------------------------------------
+// debounce.v — counter-based mechanical switch debouncer
+//
+// Takes an asynchronous, potentially bouncing input, and produces
+// a clean version that only changes after CLKS_STABLE consecutive
+// cycles of input persistence.
+//
+// Parameters:
+//   CLKS_STABLE : cycles to wait before accepting a new value
+//                 (default 500_000 = 20ms @ 25MHz)
+//
+// Ports:
+//   i_clk    : synchronous clock
+//   i_reset  : synchronous reset (active high)
+//   i_noisy  : input from external switch (async OK, but sync first
+//              externally if clock-domain-crossing applies)
+//   o_clean  : stable debounced output
+//
+// Latency: up to CLKS_STABLE cycles after a stable input change.
+// Usage:   debounce #(.CLKS_STABLE(N)) u_deb (...);
+//-----------------------------------------------------------------------------
+module debounce #(parameter CLKS_STABLE = 500_000) (
+    input  wire i_clk, i_reset, i_noisy,
+    output reg  o_clean
+);
+    // ... implementation ...
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> The header comment is the &ldquo;IP datasheet.&rdquo; A reuser sees parameters, ports, behavior, latency, and usage — everything they need to instantiate correctly without reading implementation.
+    </div>
+    <aside class="notes">Header comment = datasheet. The comment is the contract with reusers. Include: summary, parameters, ports, timing, assumptions, usage example. 10 lines of comments save hours of future confusion.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> The Reusability Checklist</h2>
+    <ul style="font-size:0.78em;">
+        <li class="fragment">☐ Every dimension that could vary is a <strong>parameter</strong></li>
+        <li class="fragment">☐ All parameters have <strong>sensible defaults</strong></li>
+        <li class="fragment">☐ Module is <strong>self-contained</strong> — no globals, no external definitions</li>
+        <li class="fragment">☐ <strong>Header comment</strong> describes purpose, parameters, ports, timing, usage</li>
+        <li class="fragment">☐ Signal names describe <strong>function</strong>, not the current project's context</li>
+        <li class="fragment">☐ Self-checking testbench covers the module's <strong>contract</strong>, not just happy-path inputs</li>
+        <li class="fragment">☐ Testbench runs under a <strong>Makefile</strong> target with one command</li>
+        <li class="fragment">☐ Synthesizable; <code>make stat</code> produces expected cell count</li>
+        <li class="fragment">☐ If the module is part of a pipeline, its latency is <strong>documented</strong></li>
+    </ul>
+    <aside class="notes">Nine boxes. Every one matters. Senior engineers review code against exactly this list.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Audit One of Your Modules</h2>
+    <p style="font-size:0.78em;">Pick a module from your Week 1-2 labs. Score it against the reusability checklist. For each unchecked box, name the work you'd do to check it.</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Most common gaps (I've seen them all):</strong>
+        <ul style="font-size:0.92em;">
+            <li>No header comment → add datasheet block</li>
+            <li>Hard-coded <code>25_000_000</code> or <code>250_000</code> → parameterize CLKS_PER_SEC</li>
+            <li>Signal names like <code>tmp</code>, <code>x</code>, <code>cnt</code> → rename for purpose</li>
+            <li>Testbench that only tests one specific case → add boundary + random</li>
+            <li>No Makefile target → add <code>make sim</code></li>
+        </ul>
+    </div>
+    <aside class="notes">Self-audit exercise. This happens before Week 3 — your modules need to be reusable when UART composition begins. Students who do this audit properly save themselves hours next week.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Before / After Comparison</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #C62828;">
+            <p style="color:#C62828;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">BEFORE: &ldquo;works for me&rdquo;</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">module btn (
+    input clk, rst, x,
+    output y
+);
+    reg [18:0] cnt;
+    // ... 20 ms @ 25 MHz ...
+    // (hard-coded to my project)
+endmodule</code></pre>
+        </div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;">
+            <p style="color:#27AE60;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">AFTER: reusable</p>
+<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">// Header comment: datasheet
+module debounce #(
+    parameter CLKS_STABLE = 500_000
+) (
+    input  wire i_clk, i_reset, i_noisy,
+    output reg  o_clean
+);
+    localparam W = $clog2(CLKS_STABLE);
+    reg [W-1:0] r_count;
+    // ... logic with docs ...
+endmodule</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Same functionality. Different reach.</strong> &ldquo;After&rdquo; version works on any clock rate, any window, with any name in any project. The change took 5 minutes; the reuse payoff lasts years.
+    </div>
+    <aside class="notes">Same functionality, different reach. The before works exactly in one place. The after works in any project, at any clock rate, with any window. Ten lines of difference.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Here's my debouncer. Refactor it to be reusable: add a parameter for the debounce window, auto-size the counter width, add a header comment block in a datasheet style, and rename signals with the <code>i_/o_/r_</code> convention.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI refactors to reusable style.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: parameter added, $clog2 used, renamed signals, datasheet comment.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI documents latency + timing assumptions. Weak AI only does syntactic rename.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">&ldquo;Reusable&rdquo; means semantic changes + docs, not just renaming.</p></div>
+    </div>
+    <aside class="notes">Reusability refactor is a great AI task. The failure mode is purely cosmetic changes without semantic improvement. Check that latency and timing assumptions get documented.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;A module is reusable when a stranger can use it from the header alone.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Everything that could vary is a parameter; everything else is documented.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The header comment is the IP datasheet. Write it as such.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Your 10-module library becomes Week 3's UART + SPI backbone.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If reading the implementation is necessary to use it, it isn't reusable.</div>
+</section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> What is the difference between <code>parameter</code> and <code>localparam</code>?</p>
-        <div class="fragment quiz-answer"><code>parameter</code> can be overridden at instantiation. <code>localparam</code> is internal/derived and cannot be overridden — use for computed constants.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> Is <code>generate for</code> a runtime loop?</p>
-        <div class="fragment quiz-answer">No! It runs at elaboration (compile time) and creates N physical copies of the hardware. It is NOT a sequential loop.</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> What does <code>$clog2(1000)</code> return?</p>
-        <div class="fragment quiz-answer">10 — because ceil(log₂(1000)) = 10. You need 10 bits to represent values 0 through 999.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> Why name generate blocks (<code>begin : gen_name</code>)?</p>
-        <div class="fragment quiz-answer">Named blocks create hierarchical paths visible in simulation and synthesis reports. Debugging <code>gen_debounce[2].db</code> is much easier than anonymous generated instances.</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 8 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> Name three things that should be parameterized in a debouncer module.</p>
+        <div class="fragment quiz-answer">CLKS_STABLE (window in cycles), possibly RESET_VAL (initial output), possibly the input-width if you want a multi-bit debouncer. Clock rate itself stays external — the module is in units of &ldquo;clocks,&rdquo; not milliseconds.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What goes in a header comment block that doesn't go in the Verilog code itself?</p>
+        <div class="fragment quiz-answer">Purpose, assumptions, timing (latency), usage example, required context. Code answers &ldquo;how&rdquo;; comments answer &ldquo;what for&rdquo; and &ldquo;how to use.&rdquo;</div>
     </div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> Why is signal naming part of reusability?</p>
+        <div class="fragment quiz-answer">Signals with project-specific names (<code>sw1_press</code>, <code>fan_on</code>) can't be used in other projects. Signals with functional names (<code>i_noisy</code>, <code>o_clean</code>) work everywhere.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> What single question do you ask to tell if a testbench tests a module's contract vs. a specific application?</p>
+        <div class="fragment quiz-answer">&ldquo;If I doubled the parameter values, would this testbench still be relevant?&rdquo; If no, the testbench is application-specific. If yes, it tests the module itself.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Week 2</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Week 3: Real Communication Protocols</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">UART · SPI · Integration Projects</p>
+        <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've now learned the <em>alphabet</em> of hardware design: combinational logic, sequential logic, synchronization, verification, state machines, and reuse. Week 3 is where you <em>compose words and sentences</em>. UART TX + RX — to actually talk to your computer over a serial cable. SPI master — to drive peripherals. Your <strong>Week 1-2 module library</strong> isn't the byproduct; it's the <em>material</em> of Week 3's designs. You're not going to learn many new primitives next week — you're going to <em>build real things</em> out of the ones you already have. See you Day 9.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

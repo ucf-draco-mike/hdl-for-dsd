@@ -1,123 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 6.2: Self-Checking Testbenches — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 6.2: Self-Checking Testbenches — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 6 · Testbenches &amp; Simulation-Driven Development
-        </span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 6 · Verification Methodology</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Self-Checking Testbenches</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">TB Anatomy</span>
-        <span class="seg-label active">Self-Checking</span>
-        <span class="seg-label ">Tasks</span>
-        <span class="seg-label ">File-Driven</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 6.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Anatomy</span><span class="seg-label active">Self-Checking</span><span class="seg-label">Tasks</span><span class="seg-label">File-Driven</span></div>
+    <aside class="notes">Video 2 of 4. The PASS/FAIL pattern you've been reading all week, from the inside.</aside>
 </section>
 
 <section>
-    <h2>The Problem With Manual Inspection</h2>
-    <div style="font-size:0.8em;margin-top:0.5em;">
-        <p class="fragment"><span style="color:#C62828;">✗</span> Miss subtle bugs (off-by-one, wrong bit, glitch)</p>
-        <p class="fragment"><span style="color:#C62828;">✗</span> Doesn&rsquo;t scale — can&rsquo;t visually verify 1000 test vectors</p>
-        <p class="fragment"><span style="color:#C62828;">✗</span> Not repeatable or automatable</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Regression suites at Intel/NVIDIA/Apple run thousands of self-checking testbenches overnight. CI/CD pipelines for RTL exist. A failing testbench emits a precise error log that developers can triage in minutes. <strong>Waveform inspection is reserved for root-causing</strong>; it is never how tests report status.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every lab from here forward uses a self-checking testbench. Your <code>make sim</code> either prints &ldquo;0 failed&rdquo; or it doesn't. Labs are graded on the self-check output. Video 3 organizes this pattern with <code>task</code>s; Video 4 scales it with external test vectors.</p>
+        </div>
     </div>
-    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:1em;">
-        The testbench must check itself. If it doesn&rsquo;t print PASS or FAIL, you&rsquo;re doing it wrong.
-    </div>
-    <aside class="notes">Looking at waveforms doesn't scale. You miss bugs, it's not repeatable, can't automate. The testbench must check itself.</aside>
+    <aside class="notes">Waveforms are for debugging — specifically, for root-causing bugs that tests have already caught. They're not for confirming behavior. That's what self-checking testbenches do.</aside>
 </section>
+
 <section>
-    <h2>Automated Checking Pattern</h2>
-    <pre class="sim-only"><code class="language-verilog" data-noescape>integer test_count = 0, fail_count = 0;
-<span class="fragment">
-    // Test: ADD 3 + 5 = 8
-    a = 4'd3; b = 4'd5; opcode = 2'b00;
-    #100;</span>
-<span class="fragment">
-    test_count = test_count + 1;
-    if (result !== 4'd8) begin
-        $display("FAIL: ADD 3+5: expected 8, got %d", result);
-        fail_count = fail_count + 1;
-    end else
-        $display("PASS: ADD 3+5 = %d", result);</span></code></pre>
-    <div class="fragment callout-warning" style="font-size:0.75em;">
-        <strong><code>!==</code> not <code>!=</code></strong> — case inequality handles <code>x</code>/<code>z</code> correctly.
-        <code>x != 0</code> → <code>x</code> (unknown!). <code>x !== 0</code> → <code>1</code> (definite mismatch).
+    <h2><span style="color:#C0392B;">⚠️</span> Eyeballing Waveforms Does Not Scale</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;I'll run the simulation, open GTKWave, check that the outputs look right. If I add more tests later I'll just re-check by eye.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Manual inspection <strong>does not scale, does not regress, and does not communicate</strong>. A self-checking testbench codifies <em>expected</em> behavior, compares it against <em>actual</em> behavior, and emits a structured PASS/FAIL report. When a student hands you a repo and says &ldquo;it works,&rdquo; you run <code>make sim</code> and trust the exit code, not their screenshot.</p>
+        </div>
     </div>
-    <aside class="notes">Track test and fail counts. Use case inequality — three-equals handles x and z. Regular inequality returns unknown when either side is x.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> If your testbench doesn't print &ldquo;<code>=== N passed, 0 failed ===</code>&rdquo;, it isn't done. No exceptions.
+    </div>
+    <aside class="notes">The biggest culture shift of the course. Students want to look at waveforms. Professional engineers write self-checking tests and only open GTKWave when the test reports a failure — and even then, only to find the root cause.</aside>
 </section>
+
 <section>
-    <h2>Summary Report</h2>
-    <pre class="sim-only"><code class="language-verilog">// At end of simulation
-$display("\n=== TEST SUMMARY ===");
-$display("Tests run:    %0d", test_count);
-$display("Tests passed: %0d", test_count - fail_count);
-$display("Tests failed: %0d", fail_count);
-if (fail_count == 0)
-    $display("*** ALL TESTS PASSED ***");
-else
-    $display("*** %0d FAILURES ***", fail_count);
-$finish;</code></pre>
-    <div class="fragment callout" style="font-size:0.8em;">
-        This is your standard from now on. Every testbench prints a summary.
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Self-Checking Pattern</h2>
+    <pre class="synth" style="font-size:0.63em;"><code class="language-verilog">integer tests_run = 0, tests_failed = 0;
+
+task check_eq(input [31:0] actual, input [31:0] expected, input [256*8-1:0] label);
+begin
+    tests_run = tests_run + 1;
+    if (actual !== expected) begin      // use !== to handle X/Z correctly
+        tests_failed = tests_failed + 1;
+        $display("FAIL: %0s  actual=%h  expected=%h", label, actual, expected);
+    end else begin
+        $display("PASS: %0s  = %h", label, actual);
+    end
+end
+endtask
+
+initial begin
+    // ... drive stimulus ...
+    check_eq(sum, 5'd8,  "5+3");
+    check_eq(sum, 5'd16, "7+9");
+    // ... more ...
+    $display("=== %0d passed, %0d failed ===", tests_run - tests_failed, tests_failed);
+    $finish;
+end</code></pre>
+    <div class="callout" style="font-size:0.68em;">
+        <strong>My thinking:</strong> Three key choices. (1) Use <code>!==</code> (case-inequality) — <em>not</em> <code>!=</code> — to correctly compare signals that may contain <code>X</code> or <code>Z</code>. (2) Track <code>tests_run</code> and <code>tests_failed</code> as integer counters. (3) Always print a <em>summary line</em> at the end so CI/CD can grep for it.
     </div>
-    <aside class="notes">Every testbench ends with a summary. Tests run, passed, failed. This is your standard going forward.</aside>
+    <aside class="notes">Three critical habits. Three-equals vs two-equals: three-equals returns 0 or 1, cleanly, even if operands are X. Two-equals returns X, propagating. Track counters explicitly. Always end with a summary line.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>==</code> vs <code>===</code></h2>
+    <pre class="synth" style="font-size:0.72em;"><code class="language-verilog">reg [3:0] signal = 4'b10x1;
+
+if (signal == 4'b1011)  $display("A fires?");  // result: X — if-condition is ambiguous
+if (signal === 4'b1011) $display("B fires?");  // result: 0 — cleanly false, B does not fire
+if (signal === 4'b10x1) $display("C fires?");  // result: 1 — matches including X, C fires</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> <code>==</code> returns <code>X</code> when either operand contains <code>X</code>. In an <code>if</code>, ambiguous results often get treated as false, but the behavior is fragile. <code>===</code> treats <code>X</code> as a literal value and always returns a clean 0 or 1. In testbenches, <strong>always use <code>===</code> and <code>!==</code></strong>.
+    </div>
+    <aside class="notes">The three-equals operators treat X and Z as distinct values rather than &ldquo;unknown.&rdquo; This is exactly what you want in a testbench, where X usually means &ldquo;the DUT is broken&rdquo; and you want that to be a FAIL.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Read the Summary</h2>
+    <pre style="font-size:0.7em;"><code class="language-bash">$ make sim
+PASS: reset → count=0
+PASS: 1 cycle → count=1
+FAIL: 5 cycles → count=5  actual=xxxx  expected=5
+PASS: rollover → count=0
+FAIL: enable test  actual=0  expected=1
+=== 3 passed, 2 failed ===</code></pre>
+    <p style="font-size:0.78em;">Two failures. What are the likely root causes?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Diagnosis:</strong>
+        <ul style="font-size:0.92em;">
+            <li><strong>&ldquo;count=xxxx&rdquo;</strong> → reset not held long enough, or missing default value — flops came out undefined and stayed that way.</li>
+            <li><strong>&ldquo;enable test actual=0&rdquo;</strong> → the DUT ignored the enable; either the clock-enable wiring is wrong or there's a priority bug in the counter.</li>
+        </ul>
+    </div>
+    <aside class="notes">Reading self-check output is a skill. X in actual means the DUT has an undefined signal — often a missing reset. Specific value mismatches typically mean priority or wiring bugs.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Convert a &ldquo;Print&rdquo; Testbench to Self-Checking</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week2_day06/ex2_self_check/
+# before: prints values
+# after: PASS/FAIL + summary
+diff tb_adder_before.v tb_adder_after.v
+make sim</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: 5+3 = 8
+PASS: 7+9 = 16
+PASS: 15+1 = 16
+PASS: 0+0 = 0
+PASS: F+F = 1E
+=== 5 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">The Makefile's <code>make sim</code> can now grep for &ldquo;<code>0 failed</code>&rdquo; to determine pass/fail automatically — enabling scripting, CI, and honest grading.</p>
+    </div>
+    <aside class="notes">[Terminal] Show the diff. Emphasize: identical stimulus, but now the testbench knows whether it passed. Once you grep &ldquo;0 failed&rdquo; you have honest CI — no more &ldquo;works on my machine.&rdquo;</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <p style="font-size:0.78em;">Same answer as before — testbenches don't synthesize. But now the difference matters:</p>
+    <pre style="font-size:0.65em;"><code class="language-bash"># Your DUT (adder.v) synthesizes:
+$ yosys -p "synth_ice40 -top adder" ...
+  SB_LUT4: 4    SB_CARRY: 4
+
+# Your testbench (tb_adder.v) does not:
+$ yosys -p "synth_ice40 -top tb_adder" ...
+  ERROR: unsynthesizable constructs
+
+# make stat runs ONLY on the DUT.
+# make sim runs ONLY the testbench.
+# They never mix.</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>The two-tool workflow made concrete:</strong> <code>make sim</code> is where verification lives. <code>make stat</code> is where synthesis lives. Self-checking testbenches are the contract between them.
+    </div>
+    <aside class="notes">Reinforces Day 1 Video 2 lesson. Synth and sim are different activities on different files. The DUT is shared; the testbench and makefile targets are not.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Refactor this testbench to be self-checking with PASS/FAIL output and a summary line. Use <code>!==</code> for comparisons.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI to self-check an existing testbench.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: a check task, <code>!==</code> compare, counter-based summary.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses <code>!==</code>. Weak AI uses <code>!=</code> and handles X poorly.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Test your AI by giving it code with an X and checking it handles the compare correctly.</p></div>
+    </div>
+    <aside class="notes">Good diagnostic. AI that uses != in testbenches misses the whole point. A fast quality test.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Self-checking: <code>if (actual !== expected)</code> — automate it.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Use <code>===</code>/<code>!==</code> (case equality) — handles x/z correctly.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Track <code>test_count</code> and <code>fail_count</code>. Print a summary.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;This pattern applies to every testbench going forward.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Manual waveform inspection is for debugging, not verification.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Every testbench must print PASS/FAIL + a summary line.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Use <code>!==</code> (case-inequality), never <code>!=</code>, for output checks.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Grep <code>"0 failed"</code> from your Makefile for honest CI.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Tasks for Organization</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~10 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Reusable testbench procedures — apply stimulus, check results, keep it DRY.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If the test doesn't report its own verdict, it isn't a test. It's a demo.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Tasks for Organization</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You already met <code>task</code> in this video. Video 3 goes further: using tasks to clean up stimulus-and-check patterns so that each test case becomes a single readable line. This is how professional verification engineers structure their testbenches.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>
