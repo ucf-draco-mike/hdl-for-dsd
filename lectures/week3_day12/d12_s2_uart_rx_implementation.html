@@ -1,98 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 12.2: RX Implementation — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12.2: UART RX Implementation — Accelerated HDL</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX · SPI · Integration</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART RX Implementation</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">RX Oversampling</span>
-        <span class="seg-label active">RX Build</span>
-        <span class="seg-label ">SPI Protocol</span>
-        <span class="seg-label ">IP Integration</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 12.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">RX Oversampling</span><span class="seg-label active">RX Impl</span><span class="seg-label">SPI</span><span class="seg-label">IP Integration</span></div>
+    <aside class="notes">Video 2 of 4. Build the UART RX — full-duplex by end of this video.</aside>
 </section>
 
 <section>
-    <h2>RX FSM States</h2>
-    <pre style="font-family:monospace;font-size:0.55em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-    ┌──────┐ falling   ┌────────┐ verified   ┌──────┐
-    │ IDLE │──────────►│ START  │───────────►│ DATA │
-    │ rx=1 │  edge     │ verify │  center    │ ×8   │
-    └──────┘           └────────┘            └──┬───┘
-       ▲                  │ glitch               │ 8 bits
-       │                  │ (rx=1)               ▼
-       │                  ▼                  ┌──────┐
-       │               (IDLE)                │ STOP │
-       └─────────────────────────────────────┘      │
-                                             └──────┘</pre>
-    <div style="font-size:0.8em;margin-top:0.3em;">
-        <p class="fragment"><strong>Bit counter:</strong> oversample ticks (0-15), resets per bit</p>
-        <p class="fragment"><strong>Data index:</strong> which of 8 bits we&rsquo;re sampling (0-7)</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every server, router, and embedded Linux system has a UART console. The console is read (RX) and written (TX) by firmware. Debugging a hung kernel? Hook up a USB-UART adapter to the board's RX pin and capture the panic message. Industrial equipment uses UART RX to receive configuration from SCADA systems. Satellite modems use UART-like receivers with Forward Error Correction on top. The RX side of serial is where <em>the system listens to the world</em>.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today you build the RX module. Pair it with yesterday's TX and you have full-duplex. A loopback test lets you verify: your laptop types, board receives, board echoes, laptop sees it. That's the end-to-end pipeline — and the platform for every capstone project that needs two-way communication.</p>
+        </div>
     </div>
-    <aside class="notes">RX FSM: IDLE watches for falling edge, START verifies at center, DATA samples 8 bits, STOP verifies and outputs valid. Two counters: oversample ticks and bit index.</aside>
+    <aside class="notes">RX is where the system listens. Essential for any interactive or interactive-debugged system.</aside>
 </section>
+
 <section>
-    <h2>Key RX Code Pattern</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Built-in synchronizer (always synchronize external input!)
-reg r_rx_sync0, r_rx_sync1;
-always @(posedge i_clk) begin
-    r_rx_sync0 &lt;= i_rx;
-    r_rx_sync1 &lt;= r_rx_sync0;
-end
-<span class="fragment">
-// Sample at center of each bit (oversample tick == 7)
-S_DATA: begin
-    if (w_os_tick) begin
-        if (r_os_cnt == 7) begin
-            r_data[r_bit_idx] &lt;= r_rx_sync1;  // capture bit
-            if (r_bit_idx == 7)
-                r_next_state = S_STOP;
-        end
-    end
-end</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Always synchronize <code>i_rx</code></strong> — it&rsquo;s an external asynchronous signal. The 2-FF sync from Day 5 is built right in.
+    <h2><span style="color:#C0392B;">⚠️</span> Count Oversamples, Not Cycles</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Single counter that increments every cycle and wraps every <code>CLKS_PER_BIT</code>. Sample on wrap.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Use a <strong>two-level counter hierarchy</strong>. Inner counter counts <code>CLKS_PER_OSX</code> cycles and pulses <code>r_osx_tick</code>. Outer counter counts <code>r_osx_tick</code>s (0..15 for oversample slots, then 0..7 for data bits). This decouples the logical structure (16 slots per bit, 8 bits per byte) from the physical clock rate. Lets you change baud rate by changing one parameter.</p>
+        </div>
     </div>
-    <aside class="notes">Always synchronize i_rx with 2-FF synchronizer. Sample data at oversample tick 7 (center of bit). Build into the shift register bit by bit.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> With a two-level counter, state advances on oversample ticks (slower), while fine timing counts cycles (faster). Clean separation of concerns.
+    </div>
+    <aside class="notes">Two-level counter = clean architecture. Inner: cycles within an oversample slot. Outer: slots within a bit / bits within a byte. Separates physical timing from logical structure.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; RX FSM States</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>State</th><th>Action</th><th>Exit</th></tr></thead>
+        <tbody>
+            <tr><td><code>S_IDLE</code></td><td>Wait for start-bit falling edge on <code>r_rx_sync</code></td><td>Edge detected → <code>S_START</code></td></tr>
+            <tr><td><code>S_START</code></td><td>Wait 8 oversample ticks (to mid-start-bit), <strong>verify line still LOW</strong></td><td>Line still 0 → <code>S_DATA</code>; Line 1 → false start → <code>S_IDLE</code></td></tr>
+            <tr><td><code>S_DATA</code></td><td>Wait 16 osx ticks, sample <code>r_rx_sync</code>, shift into byte. Repeat 8 times.</td><td>8 bits sampled → <code>S_STOP</code></td></tr>
+            <tr><td><code>S_STOP</code></td><td>Wait 16 osx ticks to mid-stop-bit, verify HIGH, assert <code>o_valid</code> for 1 cycle</td><td>→ <code>S_IDLE</code></td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Same 4-state FSM as TX, but different waits and validations. <code>S_START</code> has that &ldquo;verify still low&rdquo; check — critical for rejecting line glitches. <code>S_STOP</code>'s &ldquo;verify high&rdquo; check detects framing errors (bad bytes). Everything proceeds on oversample ticks, which happen every ~13.5 cycles at 115200 baud.
+    </div>
+    <aside class="notes">Symmetric to TX FSM — same four states with different actions. The mid-bit verification in START rejects glitches; the mid-stop verification detects framing errors.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Key RX Code Pattern</h2>
+    <pre class="synth" style="font-size:0.6em;"><code class="language-verilog">// Oversample generator
+reg [$clog2(CLKS_PER_OSX)-1:0] r_osx_cnt;
+reg                              r_osx_tick;
+always @(posedge i_clk) begin
+    r_osx_tick &lt;= 1'b0;
+    if (r_osx_cnt == CLKS_PER_OSX-1) begin
+        r_osx_cnt  &lt;= 0;
+        r_osx_tick &lt;= 1'b1;  // 1-cycle pulse every CLKS_PER_OSX
+    end else r_osx_cnt &lt;= r_osx_cnt + 1;
+end
+
+// Main FSM, advances on r_osx_tick
+reg [3:0]  r_slot;       // 0..15 within current bit
+reg [2:0]  r_bit;        // 0..7 data bit index
+reg [7:0]  r_data;
+// ...
+S_DATA: if (r_osx_tick) begin
+    if (r_slot == 4'd7) r_data &lt;= {r_rx_sync, r_data[7:1]};  // sample at slot 8
+    if (r_slot == 4'd15) begin
+        r_slot &lt;= 0;
+        if (r_bit == 3'd7) r_state &lt;= S_STOP;
+        else               r_bit &lt;= r_bit + 1;
+    end else r_slot &lt;= r_slot + 1;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Together:</strong> <strong>Sample at <code>r_slot == 7</code></strong> (after slot 7's tick, at the start of what would be slot 8 — the middle of the bit). Shift the sample into <code>r_data</code> LSB-first by putting the new bit at position 7 and shifting existing bits right. After 16 slots, advance to the next bit. After 8 bits, go to <code>S_STOP</code>.
+    </div>
+    <aside class="notes">The critical line: <code>r_data &lt;= {r_rx_sync, r_data[7:1]}</code>. Sample at slot 7, shift the new bit into position 7, old bits shift right. LSB-first matching transmission convention. After 8 shifts, r_data has the full byte.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Trace Through a Receive</h2>
+    <p style="font-size:0.78em;">The PC transmits byte 0x42 ('B' = <code>01000010</code>) at 115200 baud. Walk through the RX FSM state transitions and the sampled bits (assume <code>CLKS_PER_OSX = 14</code>).</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Trace:</strong>
+        <ol style="font-size:0.88em;">
+            <li><strong>IDLE:</strong> Line goes 1→0, <code>falling_edge</code> pulses → enter <code>S_START</code>, reset <code>r_slot</code>.</li>
+            <li><strong>START:</strong> Wait 8 osx ticks. Read line at slot 7 → 0 (confirmed start bit) → enter <code>S_DATA</code>.</li>
+            <li><strong>DATA bit 0:</strong> Wait to slot 7, sample → 0 (LSB of 0x42). r_data = <code>0_______</code>.</li>
+            <li><strong>DATA bit 1:</strong> Sample → 1. r_data = <code>10______</code>.</li>
+            <li>...continue through bit 6, all 0 except bit 1...</li>
+            <li><strong>DATA bit 7:</strong> Sample → 0 (MSB of 0x42). r_data now holds 0x42.</li>
+            <li><strong>STOP:</strong> Sample at slot 7 → 1 (confirmed stop). Assert <code>o_valid</code>, r_byte = 0x42. Return to IDLE.</li>
+        </ol>
+    </div>
+    <aside class="notes">Step-by-step trace. 10 bit times, 16 slots each, 1 sample per bit at slot 7. At the end, r_data holds the received byte and o_valid pulses for one cycle.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>UART RX + Loopback Test</h2>
-    <p style="margin-top:0.5em;">Build RX with oversampling, connect RX→TX, type on terminal and see echo</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day12_ex01_uart_rx.v + day12_ex02_uart_loopback.v</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: UART RX + Loopback Test</aside>
+    <h2 style="color:#FFC904;">UART RX + Loopback Test</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~7 minutes — full-duplex bringup</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day12/ex2_rx/
+make sim           # 20 random bytes
+make wave
+make prog          # flash loopback
+# in another terminal:
+screen /dev/ttyUSB0 115200
+# type characters — see them echoed</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: receive 0x41
+PASS: receive 0x42
+...
+PASS: framing error detect
+=== 24 passed, 0 failed ===
+
+Terminal echo working:
+  user types 'x' → sees 'x'
+  (with ~90us round-trip)</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ THE LOOPBACK</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Connect UART RX → (valid/busy handshake) → UART TX on the board. Now whatever you type in the terminal gets received by the FPGA and echoed back. The round-trip is visible in your terminal. Full-duplex working.</p>
+    </div>
+    <aside class="notes">[Board + terminal] Loopback is the classic UART bringup test. Type in terminal, see characters echoed. Full-duplex confirmation in one experiment.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> RX Error Reporting</h2>
+    <p style="font-size:0.78em;">A robust UART RX should also report errors:</p>
+    <ul style="font-size:0.75em;">
+        <li><strong>Framing error:</strong> stop bit not HIGH → <code>o_frame_err</code> pulses. Usually indicates baud mismatch or noise.</li>
+        <li><strong>Overrun:</strong> new byte arrives before previous <code>o_valid</code> is consumed → <code>o_overrun</code> latches. Upstream application is too slow.</li>
+        <li><strong>Break:</strong> line stays LOW for multiple frame times → <code>o_break</code>. Some protocols use as a &ldquo;reset&rdquo; signal.</li>
+    </ul>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Checkpoint:</strong> Production UART RX modules report all three. For coursework and capstone, <code>o_frame_err</code> is the most important — it tells you when your baud rate is off. Latch it for visibility; don't lose transient errors.
+    </div>
+    <aside class="notes">Production UART RX reports framing, overrun, and break. For your capstone you need at least framing error detection — it's what alerts you to baud mismatches.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Build a UART RX with 16× oversampling, start-bit glitch rejection, and framing error detection. Include testbench with random bytes and noise injection.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI writes robust UART RX.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 2-counter hierarchy, 2-FF sync on input, mid-bit validation on START.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI includes noise injection in TB. Weak AI only tests clean inputs.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Testbench quality = RX quality. Always test corrupted inputs.</p></div>
+    </div>
+    <aside class="notes">RX testbenches should inject noise — random short glitches, flipped bits, off-baud timing. If all the AI tests are clean bytes, the RX is only verified against an idealized world.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Built-in 2-FF synchronizer on <code>i_rx</code> — it&rsquo;s external and async.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Oversample counter (0-15) per bit. Sample at tick 7 (center).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Start-bit: verify at center. Glitch? → IDLE. Confirmed? → DATA.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Loopback test: type in terminal, see echo = both TX and RX work.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Two-level counter: cycles → oversample ticks → bits.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Sample at slot 7 (mid-bit). Shift into LSB position, then shift right.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Validate start bit at slot 8; validate stop bit before emitting byte.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Loopback test = complete full-duplex validation.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">SPI Protocol</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~12 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">A second serial protocol — synchronous this time.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">A UART that doesn't detect framing errors is not a UART.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">SPI Protocol</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~9 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">UART is universal but slow (typ. 115 kbps). When you need megabits/second to a sensor, SD card, flash memory, or display — you use SPI. Video 3 introduces the second universal serial protocol. By video end, you understand both, and you can pick the right one for any peripheral.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -100,4 +212,5 @@ end</span></code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

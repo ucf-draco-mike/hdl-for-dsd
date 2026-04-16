@@ -1,87 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 11.3: TX Implementation — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 11.3: TX Implementation — Accelerated HDL</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Implementation Walk-Through</h1>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART TX Implementation</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">UART Protocol</span>
-        <span class="seg-label ">TX Architecture</span>
-        <span class="seg-label active">TX Build</span>
-        <span class="seg-label ">PC Connect</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 11.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Protocol</span><span class="seg-label">TX Architecture</span><span class="seg-label active">Implementation</span><span class="seg-label">PC Connection</span></div>
+    <aside class="notes">Video 3 of 4. Build the UART TX in Verilog from scratch.</aside>
 </section>
 
 <section>
-    <h2>UART TX — Key Code Sections</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE; // 217
-
-// ---- Baud counter ----
-always @(posedge i_clk)
-    if (r_state == S_IDLE || w_baud_tick)
-        r_baud_cnt &lt;= 0;
-    else
-        r_baud_cnt &lt;= r_baud_cnt + 1;
-
-<span class="fragment">assign w_baud_tick = (r_baud_cnt == CLKS_PER_BIT - 1);</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Reset the counter in IDLE (not running) and on every tick (reload). Single-cycle pulse drives the FSM.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every embedded engineer you'll ever work with has written a UART TX. It's a rite of passage, the &ldquo;hello world&rdquo; of serial communication. On your first FPGA job, you will be asked to either (a) write one, or (b) debug one someone else wrote. Textbook implementations run on billions of chips worldwide. An elegant UART TX = competent RTL engineer; a messy UART TX = red flag.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today we write the whole thing. ~60 lines total. You'll compile it, simulate it, synthesize it, watch the waveform. Video 4 connects it to your PC. Your capstone protocol layer uses this exact pattern. If you internalize the idioms now, they become automatic for every subsequent protocol block.</p>
+        </div>
     </div>
-    <aside class="notes">Baud counter: counts to 216, pulses w_baud_tick, resets. Reset in IDLE so it doesn't free-run. This single-cycle tick drives the FSM state transitions.</aside>
+    <aside class="notes">This is the rite-of-passage build. Every embedded engineer has done it. Today yours works.</aside>
 </section>
+
 <section>
-    <h2>Shift Register + TX Output</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Load frame: {stop, data[7:0], start}
-always @(posedge i_clk)
-    if (r_state == S_IDLE &amp;&amp; i_valid)
-        r_shift &lt;= {1'b1, i_data, 1'b0};  // stop + data + start
-<span class="fragment">    else if (w_baud_tick)
-        r_shift &lt;= {1'b1, r_shift[9:1]};  // shift right, fill with idle</span>
-
-<span class="fragment">assign o_tx = (r_state == S_IDLE) ? 1'b1 : r_shift[0];</span></code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Frame = <code>{stop, D7, D6, D5, D4, D3, D2, D1, D0, start}</code>. Shift right = LSB first out the bottom. Idle drives high explicitly.
+    <h2><span style="color:#C0392B;">⚠️</span> Start Simple &mdash; Add Features Only When Tested</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Approach</h3>
+            <p style="font-size:0.72em;">&ldquo;I'll code everything in one go: FSM + datapath + baud gen + valid/busy + FIFO + parity. Then debug the whole mess together.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Approach</h3>
+            <p style="font-size:0.72em;">Iterative integration: (1) FSM alone with fake outputs, (2) add baud counter, (3) add shift register, (4) add valid/busy handshake, (5) add stop-bit check. Test each addition before continuing. When a bug appears, you know which component is wrong — because the previous ones already passed.</p>
+        </div>
     </div>
-    <aside class="notes">Load the full frame into a 10-bit shift register: stop, 8 data bits, start. Shift right on each baud tick — LSB comes out first. Idle state forces TX high.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> 5-step iterative integration = 5 short debug sessions. Monolithic build = 1 long, painful debug session where everything could be wrong at once.
+    </div>
+    <aside class="notes">Iterative integration is the professional approach. Junior engineers build everything, then debug the mountain. Senior engineers build in pieces, each piece verified.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Complete UART TX</h2>
+    <pre class="synth" style="font-size:0.52em;"><code class="language-verilog">module uart_tx #(
+    parameter CLKS_PER_BIT = 217       // 25 MHz / 115200 baud
+) (
+    input  wire       i_clk, i_reset,
+    input  wire       i_valid,
+    input  wire [7:0] i_data,
+    output reg        o_busy,
+    output reg        o_tx
+);
+    localparam [1:0] S_IDLE = 2'd0, S_START = 2'd1, S_DATA = 2'd2, S_STOP = 2'd3;
+    localparam       CNT_W  = $clog2(CLKS_PER_BIT);
+
+    reg [1:0]       r_state;
+    reg [CNT_W-1:0] r_baud;     // 0..CLKS_PER_BIT-1 per bit
+    reg [2:0]       r_bit;      // 0..7, which data bit
+    reg [7:0]       r_shift;    // the byte being shifted out
+
+    always @(posedge i_clk) begin
+        if (i_reset) begin
+            r_state  &lt;= S_IDLE; r_baud &lt;= 0; r_bit &lt;= 0;
+            o_tx     &lt;= 1'b1;   o_busy &lt;= 1'b0;
+        end else case (r_state)
+            S_IDLE: begin
+                o_tx   &lt;= 1'b1;
+                o_busy &lt;= 1'b0;
+                if (i_valid) begin
+                    r_shift &lt;= i_data;
+                    r_state &lt;= S_START;  r_baud &lt;= 0;  o_busy &lt;= 1'b1;
+                end
+            end
+            S_START: begin
+                o_tx &lt;= 1'b0;     // start bit
+                if (r_baud == CLKS_PER_BIT-1) begin
+                    r_state &lt;= S_DATA; r_baud &lt;= 0; r_bit &lt;= 0;
+                end else r_baud &lt;= r_baud + 1'b1;
+            end
+            S_DATA: begin
+                o_tx &lt;= r_shift[0];   // LSB first
+                if (r_baud == CLKS_PER_BIT-1) begin
+                    r_baud  &lt;= 0;
+                    r_shift &lt;= {1'b1, r_shift[7:1]};  // shift right, fill with idle
+                    if (r_bit == 3'd7) r_state &lt;= S_STOP;
+                    else              r_bit  &lt;= r_bit + 1'b1;
+                end else r_baud &lt;= r_baud + 1'b1;
+            end
+            S_STOP: begin
+                o_tx &lt;= 1'b1;     // stop bit
+                if (r_baud == CLKS_PER_BIT-1) begin
+                    r_state &lt;= S_IDLE; o_busy &lt;= 1'b0;
+                end else r_baud &lt;= r_baud + 1'b1;
+            end
+        endcase
+    end
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.65em;">
+        <strong>My thinking:</strong> 55 lines total, everything in one always block (single-block FSM is acceptable here because state/outputs are tightly coupled to timing). Parameter for baud rate. Uses all your familiar idioms: <code>$clog2</code>, localparam, 3-block pattern, named constants.
+    </div>
+    <aside class="notes">55 lines, complete, synthesizable. Single-block FSM is fine here because the datapath (r_shift, o_tx) is tightly coupled to the state transitions. Clean, readable, maintainable.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Reading the Shift Register</h2>
+    <pre style="font-size:0.72em;"><code class="language-verilog">r_shift &lt;= {1'b1, r_shift[7:1]};   // shift right, LSB drops off
+o_tx    &lt;= r_shift[0];              // output the current LSB</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Classic PISO pattern from Week 2. Each baud tick: LSB goes out on <code>o_tx</code>, the rest of the byte shifts right by 1 (putting the old bit 1 in position 0, old bit 2 in position 1, etc.), and a <code>1</code> (idle value) fills in at bit 7. After 8 ticks, the byte has been fully transmitted and the shift register is all 1's again (back to idle state).
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Timing subtlety:</strong> <code>o_tx</code> reads <em>before</em> the shift (note the nonblocking assignment semantics — both happen at the next clock edge). So on entry to each <code>S_DATA</code> cycle, the current LSB is already on the line; the shift happens just as we exit that cycle's baud count.
+    </div>
+    <aside class="notes">Nonblocking assignment semantics are subtle. Both r_shift and o_tx update at the next clock edge from their previous values. The pattern is correct; worth walking students through once.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Trace</h2>
+    <p style="font-size:0.78em;">Reset, then assert <code>i_valid=1</code> with <code>i_data=8'b01010011</code> (0x53 = 'S'). <code>CLKS_PER_BIT = 4</code> (simplified for simulation). Sketch the first 50 cycles of <code>o_tx</code>.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Answer:</strong>
+        <pre style="font-size:0.88em;"><code>Cycles 0-3:   o_tx = 0   (start bit)
+Cycles 4-7:   o_tx = 1   (D0 = 0b01010011[0] = 1)
+Cycles 8-11:  o_tx = 1   (D1 = bit 1 of data = 1)
+Cycles 12-15: o_tx = 0   (D2 = bit 2 = 0)
+Cycles 16-19: o_tx = 0   (D3 = 0)
+Cycles 20-23: o_tx = 1   (D4 = 1)
+Cycles 24-27: o_tx = 0   (D5 = 0)
+Cycles 28-31: o_tx = 1   (D6 = 1)
+Cycles 32-35: o_tx = 0   (D7 = 0)
+Cycles 36-39: o_tx = 1   (stop bit)
+Cycles 40+:   o_tx = 1   (idle)</code></pre>
+        Total frame: 40 cycles = 10 bit-times × 4 cycles/bit. ✓
+    </div>
+    <aside class="notes">Trace prediction forces students to understand LSB-first. Many get D0 vs D7 backward on the first try.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>Build UART TX from Scratch</h2>
-    <p style="margin-top:0.5em;">Baud generator → FSM → shift register → integrate → simulate in Icarus</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day11_ex01_uart_tx.v — complete implementation</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: Build UART TX from Scratch</aside>
+    <h2 style="color:#FFC904;">Build UART TX from Scratch</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~7 minutes — live coding</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day11/ex3_impl/
+# Start from empty uart_tx.v skeleton
+# Add FSM → test → add datapath → test
+make sim        # self-checks byte = 'A'
+make wave
+make stat       # ~30 cells
+gtkwave tb.vcd &amp;</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: IDLE after reset
+PASS: o_busy after valid
+PASS: start bit = 0
+PASS: data bits LSB first
+PASS: stop bit = 1
+PASS: IDLE after 10 ticks
+=== 32 passed, 0 failed ===
+
+  SB_DFFE:  20
+  SB_LUT4:  12</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>r_state · r_baud · r_bit · r_shift · o_tx · o_busy</code>. Expand to see the byte &lsquo;A' (0x41 = <code>01000001</code>) being shifted out LSB-first: <code>1 0 0 0 0 0 1 0</code>.</p>
+    </div>
+    <aside class="notes">[Live coding] Build the TX. Run simulation. Point to the GTKWave signals that match predictions. This is the &ldquo;it works&rdquo; moment.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog uart_tx.v; synth_ice40 -top uart_tx; stat" -q
+
+=== uart_tx ===  (CLKS_PER_BIT=217 at 115200 baud / 25 MHz clk)
+   Number of wires:                 49
+   Number of cells:                 32
+     SB_CARRY                        8    ← counter carry chain
+     SB_DFFE                        20    ← state + baud + bit + shift + outputs
+     SB_LUT4                        12    ← FSM + comparator + mux
+</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> 32 cells = 2.5% of an iCE40 HX1K. UART TX is <em>tiny</em>. You can fit 25 of them on one chip. This is why every system has UART — it's essentially free silicon.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Reflection:</strong> The Week 2 modules you built (shift register, mod-N counter, FSM template) each cost 5-10 cells. Compose them: ~30 cells for a complete UART TX. Composition doesn't add much overhead.
+    </div>
+    <aside class="notes">UART TX is tiny. 32 cells. Fits 25× on HX1K. Composition overhead is minimal. Free silicon for communication.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a complete UART TX in Verilog, parameterized for baud rate and clock frequency, with a valid/busy handshake. Include a self-checking testbench.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI writes a complete UART TX + TB.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 50-80 lines RTL, FSM-driven, LSB-first, parameterized.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI gets LSB-first and idle=1. Weak AI gets MSB-first or idle=0 (both wrong).</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">UART is common enough in AI training that most models do well; always verify protocol details.</p></div>
+    </div>
+    <aside class="notes">UART is common training data. Most AI does reasonable UART TX code. Protocol mistakes (endianness, polarity) are the common failure mode.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Baud counter: modulo-217, single-cycle tick.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;10-bit shift reg: <code>{stop, data[7:0], start}</code>. Shift right = LSB first.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;FSM counts 8 data bits with <code>r_bit_idx</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Idle drives TX=1 explicitly. The shift register handles the rest.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Complete UART TX = ~60 lines, ~32 cells. Tiny.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Iterative integration beats monolithic build every time.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;LSB-first shift-out. Idle = 1. Start = 0. Stop = 1.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Parameterize CLKS_PER_BIT — works at any clock/baud combination.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">Connecting to a PC</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~8 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">USB-serial, terminal emulators, and seeing your first 'H'.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Build in stages. Test each stage. Ship the whole.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Connecting to a PC</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Simulation is great, but chips that only talk to simulators don't do real work. Video 4 hooks your UART TX to a USB-serial adapter and your laptop. By the end of the video, your Go Board is transmitting &ldquo;HELLO&rdquo; that shows up in your terminal. First time your Verilog talks to the outside world.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -89,4 +248,5 @@ always @(posedge i_clk)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

@@ -1,82 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 12.4: IP Integration — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12.4: IP Integration — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">IP Integration Philosophy</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; Integration</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">IP Integration</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes · <em>Week 3 Capstone</em></p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">UART RX Oversampling</span><span class="seg-label">UART RX Implementation</span><span class="seg-label">SPI Protocol</span><span class="seg-label active">IP Integration</span></div>
+    <aside class="notes">Video 4 of 4 for Day 12. The Week 3 capstone. Brings together everything: Week 1-2's module library, Week 3's protocols, and the integration mindset that carries into Week 4 and beyond.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Modern SoCs are 80–90% <em>integration</em>, not new design. A Qualcomm Snapdragon contains ARM CPUs, Arm Mali GPU, Qualcomm DSPs, Synopsys USB controllers, Cadence DDR controllers, and hundreds of third-party blocks. The <em>integrator</em>'s job is to read datasheets, understand interfaces, wire them up correctly, and verify the composition. That's a whole engineering discipline — SoC integration — with its own career track, salary band, and skill set.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today you've seen UART TX, UART RX, and SPI all built by <em>composing</em> Week 1-2 primitives. The capstone in Week 4 integrates UART + counter + FSM into a controller. Senior design projects live and die by integration. Today's video gives you the principles and the checklist.</p>
+        </div>
     </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">RX Oversampling</span>
-        <span class="seg-label ">RX Build</span>
-        <span class="seg-label ">SPI Protocol</span>
-        <span class="seg-label active">IP Integration</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 12.</aside>
+    <aside class="notes">Integration is a real discipline. Many engineers spend their entire careers doing SoC integration at companies like Apple, Qualcomm, Broadcom. The skills here matter beyond this course.</aside>
 </section>
 
 <section>
     <h2>Build vs. Integrate</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>Build yourself:</strong> when learning, custom requirements, module is small</p>
-        <p class="fragment"><strong>Integrate IP:</strong> complex protocols (USB, Ethernet), vendor primitives (PLL), battle-tested open-source</p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:1em;">Build</h3>
+            <p style="font-size:0.72em;">Starting from the spec, you design the RTL, write the testbench, synthesize, optimize, and validate. You own every line. It's creative, slow, and specific to your use case.</p>
+            <p style="font-size:0.72em;"><strong>When to build:</strong> When no IP exists (truly novel problem), when cost matters more than time, when you need IP-level expertise, or when the block is the <em>differentiator</em> of your product.</p>
+        </div>
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:1em;">Integrate</h3>
+            <p style="font-size:0.72em;">You take an existing module — yours from a previous project, open-source, or commercial — and wire it into your design. You own the wires and the testbench at your boundary, not the internals. Fast, productive, and standardized.</p>
+            <p style="font-size:0.72em;"><strong>When to integrate:</strong> When a good IP exists (UART, SPI, I²C, USB, Ethernet — never reinvent), when time-to-market matters, when the function is commodity (not a differentiator).</p>
+        </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
-        The skill isn&rsquo;t just building — it&rsquo;s knowing <strong>when to build vs. when to integrate</strong>.
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>The professional's balance:</strong> Build the parts that make your product unique. Integrate everything else. The iPhone's Apple Silicon differentiates via CPU/GPU/Neural Engine (built). USB-C, DDR5 memory controller, WiFi, Bluetooth (integrated). You cannot build everything — nor should you.
     </div>
-    <aside class="notes">Build when learning or when requirements are custom. Integrate when the protocol is complex or battle-tested IP exists. The skill is knowing which to choose.</aside>
-</section>
-<section>
-    <h2>IP Integration Checklist</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><span style="color:#2E7D32;">①</span> <strong>Read the interface spec</strong> — ports, protocols, timing requirements</p>
-        <p class="fragment"><span style="color:#2E7D32;">②</span> <strong>Write a wrapper</strong> — adapt port names, add synchronizers, isolate</p>
-        <p class="fragment"><span style="color:#2E7D32;">③</span> <strong>Write a testbench for the wrapper</strong> — don&rsquo;t trust, verify</p>
-        <p class="fragment"><span style="color:#2E7D32;">④</span> <strong>Check synthesis results</strong> — does it fit? Meet timing?</p>
-        <p class="fragment"><span style="color:#2E7D32;">⑤</span> <strong>Document</strong> — version, config params, known limitations, coverage</p>
-    </div>
-    <aside class="notes">Integration checklist: read docs, write wrapper, add synchronizers, test the wrapper, check synthesis, document everything.</aside>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> Why does UART RX use 16× oversampling?</p>
-        <div class="fragment quiz-answer">To find the center of each bit period without a shared clock. 16 samples/bit allows center-aligned sampling (tick 7-8) for maximum noise immunity and baud rate tolerance.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> What is the loopback test and why is it the gold standard?</p>
-        <div class="fragment quiz-answer">RX→TX echo: type on PC terminal, see characters echoed back. If echo works, both TX and RX are verified correct. One test validates two modules.</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> How many wires does SPI need? What does the master provide?</p>
-        <div class="fragment quiz-answer">4 wires: SCLK, MOSI, MISO, CS_N. Master provides the clock — no baud rate negotiation needed. Full duplex: data flows both ways simultaneously.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> What&rsquo;s the first thing on the IP integration checklist?</p>
-        <div class="fragment quiz-answer">Read the interface specification: understand ports, protocols, and timing requirements before writing any code.</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p><h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 12 · Hands-On Lab</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p></div>
+    <aside class="notes">The balance is strategic. Build your differentiator; integrate your commodity. Students who try to build everything run out of time. Students who integrate everything produce nothing original. The skill is knowing which is which.</aside>
 </section>
 
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;I'll Just Drop It In&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;The IP works. I'll just connect its ports to my wires and be done. What could go wrong?&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Integration has its own failure modes. Clock domain mismatches. Reset polarity mismatches. Signaling convention mismatches (active-low vs active-high, valid/ready vs req/ack). Timing expectations (is the input stable for the whole cycle?). You must <em>verify the boundary</em> with at least as much care as you'd verify the internals. Most integration bugs aren't in the IP — they're in the glue.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Professional IP comes with a datasheet <em>and</em> integration guide. The guide is often longer than the datasheet. If you're integrating an IP without reading its integration guide, you're guessing.
+    </div>
+    <aside class="notes">Integration bugs are boundary bugs. They're not in the IP's internals — they're in the glue logic. Clock domains, reset polarity, signaling conventions. Verification at the boundary matters as much as the IP itself.</aside>
+</section>
+
+<section>
+    <h2>IP Integration Checklist</h2>
+    <ul style="font-size:0.76em;">
+        <li class="fragment">☐ <strong>Read the datasheet</strong> — every parameter, every port, every timing diagram. Yes, all of it.</li>
+        <li class="fragment">☐ <strong>Verify clock domain</strong> — is it same-clock as your logic? If not, synchronizers required at the boundary.</li>
+        <li class="fragment">☐ <strong>Verify reset behavior</strong> — synchronous or asynchronous? Active high or active low? Duration requirement?</li>
+        <li class="fragment">☐ <strong>Verify signaling convention</strong> — valid/ready? Req/ack? Strobe? One-cycle pulse or held?</li>
+        <li class="fragment">☐ <strong>Verify timing assumptions</strong> — is the input expected stable for the whole cycle, or is a transition mid-cycle OK?</li>
+        <li class="fragment">☐ <strong>Check parameter defaults</strong> — do they match your usage? <em>Always</em> set parameters explicitly, don't trust defaults.</li>
+        <li class="fragment">☐ <strong>Write a boundary testbench</strong> — tests <em>your wiring</em>, not the IP. Assumes IP is correct.</li>
+        <li class="fragment">☐ <strong>Integration test at FPGA level</strong> — waveform + real hardware. Simulation won't catch every boundary bug.</li>
+        <li class="fragment">☐ <strong>Document the interface</strong> — so the next person (or future-you) knows how to use the composition.</li>
+    </ul>
+    <aside class="notes">Nine boxes. Every integration passes through this checklist. Skipping steps is how integration bugs get to silicon. &ldquo;It works in sim&rdquo; is not enough for integration boundaries — real FPGA bring-up is essential.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Composing Your Week 1-3 Library</h2>
+    <p style="font-size:0.76em;">Look at what you've built. Here's what a complete &ldquo;echo server&rdquo; (PC sends bytes, FPGA echoes back) needs:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
+        <div style="background:#f0f8ff;padding:0.6em;border-radius:6px;border:2px solid #2E86AB;">
+            <p style="color:#2E86AB;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">FROM YOUR LIBRARY (reuse)</p>
+            <ul style="font-size:0.68em;margin:0;padding-left:1.1em;">
+                <li><code>sync_2ff</code> — CDC on RX input</li>
+                <li><code>debounce</code> — if using button control</li>
+                <li><code>mod_n_counter</code> — baud rate generation</li>
+                <li><code>piso_shift</code> / <code>sipo_shift</code> — frame shifters</li>
+                <li><code>fifo</code> — buffer between RX and TX</li>
+                <li><code>uart_tx</code> — Day 11 composition</li>
+                <li><code>uart_rx</code> — Day 12 composition</li>
+            </ul>
+        </div>
+        <div style="background:#fff8e1;padding:0.6em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">NEW FOR THIS DESIGN (build)</p>
+            <ul style="font-size:0.68em;margin:0;padding-left:1.1em;">
+                <li>Top-level wrapper module</li>
+                <li>Pin constraints file (.pcf) for Go Board UART pins</li>
+                <li>FIFO sizing / backpressure decision</li>
+                <li>LED indicator logic (optional)</li>
+            </ul>
+            <p style="font-size:0.68em;margin-top:0.3em;"><strong>That's it.</strong> Four small new things; the rest is composition.</p>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>My thinking:</strong> The ratio of reused to new code on this project is ~10:1. That's because your Week 1-2 investment in parameterization and testability paid off: each primitive dropped in without modification.
+    </div>
+    <aside class="notes">Reuse ratio of ~10:1 is typical for a mature integrator's project. The library took weeks to build but will serve for years. This is the compounding advantage that hardware careers are built on.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> Third-Party IP &mdash; What Commercial Looks Like</h2>
+    <p style="font-size:0.76em;">Open-source example: <em>OpenCores</em>, <em>LiteX</em>, <em>picorv32</em>. Commercial: ARM AMBA IP, Synopsys DesignWare. A commercial IP package typically ships:</p>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>File / artifact</th><th>Purpose</th></tr></thead>
+        <tbody>
+            <tr><td>Datasheet PDF</td><td>Parameters, ports, timing diagrams, use cases</td></tr>
+            <tr><td>Integration guide PDF</td><td>CDC handling, reset requirements, coding examples</td></tr>
+            <tr><td>SystemVerilog / Verilog sources</td><td>Often <em>encrypted</em> for commercial IP — you never see the code</td></tr>
+            <tr><td>Testbench templates</td><td>How to drive the IP's ports for various scenarios</td></tr>
+            <tr><td>Example integrations</td><td>Working projects showing IP wired into SoC</td></tr>
+            <tr><td>Release notes</td><td>Known bugs, version changes, tool compatibility</td></tr>
+            <tr><td>Timing constraints</td><td>.sdc file with setup/hold on IP ports</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together:</strong> Your Week 1-2 modules could become commercial IP if you added these artifacts. The distinction between &ldquo;student work&rdquo; and &ldquo;product&rdquo; isn't the Verilog — it's the documentation. Professionals pay for the docs.
+    </div>
+    <aside class="notes">Commercial IP is 10% code, 90% documentation + verification artifacts. ARM sells datasheets with Verilog attached, not the reverse. The pedagogical takeaway: the habits you've built this semester (testbenches, parameterization, header comments) are the foundation of the IP business.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Score Your Echo-Server Design</h2>
+    <p style="font-size:0.78em;">You're about to integrate UART TX + UART RX + FIFO into an echo server. Walk the IP Integration Checklist for this composition. Which boxes are trivially checked? Which require work?</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Expected audit:</strong>
+        <ul style="font-size:0.92em;">
+            <li>☑ Datasheet — you wrote the header comments, you know the ports.</li>
+            <li>☑ Clock domain — all three modules use <code>i_clk</code>, same domain.</li>
+            <li>☑ Reset — all modules use synchronous active-high reset per convention.</li>
+            <li>☑ Signaling — all modules use valid/busy; FIFO uses full/empty.</li>
+            <li>⚠ <strong>Timing</strong> — need to verify FIFO never asserts <code>full</code> during active RX. Backpressure path!</li>
+            <li>⚠ <strong>Parameters</strong> — must set UART baud rate to match between TX and RX, and in two places.</li>
+            <li>☐ <strong>Boundary testbench</strong> — new: stress FIFO between RX and TX.</li>
+            <li>☐ <strong>FPGA bring-up</strong> — new: confirm loopback on real Go Board.</li>
+        </ul>
+    </div>
+    <aside class="notes">Self-audit of a plausible next project. The ⚠ items are where the integration work lives. The ☐ items are the new work. Everything else you already have.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Integration at the Yosys Level</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">$ yosys -p "read_verilog uart_tx.v uart_rx.v fifo.v echo_top.v; \
+           hierarchy -top echo_top; synth_ice40; stat"
+
+=== echo_top ===                # user-written wrapper ~30 lines
+   Number of cells:        ~220
+   Submodule instances:
+     u_uart_tx      (uart_tx)
+     u_uart_rx      (uart_rx)
+     u_rx_fifo      (fifo)
+   Top-level logic:        ~15 cells (wiring, LED indicators)
+
+=== uart_tx ===   ~32 cells
+=== uart_rx ===   ~65 cells
+=== fifo ===      ~80 cells  (8-deep × 8-wide)</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> The <em>wrapper</em> is 15 cells — tiny. The sub-modules dominate. That's the signature of a well-composed design: the wrapper is small because the components do the work. If your top-level ever grows larger than any individual sub-module, you're probably not composing properly — you're re-implementing.
+    </div>
+    <aside class="notes">Wrapper-small is the signature of good composition. The wrapper's job is to <em>wire things together</em>, not to do work. Work belongs in named, reusable sub-modules.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;I have uart_tx, uart_rx, and fifo modules. Write a top-level echo_server module that wires the RX into the FIFO and the FIFO into the TX, with proper handshaking. Include a boundary testbench.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI composes 3 modules into an echo server.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: RX valid &rarr; FIFO write; TX ready &amp; FIFO not empty &rarr; FIFO read &amp; TX valid.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI handles FIFO full (dropped bytes). Weak AI ignores backpressure.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Backpressure is the classic integration blind spot. Always ask about it explicitly.</p></div>
+    </div>
+    <aside class="notes">Backpressure is where AI integrations break. &ldquo;What happens if the FIFO fills up?&rdquo; — a senior engineer asks this first; a junior (or AI) often doesn't. Ask explicitly.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Modern hardware is 80–90% integration. Build only your differentiator.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Integration bugs live at boundaries: clocks, resets, conventions, timing.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The IP Integration Checklist is not optional. Every integrated block passes it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Your Week 1-2 library + Week 3 protocols = your personal IP portfolio.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">A wrapper that's smaller than any of its sub-modules is doing its job right.</div>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> You integrate a UART IP written for a 50 MHz clock into your 25 MHz design. What's the most likely failure mode?</p>
+        <div class="fragment quiz-answer">The baud-rate counter was sized for 50 MHz. At 25 MHz, the bit period is twice as long as it should be — effectively half the configured baud rate. Fix: either change the IP's clock parameter, or re-instantiate with the correct <code>CLKS_PER_BIT</code>.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> You drop a third-party FIFO into your design but the simulator reports <code>X</code> on the output. What's the first thing to check?</p>
+        <div class="fragment quiz-answer">Reset. Most FIFOs require reset to initialize internal pointers; without it, the read pointer starts uninitialized and the output is <code>X</code>. Check reset polarity and duration per the IP's datasheet.</div>
+    </div>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> What's the single most important difference between a &ldquo;student work&rdquo; module and a &ldquo;commercial IP&rdquo; module?</p>
+        <div class="fragment quiz-answer">Documentation and verification artifacts. The Verilog itself may be identical in quality. The difference is datasheet, integration guide, release notes, timing constraints, and a test suite that stranger-integrators can run. Professionals pay for docs.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> When composing three modules into a top wrapper, how big (in cells) should the wrapper itself be?</p>
+        <div class="fragment quiz-answer">Much smaller than any sub-module. The wrapper wires things together; it doesn't do work. If your wrapper is the biggest block, you're re-implementing instead of composing. Refactor the work into a named sub-module.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Week 3</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Week 4: PPA &amp; Capstone Integration</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Design Space Exploration · Full-Stack Capstone</p>
+        <div style="max-width:840px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have a <em>complete personal IP library</em> — primitives from Weeks 1-2, protocols from Week 3. Week 4 asks the question every product team asks: <strong>how good is it?</strong> You'll run the PPA exercise on a real integrated design, explore the tradeoff space (speed vs. area vs. power), and compose your library into a <strong>capstone integration</strong> — something demonstrable on the Go Board that's more than a homework problem. This is where the course stops teaching you RTL and starts teaching you <em>product engineering</em>. See you Day 13.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -84,4 +247,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

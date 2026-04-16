@@ -1,124 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 9.2: RAM in Verilog — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 9.2: RAM in Verilog — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory Architecture</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">RAM in Verilog</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">ROM</span>
-        <span class="seg-label active">RAM</span>
-        <span class="seg-label ">iCE40 Memory</span>
-        <span class="seg-label ">Applications</span>
-    </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 9.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">ROM</span><span class="seg-label active">RAM</span><span class="seg-label">iCE40 EBRs</span><span class="seg-label">Applications</span></div>
+    <aside class="notes">Video 2 of 4. Read-write memory: FIFOs, register files, buffers. The pattern that unlocks block RAM.</aside>
 </section>
 
 <section>
-    <h2>Single-Port Synchronous RAM</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module ram_sp #(
-    parameter ADDR_W = 8,
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every CPU has an L1 cache (SRAM). Every network switch has packet buffer memory. Every GPU has a texture cache and a command FIFO. Every UART has a TX and RX FIFO. Every GoPro has a frame buffer. RAM-on-chip is the fastest memory in the system, and on-chip RAM is what block RAM models. Designs live or die by how well they manage it.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Day 8 FIFO stored data internally — you'll re-write it with proper block RAM inference. Your Day 11 UART TX FIFO uses this pattern. Your Day 12 SPI buffer does too. Your capstone frame buffer (if you do video) is a block RAM. This is the memory you'll actually use.</p>
+        </div>
+    </div>
+    <aside class="notes">RAM is the workhorse memory. ROMs are for tables; RAMs are for everything else — buffering, storing state, queuing. Understanding block RAM inference saves orders of magnitude of logic.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> RAM Inference Rules Are Strict</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Any <code>reg [N-1:0] mem [0:M-1]</code> becomes a block RAM. The tool figures it out.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Block RAM inference has <strong>strict rules</strong>. Memory must have: (1) exactly one clock, (2) synchronous <em>writes</em>, (3) synchronous <em>reads</em> with a registered output, (4) no async reset on the memory array itself, (5) no weird operations (can't partial-width-write half a word, etc.). Break any rule → LUT RAM or scattered logic. Worth checking the tool output every time.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A 1024×8 RAM that infers correctly = 2 EBRs. The same 1024×8 RAM with a combinational read = 1024 LUTs — 80% of an iCE40 HX1K, gone. Inference rules aren't suggestions.
+    </div>
+    <aside class="notes">Block RAM inference rules are worth memorizing. Every violation is expensive. Every correct inference is a massive win.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Single-Port Synchronous RAM</h2>
+    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module ram_1p #(
+    parameter ADDR_W = 10,           // 1024 entries
     parameter DATA_W = 8
-)(
-    input  wire                i_clk,
-    input  wire                i_write_en,
-    input  wire [ADDR_W-1:0]  i_addr,
-    input  wire [DATA_W-1:0]  i_write_data,
-    output reg  [DATA_W-1:0]  o_read_data
+) (
+    input  wire              i_clk,
+    input  wire              i_we,   // write enable
+    input  wire [ADDR_W-1:0] i_addr,
+    input  wire [DATA_W-1:0] i_din,
+    output reg  [DATA_W-1:0] o_dout
 );
-    reg [DATA_W-1:0] r_mem [0:(1&lt;&lt;ADDR_W)-1];
-<span class="fragment">
-    always @(posedge i_clk) begin
-        if (i_write_en)
-            r_mem[i_addr] &lt;= i_write_data;
-        o_read_data &lt;= r_mem[i_addr]; // read-before-write
-    end</span>
-endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Synchronous read</strong> (output is a <code>reg</code>, updated on <code>posedge</code>) is <strong>required</strong> for block RAM inference. Cost: 1 cycle read latency.
-    </div>
-    <aside class="notes">Single-port synchronous RAM. The key: synchronous read enables block RAM inference. Address in on cycle N, data out on cycle N+1.</aside>
-</section>
-<section>
-    <h2>Read-Before-Write vs. Write-First</h2>
-    <pre class="synth"><code class="language-verilog">// Read-before-write (read gets OLD value during write)
-always @(posedge i_clk) begin
-    if (i_write_en)
-        r_mem[i_addr] &lt;= i_write_data;
-    o_read_data &lt;= r_mem[i_addr];
-end
+    reg [DATA_W-1:0] mem [0:(2**ADDR_W)-1];
 
-// Write-first (read gets NEW value during write)
-always @(posedge i_clk) begin
-    if (i_write_en)
-        r_mem[i_addr] &lt;= i_write_data;
-    o_read_data &lt;= (i_write_en) ? i_write_data : r_mem[i_addr];
-end</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Read-before-write is the natural iCE40 EBR behavior. Use it unless you specifically need write-first.
+    always @(posedge i_clk) begin
+        if (i_we)   mem[i_addr] &lt;= i_din;   // synchronous write
+        o_dout &lt;= mem[i_addr];               // synchronous read (after the write, i.e. "read-before-write")
+    end
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Single port — shared address bus for read and write. Writes go in when <code>i_we=1</code>. Read always happens and the old value shows up on <code>o_dout</code> one cycle later. This is the textbook block-RAM inference pattern — and it's the pattern you'll reuse for every RAM in every design.
     </div>
-    <aside class="notes">Read-before-write is the natural EBR behavior. Write-first requires extra muxing. Use read-before-write unless you have a specific reason.</aside>
+    <aside class="notes">Single port = one address bus. Write when enabled, read every cycle. This exact code pattern triggers block RAM inference on iCE40, Xilinx, Intel — everyone. Portable.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Read-Before-Write vs. Write-First</h2>
+    <p style="font-size:0.78em;">When <code>i_we=1</code> and you're reading the <em>same</em> address you're writing, what comes out of <code>o_dout</code>?</p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:1em;">Read-Before-Write</h3>
+            <pre style="font-size:0.7em;"><code class="language-verilog">always @(posedge clk) begin
+    if (we) mem[addr] &lt;= din;
+    dout &lt;= mem[addr];    // old value
+end</code></pre>
+            <p style="font-size:0.7em;">Reads the <em>old</em> value while writing the new. This is the <strong>natural EBR behavior</strong> on iCE40. Cheapest.</p>
+        </div>
+        <div class="col panel panel-neutral">
+            <h3 style="font-size:1em;">Write-First (Bypass)</h3>
+            <pre style="font-size:0.7em;"><code class="language-verilog">always @(posedge clk) begin
+    if (we) begin
+        mem[addr] &lt;= din;
+        dout &lt;= din;       // new value
+    end else dout &lt;= mem[addr];
+end</code></pre>
+            <p style="font-size:0.7em;">Reads the <em>new</em> value just written. Requires extra muxing in the block RAM primitive.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Rule of thumb:</strong> Use read-before-write unless you have a specific reason. It's cheaper, maps cleanly to the hardware, and doesn't create subtle bypass bugs.
+    </div>
+    <aside class="notes">Read-before-write is the natural EBR behavior. Write-first requires a bypass mux. Pick the right one for your use case — it's a subtle thing that bites later.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Dual-Port Sketch</h2>
+    <p style="font-size:0.78em;">What does a <strong>dual-port</strong> (one read, one write, independent addresses) RAM look like? Sketch the ports and the always block.</p>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Sketch:</strong>
+        <pre style="font-size:0.82em;"><code class="language-verilog">module ram_dp (
+    input clk,
+    input we,   input [A-1:0] waddr, input [D-1:0] din,
+                input [A-1:0] raddr, output reg [D-1:0] dout
+);
+    reg [D-1:0] mem [0:(2**A)-1];
+    always @(posedge clk) begin
+        if (we) mem[waddr] &lt;= din;
+        dout &lt;= mem[raddr];     // reads a different address
+    end
+endmodule</code></pre>
+        Two address ports (<code>waddr</code>, <code>raddr</code>), one shared data path. Infers a block RAM with separate read/write ports — the iCE40 EBR supports this natively. Perfect for FIFOs (write at tail, read at head).
+    </div>
+    <aside class="notes">Dual-port is the FIFO primitive. Write address and read address are independent. iCE40 EBRs have native dual-port mode; so do Xilinx and Intel.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2>RAM Write &amp; Read</h2>
-    <p style="margin-top:0.5em;">Build ram_sp, write patterns via buttons, read back on 7-seg</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">day09_ex02_ram_sp.v — verify one-cycle read latency in simulation</p>
-    <aside class="notes">[SWITCH TO EDITOR] Live demo: RAM Write &amp; Read</aside>
+    <h2 style="color:#FFC904;">Write, Read, Confirm Block RAM Inference</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day09/ex2_ram/
+cat ram_1p.v
+make sim        # self-check write/read
+make wave
+make stat       # look for SB_RAM40_4K</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: write 42 @ addr 0
+PASS: read 42 @ addr 0 (1 cycle later)
+PASS: write cycles don't affect
+      other addresses
+=== 64 passed, 0 failed ===
+
+  SB_RAM40_4K: 2  ← 2 EBRs used</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>i_addr · i_din · i_we · o_dout</code>. Note the <strong>1-cycle read latency</strong> — address in at cycle N, data out at cycle N+1. That delay is the price of block-RAM-grade density.</p>
+    </div>
+    <aside class="notes">[GTKWave] The 1-cycle latency is inherent to synchronous block RAM. Students need to internalize that reads take a cycle. Plan pipelines accordingly.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog ram_1p.v; synth_ice40 -top ram_1p; stat" -q
+
+=== ram_1p ===    # 1024 × 8 = 8 Kbit
+   Number of wires:                 21
+   Number of cells:                  3
+     SB_DFFE                         8    ← output register (the 'o_dout' reg)
+     SB_RAM40_4KNR                   2    ← 2 EBRs with "N"on-registered read
+                                              configured for read-before-write</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> The synthesizer chose <code>SB_RAM40_4KNR</code> — the non-read-registered variant — because your <code>o_dout</code> register already provides the output flop. If you'd registered the read inside the EBR too, you'd have an extra unnecessary flop. Tools are smart; idiomatic code lets them be smart.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Checkpoint:</strong> 1024 × 8 RAM = 2 EBRs (12.5% of iCE40 HX1K's block RAM budget). The same array as LUT-RAM would be 8000+ LUTs — exceeding the chip. Block RAM inference is the difference between &ldquo;fits&rdquo; and &ldquo;doesn't fit.&rdquo;
+    </div>
+    <aside class="notes">Block RAM is the only way to have significant memory on iCE40. Get it right or you can't fit anything memory-heavy.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a dual-port 512×16 block RAM in Verilog. It should infer block RAM on iCE40 (check by running yosys synth_ice40).&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI writes dual-port RAM with BRAM inference.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: two address ports, single clock, sync read+write.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI writes one always block, single clock. Weak AI may try two clocks — doesn't infer iCE40 EBR.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Verify with <code>make stat</code>. SB_RAM40_4K must appear.</p></div>
+    </div>
+    <aside class="notes">Strict AI test: verify inference worked via yosys stat. Two-clock dual-port RAMs don't fit iCE40's single-clock EBR model and degrade to LUT RAM — visible failure.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;RAM = ROM + write enable. Almost identical coding pattern.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Synchronous read → block RAM inference. Async read → LUTs.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;One-cycle read latency: address on cycle N, data on N+1.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Read-before-write is the default EBR behavior.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Block RAM inference = one clock + sync write + sync read + registered output.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Read has <strong>1-cycle latency</strong>. Plan pipelines around it.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Read-before-write is cheap. Write-first costs extra muxing.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Dual-port RAMs are the FIFO primitive. iCE40 EBRs support native dual-port.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">iCE40 Memory Resources</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 3 of 4 · ~10 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">What the silicon actually gives you — and how to use it efficiently.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Always check <code>make stat</code> for <code>SB_RAM40_4K</code>. If it's missing, inference failed.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">iCE40 Memory Resources</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now know the patterns. Video 3 shows the <em>resource budget</em> for your actual chip: 16 Embedded Block RAMs (EBRs) at 4 Kbit each, configurable in 5 different aspect ratios. You'll learn to plan memory usage for real designs — UART FIFO, character ROM, frame buffer, sine table — and see what fits.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

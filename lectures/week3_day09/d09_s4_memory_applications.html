@@ -1,128 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 9.4: Practical Memory Applications — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 9.4: Practical Memory Applications — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
-    </div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Memory Applications</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~11 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory Architecture</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Practical Memory Applications</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">ROM</span>
-        <span class="seg-label ">RAM</span>
-        <span class="seg-label ">iCE40 Memory</span>
-        <span class="seg-label active">Applications</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 9.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">ROM</span><span class="seg-label">RAM</span><span class="seg-label">iCE40 EBRs</span><span class="seg-label active">Applications</span></div>
+    <aside class="notes">Video 4 of 4 for Day 9. Putting memory to work: sequencers, lookup tables, character displays.</aside>
 </section>
 
 <section>
-    <h2>Pattern Sequencer</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module pattern_sequencer #(
-    parameter DEPTH = 16,
-    parameter WIDTH = 8,
-    parameter MEM_FILE = "pattern.mem"
-)(
-    input  wire             i_clk, i_reset, i_next,
-    output wire [WIDTH-1:0] o_pattern
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every LED matrix display — the ones in elevators, billboards, stadium scoreboards — is a ROM-driven pattern sequencer. Every video card has a character ROM for text overlays. Every phone has sine tables for audio synthesis. Every modem has constellation ROMs for symbol decoding. The &ldquo;counter addresses ROM&rdquo; pattern is the canonical architecture for any computed-then-replayed signal.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Day 11 UART HELLO demo uses this pattern to drive the character stream. Your capstone melody player (a common project) uses it for sine tables. Your Go Board's LED patterns, 7-seg sequences, and scrolling text all follow the same shape.</p>
+        </div>
+    </div>
+    <aside class="notes">Pattern sequencers are a universal shape. Counter walks address space; ROM contents play out in sequence. Mastering this pattern = mastering half of all non-trivial FPGA designs.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> Compute or Look Up?</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;Runtime computation is always better than a lookup table — it uses less memory and is more 'clever.'&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Runtime compute costs <em>logic</em> (LUTs, DSPs). Table lookup costs <em>memory</em> (EBRs). FPGAs have abundant memory that would otherwise be wasted. For fixed functions — sine, log, gamma correction, CRC tables — <strong>look up beats compute every time</strong>. The choice isn't about cleverness; it's about resource allocation.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A 1024-entry sine table fits in 1 EBR. Computing sine at runtime via CORDIC takes ~400 LUTs + 100 cycles. The ROM is cheaper in area <em>and</em> faster.
+    </div>
+    <aside class="notes">The compute-vs-lookup tradeoff. Memory is abundant on FPGAs. Use it. Lookup tables are not &ldquo;giving up&rdquo; — they're the right architecture for fixed-function computation.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Pattern Sequencer Architecture</h2>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module pattern_sequencer #(
+    parameter STEP_LEN    = 10_000_000,   // cycles per pattern step (0.4s @ 25 MHz)
+    parameter PATTERN_LEN = 16,            // number of steps in sequence
+    parameter INIT_FILE   = "pattern.hex"
+) (
+    input  wire       i_clk, i_reset,
+    output wire [7:0] o_leds
 );
-<span class="fragment">    reg [WIDTH-1:0] r_mem [0:DEPTH-1];
-    initial $readmemb(MEM_FILE, r_mem);
+    localparam STEP_W = $clog2(STEP_LEN);
+    localparam ADDR_W = $clog2(PATTERN_LEN);
 
-    reg [$clog2(DEPTH)-1:0] r_addr;
-    always @(posedge i_clk)
-        if (i_reset)     r_addr &lt;= 0;
-        else if (i_next) r_addr &lt;= (r_addr == DEPTH-1) ? 0 : r_addr + 1;</span>
-<span class="fragment">
-    assign o_pattern = r_mem[r_addr];</span>
+    // Timer: counts STEP_LEN cycles, then pulses step_tick
+    reg [STEP_W-1:0] r_step_counter;
+    wire             w_step_tick = (r_step_counter == STEP_LEN - 1);
+    always @(posedge i_clk) r_step_counter &lt;= i_reset ? 0 : (w_step_tick ? 0 : r_step_counter + 1);
+
+    // Address counter: advances on each step_tick
+    reg [ADDR_W-1:0] r_addr;
+    always @(posedge i_clk) r_addr &lt;= i_reset ? 0 : (w_step_tick ? r_addr + 1 : r_addr);
+
+    // ROM: 16 × 8 patterns
+    rom_array #(.ADDR_W(ADDR_W), .DATA_W(8), .INIT_FILE(INIT_FILE))
+      u_rom (.i_clk(i_clk), .i_addr(r_addr), .o_data(o_leds));
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Counter + ROM = sequencer. Change the <code>.mem</code> file to change the animation. Classic pattern for LED shows, waveforms, character displays.
+    <div class="callout" style="font-size:0.68em;">
+        <strong>My thinking:</strong> Three sub-blocks: <strong>(1)</strong> step timer (creates a slow tick), <strong>(2)</strong> address counter (walks the pattern space), <strong>(3)</strong> ROM (pattern contents). Compose with hierarchical instantiation. Change <code>pattern.hex</code> → different animation. No RTL changes needed.
     </div>
-    <aside class="notes">Pattern sequencer: counter steps through ROM addresses. Change the mem file to change the animation. Classic pattern for LED displays, sine waves, character generators.</aside>
+    <aside class="notes">The three-block pattern sequencer is a canonical composition. Timer → counter → ROM → output. Each block is from previous lessons; Week 2's hierarchy and reuse paying off here.</aside>
 </section>
+
 <section>
-    <h2>More Applications</h2>
-    <div style="font-size:0.8em;">
-        <div class="fragment">
-            <p><strong>Sine Wave Lookup Table</strong> — 256-entry quarter-sine ROM. Mirror for full wave. Feed to PWM for audio.</p>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sine Table Lookup</h2>
+    <p style="font-size:0.78em;">For an audio synthesizer, we need <code>sin(x)</code> at 1024 points per cycle with 10-bit precision:</p>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// Python: generate the table at build time
+// for i in range(1024): print(f"{int((math.sin(2*math.pi*i/1024)+1)/2 * 1023):03x}")
+
+module sine_rom (
+    input wire i_clk,
+    input wire [9:0] i_phase,    // 0..1023 (full period)
+    output reg [9:0] o_sample    // 0..1023 (scaled)
+);
+    reg [9:0] mem [0:1023];
+    initial $readmemh("sine_1024x10.hex", mem);
+    always @(posedge i_clk) o_sample &lt;= mem[i_phase];
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;">
+        <strong>Together:</strong> 1024 × 10 = 10 Kbit ≈ 3 EBRs. Cost: <strong>3 EBRs and 10 output flops — roughly 0.8% of the chip</strong>. Equivalent compute (CORDIC iterative sine) would consume ~200-400 LUTs + multiple cycles per sample. Memory wins on both area and speed. This is the FPGA trick.
+    </div>
+    <aside class="notes">Sine lookup is the canonical lookup-vs-compute example. On FPGAs, memory-based is almost always better for fixed functions.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Design a 7-Seg Decoder ROM</h2>
+    <p style="font-size:0.78em;">Your 7-seg display needs to show hex digits 0-F. Input: 4-bit value. Output: 7-bit segment pattern. Is this a good ROM candidate?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Analysis:</strong>
+        <ul style="font-size:0.9em;">
+            <li>Input space: 4 bits = 16 entries</li>
+            <li>Output: 7 bits</li>
+            <li>Total: 16 × 7 = 112 bits. <em>Way</em> smaller than 1 EBR.</li>
+            <li><strong>Conclusion:</strong> Case-based ROM wins at this size (6-8 LUTs vs. 1 whole EBR). Small ROMs belong in LUTs; use EBRs only when the LUT cost exceeds ~100 cells.</li>
+        </ul>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Lesson:</strong> EBRs aren't always the right answer. Tiny lookup tables belong in LUTs. &ldquo;Always use block RAM&rdquo; is as wrong as &ldquo;never use block RAM.&rdquo; Pick by size.
+    </div>
+    <aside class="notes">Not everything belongs in an EBR. Small lookups belong in LUTs. The crossover is around ~100-300 bits of content, depending on structure.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Pattern Sequencer on the Go Board</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day09/ex4_sequencer/
+cat pattern.hex    # 16 × 8-bit patterns
+make sim
+make prog
+# watch LEDs cycle
+# edit pattern.hex, reprogram,
+#   new animation — no RTL change</code></pre>
         </div>
-        <div class="fragment">
-            <p><strong>Character ROM</strong> — 8×8 font bitmaps. Address = {char_code, row}. Data = pixel pattern. Essential for VGA text.</p>
-        </div>
-        <div class="fragment">
-            <p><strong>Instruction Memory</strong> — ROM holding a program for a simple processor. Address = PC. (Final project option!)</p>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED BEHAVIOR</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">pattern.hex = walk right:
+01 → 02 → 04 → 08 → 10 → 20 → 40 → 80 → 80 → 40 ...
+
+Board shows 8 LEDs cycling
+left to right, pattern
+wraps every 6.4 sec
+(16 steps × 0.4s)</code></pre>
         </div>
     </div>
-    <aside class="notes">Beyond LED patterns: sine tables for audio, character ROMs for VGA text, instruction memory for simple processors. All use the same ROM pattern.</aside>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Edit the hex file, reprogram — new animation. <strong>Content and architecture are decoupled.</strong> Adding a new pattern = 30 seconds of editing + 10 seconds of programming. No synthesis, no Verilog changes. This is the elegance of lookup-based designs.</p>
+    </div>
+    <aside class="notes">[Terminal + Board] Students change the pattern.hex file and see new behavior without touching RTL. Powerful demonstration of content-architecture decoupling.</aside>
 </section>
+
+<section data-background-color="#FAFAFA">
+    <h2>More Memory-Driven Applications</h2>
+    <table style="font-size:0.72em;margin-top:0.3em;">
+        <thead><tr><th>Application</th><th>Pattern</th><th>Memory Cost</th></tr></thead>
+        <tbody>
+            <tr><td>Audio sine synth</td><td>phase counter → sine ROM</td><td>1-3 EBRs</td></tr>
+            <tr><td>7-seg message scroller</td><td>char counter → char ROM → 7seg decoder</td><td>1-2 EBRs</td></tr>
+            <tr><td>Microcoded controller</td><td>state counter → microcode ROM</td><td>1-4 EBRs (depending on instruction width)</td></tr>
+            <tr><td>CRC lookup</td><td>byte in → CRC table → XOR accumulator</td><td>1 EBR (256×16 table)</td></tr>
+            <tr><td>Gamma correction</td><td>pixel → gamma ROM</td><td>1-2 EBRs</td></tr>
+            <tr><td>Font ROM (VGA text)</td><td>char + row → font ROM → pixel stream</td><td>1-2 EBRs (128 chars × 8×8 pixels)</td></tr>
+        </tbody>
+    </table>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Your capstone probably uses 1-3 of these.</strong> If you're building anything that plays, displays, or transforms data according to a fixed rule, a ROM is almost certainly involved.
+    </div>
+    <aside class="notes">Six concrete applications. Every single one of these could be a capstone project. Memory-driven design is half the toolkit.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Design a Verilog pattern sequencer that drives 8 LEDs with a heartbeat pattern (pulse, pulse, pause, pulse, pulse, pause) at 1 Hz on a 25 MHz clock. Include Python code to generate the hex file.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI designs complete sequencer + table.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: timer + address counter + array ROM + Python hex generator.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI pairs Verilog and Python. Weak AI writes only Verilog with hard-coded tables.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Separation of content and architecture = Python + Verilog.</p></div>
+    </div>
+    <aside class="notes">Hard-coded patterns in Verilog are a smell. Good AI produces the content-generator + RTL pair — letting you iterate on the pattern without touching hardware.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Pattern sequencer = timer + address counter + ROM.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Look up beats compute for fixed functions — memory is abundant, logic is dear.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Tiny tables (&lt; 100 bits) → LUTs. Large tables (&gt; few hundred bits) → EBRs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Content (hex files) and architecture (RTL) should be <em>decoupled</em>.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If you can name what it should do and the rule is fixed, it probably belongs in a ROM.</div>
+</section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> Async read vs. sync read — which infers block RAM?</p>
-        <div class="fragment quiz-answer">Synchronous read (<code>always @(posedge clk) o_data &lt;= r_mem[addr]</code>) infers block RAM. Async read (<code>assign</code>) uses LUTs. Trade-off: 1 cycle read latency.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> How much total block RAM on the iCE40 HX1K?</p>
-        <div class="fragment quiz-answer">16 EBR blocks × 4 Kbit each = 64 Kbit (8 KB) total.</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> What system task loads a hex file into a memory array?</p>
-        <div class="fragment quiz-answer"><code>$readmemh("file.hex", r_mem)</code> for hex, <code>$readmemb</code> for binary. Works in both simulation and synthesis.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> Write the always block for single-port sync RAM with read-before-write.</p>
-        <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.85em;white-space:pre;line-height:1.4;">always @(posedge i_clk) begin
-  if (i_write_en)
-    r_mem[i_addr] &lt;= i_write_data;
-  o_read_data &lt;= r_mem[i_addr];
-end</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 9 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> What triggers block RAM inference on iCE40?</p>
+        <div class="fragment quiz-answer">Idiomatic array + <code>initial $readmemh</code> (for ROM) or sync write + sync read (for RAM). The key: <strong>synchronous</strong> read via a registered output.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> How many EBRs does a 768×8 RAM consume?</p>
+        <div class="fragment quiz-answer">768 × 8 = 6 Kbit. Doesn't fit in one 4 Kbit EBR → needs 2 EBRs. The second one is half-wasted; you &ldquo;pay&rdquo; for 8 Kbit.</div>
     </div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> Why is lookup usually better than runtime compute on FPGAs?</p>
+        <div class="fragment quiz-answer">Memory (EBRs) is abundant and otherwise unused; logic (LUTs) is the scarce resource. Lookups consume &ldquo;free&rdquo; silicon; compute consumes the resource you need for everything else.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> When does the case-ROM pattern still make sense?</p>
+        <div class="fragment quiz-answer">For tables smaller than ~32 entries where the content is fixed and the readability of case is worth more than EBR allocation. 7-seg decoders, opcode decoders, small FSM outputs — all case-based.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 9</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Timing &amp; PPA</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 10 · Timing, Numerics, Performance-Power-Area</p>
+        <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now know what your chip has (LUTs + EBRs) and how to use memory idioms. Day 10 answers the next question: <strong>how fast can it go, and what does it cost?</strong> You'll learn to read timing reports, understand numerical architecture tradeoffs, and measure PPA (Performance / Power / Area) — the three axes every real design is evaluated on.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

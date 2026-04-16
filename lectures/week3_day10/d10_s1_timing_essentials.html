@@ -1,136 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 10.1: Timing &amp; Constraints Essentials — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 10.1: Timing &amp; Constraints Essentials — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
-<!-- ─── TITLE ─── -->
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Numerical Architectures &amp; Design Trade-offs</span>
-    </div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">Timing &amp; Constraints Essentials</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Timing, Numerics &amp; PPA</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Timing &amp; Constraints Essentials</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot"></div>
-        <div class="seg-dot"></div>
-        <div class="seg-dot"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">Timing Essentials</span>
-        <span class="seg-label">Numerical Architectures</span>
-        <span class="seg-label">PPA Introduction</span>
-        <span class="seg-label">ASIC PPA Context</span>
-    </div>
-    <aside class="notes">Welcome to Day 10 Video 1 of 4. Today is a big day — we bring together timing, numerical architecture trade-offs, and PPA analysis. This first segment gives you the timing vocabulary you need for the rest of the day.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">Timing</span><span class="seg-label">Numerics</span><span class="seg-label">PPA</span><span class="seg-label">ASIC Context</span></div>
+    <aside class="notes">Video 1 of 4 for Day 10. Timing: the one thing the synthesizer tells you whether your design is fast enough.</aside>
 </section>
 
-<!-- ─── WHY TIMING MATTERS ─── -->
 <section>
-    <h2>Why Timing Matters</h2>
-    <p style="font-size:0.85em;">Every gate and wire has <strong>propagation delay</strong>. Signals take time to travel through combinational logic between flip-flops.</p>
-    <div class="fragment" style="margin-top:0.5em;">
-        <img src="diagrams/d10_critical_path.svg" alt="Critical path between two flip-flops" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Tapeouts <em>are</em> timing closure. A modern SoC has hundreds of thousands of timing paths; every one must meet setup and hold. Teams of timing engineers spend months ensuring closure at target frequency. A chip that fails timing at the corners ships late, ships slow, or doesn't ship at all. When Intel's Pentium 4 capped at 4 GHz instead of reaching 10 GHz, it was primarily a timing problem (leakage + critical paths too long to hide).</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Your Go Board runs at 25 MHz (40 ns period). Every design so far has stayed comfortably under that — we've never shown you a failing timing report. Today changes that. You'll learn to read nextpnr's report, identify critical paths, and apply the three-move playbook when timing fails.</p>
+        </div>
     </div>
-    <div class="fragment golden-rule" style="font-size:0.9em;margin-top:0.5em;">
-        The critical path determines the maximum clock frequency of your design.
-    </div>
-    <aside class="notes">Every gate and wire has delay. The longest path between any two flip-flops is the critical path — it sets your maximum frequency.</aside>
+    <aside class="notes">Timing is binary: your design either meets timing or it doesn't. Learning to read and repair timing reports is a career skill. 25 MHz is lenient — once you push further, timing becomes everything.</aside>
 </section>
 
-<!-- ─── SETUP & HOLD ─── -->
 <section>
-    <h2>Setup &amp; Hold Time</h2>
-    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-               Tsetup      Thold
-              ◄──────►    ◄──────►
-              │        │          │
-   data: ─────────────STABLE───────────────
-              │        │          │
-   clk:  ────────────┐ │
-                      └───────────────
-                      ↑
-                  clock edge
+    <h2><span style="color:#C0392B;">⚠️</span> Combinational Depth Kills Clock Speed</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;If I want my design to run at a higher clock rate, I just set a faster clock. The logic is the logic.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">The maximum clock rate is set by the <strong>longest combinational path between any two flip-flops</strong>. That path has a delay (t<sub>clk-to-Q</sub> + Σ t<sub>LUT</sub> + t<sub>setup</sub>). Your clock period <em>must</em> exceed this delay. A deep combinational chain = long delay = slow maximum clock. To go faster: shorten the chains by inserting pipeline flops.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> A 32-bit ripple-carry adder on iCE40 has a critical path of ~12 ns. Max clock: ~80 MHz. A pipelined or carry-lookahead adder reaches 200+ MHz on the same chip, same inputs. Same function, different architecture, different timing.
+    </div>
+    <aside class="notes">The fundamental timing reframe. Clock speed is set by combinational path length. To go faster: shorter paths. To add pipeline stages: register more intermediate results.</aside>
+</section>
+
+<section>
+    <h2>Setup &amp; Hold — The Timing Contract</h2>
+    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;color:#333;">
+    clk ────┐           ┌───
+            └───────────┘
+
+    D   ────────∎────────────
+           setup│    │hold
+                │    │
+                └──edge
     </pre>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>Setup violation:</strong> data changes too close <em>before</em> the edge → wrong value captured</p>
-        <p class="fragment"><strong>Hold violation:</strong> data changes too soon <em>after</em> the edge → wrong value captured</p>
+    <ul style="font-size:0.72em;">
+        <li><strong>Setup time</strong> (t<sub>setup</sub>): D must be stable <em>before</em> the clock edge (iCE40 ~0.4 ns)</li>
+        <li><strong>Hold time</strong> (t<sub>hold</sub>): D must remain stable <em>after</em> the clock edge (iCE40 ~0.3 ns)</li>
+        <li><strong>Clock-to-Q</strong> (t<sub>clk-to-Q</sub>): propagation from clock edge to Q output (iCE40 ~0.8 ns)</li>
+    </ul>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>Setup timing equation:</strong> T<sub>clk</sub> ≥ t<sub>clk-to-Q</sub> + t<sub>comb</sub>(FF→FF) + t<sub>setup</sub>
+        &emsp;<em>(the clock period must accommodate all three)</em>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <strong>Slack</strong> = clock_period − (Tclk-to-q + Tcomb + Trouting + Tsetup). Positive = timing met. Negative = violation.
-    </div>
-    <aside class="notes">Setup: data stable before edge. Hold: data stable after. Slack is your margin. At 25 MHz with 40 ns period, most simple designs pass easily. Problems appear with deep combinational chains or higher clocks.</aside>
+    <aside class="notes">Setup = before edge. Hold = after edge. Clock-to-Q = propagation delay through the flop. These three numbers define whether a design meets timing.</aside>
 </section>
 
-<!-- ─── NEXTPNR TIMING ─── -->
 <section>
-    <h2>Reading the nextpnr Timing Report</h2>
-    <pre class="synth"><code class="language-bash" data-noescape><span class="fragment"># Tell nextpnr about your clock:
-nextpnr-ice40 --hx1k --package vq100 \
-    --pcf go_board.pcf --json top.json --asc top.asc \
-    --freq 25</span>
-
-<span class="fragment"># PASS — Fmax exceeds target
-Info: Max frequency for clock 'i_clk': 48.23 MHz
-#  Target: 25 MHz → PASS (23 MHz of margin)</span>
-
-<span class="fragment"># FAIL — Fmax below target
-Info: Max frequency for clock 'i_clk': 22.10 MHz
-#  Target: 25 MHz → FAIL! Design may work intermittently.</span></code></pre>
-    <div class="fragment callout-danger" style="font-size:0.75em;">
-        Timing violations cause <strong>intermittent failures</strong> — the worst kind of bug. The design works sometimes, fails randomly.
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Reading the nextpnr Timing Report</h2>
+    <pre style="font-size:0.6em;"><code class="language-bash">Info: Critical path report for clock 'clk_25mhz' (posedge -&gt; posedge):
+Info: curr total
+Info: 0.8  0.8   Source u_counter.r_count_reg[5]_DFFR_Q
+Info: 1.4  2.2   Net count[5]                              (fanout = 3)
+Info: 1.1  3.3   Source u_alu.u_add.SB_LUT4_I3_O
+Info: 1.4  4.7   Net adder_inter[5]                        (fanout = 2)
+Info: 1.1  5.8   Source u_alu.u_mux.SB_LUT4_I0_O
+Info: 0.4  6.2   Sink u_out.r_out_reg[5]_DFFR_D (setup)
+Info: 6.2 ns delay estimate, frequency 161.3 MHz</code></pre>
+    <div class="callout" style="font-size:0.68em;">
+        <strong>My thinking:</strong> Read from top: starts at <code>r_count[5]</code>'s flop output, wire delay (Net), through an adder LUT, wire, through a mux LUT, to <code>r_out[5]</code>'s flop D input with setup. Total: 6.2 ns. Max frequency: 1/6.2 ns = 161 MHz. At 25 MHz (40 ns period), we have <strong>33.8 ns of slack</strong> — plenty.
     </div>
-    <aside class="notes">Always add --freq to nextpnr. Without it, no timing analysis happens. Above target = pass. Below = violation. Violations cause intermittent failures — maddening to debug.</aside>
+    <aside class="notes">nextpnr's critical path report. Source → nets → sinks. Total delay at the bottom tells you max frequency. Slack = target period - actual delay. Positive slack = pass. Negative slack = fail.</aside>
 </section>
 
-<!-- ─── WHEN TIMING FAILS ─── -->
 <section>
-    <h2>When Timing Fails: Three Fixes</h2>
-    <div style="font-size:0.82em;">
-        <p class="fragment"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<strong>Pipeline:</strong> insert registers to break long combinational chains. Costs latency + FFs.</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<strong>Restructure logic:</strong> rethink the architecture. Sequential multiplier instead of combinational?</p>
-        <p class="fragment"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<strong>Relax the clock:</strong> lower the frequency if the application allows it.</p>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; When Timing Fails: Three Moves</h2>
+    <ol style="font-size:0.78em;">
+        <li><strong>Pipeline the critical path.</strong> Insert a register mid-path to split it into two shorter paths. Adds one cycle of latency but roughly halves the delay. Canonical fix for arithmetic.</li>
+        <li><strong>Reduce combinational width.</strong> Replace a 32-bit ripple-carry adder with a tree or carry-lookahead structure. Or use DSP blocks for multiplication. Often free if you write the idiom.</li>
+        <li><strong>Reduce fanout.</strong> A signal driving hundreds of loads has long routing delay. Clone the driver so each copy drives fewer loads, or add a pipeline flop to break fanout.</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.5em;">
+        <strong>Together:</strong> In practice, &ldquo;pipeline it&rdquo; is the answer 80% of the time. Adding a register is cheap (1 flop); pays dividends immediately. The cost is latency — an extra cycle of delay — which is usually affordable.
     </div>
-    <div class="fragment" style="margin-top:0.8em;">
-        <img src="diagrams/d10_pipeline_fix.svg" alt="Pipeline fix illustration" style="width:100%;max-width:680px;display:block;margin:0 auto;">
-    </div>
-    <aside class="notes">Three options: pipeline (trade latency for throughput), restructure (change the architecture), or slow the clock. We'll see concrete examples of options 1 and 2 in the next segment when we compare adder and multiplier architectures.</aside>
+    <aside class="notes">Three fixes. Pipelining is the most common. Width reduction is design-specific. Fanout reduction is last resort. Master pipelining, know when to reach for the others.</aside>
 </section>
 
-<!-- ─── KEY TAKEAWAYS ─── -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Diagnose This Failure</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">Info: Critical path report:
+Info: 0.8  0.8   Source r_a_reg[0]_DFFR_Q
+Info: 1.5  2.3   Net a[0] -> adder input
+Info: 1.1  3.4   Source u_add.full_adder_0.SB_LUT4_I1_O
+Info: 1.4  4.8   Net carry[1] -> full_adder_1.cin
+Info: 1.1  5.9   Source u_add.full_adder_1.SB_LUT4_I1_O
+Info: ... (30 more full_adder stages ...)
+Info: 1.1 45.3   Source u_add.full_adder_31.SB_LUT4_I1_O
+Info: 0.4 45.7   Sink r_sum_reg[31]_DFFR_D (setup)
+Info: 45.7 ns delay, frequency 21.9 MHz
+
+ERROR: max frequency for clock 'clk_25mhz' is 21.9 MHz, target 25 MHz</code></pre>
+    <p style="font-size:0.78em;">What's wrong, and which fix?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Diagnosis:</strong> <strong>32-bit ripple-carry adder.</strong> The carry chain is the critical path — 32 LUT stages in series. <strong>Fix:</strong> pipeline the adder (insert flops after bits 15 and 16, adding 1 cycle latency but halving the critical path), <em>or</em> rewrite as <code>assign sum = a + b</code> and let Yosys infer a tree-adder / use the SB_CARRY fast path.
+    </div>
+    <aside class="notes">The classic &ldquo;ripple carry doesn't scale&rdquo; lesson. 32 stages of ripple = 32 LUT delays. Either pipeline or use the SB_CARRY fast path via idiomatic <code>a + b</code>.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Live Timing Closure</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes — make a design fail, then fix it</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day10/ex1_timing/
+make timing      # fails at 25 MHz
+# edit adder.v — add pipeline reg
+make timing      # passes
+diff adder_slow.v adder_fast.v</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">BEFORE:
+  Fmax: 21.9 MHz — FAIL
+
+AFTER (pipelined):
+  Fmax: 85.3 MHz — PASS
+  (1 cycle extra latency)</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Same inputs, same output. One register added. Fmax went from 21.9 → 85.3 MHz. Latency: one extra cycle. This is the full toolkit: <em>sacrifice latency for throughput</em> when you need to hit a timing target.</p>
+    </div>
+    <aside class="notes">[Terminal] Live demo of pipelining a failing adder. Students see the before/after numbers and internalize: pipeline stages are cheap, and they let you hit higher clocks.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Where Timing Lives in the Flow</h2>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Tool</th><th>Does What</th><th>Output You Care About</th></tr></thead>
+        <tbody>
+            <tr><td><code>yosys</code></td><td>RTL → gate-level netlist</td><td>Cell count (from <code>stat</code>)</td></tr>
+            <tr><td><code>nextpnr-ice40</code></td><td>Place &amp; route, timing analysis</td><td>Fmax (critical path)</td></tr>
+            <tr><td><code>icetime</code></td><td>Static timing analysis of placed design</td><td>Path-by-path timing report</td></tr>
+        </tbody>
+    </table>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Checkpoint:</strong> Yosys says &ldquo;how many cells.&rdquo; nextpnr says &ldquo;how fast can they run.&rdquo; Both metrics matter. Today's focus: the second one. Tomorrow: balancing both.
+    </div>
+    <aside class="notes">The open-source flow splits synthesis (yosys) from P&R and timing (nextpnr/icetime). Both report critical numbers. Learn to read both outputs.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;My 32-bit ripple adder has Fmax 22 MHz, I need 50 MHz. Show me a pipelined version with the minimum number of pipeline stages to meet timing.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a pipelined adder.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 1 pipeline stage ≈ doubles Fmax. So 1 stage gets to ~44 MHz. Need 2 stages for 50 MHz safely.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI picks proper split points. Weak AI just says &ldquo;add a register&rdquo; with no breakdown.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Pipelining is a quantitative decision — estimate before implementing.</p></div>
+    </div>
+    <aside class="notes">Good quantitative AI task. Verify that the AI accounts for per-stage overhead (clock-to-Q + setup ~1.2 ns) and picks enough stages.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Critical path = longest FF-to-FF delay → limits maximum frequency.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Slack = clock_period − total_delay. Positive = pass. Negative = intermittent failures.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;<code>--freq 25</code> on nextpnr enables timing analysis. Always include it.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Fixes: pipeline, restructure, or relax the clock — all have PPA trade-offs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Fmax = 1 / (longest combinational path between flops).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Read nextpnr's critical path report — it names your bottleneck.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Three fixes: pipeline, reduce width, reduce fanout.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Pipelining trades latency for throughput. Usually a worthy trade.</p>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
-        PLL and clock domain crossing are covered in the Day 5 metastability discussion and the Day 10 stretch exercises. Today's focus: <strong>numerical architectures and PPA.</strong>
-    </div>
-    <aside class="notes">That's the timing vocabulary you need. The rest of today is about numerical architectures and PPA — where timing trade-offs become concrete design decisions.</aside>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Every design has a critical path. You just haven't met yours yet.</div>
 </section>
 
-<!-- ─── TRANSITION ─── -->
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Numerical Architecture Trade-offs</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~20 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Adders, multipliers, fixed-point — and what the synthesis tool actually builds.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Numerical Architecture Tradeoffs</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~15 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Timing tells you &ldquo;how fast.&rdquo; Video 2 asks &ldquo;why so slow?&rdquo; — and answers with adder architectures, multiplier explosions, fixed-point arithmetic, and the tricks that turn a 32-cycle math operation into a 1-cycle one. By the end you'll know which <code>+</code> the synthesizer built and what you could have built instead.</p>
+        </div>
     </div>
 </section>
 
@@ -139,13 +215,6 @@ Info: Max frequency for clock 'i_clk': 22.10 MHz
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

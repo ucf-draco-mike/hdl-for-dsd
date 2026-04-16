@@ -1,128 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 10.4: Open-Source ASIC PPA — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 10.4: Open-Source ASIC PPA — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
-<!-- ─── TITLE ─── -->
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Numerical Architectures &amp; Design Trade-offs</span>
-    </div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.0em;">Open-Source ASIC PPA</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~5 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Timing, Numerics &amp; PPA</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Open-Source ASIC PPA</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot"></div>
-        <div class="seg-dot"></div>
-        <div class="seg-dot"></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label">Timing Essentials</span>
-        <span class="seg-label">Numerical Architectures</span>
-        <span class="seg-label">PPA Introduction</span>
-        <span class="seg-label active">ASIC PPA Context</span>
-    </div>
-    <aside class="notes">A brief aspirational segment. The PPA habits you're building with yosys stat transfer directly to ASIC design. Here's how.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Timing</span><span class="seg-label">Numerics</span><span class="seg-label">PPA</span><span class="seg-label active">ASIC Context</span></div>
+    <aside class="notes">Video 4 of 4 for Day 10. What happens when your Verilog becomes a real chip.</aside>
 </section>
 
-<!-- ─── FPGA vs ASIC PPA ─── -->
 <section>
-    <h2>FPGA vs. ASIC PPA</h2>
-    <div class="columns" style="font-size:0.78em;">
-        <div class="col panel panel-hw">
-            <h3>FPGA (what we do)</h3>
-            <p><strong>Area:</strong> LUT count (fixed-size units)</p>
-            <p><strong>Perf:</strong> Fmax from place-and-route</p>
-            <p><strong>Power:</strong> Estimate from toggle rate</p>
-            <p><strong>Tool:</strong> <code>yosys stat</code> + <code>nextpnr</code></p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Skywater 130 nm (open PDK) and GlobalFoundries 180 nm are real foundry processes you can tape out to via the Google/Efabless sponsorship programs — for under $10k per design. Students and researchers have shipped working silicon from their laptops. OpenROAD and OpenLane are the tool flows. What used to be a $500k EDA license barrier is now open-source. <strong>The barrier to entry for custom silicon is the lowest it has ever been.</strong></p>
         </div>
-        <div class="col panel panel-neutral fragment">
-            <h3>ASIC (industry)</h3>
-            <p><strong>Area:</strong> Gate count × cell size (nm²)</p>
-            <p><strong>Perf:</strong> Critical path through std cells</p>
-            <p><strong>Power:</strong> Dynamic + leakage (process node)</p>
-            <p><strong>Tool:</strong> OpenROAD / OpenLane</p>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">You won't do a full tapeout — but you'll learn to read ASIC-flow reports, understand why FPGA and ASIC PPA differ, and appreciate why the RTL discipline you've been building matters even more when silicon is permanent. This context is career-shaping: it connects your current course to real silicon careers.</p>
         </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
-        Key difference: On FPGA, all LUTs are the same size. On ASIC, a 2-input gate is <em>physically smaller</em> than a 4-input gate. Area optimization is much richer.
-    </div>
-    <aside class="notes">On FPGA, area is quantized — LUTs are fixed. On ASIC, a simple inverter is tiny, a multiplier is large, and you pay for every transistor. The analysis habits are identical, but the numbers mean different things.</aside>
+    <aside class="notes">Open ASIC is a real thing now. Efabless / Google sponsors shuttle runs. Students ship chips. Learning this context opens a door.</aside>
 </section>
 
-<!-- ─── OPENROAD / OPENLANE ─── -->
 <section>
-    <h2>OpenROAD / OpenLane</h2>
-    <div style="font-size:0.82em;">
-        <p class="fragment"><strong>Same Verilog.</strong> The RTL you write in this course can be synthesized to real standard cells.</p>
-        <p class="fragment"><strong>SKY130:</strong> SkyWater/Google's open-source 130nm process. Real transistor models, real PPA data.</p>
-        <p class="fragment"><strong>The flow:</strong> Verilog → Yosys (synthesis to std cells) → OpenROAD (place &amp; route) → GDSII (chip layout)</p>
-        <p class="fragment"><strong>Google/Efabless shuttle:</strong> Fabricate real chips from open-source designs. This is not hypothetical.</p>
+    <h2><span style="color:#C0392B;">⚠️</span> FPGA PPA Is a Proxy — Not the Final Answer</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;My design fits in 500 LUTs and runs at 150 MHz on iCE40. That's the PPA. Moving to ASIC wouldn't change anything fundamental.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">FPGA and ASIC have <strong>different cost models</strong>. On FPGA: LUTs and EBRs are free (already on the chip) but you pay per switched gate in power. On ASIC: flops are expensive (each is fabricated silicon), combinational logic is cheap, and <em>clock tree power</em> dominates. The same RTL produces different-shaped hardware with different winners. FPGA numbers predict the <em>shape</em> of ASIC tradeoffs, not the <em>magnitudes</em>.</p>
+        </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        We won't use OpenROAD in this course (the learning curve is steep), but the PPA analysis habits you build with <code>yosys stat</code> transfer <strong>directly</strong>.
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> An FPGA &ldquo;good&rdquo; design at 100 MHz is often a mediocre ASIC design. ASIC Fmax targets are often 500 MHz-3 GHz, so what looks fast on iCE40 barely clears the ASIC bar.
     </div>
-    <aside class="notes">OpenROAD and OpenLane take the same Verilog and give you real ASIC PPA metrics. The Google/Efabless shuttle actually fabricates chips from open-source designs. Everything you're learning transfers.</aside>
+    <aside class="notes">FPGA PPA and ASIC PPA are related but not identical. Students who only learn FPGA ship designs that fail on ASIC. This video bridges.</aside>
 </section>
 
-<!-- ─── CONCRETE EXAMPLE ─── -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; FPGA vs. ASIC PPA Side-by-Side</h2>
+    <table style="font-size:0.7em;margin-top:0.3em;">
+        <thead><tr><th>Metric</th><th>FPGA (iCE40 HX1K)</th><th>ASIC (Skywater 130 nm)</th></tr></thead>
+        <tbody>
+            <tr><td>Area unit</td><td>LUT, DFF, EBR (abstract)</td><td>µm² of silicon (real)</td></tr>
+            <tr><td>Typical Fmax</td><td>100-200 MHz</td><td>500 MHz - 3 GHz</td></tr>
+            <tr><td>Flop cost</td><td>Free (already on chip)</td><td>Real silicon, ~50 µm² each</td></tr>
+            <tr><td>Power model</td><td>Fixed static + dynamic ~ f × activity</td><td>Static (leakage) + Dynamic + Clock tree</td></tr>
+            <tr><td>Critical path</td><td>Net routing dominates</td><td>Combinational logic dominates</td></tr>
+            <tr><td>Timing margins</td><td>Easy (slow clocks)</td><td>Tight — every ps matters</td></tr>
+            <tr><td>Memory</td><td>Fixed EBRs</td><td>Custom-sized SRAM macros</td></tr>
+            <tr><td>Bring-up cost</td><td>Flash and go (seconds)</td><td>6-12 months + $10k-$10M</td></tr>
+        </tbody>
+    </table>
+    <aside class="notes">The PPA differences across target. Different cost models, different design emphases. Shows why a &ldquo;good FPGA design&rdquo; isn't automatically a good ASIC design.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; OpenROAD / OpenLane Flow</h2>
+    <p style="font-size:0.78em;">The open-source ASIC design flow mirrors your FPGA flow, but with more steps:</p>
+    <pre style="font-family:monospace;font-size:0.68em;text-align:left;background:none;border:none;color:#333;">
+  Your Verilog
+      │
+      ▼
+  Yosys ────────────→ synthesis to gate-level
+      │
+      ▼
+  OpenROAD ────┬─→ floorplanning
+               ├─→ placement
+               ├─→ clock tree synthesis (CTS)
+               ├─→ routing
+               └─→ timing signoff
+      │
+      ▼
+  GDS-II layout ──→ send to foundry</pre>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together:</strong> Same Yosys you've been using. OpenROAD takes the gate-level netlist and physically lays it out on silicon. The whole flow runs on your laptop — no licenses — and produces a GDS-II file the foundry turns into chips. <strong>OpenLane is a Make-like wrapper</strong> that automates all of this with one command.
+    </div>
+    <aside class="notes">Open-source ASIC flow is real and works on a laptop. OpenROAD for physical design, OpenLane for automation. Same RTL as your FPGA projects.</aside>
+</section>
+
 <section>
     <h2>A Concrete Comparison</h2>
-    <table style="font-size:0.72em;">
-        <tr><th>Design</th><th>iCE40 HX1K (FPGA)</th><th>SKY130 (ASIC, conceptual)</th></tr>
-        <tr class="fragment"><td>8-bit adder</td><td>~8 LUTs</td><td>~50 gates, tiny area</td></tr>
-        <tr class="fragment"><td>8×8 multiplier</td><td>~60 LUTs (~5% of chip)</td><td>~400 gates, still small</td></tr>
-        <tr class="fragment"><td>32×32 multiplier</td><td>~400 LUTs (~30% of chip!)</td><td>~5,000 gates, small fraction</td></tr>
+    <p style="font-size:0.78em;">Your Week 2 traffic-light FSM, run through both flows:</p>
+    <table style="font-size:0.7em;margin-top:0.3em;">
+        <thead><tr><th>Metric</th><th>iCE40 HX1K</th><th>Skywater 130 nm</th></tr></thead>
+        <tbody>
+            <tr><td>Area</td><td>7 cells (2 DFF + 5 LUT)</td><td>~185 µm² (8 std cells)</td></tr>
+            <tr><td>Fmax</td><td>162 MHz</td><td>780 MHz</td></tr>
+            <tr><td>Power @ 25 MHz</td><td>~2 µW (FPGA static dominates)</td><td>~0.3 µW</td></tr>
+            <tr><td>Power @ max Fmax</td><td>~12 µW</td><td>~15 µW</td></tr>
+        </tbody>
     </table>
-    <div class="fragment" style="font-size:0.82em;margin-top:0.5em;">
-        <p><strong>The insight:</strong> What's "expensive" depends on the platform. A 32-bit multiplier that consumes 30% of the iCE40 is trivial on an ASIC (or on an FPGA with DSP blocks).</p>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>What to notice:</strong> Same RTL, 5× higher Fmax on ASIC. At low clocks, ASIC is much lower power; at max Fmax, they converge (different reasons: FPGA has configurable routing overhead; ASIC has leakage at small nodes). <strong>The shape of tradeoffs is similar; the magnitudes differ.</strong>
     </div>
-    <aside class="notes">Context matters. A 32-bit multiplier is massive on iCE40 but trivial on an ASIC or a larger FPGA with DSP. The ability to quantify cost and make informed decisions — that's what PPA analysis gives you.</aside>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Takeaway:</strong> If you design carefully for FPGA (correct synchronous reset, no combinational loops, meet timing comfortably), your RTL is generally ASIC-ready. The RTL discipline you're learning applies both directions.
+    </div>
+    <aside class="notes">Same RTL, two targets, different numbers. The discipline translates; the magnitudes change. A well-designed FPGA RTL is usually ASIC-ready.</aside>
 </section>
 
-<!-- ─── PRE-CLASS QUIZ ─── -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;I have a 16-bit sequential multiplier that runs at 180 MHz on iCE40. If I target Skywater 130 nm ASIC, what rough Fmax should I expect, and what would be different about the design?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI estimates FPGA→ASIC translation.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: ~5× Fmax on ASIC → ~900 MHz. Critical path moves from routing to logic.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI discusses clock tree + leakage. Weak AI just scales numbers linearly.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Cross-target estimates need cost-model awareness, not just scale factors.</p></div>
+    </div>
+    <aside class="notes">Cross-target estimation is a subtle skill. AI that linearly scales is wrong. Accounting for clock tree, leakage, and different dominant costs = senior thinking.</aside>
+</section>
+
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Open-source ASIC flow (Yosys + OpenROAD) runs on your laptop.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Different cost models: FPGA flops are free; ASIC flops are silicon.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;ASIC Fmax is typically 5× higher than FPGA for the same RTL.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Well-designed FPGA RTL is generally ASIC-ready. RTL discipline transfers.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">The RTL discipline is universal. The cost models are target-specific.</div>
+</section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
     <div style="font-size:0.82em;">
-        <p><strong>Q1:</strong> What does positive slack mean? What about negative slack?</p>
-        <div class="fragment quiz-answer">Positive slack = timing met (signal arrives before the deadline). Negative slack = timing violation (intermittent failures).</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> Why does <code>assign product = a * b;</code> use so many LUTs on iCE40?</p>
-        <div class="fragment quiz-answer">iCE40 has no DSP blocks. Multiplication is implemented entirely in LUT logic, with O(N²) gate count growth. Larger FPGAs use dedicated DSP slices.</div>
-    </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.82em;">
-        <p><strong>Q3:</strong> When would you choose a sequential (shift-and-add) multiplier over a combinational one?</p>
-        <div class="fragment quiz-answer">When area is constrained and latency is acceptable. Sequential uses O(N) LUTs but takes N cycles. Combinational uses O(N²) LUTs but finishes in 1 cycle.</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> What are the three FPGA PPA proxies, and which tools measure them?</p>
-        <div class="fragment quiz-answer">Performance → Fmax (nextpnr --freq). Area → LUT/FF/EBR count (yosys stat). Power → toggle rate × capacitance (limited on iCE40, conceptual).</div>
+        <p><strong>Q1:</strong> On an FPGA, what's the dominant factor in the critical path delay?</p>
+        <div class="fragment quiz-answer">Routing (net delay between LUTs). FPGA logic is fast; moving signals around via configurable switches is slow.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> On an ASIC at 130 nm, which is typically a bigger power concern: static leakage or dynamic switching?</p>
+        <div class="fragment quiz-answer">Dynamic (at larger nodes like 130 nm). At &lt;28 nm, static leakage starts to dominate. Depends on node and activity.</div>
     </div>
 </section>
 
-<!-- ─── END ─── -->
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> What open-source ASIC tool handles placement and routing?</p>
+        <div class="fragment quiz-answer">OpenROAD. Wrapper automation: OpenLane.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> Your iCE40 design has 100 MHz Fmax. What's a reasonable expectation on Skywater 130 nm, and why?</p>
+        <div class="fragment quiz-answer">~400-700 MHz, typical 4-7× increase. ASIC standard cells and routing are faster than FPGA LUT+interconnect. Actual results require a real flow run.</div>
+    </div>
+</section>
+
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 10 · Hands-On Lab</p>
-        <p style="color:#888;font-size:0.6em;margin-top:1em;">Today's lab: adder comparison, shift-and-add multiplier, fixed-point, PPA tables.</p>
-        <p style="color:#888;font-size:0.6em;margin-top:0.5em;">Make sure your toolchain is working and your Go Board is connected.</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 10</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: UART &mdash; Real Serial Communication</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 11 · Protocol, Architecture, Implementation, PC Connection</p>
+        <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have a complete toolkit: logic, state machines, memory, verification, hierarchy, timing, PPA. Day 11 puts it all together in one ambitious project: a <strong>UART transmitter</strong> that talks to your laptop. You'll compose your Week 2 modules (piso_shift, mod_n_counter, FSM) into a real communication link. By end of Day 11, your Go Board says &ldquo;HELLO&rdquo; to your terminal over a serial cable. This is where FPGAs get fun.</p>
+        </div>
     </div>
 </section>
 
@@ -131,13 +178,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

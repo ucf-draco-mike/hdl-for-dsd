@@ -1,93 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 12.3: SPI Protocol — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12.3: SPI Protocol — Accelerated HDL</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX · SPI · Integration</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">SPI Protocol</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">RX Oversampling</span>
-        <span class="seg-label ">RX Build</span>
-        <span class="seg-label active">SPI Protocol</span>
-        <span class="seg-label ">IP Integration</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 12.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">RX Oversampling</span><span class="seg-label">RX Impl</span><span class="seg-label active">SPI</span><span class="seg-label">IP Integration</span></div>
+    <aside class="notes">Video 3 of 4. SPI: the second universal serial protocol. Fast, synchronous, 4 wires, talks to almost any peripheral.</aside>
 </section>
 
 <section>
-    <h2>SPI: Synchronous Serial</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>4 wires:</strong> SCLK (clock), MOSI (master out), MISO (master in), CS_N (chip select)</p>
-        <p class="fragment"><strong>Master provides clock</strong> — no baud rate negotiation needed.</p>
-        <p class="fragment">Data clocked in and out simultaneously — <strong>full duplex</strong>.</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">SD cards. SPI flash memory (where your FPGA's config bitstream lives). Accelerometers, gyroscopes, magnetometers, barometers — every MEMS sensor you've ever owned. OLED and E-ink displays. Temperature sensors. ADC/DAC chips. SD/MMC protocols layer on SPI. NAND flash uses SPI variants. <strong>SPI is the peripheral interface</strong> in the embedded world. Any time a small device needs to talk fast to a microcontroller, it's usually SPI.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today introduces the protocol. Your capstone may use SPI to talk to a display or an external flash. Real embedded careers spend half their time driving SPI peripherals. You'll see how SPI compares to UART (much faster, requires shared clock) and how it layers on the shift registers you already know.</p>
+        </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
-        SPI is essentially two shift registers connected by a clock wire. You already have all the building blocks.
-    </div>
-    <aside class="notes">SPI: 4 wires, master provides clock. Full duplex — data flows both directions simultaneously. It's really just two connected shift registers.</aside>
+    <aside class="notes">SPI is the peripheral workhorse. Every sensor, every display, every external chip speaks SPI. Embedded engineers drive it daily.</aside>
 </section>
+
 <section>
-    <h2>SPI Transaction</h2>
-    <pre style="font-family:monospace;font-size:0.5em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-  CS_N:  ────┐                               ┌──────
-             └───────────────────────────────┘
-
-  SCLK:  ────┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──┐  ┌──
-             └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──┘  └──
-
-  MOSI:  ────|D7|D6|D5|D4|D3|D2|D1|D0|──── (master → slave)
-
-  MISO:  ────|D7|D6|D5|D4|D3|D2|D1|D0|──── (slave → master)</pre>
-    <div style="font-size:0.8em;margin-top:0.3em;">
-        <p class="fragment"><strong>Assert CS_N low</strong> → clock 8 bits → <strong>deassert CS_N</strong></p>
-        <p class="fragment">After 8 clocks, master and slave have <strong>exchanged bytes</strong>.</p>
+    <h2><span style="color:#C0392B;">⚠️</span> Synchronous: Clock Is Shared</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;SPI is like UART but with more wires. Same async framing, different protocol.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">SPI is <strong>synchronous</strong> — master and slave share a common clock (SCK). The master drives SCK and MOSI (data to slave); slave drives MISO (data to master). Simultaneously on every clock edge. No baud-rate negotiation, no start/stop bits, no oversampling needed. Can run at tens or hundreds of megabits/s — <em>orders of magnitude faster than UART</em>. The cost: more wires (4 typically: SCK, MOSI, MISO, CS).</p>
+        </div>
     </div>
-    <aside class="notes">SPI transaction: assert chip select, clock 8 bits in both directions simultaneously, deassert. After 8 clocks, bytes are exchanged.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Synchronous = shared clock = no timing negotiation = faster, simpler, more wires. SPI at 50 MHz moves 6.25 MB/s. UART at 115200 baud moves 11 KB/s. ~500× difference.
+    </div>
+    <aside class="notes">Sync vs async is the fundamental difference. Shared clock eliminates timing negotiation overhead but costs an extra wire.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; SPI Signals</h2>
+    <pre style="font-family:monospace;font-size:0.62em;text-align:left;background:none;border:none;color:#333;">
+    Master (FPGA)                          Slave (sensor, flash, ...)
+    ┌─────────────┐                       ┌─────────────┐
+    │       SCK ──┼───────clock──────────►│── SCK       │
+    │             │                       │             │
+    │      MOSI ──┼──master out, slave in►│── MOSI      │
+    │             │                       │             │
+    │      MISO ◄─┼──master in, slave out─┼── MISO      │
+    │             │                       │             │
+    │        CS ──┼───chip select (low)──►│── CS_n      │
+    └─────────────┘                       └─────────────┘
+    </pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking — four signals, each named for its function:</strong>
+        <ul style="font-size:0.9em;">
+            <li><strong>SCK</strong> (clock): master drives, toggled once per bit</li>
+            <li><strong>MOSI</strong> (master-out, slave-in): data from master to slave</li>
+            <li><strong>MISO</strong> (master-in, slave-out): data from slave to master</li>
+            <li><strong>CS_n</strong> (chip select, active-low): master asserts to begin transaction, deasserts to end</li>
+        </ul>
+    </div>
+    <aside class="notes">Four wires. Names tell the function. CS is active-low because the bus can have multiple slaves; each slave listens only when its CS is asserted.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; An SPI Transaction</h2>
+    <pre style="font-family:monospace;font-size:0.52em;text-align:center;background:none;border:none;color:#333;">
+                   ◄───── 1 byte (8 bits) ─────►
+                   │                              │
+   CS ────────┐                                        ┌────────
+              └────────────────────────────────────────┘
+                                                          (deassert)
+
+   SCK  ─┐   ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐    ┌─────
+         └───┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └─┘ └────┘
+         idle  ^   ^   ^   ^   ^   ^   ^   ^
+               │   │   │   │   │   │   │   │
+   MOSI  ─X═════╩═══╩═══╩═══╩═══╩═══╩═══╩═══╩═════X────
+              D7  D6  D5  D4  D3  D2  D1  D0
+              (MSB first — opposite of UART!)
+    </pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Master asserts CS, then pulses SCK 8 times. On each SCK edge, 1 bit of MOSI is driven by master and 1 bit of MISO is captured from slave. <strong>MSB-first</strong> (opposite of UART!). After 8 SCK pulses, 1 byte has been transferred in each direction simultaneously. Master can then either pulse SCK more (multi-byte transaction) or deassert CS.
+    </div>
+    <aside class="notes">Full-duplex per clock edge: MOSI bit out AND MISO bit in, at the same time. MSB-first is a SPI convention (UART is LSB-first — remember the difference).</aside>
+</section>
+
 <section>
     <h2>UART vs. SPI vs. I²C</h2>
-    <table style="margin-top:0.5em;font-size:0.65em;">
-        <thead><tr><th></th><th>UART</th><th>SPI</th><th>I²C</th></tr></thead>
+    <table style="font-size:0.7em;">
+        <thead><tr><th>Feature</th><th>UART</th><th>SPI</th><th>I²C</th></tr></thead>
         <tbody>
-            <tr><td><strong>Wires</strong></td><td>2 (TX, RX)</td><td>4 (SCLK, MOSI, MISO, CS)</td><td>2 (SDA, SCL)</td></tr>
-            <tr><td><strong>Clock</strong></td><td>Async (agreed baud)</td><td>Sync (master provides)</td><td>Sync (master provides)</td></tr>
-            <tr><td><strong>Duplex</strong></td><td>Full</td><td>Full</td><td>Half</td></tr>
-            <tr><td><strong>Devices</strong></td><td>Point-to-point</td><td>1 master, N slaves (N CS lines)</td><td>Multi-master, N slaves (addr)</td></tr>
-            <tr><td><strong>Speed</strong></td><td>~1 Mbps</td><td>10+ Mbps</td><td>100/400 Kbps</td></tr>
-            <tr><td><strong>Use</strong></td><td>Debug, GPS, BT</td><td>Flash, ADC, display</td><td>Sensors, EEPROM</td></tr>
+            <tr><td>Wires</td><td>2 (TX, RX)</td><td>3-4 (+CS per slave)</td><td>2 (SCL, SDA)</td></tr>
+            <tr><td>Clock</td><td>Async (baud agreement)</td><td>Sync (SCK shared)</td><td>Sync (SCL shared)</td></tr>
+            <tr><td>Speed (typ.)</td><td>9.6k - 1 Mbaud</td><td>1 - 50+ MHz</td><td>100k / 400k / 1M / 3.4M</td></tr>
+            <tr><td>Full-duplex</td><td>Yes (both directions)</td><td>Yes (MOSI + MISO)</td><td>No (half-duplex)</td></tr>
+            <tr><td>Multi-slave</td><td>No (point-to-point)</td><td>Yes (1 CS per slave)</td><td>Yes (7-bit address)</td></tr>
+            <tr><td>Typical use</td><td>Console, debug, configuration</td><td>Fast peripherals: flash, display, sensor</td><td>Slow/shared: sensors, I/O expanders, EEPROM</td></tr>
         </tbody>
     </table>
-    <aside class="notes">UART: simple point-to-point. SPI: fast, full duplex, multiple slaves. I2C: fewest wires, addressed multi-device, slower. Each has its niche.</aside>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Rule of thumb:</strong> UART for console/debug. SPI for fast one-to-one peripherals. I²C for many slow devices sharing a bus. Knowing when to reach for each is a key embedded engineering skill.
+    </div>
+    <aside class="notes">Three protocols, three niches. UART for console, SPI for fast peripherals, I2C for slow shared buses. Choose based on use case.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Pick the Protocol</h2>
+    <p style="font-size:0.78em;">For each scenario, pick UART, SPI, or I²C:</p>
+    <ol style="font-size:0.76em;">
+        <li>Reading a BMP180 pressure sensor (1 Hz, shared with other sensors)</li>
+        <li>Streaming 24-bit audio samples at 48 kHz</li>
+        <li>Debug console printing from your FPGA to your laptop</li>
+        <li>Reading a bitstream from an SPI flash chip at chip config time</li>
+        <li>Talking to 10 LED drivers on the same bus</li>
+    </ol>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answers:</strong>
+        <ol style="font-size:0.88em;">
+            <li><strong>I²C</strong> — shared bus, slow rate, standard sensor interface</li>
+            <li><strong>SPI</strong> — high throughput (48k × 24 = 1.15 Mbps)</li>
+            <li><strong>UART</strong> — standard console interface</li>
+            <li><strong>SPI</strong> — literally <em>named</em> SPI flash; MHz-rate</li>
+            <li><strong>I²C</strong> — addressable shared bus wins at 10 devices</li>
+        </ol>
+    </div>
+    <aside class="notes">Quick sorting exercise. Pattern: shared+slow = I²C, fast+point-to-point = SPI, debug/config = UART.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">SPI Master Talking to an ADC</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day12/ex3_spi/
+cat spi_master.v    # CPOL=0, CPHA=0
+make sim            # ADC model responds
+make wave
+# see SCK, MOSI, MISO, CS
+# aligned 8-bit transaction</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">TX byte: 0x42 (start conv)
+RX byte: 0xA5 (ADC result)
+
+PASS: CS falls, SCK toggles
+PASS: 8 edges, 8 bits
+PASS: MSB-first order
+PASS: CS rises after transfer
+=== 16 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>cs_n · sck · mosi · miso</code>. Classic SPI waveform: CS falls, 8 SCK pulses, MOSI transmits byte MSB-first, MISO returns byte MSB-first, CS rises. Two 8-bit shift registers running synchronized — left edge to sample, right edge to shift.</p>
+    </div>
+    <aside class="notes">[GTKWave] SPI waveform is iconic — once seen, always recognized. Two shift registers running in lockstep on SCK edges.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> SPI Modes (CPOL/CPHA)</h2>
+    <p style="font-size:0.78em;">SPI has 4 variants based on clock polarity (CPOL) and clock phase (CPHA):</p>
+    <table style="font-size:0.72em;">
+        <thead><tr><th>Mode</th><th>CPOL</th><th>CPHA</th><th>Clock idle</th><th>Sample edge</th></tr></thead>
+        <tbody>
+            <tr><td>0</td><td>0</td><td>0</td><td>Low</td><td>Rising</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td><td>Low</td><td>Falling</td></tr>
+            <tr><td>2</td><td>1</td><td>0</td><td>High</td><td>Falling</td></tr>
+            <tr><td>3</td><td>1</td><td>1</td><td>High</td><td>Rising</td></tr>
+        </tbody>
+    </table>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Rule of thumb:</strong> Mode 0 is the most common; check your slave's datasheet. SPI flash and most sensors use Mode 0. Some ADCs use Mode 3. <strong>Get the mode wrong and you capture on the wrong edge</strong> — garbage data every time. Always check the datasheet.
+    </div>
+    <aside class="notes">4 SPI modes, most devices use mode 0. Getting the mode right is essential — wrong mode = capturing mid-transition = garbage bits.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Design an SPI master (mode 0) that transfers 16-bit words. Include CPOL/CPHA rationale, clock divider from 25 MHz to 1 MHz SCK, and a simple AD7476-style slave testbench.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI designs SPI master + TB.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: MSB-first shift reg, SCK divider, CS state machine, 16-bit counter.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI explains mode 0 choice. Weak AI picks one without explaining why.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Mode choice depends on slave datasheet. AI should always reference it.</p></div>
+    </div>
+    <aside class="notes">SPI mode choice is always driven by the slave device datasheet. Good AI reads the requirements and justifies. Weak AI arbitrarily picks.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;SPI: 4 wires. Master provides clock — no baud negotiation.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Full duplex: data flows both ways simultaneously.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Four modes (CPOL/CPHA) — check the device datasheet.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;SPI = connected shift registers. Same building blocks as UART.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;SPI is synchronous: shared clock, no timing negotiation.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;4 wires: SCK, MOSI, MISO, CS. MSB-first (opposite of UART).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;SPI &gt;&gt; UART on speed (MHz vs kHz), at cost of more wires.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;4 modes (CPOL/CPHA). Check your slave's datasheet.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">IP Integration Philosophy</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~8 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Working with third-party modules — wrapping, testing, trusting.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">UART for consoles. SPI for peripherals. I²C for buses. Pick deliberately.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">IP Integration</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~8 minutes · <em>Week 3 Capstone</em></p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've now built UART TX, UART RX, and SPI master — three major IP blocks. Video 4 is the Week 3 capstone: how to integrate these, plus third-party IP, into a complete system. The IP Integration Checklist you'll learn is what distinguishes junior engineers (who hack) from senior engineers (who integrate reliably).</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -95,4 +238,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

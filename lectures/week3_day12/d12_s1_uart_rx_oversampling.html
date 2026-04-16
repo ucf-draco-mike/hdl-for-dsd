@@ -1,88 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 12.1: RX Oversampling — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 12.1: RX Oversampling — Accelerated HDL</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; IP Integration</span></div>
-    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART RX — Oversampling</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~15 minutes</p>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX · SPI · Integration</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">RX Oversampling</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">RX Oversampling</span>
-        <span class="seg-label ">RX Build</span>
-        <span class="seg-label ">SPI Protocol</span>
-        <span class="seg-label ">IP Integration</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 12.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">RX Oversampling</span><span class="seg-label">RX Impl</span><span class="seg-label">SPI</span><span class="seg-label">IP Integration</span></div>
+    <aside class="notes">Video 1 of 4 for Day 12. Receiving is harder than transmitting — here's why, and the clever trick that fixes it.</aside>
 </section>
 
 <section>
-    <h2>Why RX Is Harder Than TX</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>TX controls timing</strong> — it generates the baud clock. Easy.</p>
-        <p class="fragment"><strong>RX must discover timing</strong> — data arrives asynchronously. When do you sample?</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">16× oversampling is the standard across <em>every</em> UART implementation since the original 8250 UART chip (1970s). Intel's 8250, 16550A, and descendants all use 16×. FTDI USB-UART chips use 16×. ARM's PL011 UART uses 16×. Your FPGA vendor IP uses 16×. Once you learn this technique, you can reverse-engineer any UART RX in under 10 minutes. Also: 16× is the foundation of every clock-recovery scheme in modems, SerDes, and high-speed links.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Day 11 TX was straightforward — you controlled the timing. Today's RX is the hard part, and the &ldquo;16× oversampling&rdquo; trick is what makes it work. Once you have RX working (Video 2), you have full-duplex UART on your Go Board. Day 12 Video 3 introduces SPI; Video 4 integrates everything.</p>
+        </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
-        <strong>Solution: 16× oversampling.</strong> Sample at 16× the baud rate to find the center of each bit period.
-    </div>
-    <aside class="notes">TX has it easy — it controls timing. RX must figure out when to sample without a shared clock. Solution: sample at 16x the baud rate.</aside>
+    <aside class="notes">Oversampling is the universal technique. Learn once, apply to every UART / SerDes / modem receiver you'll ever encounter.</aside>
 </section>
+
 <section>
-    <h2>16× Oversampling</h2>
-    <pre style="font-family:monospace;font-size:0.5em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-          1 bit period (217 clocks at 25 MHz / 115200 baud)
-    ◄────────────────────────────────────────────────────►
-    ┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
-    │ 0│ 1│ 2│ 3│ 4│ 5│ 6│ 7│ 8│ 9│10│11│12│13│14│15│
-    └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
-                            ↑
-                     sample point 7 or 8
-                     (center of bit period)</pre>
-    <div style="font-size:0.8em;margin-top:0.3em;">
-        <p class="fragment">Oversample clock: 25M / (115200 × 16) ≈ <strong>13-14 clocks per sample</strong></p>
-        <p class="fragment">Sample at the center → maximum tolerance for baud rate mismatch and noise.</p>
+    <h2><span style="color:#C0392B;">⚠️</span> Receive Timing Is Not Your Timing</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;For RX, I'll just reverse the TX: count <code>CLKS_PER_BIT</code> cycles, sample the line, move to the next bit.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">You don't know <strong>when</strong> the byte arrives. The transmitter's clock and yours drift independently up to ±2%. If you sample at <code>CLKS_PER_BIT</code> intervals starting from the detected start edge, by bit 8 your sample point has drifted well into the next bit. <strong>You need to sample in the <em>middle</em> of each bit</strong>, not at the edges, to tolerate drift. 16× oversampling gives you the machinery to do this.</p>
+        </div>
     </div>
-    <aside class="notes">16 samples per bit. Sample at position 7 or 8 for the center. Oversample counter runs at ~14 clocks per tick. Center sampling maximizes noise immunity.</aside>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Without oversampling, ±2% clock mismatch gives you ~2% sampling error per bit × 10 bits = 20% drift by end of byte. You'll sample bit 8's value during bit 9's time. Byte decoded wrong.
+    </div>
+    <aside class="notes">Receive is async to your clock. Sample-in-the-middle beats sample-at-edges. 16× oversampling gives you the precision to find the middle reliably.</aside>
 </section>
+
 <section>
-    <h2>Start-Bit Detection</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>1.</strong> IDLE: RX line is high. Continuously oversample.</p>
-        <p class="fragment"><strong>2.</strong> Falling edge detected: RX goes low — possible start bit.</p>
-        <p class="fragment"><strong>3.</strong> Wait 7-8 oversample ticks → center of start bit. Sample again.</p>
-        <p class="fragment"><strong>4.</strong> Still low? <span style="color:#2E7D32;font-weight:600;">Confirmed start bit!</span> High? <span style="color:#C62828;font-weight:600;">Glitch — return to IDLE.</span></p>
-        <p class="fragment"><strong>5.</strong> From start center, count 16 ticks → center of D0. Sample. Repeat for D1–D7.</p>
-        <p class="fragment"><strong>6.</strong> Count 16 ticks → center of stop bit. Verify high. Assert <code>o_valid</code>.</p>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The 16× Oversampling Scheme</h2>
+    <pre style="font-family:monospace;font-size:0.58em;text-align:center;background:none;border:none;color:#333;">
+   One bit time (CLKS_PER_BIT cycles)
+   ├─────────────────────────────────────┤
+    │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │ │
+    0 1 2 3 4 5 6 7 8 9 A B C D E F        ← 16 oversample slots
+
+              ▲         ▲         
+              │         │
+            start      mid-bit sample point
+            edge       (slot 8)   → this is the value</pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Divide each bit time into <strong>16 oversample slots</strong>. Trigger on the start-bit falling edge. From that edge, count 8 slots forward (middle of start bit) to verify it's still LOW. Then count 16 slots to reach the middle of bit 0. 16 more to middle of bit 1. And so on. <strong>Each bit is sampled at its midpoint</strong>, where drift is least likely to corrupt it.
     </div>
-    <aside class="notes">Start bit detection: falling edge triggers, wait to center, verify still low, then sample 8 data bits at 16-tick intervals. Verify stop bit.</aside>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Math:</strong> <code>CLKS_PER_OSX = CLKS_PER_BIT / 16</code>. At 25 MHz/115200 baud: <code>217/16 = 13.6 cycles</code> per oversample slot. The FPGA counter counts up to 13 or 14 cycles per oversample.
+    </div>
+    <aside class="notes">Oversample every bit 16 times. Find the start edge. Count to slot 8 = middle of start bit. Verify it's still low. Then count 16 more = middle of data bit 0. Repeat.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Start-Bit Detection</h2>
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// 1. Synchronize the async RX line (2-FF sync — Day 5 lesson returns!)
+reg r_rx_sync1, r_rx_sync2, r_rx_sync3;
+always @(posedge i_clk) begin
+    r_rx_sync1 &lt;= i_rx;      // metastability flop 1
+    r_rx_sync2 &lt;= r_rx_sync1; // stable
+    r_rx_sync3 &lt;= r_rx_sync2; // 1 cycle earlier — for edge detect
+end
+wire falling_edge = r_rx_sync3 &amp; ~r_rx_sync2;   // 1 → 0 transition</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> First step: synchronize <code>i_rx</code> (external, async) through 2 flops. Third flop is for edge detection. <code>falling_edge</code> pulses for 1 cycle when the line transitions from idle (1) to start-bit (0). The RX FSM uses this to leave the IDLE state and begin framing. Then the oversampling logic counts to slot 8 to verify it wasn't a glitch.
+    </div>
+    <aside class="notes">Start bit detection is edge-triggered. 2-FF sync for metastability, then edge detect. Glitch rejection comes from re-sampling at slot 8.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Why 16 And Not 4 Or 64?</h2>
+    <p style="font-size:0.78em;">Why does UART RX use 16× oversampling? Why not 4× (cheaper) or 64× (more precise)?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Tradeoff analysis:</strong>
+        <ul style="font-size:0.88em;">
+            <li><strong>4×:</strong> Middle of bit = slot 2. Only 1 sample on each side of true middle → poor tolerance to clock drift. Fails at ±1% mismatch.</li>
+            <li><strong>8×:</strong> Better, but still sensitive to start-bit detection jitter.</li>
+            <li><strong>16×:</strong> Middle at slot 8. ±7 slots (~43% of bit time) of drift tolerance. <strong>Standard since 1970s.</strong></li>
+            <li><strong>64×:</strong> Excellent tolerance but 4× the counter width, 4× the clock speed requirement. Diminishing returns for UART.</li>
+        </ul>
+        <strong>Answer: 16× is the sweet spot</strong> for UART's ±2% tolerance requirement. Modems and SerDes use higher oversampling (8-128×) because their data rates leave less room for error.
+    </div>
+    <aside class="notes">16 is a design decision rooted in 1970s tolerance requirements. Modern high-speed links use more. Know why 16 — it's not arbitrary.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Oversampling Decision Visualization</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day12/ex1_oversample/
+python3 plot_sampling.py
+# Simulates ±2% drift
+# Compares 4× vs 16× decision</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">At +2% clock drift:
+  4× sample: fails bit 6
+  16× sample: correct
+     through bit 9
+  (7-slot margin still)
+
+At ±2% tolerance:
+  16× PASS (by design)</code></pre>
+        </div>
+    </div>
+    <aside class="notes">Matplotlib visualization of sampling decisions under drift. Concrete numerical argument for why 16× is the right amount.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Design a UART RX module with 16× oversampling. Describe the counter hierarchy, start-bit validation logic, and sample-point calculation.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI describes 16× oversampling RX.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 2 counters (oversample + bit), 2-FF sync, start-bit revalidation at slot 8.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI mentions glitch rejection via mid-start resample. Weak AI skips this.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">The mid-bit resample is what distinguishes robust RX designs from fragile ones.</p></div>
+    </div>
+    <aside class="notes">The mid-start-bit resample is a subtle but critical feature. It's what rejects line glitches that would otherwise trigger false byte receives. AI that skips it = fragile design.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;RX must discover timing. TX controls it — RX recovers it.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;16× oversampling: 16 samples per bit, sample at center (position 7-8).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Start-bit verification: wait to center, re-check — eliminates glitches.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Oversample counter: ~14 system clocks per sample tick.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;RX is harder than TX — you don't control the timing.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;16× oversampling is the universal UART RX trick.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Sample each bit at its midpoint (slot 8 of 16).</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;2-FF sync + edge detect + mid-bit revalidation = robust design.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p><h2 style="color:#FFFFFF;font-size:1.8em;">UART RX Implementation</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~15 minutes</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Building the receiver with oversampling FSM.</p></div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Oversampling makes asynchronous communication reliable. It's the trick that makes UART work.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">RX Implementation</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~12 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have the theory. Video 2 is the build: FSM states, oversample counter, sample-and-shift logic. Full working Verilog. End of Video 2: your Go Board echoes characters you type in your terminal. Full-duplex. Your RTL has become a conversation partner.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -90,4 +176,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>

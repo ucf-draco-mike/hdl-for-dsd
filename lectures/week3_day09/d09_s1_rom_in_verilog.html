@@ -1,126 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 9.1: ROM in Verilog — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 9.1: ROM in Verilog — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory Architecture</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">ROM in Verilog</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label active">ROM</span>
-        <span class="seg-label ">RAM</span>
-        <span class="seg-label ">iCE40 Memory</span>
-        <span class="seg-label ">Applications</span>
-    </div>
-    <aside class="notes">Welcome to Video 1 of 4 for Day 9.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label active">ROM</span><span class="seg-label">RAM</span><span class="seg-label">iCE40 EBRs</span><span class="seg-label">Applications</span></div>
+    <aside class="notes">Video 1 of 4 for Day 9. Read-only memory in Verilog — two idioms, two different hardware outcomes.</aside>
 </section>
 
 <section>
-    <h2>ROM in an FPGA</h2>
-    <p style="font-size:0.85em;">No physical ROM chip — ROM is implemented as:</p>
-    <div style="font-size:0.8em;margin-top:0.5em;">
-        <p class="fragment"><strong>LUT-based:</strong> Small ROMs packed into lookup tables (same ones used for logic)</p>
-        <p class="fragment"><strong>Block RAM-based:</strong> Larger ROMs mapped to dedicated EBR blocks, initialized at config</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every CPU has a boot ROM (containing the first instructions executed after reset — Apple's M-series chips have a multi-megabyte iBoot ROM). Every video device has a character ROM. Every DSP has coefficient tables, sine tables, windowing functions in ROM. The GPU in your phone has texture ROMs. &ldquo;Pre-compute and look up&rdquo; is faster and lower-power than compute-at-runtime, so ROMs are everywhere silicon meets math.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today's ROM patterns appear in Day 9.4 (LED pattern sequencer), Day 10.2 (lookup-based multipliers), Day 11.3 (UART character ROM for HELLO demo), and every capstone design. ROM isn't a nice-to-have — it's the <em>first</em> memory you'll reach for.</p>
+        </div>
     </div>
-    <div class="fragment callout" style="font-size:0.75em;">
-        You write the same Verilog regardless. The synthesis tool decides placement based on size and access pattern.
-    </div>
-    <aside class="notes">FPGA ROM is implemented in LUTs or block RAM. You write one style of Verilog; the tools choose the resource.</aside>
+    <aside class="notes">ROMs are everywhere in industry. Boot code, lookup tables, microcode. &ldquo;Computed at compile time, read at runtime&rdquo; is always cheaper than &ldquo;computed at runtime.&rdquo;</aside>
 </section>
+
 <section>
-    <h2>Approach 1: <code>case</code>-Based ROM</h2>
+    <h2><span style="color:#C0392B;">⚠️</span> &ldquo;The Tools Decide the Memory Resource&rdquo;</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;To use block RAM, I need a special <code>SB_RAM40_4K</code> primitive. I should instantiate it directly like any other module.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">You write a standard Verilog memory pattern (<code>reg [7:0] mem [0:255]; ... data &lt;= mem[addr];</code>) and the synthesizer <strong>infers</strong> the resource. Small ROMs (16 entries) become LUTs. Medium ROMs (256 entries) become distributed LUT-RAM or block RAM. Large ROMs become block RAM. Idiomatic code → tool-chosen target.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Vendor primitives (<code>SB_RAM40_4K</code> for iCE40, <code>RAMB36E2</code> for Xilinx) work but lock you to a chip. <em>Idiomatic</em> patterns are portable across vendors and get inferred correctly everywhere.
+    </div>
+    <aside class="notes">The fundamental lesson of memory in RTL: don't instantiate primitives. Write the idiom. Let the tool pick the resource. Your code stays portable; the tool handles optimization.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Approach 1: <code>case</code>-Based ROM</h2>
     <pre class="synth"><code class="language-verilog">module rom_case (
-    input  wire [3:0] i_addr,
+    input  wire [2:0] i_addr,
     output reg  [7:0] o_data
 );
     always @(*) begin
         case (i_addr)
-            4'h0: o_data = 8'h3E;
-            4'h1: o_data = 8'h41;
-            4'h2: o_data = 8'h49;
-            // ... 16 entries total ...
+            3'd0: o_data = 8'h48;   // 'H'
+            3'd1: o_data = 8'h45;   // 'E'
+            3'd2: o_data = 8'h4C;   // 'L'
+            3'd3: o_data = 8'h4C;   // 'L'
+            3'd4: o_data = 8'h4F;   // 'O'
             default: o_data = 8'h00;
         endcase
     end
 endmodule</code></pre>
-    <div class="fragment callout-danger" style="font-size:0.75em;">
-        <strong>Doesn&rsquo;t scale.</strong> 256 entries = 256 case items. Use for tiny hand-crafted tables only.
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Combinational (<code>always @(*)</code>), no clock needed — the ROM's contents are truly fixed at synthesis time. For 5 entries this is perfectly readable. At 256 entries, it becomes a maintenance nightmare. <code>default</code> case covers the unused addresses and prevents latch inference.
     </div>
-    <aside class="notes">Case-based ROM is readable for small tables but doesn't scale. 256 entries becomes unmanageable.</aside>
+    <aside class="notes">Case-based ROMs are fine for tiny tables. Readable, synthesizable. Don't scale past ~16 entries before legibility dies.</aside>
 </section>
+
 <section>
-    <h2>Approach 2: Array + <code>$readmemh</code></h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>module rom_array #(
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Approach 2: Array + <code>$readmemh</code></h2>
+    <pre class="synth"><code class="language-verilog">module rom_array #(
     parameter ADDR_W = 8,
     parameter DATA_W = 8,
-    parameter MEM_FILE = "rom_data.hex"
-)(
+    parameter INIT_FILE = "rom_contents.hex"
+) (
+    input  wire              i_clk,
     input  wire [ADDR_W-1:0] i_addr,
-    output wire [DATA_W-1:0] o_data
+    output reg  [DATA_W-1:0] o_data
 );
-<span class="fragment">    reg [DATA_W-1:0] r_mem [0:(1&lt;&lt;ADDR_W)-1];
+    reg [DATA_W-1:0] mem [0:(2**ADDR_W)-1];
 
-    initial $readmemh(MEM_FILE, r_mem);</span>
-<span class="fragment">
-    assign o_data = r_mem[i_addr];  // async read → LUT-based</span>
+    initial $readmemh(INIT_FILE, mem);      // synth-time content load
+
+    always @(posedge i_clk) o_data &lt;= mem[i_addr];  // synchronous read
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.75em;">
-        <code>$readmemh</code> works in <strong>both</strong> simulation (Icarus) and synthesis (Yosys). Change the file, change the ROM — no recompilation.
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Three features: <strong>(1)</strong> parameterized depth and width, <strong>(2)</strong> content loaded from external hex file — same <code>$readmemh</code> you saw in Day 6 testbenches, but here it's used at <em>synthesis</em>, <strong>(3)</strong> <em>synchronous</em> read — <code>o_data</code> appears one cycle after <code>i_addr</code>. That synchronous read is the magic word: it's what triggers block RAM inference.
     </div>
-    <aside class="notes">Array-based ROM with readmemh scales to any size. Works in both simulation and synthesis. Change the hex file, change the behavior.</aside>
+    <aside class="notes">The scalable pattern. Parameters + external file + synchronous read. Each of these matters. Sync read is the critical one for block RAM — without it you get LUT RAM or distributed logic.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Identify the Bug</h2>
+    <pre class="mistake"><code class="language-verilog">// Intended: a 1024-entry ROM that should infer block RAM
+module rom_bad (input wire [9:0] addr, output wire [7:0] data);
+    reg [7:0] mem [0:1023];
+    initial $readmemh("rom.hex", mem);
+
+    assign data = mem[addr];        // ← combinational read
+endmodule</code></pre>
+    <p style="font-size:0.78em;">Why will the tool <em>not</em> infer block RAM here?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <strong>Combinational read</strong> (<code>assign</code>, not a clocked always block). Block RAM reads require a clock edge. The synthesizer will be forced to map this 1024-entry array as LUT RAM or even scattered combinational logic — orders of magnitude more expensive. <strong>Fix:</strong> change to <code>always @(posedge clk) data &lt;= mem[addr];</code> with <code>data</code> as <code>reg</code>.
+    </div>
+    <aside class="notes">This is the most common ROM bug. Students want instant reads and write combinational. Block RAM is synchronous. Always use clocked reads for ROMs beyond trivial size.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Case vs Array ROM: Same Output, Different Silicon</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day09/ex1_rom/
+cat hello.hex    # 'H','E','L','L','O'
+make stat_case    # tiny case-ROM
+make stat_array   # synchronous array ROM
+make sim
+gtkwave tb_rom.vcd &amp;</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">=== rom_case ===
+  SB_LUT4: 5   SB_DFF: 0
+
+=== rom_array ===
+  SB_LUT4: 0   SB_DFF: 8
+  SB_RAM40_4K: 1  ← block RAM!
+
+5 × 8 = 40 bits
+stored in a 4Kbit EBR.</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">The 5-entry case ROM costs 5 LUTs. The 5-entry <em>array</em> ROM costs 1 block RAM. For this size, case is cheaper. But the same array code scales to 4096 entries with zero more LUTs — block RAM stays the same size, case explodes. <strong>The array pattern wins at scale.</strong></p>
+    </div>
+    <aside class="notes">[Terminal] The contrast is pedagogically crucial. At 5 entries, case wins on area. At 500 entries, array wins massively. The crossover is around 32-64 entries on iCE40.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog rom_array.v; synth_ice40 -top rom_array; stat" -q
+
+=== rom_array ===    # ADDR_W=10, 1024 × 8-bit ROM (8 Kbit)
+   Number of wires:                 15
+   Number of cells:                  3
+     SB_DFFE                         8     ← output register
+     SB_RAM40_4K                     2     ← 2 block RAMs @ 4Kbit each
+                                            = 8 Kbit total ✓</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> 1024 entries × 8 bits = 8 Kbit, needs 2 EBRs (each 4 Kbit). Cost: 2 of iCE40 HX1K's 16 EBRs (12.5% of block RAM). <strong>Zero LUTs for the ROM itself</strong> — the ROM &ldquo;disappeared&rdquo; into dedicated memory silicon.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Preview:</strong> Video 3 shows iCE40's memory resources in detail: 16 EBRs, aspect-ratio options, budgeting for complete designs. You'll learn to plan memory usage.
+    </div>
+    <aside class="notes">Block RAM is dedicated silicon on the FPGA — fixed-size, fixed-location memory blocks. Using them keeps LUT count low for large memories. Not using them means you've wasted a critical resource.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Write a synchronous-read ROM in Verilog with 256 entries of 16 bits, loaded from a hex file. Include a testbench.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">Ask AI for a parameterized BRAM-inferred ROM.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: array, <code>$readmemh</code>, clocked read with <code>&lt;=</code>, parameters.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI uses synchronous read. Weak AI uses <code>assign</code> — won't infer BRAM.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Verify with <code>make stat</code> that SB_RAM40_4K appears.</p></div>
+    </div>
+    <aside class="notes">The AI calibration test. Synchronous read is non-negotiable for BRAM inference. If AI writes combinational, the output will work in simulation but fail to infer block RAM, wasting LUTs.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>case</code>-ROM: small, hand-crafted. Array-ROM: scalable, file-driven.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>$readmemh</code> works in simulation <strong>and</strong> synthesis.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Async read (<code>assign</code>) → LUT-based. Sync read → block RAM.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Change the <code>.hex</code> file to change behavior — no recompile needed.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;Write idiomatic RTL; let the tool pick the resource.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Case ROM: readable for small tables, doesn't scale.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Array + <code>$readmemh</code>: scales to any size, external content.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;<strong>Synchronous read</strong> is the trigger for block-RAM inference.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">RAM in Verilog</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 2 of 4 · ~12 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">Adding a write port — same array, new capability.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If it's more than 16 entries, use array + hex file + clocked read.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">RAM in Verilog</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 2 of 4 · ~10 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">ROM is read-only — great for fixed content. Real designs also need <strong>read-write</strong> memory: FIFOs for buffering, register files for CPUs, frame buffers for video. Video 2 shows the RAM pattern that infers the same block-RAM silicon, plus the read-before-write vs. write-first choice that shapes your next-cycle behavior.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

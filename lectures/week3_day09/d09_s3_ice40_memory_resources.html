@@ -1,104 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 9.3: iCE40 Memory Resources — Accelerated HDL for Digital System Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 9.3: iCE40 Memory Resources — Accelerated HDL for Digital System Design</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
 </head>
 <body>
-<div class="reveal">
-<div class="slides">
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;">
-        <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory: RAM, ROM &amp; Block RAM</span>
-    </div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory Architecture</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">iCE40 Memory Resources</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~10 minutes</p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-        <div class="seg-dot "></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">ROM</span>
-        <span class="seg-label ">RAM</span>
-        <span class="seg-label active">iCE40 Memory</span>
-        <span class="seg-label ">Applications</span>
-    </div>
-    <aside class="notes">Welcome to Video 3 of 4 for Day 9.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">ROM</span><span class="seg-label">RAM</span><span class="seg-label active">iCE40 EBRs</span><span class="seg-label">Applications</span></div>
+    <aside class="notes">Video 3 of 4. What's actually inside your Go Board's chip: 1280 LUTs + 16 EBRs = 64 Kbit of block memory.</aside>
 </section>
 
 <section>
-    <h2>iCE40 HX1K Memory Resources</h2>
-    <table style="margin-top:0.5em;font-size:0.7em;">
-        <thead><tr><th>Resource</th><th>Amount</th><th>Use For</th></tr></thead>
-        <tbody>
-            <tr><td><strong>LUTs</strong></td><td>1,280</td><td>Small ROMs, distributed RAM (&lt;64 bits)</td></tr>
-            <tr class="fragment"><td><strong>EBR Blocks</strong></td><td>16 × 4 Kbit</td><td>Larger memories (RAM, ROM, FIFO buffers)</td></tr>
-            <tr class="fragment"><td><strong>Total Block RAM</strong></td><td>64 Kbit (8 KB)</td><td>Combined across all EBR blocks</td></tr>
-        </tbody>
-    </table>
-    <div class="fragment callout" style="font-size:0.75em;">
-        Each EBR is configurable: 256×16, 512×8, 1024×4, or 2048×2.
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every FPGA chip family has a fixed number of memory blocks: iCE40 HX1K has 16 EBRs. iCE40 UP5K has 128 SPRAM + 30 BRAM. Xilinx Artix-7 has 135 BRAM36Ks (~4.8 Mbit). Intel Cyclone V has 3.3 Mbit. When you buy a chip, you buy a fixed memory budget — designs that don't fit are redesigned. Datasheet comprehension is career-critical.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Every design from here to capstone must fit within 1280 LUTs + 64 Kbit of block RAM. Today's memory-planning skills are what let you size ambitious projects. Trying to cram a 256-character text frame buffer in without understanding EBRs? You'll fail synthesis. Understanding the budget? You'll allocate 2 EBRs and move on.</p>
+        </div>
     </div>
-    <aside class="notes">iCE40 HX1K: 1280 LUTs for logic/distributed RAM, 16 EBR blocks at 4 Kbit each = 64 Kbit total block RAM. Each EBR configurable in multiple aspect ratios.</aside>
+    <aside class="notes">Real FPGA work requires datasheet literacy. The chip you have is fixed; your design adapts. Reading specs = knowing what you can build.</aside>
 </section>
+
 <section>
-    <h2>Memory Budget for Common Designs</h2>
-    <table style="margin-top:0.5em;font-size:0.7em;">
-        <thead><tr><th>Design</th><th>Memory Need</th><th>EBR Blocks</th></tr></thead>
+    <h2><span style="color:#C0392B;">⚠️</span> EBRs Are a Fixed Budget, Not a Lake</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;The FPGA has 64 Kbit of block memory, so I can fit any combination of RAMs up to that total. A 3 Kbit RAM + a 5 Kbit RAM + a 2 Kbit RAM = 10 Kbit, and I've got 54 Kbit left.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Block RAM comes in <strong>fixed-size units</strong>: 16 blocks × 4 Kbit each. A 3 Kbit RAM consumes 1 whole EBR. A 5 Kbit RAM consumes 2 EBRs (overflows into a second block). A 2 Kbit RAM consumes 1 EBR. Total EBR cost: <strong>1 + 2 + 1 = 4 EBRs</strong>, not a &ldquo;10 Kbit&rdquo; calculation. <em>Always round up to the next whole block.</em></p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Planning memory by total bits is a beginner's mistake. Each RAM rounds up. A design with 16 tiny 256-bit RAMs exhausts the chip's EBR count even though total bits = 4 Kbit.
+    </div>
+    <aside class="notes">EBRs are indivisible units. Small RAMs waste block RAM. If you have many small memories, consider consolidating them or using distributed (LUT-based) RAM instead.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The iCE40 HX1K Datasheet</h2>
+    <table style="font-size:0.72em;margin-top:0.3em;">
+        <thead><tr><th>Resource</th><th>Count</th><th>Per-unit</th><th>Total</th></tr></thead>
         <tbody>
-            <tr><td>UART TX/RX buffer</td><td>256×8 = 2 Kbit</td><td>1</td></tr>
-            <tr><td>Character ROM (ASCII font)</td><td>1024×8 = 8 Kbit</td><td>2</td></tr>
-            <tr><td>VGA frame buffer (40×30)</td><td>1200×8 ≈ 10 Kbit</td><td>3</td></tr>
-            <tr><td>Sine lookup table</td><td>256×8 = 2 Kbit</td><td>1</td></tr>
-            <tr><td>Instruction ROM (simple CPU)</td><td>256×16 = 4 Kbit</td><td>1</td></tr>
+            <tr><td>Logic cells (LUT4 + DFF)</td><td>1,280</td><td>—</td><td>1,280 LUTs</td></tr>
+            <tr><td>Embedded Block RAM (EBR)</td><td>16</td><td>4 Kbit</td><td>64 Kbit</td></tr>
+            <tr><td>PLLs</td><td>1</td><td>—</td><td>1</td></tr>
+            <tr><td>I/O pins</td><td>up to 96</td><td>—</td><td>—</td></tr>
+            <tr><td>SPI config flash</td><td>1</td><td>external</td><td>8 Mbit typ.</td></tr>
         </tbody>
     </table>
-    <div class="fragment callout" style="font-size:0.75em;">
-        You have 16 EBR blocks — plenty for any of the final project options.
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> 1,280 LUTs is the combinational + sequential budget. 16 EBRs is the memory budget. They're <em>independent</em> — using all your EBRs doesn't reduce LUT availability. This is why block RAM is so valuable: it's free silicon you can't do anything else with.
     </div>
-    <aside class="notes">Memory budget: UART buffer 1 EBR, character ROM 2, VGA buffer 3, sine table 1. 16 available — plenty for any project.</aside>
+    <aside class="notes">Key insight: LUTs and EBRs are independent resources. EBRs are &ldquo;free&rdquo; silicon — either use them or they're wasted. That's why BRAM inference matters.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; EBR Aspect Ratios</h2>
+    <p style="font-size:0.75em;">Each 4 Kbit EBR can be configured in 5 different shapes:</p>
+    <table style="font-size:0.72em;margin-top:0.3em;">
+        <thead><tr><th>Aspect Ratio</th><th>Depth × Width</th><th>Typical Use</th></tr></thead>
+        <tbody>
+            <tr><td>256 × 16</td><td>256 words</td><td>Coefficient table, char ROM (16-bit ASCII)</td></tr>
+            <tr><td>512 × 8</td><td>512 bytes</td><td>UART FIFO, text buffer, 7-seg char ROM</td></tr>
+            <tr><td>1024 × 4</td><td>1024 nibbles</td><td>Audio sample table (4-bit PCM)</td></tr>
+            <tr><td>2048 × 2</td><td>2048 dibits</td><td>Rare — dense packed data</td></tr>
+            <tr><td>4096 × 1</td><td>4096 bits</td><td>Bitmap pixels, BCD encodings</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together:</strong> The synthesizer picks the aspect ratio from your Verilog widths. Declare <code>reg [7:0] mem [0:511]</code> → 512×8 aspect. Declare <code>reg [15:0] mem [0:255]</code> → 256×16. <strong>If you need more depth or width than one EBR supports</strong>, the tool automatically concatenates multiple EBRs.
+    </div>
+    <aside class="notes">Aspect ratios are automatic — your Verilog width/depth picks the configuration. For RAMs wider than 16 or deeper than 4096, multiple EBRs combine transparently.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Memory Budget Exercise</h2>
+    <p style="font-size:0.78em;">A design needs: UART TX FIFO (256 × 8), UART RX FIFO (256 × 8), character ROM for VGA (128 × 64), sine lookup (1024 × 10). How many EBRs?</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong>
+        <ul style="font-size:0.9em;">
+            <li>TX FIFO: 256 × 8 = 2 Kbit → <strong>1 EBR</strong> (fits in 512×8 mode)</li>
+            <li>RX FIFO: 256 × 8 = 2 Kbit → <strong>1 EBR</strong></li>
+            <li>Character ROM: 128 × 64 = 8 Kbit → <strong>4 EBRs</strong> (need 64-bit width, so 4 EBRs of 16-bit width combined)</li>
+            <li>Sine lookup: 1024 × 10 = 10 Kbit → <strong>3 EBRs</strong> (1024×10 rounds up to 1024×16 + needs 3 EBRs to provide enough bits)</li>
+            <li><strong>Total: 9 of 16 EBRs (56%).</strong> Fits with 7 EBRs to spare.</li>
+        </ul>
+    </div>
+    <aside class="notes">Memory budgeting is a first-class design activity. Do it before coding. Shows students you can pre-plan hardware resource utilization — a real engineering skill.</aside>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> Read the Tool's Verdict</h2>
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog *.v; synth_ice40 -top top_design; stat" -q
+=== top_design ===
+   Number of cells:                 480
+     SB_CARRY                        45
+     SB_DFFE                        120
+     SB_LUT4                        280
+     SB_RAM40_4K                      9    ← 9 EBRs used
+                                            (56% of 16 available)</code></pre>
+    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
+        <strong>What to notice:</strong> <code>SB_RAM40_4K</code> count matches your budget estimate. If it doesn't — if you expected 3 and got 8 — some RAM wasn't inferred and got scattered. Bug. If it's bigger than 16, your design <em>does not fit</em> on this chip — redesign or re-target.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Next-pnr check:</strong> After Yosys, <code>nextpnr-ice40</code> reports utilization with &ldquo;Device utilization: LCs 34%, BRAMs 56%&rdquo;. That's the final authority on whether you fit. Watch those numbers grow through a project.
+    </div>
+    <aside class="notes">make stat gives you counts; nextpnr-ice40 gives you utilization percentages. Both matter. Budget tight designs and verify against tool output.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;I'm targeting an iCE40 HX1K (16 × 4Kbit EBRs, 1280 LUTs). Can I fit a 2048-entry × 32-bit lookup table? If not, what do I do?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI does a resource-fit analysis.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: 2048 × 32 = 64 Kbit. Exactly the full EBR budget. Any other memory = doesn't fit.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI: &ldquo;Fills all EBRs, leaves no other memory. Consider halving precision or storing half-ROM with symmetry.&rdquo;</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">Architecture-aware problem solving is a hallmark of senior AI help.</p></div>
+    </div>
+    <aside class="notes">Resource-constrained problem solving is a good AI exercise. Strong answers include practical tradeoffs (half-precision, symmetric ROM storage, external memory). Weak answers just compute the bit total.</aside>
+</section>
+
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;iCE40 HX1K: 1,280 LUTs + 16 EBR × 4 Kbit = 64 Kbit block RAM.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Sync read → EBR inference (saves LUTs). Async read → distributed (LUTs).</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Each EBR configurable: 256×16, 512×8, 1024×4, 2048×2.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Budget your EBRs for the final project — 16 blocks is generous.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;iCE40 HX1K: 1280 LUTs + 16 EBRs × 4 Kbit = 64 Kbit block RAM.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;EBRs are fixed units. Always round up when budgeting.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Aspect ratios: 256×16, 512×8, 1024×4, 2048×2, 4096×1. Tool picks automatically.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Budget before coding. Verify with <code>make stat</code>.</p>
     </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Up Next</p>
-        <h2 style="color:#FFFFFF;font-size:1.8em;">Practical Memory Applications</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Video 4 of 4 · ~11 minutes</p>
-        <p style="color:#888;font-size:0.6em;margin-top:2em;">ROM-driven sequencers, sine tables, and character ROMs.</p>
-    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Every EBR you leave unused is free silicon thrown away.</div>
 </section>
 
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 Transfer</p>
+        <h2 style="color:#FFFFFF;font-size:1.8em;">Practical Memory Applications</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~8 minutes</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Pattern + budget = what can you <em>build</em>? Video 4 puts it together with a concrete application: a pattern sequencer that uses ROM + a counter to produce arbitrary LED animations, sine waves, or character displays. You'll see how the memory resources from today become real-world behavior.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
-<script>
-Reveal.initialize({
-    hash: true, slideNumber: 'c/t', showSlideNumber: 'all',
-    width: 1280, height: 720, margin: 0.04,
-    transition: 'slide', transitionSpeed: 'default', backgroundTransition: 'fade',
-    plugins: [ RevealHighlight, RevealNotes ],
-});
-</script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

@@ -1,91 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 11.4: Connecting to a PC — Accelerated HDL</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../theme/ucf-hdl.css">
-    <style>
-        .quiz-answer { background:#E8F5E9; border:1px solid #2E7D32; border-radius:6px; padding:0.6em 0.8em; margin-top:0.4em; font-size:0.7em; }
-    </style>
-</head><body><div class="reveal"><div class="slides">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 11.4: Connecting to a PC — Accelerated HDL</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Connecting to a PC</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <div class="seg-breadcrumb">
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot "></div>
-        <div class="seg-dot active"></div>
-    </div>
-    <div class="seg-breadcrumb-labels">
-        <span class="seg-label ">UART Protocol</span>
-        <span class="seg-label ">TX Architecture</span>
-        <span class="seg-label ">TX Build</span>
-        <span class="seg-label active">PC Connect</span>
-    </div>
-    <aside class="notes">Welcome to Video 4 of 4 for Day 11.</aside>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">Protocol</span><span class="seg-label">TX Architecture</span><span class="seg-label">Implementation</span><span class="seg-label active">PC Connection</span></div>
+    <aside class="notes">Video 4 of 4 for Day 11. Crossing the boundary: your Verilog talks to software on a computer.</aside>
 </section>
 
 <section>
-    <h2>Go Board → PC Connection</h2>
-    <div style="font-size:0.8em;">
-        <p class="fragment"><strong>Go Board has FTDI chip</strong> — converts FPGA TX/RX pins to USB.</p>
-        <p class="fragment"><strong>Settings:</strong> 115200 baud, 8 data bits, no parity, 1 stop bit (8N1).</p>
-        <p class="fragment"><strong>Terminal emulators:</strong></p>
-        <p class="fragment" style="margin-left:1em;font-size:0.9em;">Linux/Mac: <code>screen /dev/ttyUSB0 115200</code></p>
-        <p class="fragment" style="margin-left:1em;font-size:0.9em;">Windows: PuTTY → Serial → COM port → 115200</p>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every FPGA dev board has a USB-UART bridge chip (FT232H, CP2102, CH340G) that translates USB to 3.3V UART. The Go Board uses an FT2232H. Your laptop sees it as <code>/dev/ttyUSB0</code> (Linux), <code>/dev/cu.usbserial-XYZ</code> (macOS), or <code>COM3</code> (Windows). Python's <code>pyserial</code>, <code>screen</code>, <code>minicom</code>, and PuTTY all speak to it. This standard pipeline is how every FPGA/MCU developer moves data between chip and laptop.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Today's setup is your lifeline. Your capstone will print debug info over UART, read configuration over UART, or stream sensor data over UART. Day 12 RX lets you receive bytes FROM the PC. By the end of the week, you have full bidirectional communication.</p>
+        </div>
     </div>
-    <aside class="notes">Go Board has FTDI chip for USB-serial. Settings: 115200/8N1. Use screen on Linux/Mac, PuTTY on Windows. This is where students see their first character appear.</aside>
+    <aside class="notes">The USB-UART bridge is standard equipment. Every FPGA dev board has one. pyserial on the laptop side, your Verilog UART on the board side, USB between them.</aside>
 </section>
+
 <section>
-    <h2>Transmitting &ldquo;HELLO&rdquo;</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>// Simple message sender: transmit H-E-L-L-O
-reg [2:0] r_char_idx;
-reg [7:0] r_message [0:4];
-initial begin
-    r_message[0] = "H";  r_message[1] = "E";
-    r_message[2] = "L";  r_message[3] = "L";
-    r_message[4] = "O";
-end
-<span class="fragment">
-always @(posedge i_clk)
-    if (!uart_busy &amp;&amp; r_char_idx &lt; 5) begin
-        uart_valid &lt;= 1;
-        uart_data  &lt;= r_message[r_char_idx];
-        r_char_idx &lt;= r_char_idx + 1;
-    end else
-        uart_valid &lt;= 0;</span></code></pre>
-    <aside class="notes">Simple message sender: a small ROM of characters, a counter stepping through them, and the valid/busy handshake feeding the UART TX. Students see HELLO appear on their terminal.</aside>
+    <h2><span style="color:#C0392B;">⚠️</span> Voltage Levels and Polarity Matter</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;UART is UART. Connect my FPGA's TX to any UART RX and it works.&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">Modern 3.3V UART (FPGA/MCU) uses <strong>positive logic</strong>: idle=3.3V (HIGH), start=0V (LOW). True <strong>RS-232</strong> (9-pin connectors from the PC era) uses inverted bipolar levels: idle=-12V, active=+12V. Connecting 3.3V UART directly to an RS-232 port can <em>damage</em> the FPGA. Go Board's on-board USB-UART bridge handles conversion to 3.3V; external RS-232 devices need a MAX3232 level-shifter.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Check the voltage before connecting. 3.3V to USB-UART bridge = safe. 3.3V directly to DB9 RS-232 port = smoke. Read the datasheet of anything you're about to plug into.
+    </div>
+    <aside class="notes">Voltage compatibility is critical. 3.3V TTL UART and RS-232 are logically the same but electrically different. A level shifter (MAX3232) is required to bridge them.</aside>
 </section>
+
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Go Board → PC Connection</h2>
+    <pre style="font-family:monospace;font-size:0.62em;text-align:left;background:none;border:none;color:#333;">
+   iCE40 HX1K              FT2232H USB-UART            Host (Laptop)
+  ┌────────────┐          ┌────────────────┐         ┌──────────────┐
+  │            │          │                │         │              │
+  │  UART TX   │──TX──────│ RX   chip   USB│─────────│ /dev/ttyUSB0 │
+  │  (your RTL)│          │                │         │  pyserial    │
+  │            │──RX──────│ TX           (D+)(D−)   │  minicom     │
+  │            │          │                │         │              │
+  │     GND    │──────────│ GND           VBUS──     │ (5V USB power)│
+  └────────────┘          └────────────────┘         └──────────────┘
+    3.3V TTL                                           115200 baud
+    </pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Three wires: TX, RX, GND. The FT2232H is pre-wired on the Go Board PCB, so you don't solder anything. On the laptop, the serial port appears as soon as you plug in USB. <code>screen /dev/ttyUSB0 115200</code> opens it; <code>screen -X quit</code> closes it (or <code>Ctrl-A K</code>).
+    </div>
+    <aside class="notes">Simple physical setup on the Go Board — everything is pre-wired. The work is in matching baud rate and configuring your software.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Transmitting &ldquo;HELLO&rdquo;</h2>
+    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module hello_tx (
+    input wire i_clk, i_btn, output wire o_tx
+);
+    // Character ROM: 5 characters (H, E, L, L, O), repeated forever
+    reg [7:0] rom [0:4];
+    initial begin
+        rom[0] = 8'h48; rom[1] = 8'h45; rom[2] = 8'h4C;
+        rom[3] = 8'h4C; rom[4] = 8'h4F;
+    end
+
+    // Slow timer — one character per ~0.5 s so you can watch in terminal
+    reg [23:0] r_timer;
+    reg [2:0]  r_idx;
+    reg        r_send;
+
+    always @(posedge i_clk) begin
+        r_send &lt;= 1'b0;
+        r_timer &lt;= r_timer + 1;
+        if (r_timer == 24'd12_500_000) begin
+            r_timer &lt;= 0;
+            r_send  &lt;= 1'b1;
+            r_idx   &lt;= (r_idx == 3'd4) ? 3'd0 : r_idx + 1'b1;
+        end
+    end
+
+    uart_tx #(.CLKS_PER_BIT(217)) u_tx (
+        .i_clk(i_clk), .i_reset(1'b0),
+        .i_valid(r_send), .i_data(rom[r_idx]),
+        .o_busy(), .o_tx(o_tx)
+    );
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Together:</strong> Character ROM (5 entries), slow timer (0.5s), UART TX instance. The timer pulses <code>r_send</code> every 0.5s; the UART TX latches the current character and transmits; the index advances to the next character. <strong>Entire composition: ~25 lines</strong> of new code, using your UART as a ready-to-use building block.
+    </div>
+    <aside class="notes">Simple composition. Character ROM + timer + UART TX = streaming HELLO. This is the payoff of the week: reusing yesterday's building blocks to produce visible behavior.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Diagnose the Garbage</h2>
+    <p style="font-size:0.78em;">You flash the board. Terminal shows: <code>æ²■µÌ</code> instead of <code>HELLO</code>.</p>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Most likely cause:</strong> <strong>Baud rate mismatch.</strong> Your Verilog parameter <code>CLKS_PER_BIT</code> doesn't match <code>screen</code>'s rate. Check:
+        <ul style="font-size:0.9em;">
+            <li>Verilog: <code>CLKS_PER_BIT = 217</code> ← assumes 25 MHz / 115200</li>
+            <li>Actual Go Board clock: confirm 25 MHz (some boards are 12 MHz)</li>
+            <li>Screen command: <code>screen /dev/ttyUSB0 115200</code> (not 9600)</li>
+            <li>Terminal's 8N1 setting (most defaults are correct, but verify)</li>
+        </ul>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Other possibilities:</strong> wrong clock constant in your PCF/constraints file; Verilog using an LSB/MSB convention the terminal doesn't expect; TX and RX wires swapped in the constraints.
+    </div>
+    <aside class="notes">&ldquo;Garbage at the terminal&rdquo; is the #1 UART debugging scenario. 90% of the time it's baud rate mismatch. Check the numbers on both sides.</aside>
+</section>
+
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Your Go Board Says HELLO</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes — end-to-end</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd labs/week3_day11/ex4_hello/
+make prog
+# in another terminal:
+screen /dev/ttyUSB0 115200
+# (Ctrl-A K to quit)
+
+# Or via Python:
+python3 rx_display.py</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED TERMINAL</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">HELLOHELLOHELLOHELLO
+HELLOHELLOHELLOHELLO
+HELLOHELLOHELLOHELLO
+HELLOHELLO...</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ THE MOMENT</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Character-by-character HELLO streams into your terminal. Your Verilog is driving a real signal into your laptop. Take a moment — most students will remember this moment of their FPGA career.</p>
+    </div>
+    <aside class="notes">[Board + terminal] The moment the first HELLO appears is memorable. Students often cheer. Real-world payoff of 11 days of RTL discipline.</aside>
+</section>
+
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;My UART TX is outputting garbage on the terminal. What are the top five causes and how do I diagnose each?&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p style="font-size:0.62em;margin:0;">AI diagnoses a UART bring-up bug.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p style="font-size:0.62em;margin:0;">Predict: baud mismatch, CLKS_PER_BIT off-by-one, bit order (LSB/MSB), inverted idle, wrong parity.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p style="font-size:0.62em;margin:0;">Strong AI gives concrete diagnostic steps (scope the line, check idle level). Weak AI just lists causes without diagnostics.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p style="font-size:0.62em;margin:0;">A good AI debugging session produces an ordered diagnostic sequence, not just a list of possibilities.</p></div>
+    </div>
+    <aside class="notes">UART bring-up bugs are AI's sweet spot — well-documented failure modes, concrete diagnostic steps. Expect good answers if you ask for diagnostics, not just causes.</aside>
+</section>
+
 <section data-background-color="#FAFAFA">
     <h2>Pre-Class Self-Check</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q1:</strong> Draw a UART frame for byte 0x48 (&lsquo;H&rsquo;) at 115200, 8N1. What&rsquo;s the bit order on the wire?</p>
-        <div class="fragment quiz-answer">Idle(1)→Start(0)→0,0,0,1,0,0,1,0→Stop(1). 0x48=01001000, sent LSB first. 10 bit periods ≈ 86.8 µs.</div>
-        <p style="margin-top:0.8em;"><strong>Q2:</strong> How many clock cycles per bit at 25 MHz / 115200?</p>
-        <div class="fragment quiz-answer">25,000,000 / 115,200 ≈ <strong>217</strong> clock cycles per bit.</div>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> At 25 MHz clock and 115200 baud, what's <code>CLKS_PER_BIT</code> (rounded)?</p>
+        <div class="fragment quiz-answer"><code>25_000_000 / 115_200 = 217.01</code>. Round to <strong>217</strong>. Actual baud: 25e6/217 = 115207.4 — 0.006% error, well within tolerance.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> Why do we need a USB-UART bridge chip between the FPGA and laptop?</p>
+        <div class="fragment quiz-answer">Laptops speak USB; FPGAs speak 3.3V TTL UART. The bridge chip translates. Without it, you'd need a cable with a TTL-to-USB adapter.</div>
     </div>
-</section>
-<section data-background-color="#FAFAFA">
-    <h2>Pre-Class Self-Check (cont.)</h2>
-    <div style="font-size:0.85em;">
-        <p><strong>Q3:</strong> What three building blocks does the UART TX decompose into?</p>
-        <div class="fragment quiz-answer">1. FSM (IDLE→START→DATA→STOP), 2. PISO shift register (holds byte, shifts LSB first), 3. Modulo-N counter (baud tick every 217 clocks).</div>
-        <p style="margin-top:0.8em;"><strong>Q4:</strong> What is the valid/busy handshake protocol?</p>
-        <div class="fragment quiz-answer">Producer asserts <code>i_valid</code> for 1 cycle when <code>o_busy==0</code>. TX latches data, asserts <code>o_busy</code>, transmits. Producer waits for <code>!o_busy</code> before next byte.</div>
-    </div>
-</section>
-<section data-background-color="#000000">
-    <div style="text-align:center;"><p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Pre-Class Videos Complete</p><h2 style="color:#FFFFFF;font-size:1.6em;">See You in Class!</h2><p style="color:#E8E8E4;font-size:0.8em;margin-top:0.5em;">Day 11 · Hands-On Lab</p><p style="color:#888;font-size:0.6em;margin-top:2em;">Make sure your toolchain is working and your Go Board is connected.</p></div>
 </section>
 
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> You see random characters in your terminal. What do you check first?</p>
+        <div class="fragment quiz-answer">Baud rate on both sides. Second: clock frequency assumption in your Verilog (did someone put 50 MHz in a parameter but the board is really 25 MHz?). Third: 8N1 framing settings.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> Why transmit at 0.5 s intervals instead of full baud rate?</p>
+        <div class="fragment quiz-answer">So humans can watch characters appear one at a time. At 115,200 baud a 5-character message completes in 434 µs — too fast to perceive. For demos, slow the pacing. For real data, send at full rate.</div>
+    </div>
+</section>
+
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 11</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Receiving Bytes</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 12 · UART RX · SPI · IP Integration · Week 3 Capstone</p>
+        <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You transmit. Day 12 is <strong>receiving</strong> — harder than transmitting, because you don't control the timing. You'll learn 16× oversampling (the standard UART RX trick), start-bit detection, and then round out Week 3 with SPI (a different serial protocol) and a full IP-integration methodology. By Friday: bidirectional UART + SPI = you can talk to any peripheral in the embedded world.</p>
+        </div>
+    </div>
+</section>
 
 </div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
@@ -93,4 +213,5 @@ always @(posedge i_clk)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
-</body></html>
+</body>
+</html>
