@@ -41,31 +41,27 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day07.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day07.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day07/day07_all_starter.zip)
 </div>
 
 </div>
 
 ## :material-play-circle: Pre-Class Video Segments
 
-### Segment 1: FSM Theory &amp; Architecture
+### Segment 1: FSM Theory &amp; Architecture [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week2_day07/d07_s1_fsm_theory_architecture.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: The 3-Always-Block Template
+### Segment 2: The Three-Block FSM Template
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

@@ -39,45 +39,41 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day02.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day02.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day02/day02_all_starter.zip)
 </div>
 
 </div>
 
 ## :material-play-circle: Pre-Class Video Segments
 
-### Segment 1: Data Types and Vectors
+### Segment 1: Data Types and Vectors [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day02/d02_s1_data_types_and_vectors.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: Operators
+### Segment 2: Operators [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day02/d02_s2_operators.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 3: Sized Literals &amp; Width Matching
+### Segment 3: Sized Literals &amp; Width Matching [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day02/d02_s3_sized_literals_width_matching.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: The 7-Segment Display
+### Segment 4: 7-Segment Display [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

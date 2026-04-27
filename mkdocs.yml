@@ -5,12 +5,12 @@ site_url: "https://ucf-draco-mike.github.io/hdl-for-dsd/"
 docs_dir: docs_src
 site_dir: _site
 
-# Slide and notebook links point outside docs_src/ — resolved post-build
-# when lectures/ and notebooks/ are copied into _site/
+# Slide links point outside docs_src/ — resolved post-build
+# when lectures/ is copied into _site/
 validation:
   links:
     absolute_links: relative_to_docs
-    not_found: info                 # post-build copies (lectures/, notebooks/) resolve these
+    not_found: info                 # post-build copies (lectures/, downloads/) resolve these
     unrecognized_links: info
   nav:
     omitted_files: info             # code.md pages accessible via links, not nav

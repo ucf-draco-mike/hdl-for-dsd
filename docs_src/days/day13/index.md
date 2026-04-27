@@ -39,45 +39,41 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day13.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day13.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day13/day13_all_starter.zip)
 </div>
 
 </div>
 
 ## :material-play-circle: Pre-Class Video Segments
 
-### Segment 1: Why SystemVerilog?
+### Segment 1: Why SystemVerilog
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week4_day13/d13_s1_why_systemverilog.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: logic
+### Segment 2: The logic Type
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week4_day13/d13_s2_logic_type.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 3: Intent-Based Always Blocks
+### Segment 3: Intent-Based always_*
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week4_day13/d13_s3_intent_based_always.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: enum, struct, package
+### Segment 4: enum · struct · package
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

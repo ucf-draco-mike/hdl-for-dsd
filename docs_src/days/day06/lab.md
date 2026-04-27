@@ -1,11 +1,7 @@
 # Day 6 Lab: Testbenches & Simulation-Driven Development
 
-!!! abstract "Starter Code & Notebooks"
+!!! abstract "Starter Code"
     [:material-folder-download: Download All Starter Code (.zip)](../../downloads/day06/day06_all_starter.zip){ .md-button .md-button--primary }
-
-    [:material-notebook: Open in JupyterLab](http://localhost:8888/lab/tree/notebooks/labs/lab_day06.ipynb){ .md-button target=_blank }
-    [:material-download: Download .ipynb](../../notebooks/labs/lab_day06.ipynb){ .md-button target=_blank }
-    [:material-github: View on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day06.ipynb){ .md-button target=_blank }
 
     Individual exercise downloads and file links are below each exercise.
 
@@ -53,7 +49,7 @@ By the end of this lab, you will:
 ## Exercise 1: Self-Checking ALU Testbench (35 min)
 
 !!! code "Exercise 1 — Code"
-    [:material-download: Starter .zip](../../downloads/day06/ex1_alu_testbench_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex1_alu_testbench_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex1_alu_testbench/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex1_alu_testbench/starter/Makefile){ target=_blank } [:material-github: `alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex1_alu_testbench/starter/alu_4bit.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex1_alu_testbench/starter/alu_4bit.v){ target=_blank } [:material-github: `tb_alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex1_alu_testbench/starter/tb_alu_4bit.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex1_alu_testbench/starter/tb_alu_4bit.v){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day06/ex1_alu_testbench_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex1_alu_testbench_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex1_alu_testbench/starter/Makefile){ target=_blank } [:material-github: `alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex1_alu_testbench/starter/alu_4bit.v){ target=_blank } [:material-github: `tb_alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex1_alu_testbench/starter/tb_alu_4bit.v){ target=_blank }
 
 
 
@@ -84,7 +80,7 @@ Change SUB to `a + b` in the ALU. Re-run the testbench. Confirm SUB tests fail.
 ## Exercise 2: Debounce Module Testbench (25 min)
 
 !!! code "Exercise 2 — Code"
-    [:material-download: Starter .zip](../../downloads/day06/ex2_debounce_testbench_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex2_debounce_testbench_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex2_debounce_testbench/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex2_debounce_testbench/starter/Makefile){ target=_blank } [:material-github: `debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex2_debounce_testbench/starter/debounce.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex2_debounce_testbench/starter/debounce.v){ target=_blank } [:material-github: `tb_debounce_thorough.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex2_debounce_testbench/starter/tb_debounce_thorough.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex2_debounce_testbench/starter/tb_debounce_thorough.v){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day06/ex2_debounce_testbench_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex2_debounce_testbench_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex2_debounce_testbench/starter/Makefile){ target=_blank } [:material-github: `debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex2_debounce_testbench/starter/debounce.v){ target=_blank } [:material-github: `tb_debounce_thorough.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex2_debounce_testbench/starter/tb_debounce_thorough.v){ target=_blank }
 
 
 
@@ -101,7 +97,7 @@ Write `tb_debounce_thorough.v` with four test scenarios:
 ## Exercise 3: Counter Testbench (20 min)
 
 !!! code "Exercise 3 — Code"
-    [:material-download: Starter .zip](../../downloads/day06/ex3_counter_testbench_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex3_counter_testbench_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex3_counter_testbench/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex3_counter_testbench/starter/Makefile){ target=_blank } [:material-github: `counter_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex3_counter_testbench/starter/counter_4bit.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex3_counter_testbench/starter/counter_4bit.v){ target=_blank } [:material-github: `tb_counter.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex3_counter_testbench/starter/tb_counter.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex3_counter_testbench/starter/tb_counter.v){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day06/ex3_counter_testbench_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex3_counter_testbench_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex3_counter_testbench/starter/Makefile){ target=_blank } [:material-github: `counter_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex3_counter_testbench/starter/counter_4bit.v){ target=_blank } [:material-github: `tb_counter.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex3_counter_testbench/starter/tb_counter.v){ target=_blank }
 
 
 
@@ -118,7 +114,7 @@ Write `tb_counter.v` for a simple 4-bit counter. Verify:
 ## Exercise 4 (Stretch): File-Driven Testing (15 min)
 
 !!! code "Exercise 4 — Code"
-    [:material-download: Starter .zip](../../downloads/day06/ex4_file_driven_testing_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex4_file_driven_testing_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex4_file_driven_testing/starter/Makefile){ target=_blank } [:material-github: `hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/hex_to_7seg.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex4_file_driven_testing/starter/hex_to_7seg.v){ target=_blank } [:material-github: `hex_vectors.hex`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/hex_vectors.hex){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex4_file_driven_testing/starter/hex_vectors.hex){ target=_blank } [:material-github: `tb_hex_file.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/tb_hex_file.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex4_file_driven_testing/starter/tb_hex_file.v){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day06/ex4_file_driven_testing_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex4_file_driven_testing_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/Makefile){ target=_blank } [:material-github: `hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/hex_to_7seg.v){ target=_blank } [:material-github: `hex_vectors.hex`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/hex_vectors.hex){ target=_blank } [:material-github: `tb_hex_file.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex4_file_driven_testing/starter/tb_hex_file.v){ target=_blank }
 
 
 
@@ -131,7 +127,7 @@ Use `$readmemh` to load test vectors from `hex_vectors.hex`. Verify the hex-to-7
 ## Exercise 5 (Stretch): Exhaustive Combinational Test (20 min)
 
 !!! code "Exercise 5 — Code"
-    [:material-download: Starter .zip](../../downloads/day06/ex5_exhaustive_alu_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex5_exhaustive_alu_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex5_exhaustive_alu/starter/Makefile){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex5_exhaustive_alu/starter/Makefile){ target=_blank } [:material-github: `alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex5_exhaustive_alu/starter/alu_4bit.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex5_exhaustive_alu/starter/alu_4bit.v){ target=_blank } [:material-github: `tb_alu_exhaustive.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex5_exhaustive_alu/starter/tb_alu_exhaustive.v){ target=_blank } [:material-notebook: Jupyter](http://localhost:8888/lab/tree/labs/week2_day06/ex5_exhaustive_alu/starter/tb_alu_exhaustive.v){ target=_blank }
+    [:material-download: Starter .zip](../../downloads/day06/ex5_exhaustive_alu_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day06/ex5_exhaustive_alu_solution.zip){ .md-button } [:material-github: `Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex5_exhaustive_alu/starter/Makefile){ target=_blank } [:material-github: `alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex5_exhaustive_alu/starter/alu_4bit.v){ target=_blank } [:material-github: `tb_alu_exhaustive.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week2_day06/ex5_exhaustive_alu/starter/tb_alu_exhaustive.v){ target=_blank }
 
 
 

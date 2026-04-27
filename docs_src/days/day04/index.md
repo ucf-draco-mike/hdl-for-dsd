@@ -39,45 +39,41 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day04.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day04.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day04/day04_all_starter.zip)
 </div>
 
 </div>
 
 ## :material-play-circle: Pre-Class Video Segments
 
-### Segment 1: Clocks and Edge-Triggered Behavior
+### Segment 1: Clocks &amp; Edges [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day04/d04_s1_clocks_and_edges.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: Nonblocking Assignment
+### Segment 2: Nonblocking Assignment [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day04/d04_s2_nonblocking_assignment.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 3: Flip-Flop Variants
+### Segment 3: Flip-Flop Variants [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day04/d04_s3_flip_flop_variants.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: Counters and Clock Division
+### Segment 4: Counters &amp; Clock Division [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

@@ -41,45 +41,41 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day03.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day03.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day03/day03_all_starter.zip)
 </div>
 
 </div>
 
 ## :material-play-circle: Pre-Class Video Segments
 
-### Segment 1: The always @(*) Block
+### Segment 1: The always @(*) Block [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day03/d03_s1_always_star_block.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: if/else and case
+### Segment 2: if/else and case [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day03/d03_s2_if_else_and_case.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 3: The Latch Problem
+### Segment 3: The Latch Problem [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week1_day03/d03_s3_the_latch_problem.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: Blocking vs. Nonblocking
+### Segment 4: Blocking vs. Nonblocking [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

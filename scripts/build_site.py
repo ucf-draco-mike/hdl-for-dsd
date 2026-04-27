@@ -10,7 +10,6 @@ Output:              site/
 """
 
 import json
-import os
 import re
 import shutil
 import zipfile
@@ -27,21 +26,11 @@ REPO = Path(__file__).resolve().parent.parent
 SITE = REPO / "site"
 CONTENT = SITE / "content"
 
-# ─── JupyterLab configuration ─────────────────────────────────────
-# Base URL for local JupyterLab file links.
-# Default assumes `jupyter lab` is launched from the repo root.
-# Override with HDL_JUPYTER_BASE for institutional JupyterHub deployments.
-JUPYTER_LAB_BASE = os.environ.get(
-    "HDL_JUPYTER_BASE",
-    "http://localhost:8888/lab/tree"
-)
-# GitHub raw base for direct file viewing (fallback when no hub)
+# GitHub raw base for direct file viewing
 GITHUB_RAW_BASE = "https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main"
 
 # File extensions to include in code downloads
 CODE_EXTENSIONS = {".v", ".sv", ".hex", ".pcf", ".md"}
-# Extensions that get JupyterLab "open" links (text-editable files)
-JUPYTER_EXTENSIONS = {".v", ".sv", ".hex", ".py", ".ipynb", ".md"}
 
 # ─── Course metadata ───────────────────────────────────────────────
 
@@ -278,7 +267,7 @@ def build_lab_code_assets():
     Each exercise entry:
         { "name": "ex1_led_on", "label": "Ex 1 — LED On",
           "files": [ { "name": "ex1_led_on.v", "path": "labs/week1_day01/starter/ex1_led_on.v",
-                        "jupyter_url": "...", "github_url": "..." } ],
+                        "github_url": "..." } ],
           "zip": "downloads/day01/ex1_led_on_starter.zip",
           "has_solution": true,
           "solution_zip": "downloads/day01/ex1_led_on_solution.zip" }
@@ -469,17 +458,14 @@ def _exercise_label(ex_name):
 
 
 def _file_entry(filepath, rel_path):
-    """Create a file entry dict with URLs for JupyterLab and GitHub."""
+    """Create a file entry dict with URLs for GitHub."""
     suffix = filepath.suffix.lower()
-    entry = {
+    return {
         "name": filepath.name,
         "path": str(rel_path),
         "github_url": f"{GITHUB_RAW_BASE}/{rel_path}",
         "ext": suffix,
     }
-    if suffix in JUPYTER_EXTENSIONS or filepath.name == "Makefile":
-        entry["jupyter_url"] = f"{JUPYTER_LAB_BASE}/{rel_path}"
-    return entry
 
 
 def _create_zip(zip_path, files, arcname_base=""):
@@ -510,7 +496,6 @@ def build_manifest(code_assets=None):
             "institution": "UCF · College of Engineering & Computer Science",
             "version": "v2.1"
         },
-        "jupyter_base": JUPYTER_LAB_BASE,
         "github_base": GITHUB_RAW_BASE,
         "docs": [
             {"id": "overview", "label": "Course Overview", "content": "content/overview.html"},
@@ -952,15 +937,12 @@ button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
 .slide-toolbar a{font-size:12px;color:var(--link);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid #1565C030}
 .slide-toolbar a:hover{background:#1565C010}
 
-/* ── Code & Notebook panel ── */
+/* ── Code download panel ── */
 .code-panel{flex:1;overflow-y:auto;background:#fdfcfa;padding:20px 24px}
 .code-panel .code-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .code-panel .code-header h3{font-size:16px;font-weight:700;color:var(--black);margin:0}
 .code-panel .dl-all{font-size:12px;color:#fff;background:var(--link);padding:6px 14px;border-radius:6px;text-decoration:none;font-weight:600}
 .code-panel .dl-all:hover{opacity:.9}
-.code-panel .jupyter-banner{background:#F37626;color:#fff;border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:13px;display:flex;align-items:center;gap:10px}
-.code-panel .jupyter-banner .jup-icon{font-size:20px}
-.code-panel .jupyter-banner a{color:#fff;font-weight:700;text-decoration:underline}
 .ex-section{margin-bottom:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .ex-section .ex-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--gray-100);border-bottom:1px solid var(--border)}
 .ex-section .ex-header .ex-title{font-size:14px;font-weight:600;color:var(--black)}
@@ -978,8 +960,6 @@ button{border:none;background:none;cursor:pointer;font:inherit;color:inherit}
 .ex-section .file-item .file-links{display:flex;gap:6px}
 .ex-section .file-item .file-link{font-size:11px;color:var(--link);text-decoration:none;padding:2px 8px;border-radius:3px;border:1px solid #1565C020}
 .ex-section .file-item .file-link:hover{background:#1565C010}
-.ex-section .file-item .file-link.jup{color:#E65100;border-color:#E6510030}
-.ex-section .file-item .file-link.jup:hover{background:#E6510010}
 </style>
 </head>
 <body>
@@ -1117,7 +1097,7 @@ function showDay(dayNum) {
             <div class="day-tab" data-tab="videos" onclick="switchDayTab('videos')">▶ Videos (${dayData.slides.length})</div>
             ${dayData.content.quiz ? '<div class="day-tab" data-tab="quiz" onclick="switchDayTab(\'quiz\')">📝 Quiz</div>' : ''}
             <div class="day-tab" data-tab="lab" onclick="switchDayTab('lab')">🔬 Lab</div>
-            ${dayData.code_assets ? '<div class="day-tab" data-tab="code" onclick="switchDayTab(\'code\')">💾 Code & Notebooks</div>' : ''}
+            ${dayData.code_assets ? '<div class="day-tab" data-tab="code" onclick="switchDayTab(\'code\')">💾 Code Downloads</div>' : ''}
         </div>
     `;
 
@@ -1248,32 +1228,24 @@ function loadFrame(url) {
     }
 }
 
-// ── Code & Notebooks panel ──
+// ── Code download panel ──
 
-const FILE_ICONS = {'.v':'📄','.sv':'📄','.hex':'🔢','.pcf':'📌','.md':'📝','.py':'🐍','.ipynb':'📓'};
+const FILE_ICONS = {'.v':'📄','.sv':'📄','.hex':'🔢','.pcf':'📌','.md':'📝','.py':'🐍'};
 const MAKEFILE_ICON = '⚙️';
 
 function renderCodePanel(dayData) {
     const ca = dayData.code_assets;
     if (!ca) return '<div style="padding:40px;text-align:center;color:#999">No code assets for this session.</div>';
 
-    const jupBase = manifest.jupyter_base;
     let html = '';
 
     // Header with download-all button
     html += '<div class="code-header">';
-    html += `<h3>Lab Code & Notebooks — Day ${dayData.num}</h3>`;
+    html += `<h3>Lab Code — Day ${dayData.num}</h3>`;
     if (ca.all_zip) {
         html += `<a class="dl-all" href="${ca.all_zip}" download>⬇ Download All Starter Code (.zip)</a>`;
     }
     html += '</div>';
-
-    // JupyterLab banner
-    html += `<div class="jupyter-banner">
-        <span class="jup-icon">🪐</span>
-        <span>Open files directly in <a href="${jupBase}" target="_blank">JupyterLab</a> — click the <strong>Open in Jupyter</strong> links below.
-        Start JupyterLab from the repo root: <code style="background:rgba(255,255,255,.2);padding:1px 5px;border-radius:3px;font-size:12px">jupyter lab</code></span>
-    </div>`;
 
     // Exercise sections
     ca.exercises.forEach(ex => {
@@ -1298,9 +1270,6 @@ function renderCodePanel(dayData) {
             html += `<span class="file-name">${f.name}</span>`;
             html += '<span class="file-links">';
             html += `<a class="file-link" href="${f.github_url}" target="_blank">GitHub ↗</a>`;
-            if (f.jupyter_url) {
-                html += `<a class="file-link jup" href="${f.jupyter_url}" target="_blank">Open in Jupyter ↗</a>`;
-            }
             html += '</span></li>';
         });
         html += '</ul></div>';

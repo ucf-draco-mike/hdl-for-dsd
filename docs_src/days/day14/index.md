@@ -41,17 +41,13 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day14.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day14.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day14/day14_all_starter.zip)
 </div>
 
 </div>
@@ -65,21 +61,21 @@ Lab notebook · lecture notebook
 
 [:material-presentation: View Slides](../../lectures/week4_day14/d14_s1_assertions.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: AI-Driven Verification Workflows
+### Segment 2: AI Verification Workflows
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week4_day14/d14_s2_ai_verification_workflows.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 3: PPA Analysis Methodology
+### Segment 3: PPA Methodology
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
 [:material-presentation: View Slides](../../lectures/week4_day14/d14_s3_ppa_methodology.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: Coverage &amp; the Road Ahead
+### Segment 4: Coverage &amp; The Road Ahead
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

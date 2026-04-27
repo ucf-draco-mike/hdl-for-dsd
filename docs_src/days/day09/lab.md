@@ -1,11 +1,7 @@
 # Day 9 Lab: Memory — RAM, ROM & Block RAM
 
-!!! abstract "Starter Code & Notebooks"
+!!! abstract "Starter Code"
     [:material-folder-download: Download All Starter Code (.zip)](../../downloads/day09/day09_all_starter.zip){ .md-button .md-button--primary }
-
-    [:material-notebook: Open in JupyterLab](http://localhost:8888/lab/tree/notebooks/labs/lab_day09.ipynb){ .md-button target=_blank }
-    [:material-download: Download .ipynb](../../notebooks/labs/lab_day09.ipynb){ .md-button target=_blank }
-    [:material-github: View on GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day09.ipynb){ .md-button target=_blank }
 
     Individual exercise downloads and file links are below each exercise.
 
