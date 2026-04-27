@@ -41,17 +41,13 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day12.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day12.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day12/day12_all_starter.zip)
 </div>
 
 </div>
@@ -65,7 +61,7 @@ Lab notebook · lecture notebook
 
 [:material-presentation: View Slides](../../lectures/week3_day12/d12_s1_uart_rx_oversampling.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 2: RX Implementation
+### Segment 2: UART RX Implementation
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

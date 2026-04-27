@@ -28,7 +28,7 @@ Every day (except Days 15–16) has four sub-pages:
 
 **:material-help-circle: Pre-Class Quiz** — self-check questions with collapsible answers. Work through these *after* watching the pre-class video and *before* class. They're ungraded — the goal is to catch gaps before the hands-on lab.
 
-**:material-flask: Lab Guide** — step-by-step exercises with embedded starter code downloads, solution zips, and links to source files on GitHub. Each exercise section has its own download buttons. Notebook versions are available for JupyterLab users.
+**:material-flask: Lab Guide** — step-by-step exercises with embedded starter code downloads, solution zips, and links to source files on GitHub. Each exercise section has its own download buttons, and the top of every lab page links to a single bundled `.zip` of all starter code for the day.
 
 ## Repository Structure
 
@@ -51,7 +51,6 @@ hdl-for-dsd/
 │   │   │   └── solution/       ← Reference solution
 │   │   └── ...
 │   └── ...
-├── notebooks/            ← Auto-generated Jupyter notebook versions
 ├── shared/
 │   ├── lib/              ← Reusable module library (uart_tx, debounce, etc.)
 │   └── pcf/              ← Pin constraint file for the Go Board
@@ -117,4 +116,4 @@ nix develop .#full
 # Open http://127.0.0.1:8000
 ```
 
-The build pipeline: `prep_mkdocs.py` generates `docs_src/` → MkDocs builds `_site/` → slides and notebooks are copied in.
+The build pipeline: `prep_mkdocs.py` generates `docs_src/` (including per-day code download zips) → MkDocs builds `_site/` → slides and download zips are copied in.

@@ -274,9 +274,6 @@ gtkwave --version && echo "✅ GTKWave — OK"
 # ── Test 5: Bitstream tools ──
 icepack test.asc test.bin && echo "✅ icepack — OK"
 
-# ── Test 6: JupyterLab ──
-jupyter --version > /dev/null 2>&1 && echo "✅ JupyterLab — OK"
-
 # ── Cleanup ──
 cd ~ && rm -rf /tmp/hdl-verify
 
@@ -351,52 +348,13 @@ You'll submit your AI prompts and corrected outputs as part of lab deliverables.
 
 ---
 
-## JupyterLab & Course Site
+## Course Site
 
-The course website includes a **Code & Notebooks** page for each day with direct links to starter code, solution zips, and JupyterLab. This section explains how the pieces fit together.
+Each day's page on the course site provides:
 
-### Running JupyterLab
-
-JupyterLab is included in the Nix development environment — no separate install needed. Launch it from the repo root so that all file paths resolve correctly:
-
-```bash
-cd hdl-for-dsd
-nix develop
-jupyter lab
-```
-
-This opens JupyterLab in your browser with the full repository tree. You can:
-
-- Edit Verilog, SystemVerilog, and testbench files in the built-in text editor
-- Open the `.ipynb` lab notebooks for an interactive guided experience
-- Use the terminal panel to run simulations (`make sim`) or program the board (`make prog`)
-
-### Code & Notebooks Pages
-
-Each day's page on the course site includes a **Code & Notebooks** card with:
-
-- **Download All Starter Code (.zip)** — a single zip with every exercise's starter files for that day
+- **Download All Starter Code (.zip)** — a single zip with every exercise's starter files for that day, prominently linked from the day's lab page
 - **Per-exercise starter and solution zips**
 - **GitHub links** — view each file directly on GitHub
-- **Open in Jupyter links** — open each file directly in your running JupyterLab instance
-- **Lab Notebook (.ipynb)** — the full lab guide as a Jupyter notebook (auto-generated via `jupytext`)
-
-> **How the "Open in Jupyter" links work:** The links point to `http://localhost:8888/lab/tree/<path>`, which is the default JupyterLab address when launched from the repo root. If JupyterLab starts on a different port, adjust the URL or navigate to the file manually in JupyterLab's file browser.
-
-### Configuring a Custom URL
-
-If you run JupyterLab on a different port, or your institution provides a shared JupyterHub, override the base URL when building the site:
-
-```bash
-# Custom local port
-export HDL_JUPYTER_BASE="http://localhost:9999/lab/tree"
-
-# Institutional JupyterHub
-export HDL_JUPYTER_BASE="https://jupyter.cecs.ucf.edu/hub/user-redirect/lab/tree/hdl-for-dsd"
-
-# Then rebuild
-./scripts/build_all.sh --quick
-```
 
 ### Browsing the Course Site Locally
 
@@ -410,26 +368,24 @@ nix develop .#full
 
 ### Building the Course Site
 
-To build the full course site (with download zips, notebooks, and all pages), use the `full` dev shell which adds MkDocs, jupytext, and dependencies:
+To build the full course site (with download zips and all pages), use the `full` dev shell which adds MkDocs and dependencies:
 
 ```bash
 nix develop .#full
 
-# Full build: notebooks → MkDocs source → static site
+# Full build: MkDocs source → static site
 ./scripts/build_all.sh
 
 # Or individual steps:
-./scripts/build_all.sh --notebooks  # only regenerate .ipynb files
 ./scripts/build_all.sh --quick      # skip standalone site (build_site.py)
 ./scripts/build_all.sh --serve      # build then live-preview at localhost:8000
 ```
 
 The `build_all.sh` script runs each step in order:
 
-1. **Notebooks** — converts every lab `README.md` to `.ipynb` via `jupytext` (incremental: skips unchanged files)
-2. **MkDocs prep** — generates `docs_src/` with code pages, download zips, and day navigation
-3. **Standalone site** — builds `site/` via `build_site.py` (skipped with `--quick`)
-4. **MkDocs build** — produces the final `_site/` directory with slides and downloads copied in
+1. **MkDocs prep** — generates `docs_src/` with code pages, download zips, and day navigation
+2. **Standalone site** — builds `site/` via `build_site.py` (skipped with `--quick`)
+3. **MkDocs build** — produces the final `_site/` directory with slides and downloads copied in
 
 ---
 
@@ -449,9 +405,6 @@ yosys -p "synth_ice40 -top top_module -json top.json" top.v sub1.v sub2.v
 nextpnr-ice40 --hx1k --package vq100 --pcf go_board.pcf --json top.json --asc top.asc
 icepack top.asc top.bin
 iceprog top.bin
-
-# ── JupyterLab (edit & browse in browser) ──
-jupyter lab
 
 # ── Resource analysis ──
 yosys -p "read_verilog module.v; synth_ice40 -top module; stat"
@@ -480,8 +433,6 @@ iverilog -g2012 -o sim.vvp tb_module.sv module.sv
 | Serial terminal shows garbled text | Verify baud rate is 115200 and settings are 8N1, no flow control |
 | `screen` won't release serial port | Detach with `Ctrl-A` then `K`, confirm with `Y` |
 | Nix store using too much disk space | Run `nix store gc` to garbage-collect unused packages |
-| "Open in Jupyter" links go to wrong page | Make sure JupyterLab is running (`jupyter lab`) from the repo root. If it's on a different port than 8888, set `HDL_JUPYTER_BASE` and rebuild |
-| JupyterLab can't find Icarus Verilog | Open a terminal inside JupyterLab and run `nix develop` to enter the course environment before running `make sim` |
 
 ---
 

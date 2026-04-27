@@ -41,17 +41,13 @@ Self-check questions
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day06.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day06.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day06/day06_all_starter.zip)
 </div>
 
 </div>
@@ -79,7 +75,7 @@ Lab notebook · lecture notebook
 
 [:material-presentation: View Slides](../../lectures/week2_day06/d06_s3_tasks_for_organization.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: File-Driven &amp; Sequential Testing
+### Segment 4: File-Driven Testing
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.

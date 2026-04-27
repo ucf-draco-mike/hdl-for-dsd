@@ -95,7 +95,7 @@ The first run downloads the toolchain (~5–15 min). Subsequent runs are instant
 ### 4. Verify
 
 ```bash
-yosys --version && nextpnr-ice40 --version && iverilog -V && jupyter --version
+yosys --version && nextpnr-ice40 --version && iverilog -V
 ```
 
 ### 5. First Build (Day 1)
@@ -107,37 +107,26 @@ make prog    # synthesize + program the Go Board
 
 > **Full setup details** — including USB verification, GTKWave testing, serial terminal config, and troubleshooting — are in [`docs/course_setup_guide.md`](docs/course_setup_guide.md).
 
-## Course Site & JupyterLab
+## Course Site
 
-The course includes a static site (built with MkDocs Material) with lecture videos, daily plans, lab guides, and **Code & Notebooks** pages for each day. The Code pages provide per-exercise zip downloads, GitHub source links, and direct "Open in Jupyter" links for your local JupyterLab.
-
-### JupyterLab (included in Nix)
-
-JupyterLab is part of the default dev shell. After `nix develop`, launch it from the repo root:
-
-```bash
-jupyter lab
-```
-
-This opens the full repo in a browser-based editor where you can edit Verilog, open `.ipynb` lab notebooks, and use the terminal to run simulations. The "Open in Jupyter" links on the course site point to `localhost:8888` by default and will open files directly in your running instance.
+The course includes a static site (built with MkDocs Material) with lecture videos, daily plans, lab guides, and per-day code download pages. Each day's page links to a single bundled `.zip` of all starter code, plus per-exercise starter and solution zips.
 
 ### Building the Course Site
 
-The site build tools (MkDocs, Material theme, jupytext) live in a separate `full` shell to keep the default shell lean:
+The site build tools (MkDocs, Material theme) live in a separate `full` shell to keep the default shell lean:
 
 ```bash
 nix develop .#full
 
-# Full build: notebooks + MkDocs site + downloads
+# Full build: MkDocs site + code download zips
 ./scripts/build_all.sh
 
 # Or individual steps:
-./scripts/build_all.sh --notebooks  # only regenerate .ipynb files
 ./scripts/build_all.sh --quick      # skip standalone site (build_site.py)
 ./scripts/build_all.sh --serve      # build then live-preview at localhost:8000
 ```
 
-See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) for full details on JupyterLab setup and troubleshooting.
+See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) for full toolchain setup and troubleshooting.
 
 ## Toolchain Quick Reference
 

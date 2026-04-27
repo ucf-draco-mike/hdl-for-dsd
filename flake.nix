@@ -19,16 +19,11 @@
 
         # ---------- Python environment (shared) ----------
         pythonEnv = pkgs.python3.withPackages (ps: with ps; [
-          jupyterlab
-          notebook
-          jupytext             # markdown ↔ notebook conversion
+          # Lightweight set used by lab/simulation helper scripts.
         ]);
 
         # ---------- Python environment for site building ----------
         pythonFull = pkgs.python3.withPackages (ps: with ps; [
-          jupyterlab
-          notebook
-          jupytext             # markdown ↔ notebook conversion
           # MkDocs + extensions for building the course site
           mkdocs
           mkdocs-material
@@ -72,7 +67,7 @@
         baseShellHook = localeHook + ''
 
           # Version check with 3-second timeout — prevents hang from
-          # tools that probe X11/Wayland (gtkwave) or spin up servers (jupyter).
+          # tools that probe X11/Wayland (gtkwave).
           __ver() {
             local label="$1"; shift
             local result
@@ -96,17 +91,15 @@
           __ver icestorm icepack
           __ver iverilog iverilog -V
           __ver gtkwave  gtkwave --version
-          __ver jupyter  jupyter --version
           echo ""
           echo "  Run 'make sim' in any lab directory to simulate."
           echo "  Run 'make prog' to synthesize and program the Go Board."
-          echo "  Run 'jupyter lab' to open JupyterLab in your browser."
           echo ""
           unset -f __ver
         '';
 
       in {
-        # Default shell: HDL toolchain + JupyterLab
+        # Default shell: HDL toolchain
         # Usage: nix develop
         devShells.default = pkgs.mkShell {
           buildInputs = commonPkgs ++ linuxPkgs ++ [ pythonEnv ];

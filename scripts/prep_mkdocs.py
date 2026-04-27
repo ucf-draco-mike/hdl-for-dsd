@@ -15,17 +15,7 @@ REPO = Path(__file__).resolve().parent.parent
 DOCS = REPO / "docs_src"
 YOUTUBE_FILE = REPO / "youtube_ids.json"
 
-# ─── JupyterLab configuration ─────────────────────────────────────
-# Base URL for JupyterLab file links.
-# Default assumes `jupyter lab` is launched from the repo root,
-# so file paths are relative to the working directory.
-# Override with HDL_JUPYTER_BASE for institutional JupyterHub deployments.
-JUPYTER_LAB_BASE = os.environ.get(
-    "HDL_JUPYTER_BASE",
-    "http://localhost:8888/lab/tree"
-)
 GITHUB_RAW_BASE = "https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main"
-JUPYTER_EXTENSIONS = {".v", ".sv", ".hex", ".py", ".ipynb", ".md"}
 
 DAYS = [
     (1,  "week1_day01", "Welcome to Hardware Thinking"),
@@ -103,35 +93,26 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
     # Nav cards — add code card if assets exist
     quiz_exists = (REPO / "lectures" / dir_name / f"day{dz}_quiz.md").exists()
     has_code = code_assets and day_num in code_assets
-    lab_nb_chk = (REPO / "notebooks" / "labs" / f"lab_day{dz}.ipynb").exists()
-    lec_nb_chk = (REPO / "notebooks" / "lectures" / f"lecture_day{dz}.ipynb").exists()
-    has_notebooks = lab_nb_chk or lec_nb_chk
-    n_cards = 2 + (1 if quiz_exists else 0) + (1 if has_notebooks else 0)
+    n_cards = 2 + (1 if quiz_exists else 0) + (1 if has_code else 0)
     grid_class = "card-grid--4" if n_cards == 4 else "card-grid--3"
     lines.append(f'<div class="card-grid {grid_class}" markdown>\n')
     lines.append(f'<div class="nav-card" markdown>\n:material-clipboard-text:{{ .card-icon }}\n\n**Daily Plan**\n\nSession timeline & instructor notes\n\n[:octicons-arrow-right-16: View plan](plan.md)\n</div>\n')
     lines.append(f'<div class="nav-card" markdown>\n:material-flask:{{ .card-icon }}\n\n**Lab Guide**\n\n{len(slides)} exercises · hands-on\n\n[:octicons-arrow-right-16: View lab](lab.md)\n</div>\n')
     if quiz_exists:
         lines.append(f'<div class="nav-card" markdown>\n:material-help-circle:{{ .card-icon }}\n\n**Pre-Class Quiz**\n\nSelf-check questions\n\n[:octicons-arrow-right-16: Take quiz](quiz.md)\n</div>\n')
-    # Notebooks card — lab + lecture .ipynb
-    if has_notebooks:
-        nb_desc_parts = []
-        if lab_nb_chk:
-            nb_desc_parts.append("Lab notebook")
-        if lec_nb_chk:
-            nb_desc_parts.append("lecture notebook")
-        nb_desc = " · ".join(nb_desc_parts)
-        lines.append(f'<div class="nav-card" markdown>\n'
-                     f':material-notebook:{{ .card-icon }}\n\n'
-                     f'**Notebooks**\n\n'
-                     f'{nb_desc}\n\n')
-        if lab_nb_chk:
-            nb_gh = f"{GITHUB_RAW_BASE}/notebooks/labs/lab_day{dz}.ipynb"
-            lines.append(f'[:material-notebook: Lab Notebook]({nb_gh}){{ target=_blank }}\n')
-        if lec_nb_chk:
-            nb_gh = f"{GITHUB_RAW_BASE}/notebooks/lectures/lecture_day{dz}.ipynb"
-            lines.append(f'[:material-notebook-outline: Lecture Notebook]({nb_gh}){{ target=_blank }}\n')
-        lines.append(f'</div>\n')
+    if has_code:
+        all_zip_rel = code_assets[day_num].get("all_zip")
+        if all_zip_rel:
+            # Convert "../../downloads/..." (relative to lab.md) to "../downloads/..." for index.md
+            all_zip_index_rel = all_zip_rel.replace("../../downloads/", "../../downloads/")
+            lines.append(
+                f'<div class="nav-card" markdown>\n'
+                f':material-folder-download:{{ .card-icon }}\n\n'
+                f'**Starter Code**\n\n'
+                f'All exercises bundled\n\n'
+                f'[:octicons-arrow-right-16: Download .zip]({all_zip_index_rel})\n'
+                f'</div>\n'
+            )
     lines.append('</div>\n')
 
     # Videos section
@@ -312,42 +293,20 @@ def build_lab_zips(code_assets):
 
 
 def generate_code_page(day_num, code_assets):
-    """Generate a code.md page for a given day with download links and JupyterLab links."""
+    """Generate a code.md page for a given day with download links."""
     if day_num not in code_assets:
         return None
 
     assets = code_assets[day_num]
     dz = f"{day_num:02d}"
     lines = []
-    lines.append(f"---\ntitle: \"Day {day_num} — Code & Notebooks\"\n---\n")
-    lines.append(f"# :material-download-circle: Day {day_num} — Code & Notebooks\n")
+    lines.append(f"---\ntitle: \"Day {day_num} — Code Downloads\"\n---\n")
+    lines.append(f"# :material-download-circle: Day {day_num} — Code Downloads\n")
 
     # Download-all button
     if assets.get("all_zip"):
         lines.append(f'[:material-folder-download: Download All Starter Code (.zip)]({assets["all_zip"]})'
                      f'{{ .md-button .md-button--primary }}\n')
-
-    # JupyterLab banner
-    lines.append(f'!!! tip "Open files in JupyterLab"\n'
-                 f'    Click the **:material-notebook: Open in Jupyter** links below to open files '
-                 f'directly in your local JupyterLab instance.\n'
-                 f'    Start JupyterLab from the repo root: `cd hdl-for-dsd && jupyter lab`\n')
-
-    # Lab notebook (.ipynb generated from README by jupytext)
-    lab_dir = assets["lab_dir"]
-    nb_name = f"{lab_dir.name}_lab.ipynb"
-    nb_path = lab_dir / nb_name
-    if nb_path.exists():
-        nb_rel = nb_path.relative_to(REPO)
-        nb_gh = f"{GITHUB_RAW_BASE}/{nb_rel}"
-        nb_jup = f"{JUPYTER_LAB_BASE}/{nb_rel}"
-        lines.append("## :material-notebook: Lab Notebook\n")
-        lines.append(f"The full lab guide is also available as a Jupyter notebook "
-                     f"(auto-generated from the lab markdown via `jupytext`).\n")
-        lines.append(f'[:material-notebook: Open `{nb_name}` in Hub]({nb_jup})'
-                     f'{{ .md-button .md-button--primary target=_blank }} '
-                     f'[:material-github: View on GitHub]({nb_gh})'
-                     f'{{ .md-button target=_blank }}\n')
 
     # Shared files
     if assets["shared_files"]:
@@ -359,9 +318,6 @@ def generate_code_page(day_num, code_assets):
             rel = f.relative_to(REPO)
             gh = f"{GITHUB_RAW_BASE}/{rel}"
             links = f"[:material-github: GitHub]({gh}){{ target=_blank }}"
-            if f.suffix.lower() in JUPYTER_EXTENSIONS or f.name == "Makefile":
-                jup = f"{JUPYTER_LAB_BASE}/{rel}"
-                links += f" · [:material-notebook: Open in Jupyter]({jup}){{ target=_blank }}"
             icon = _file_icon_md(f)
             lines.append(f"| {icon} `{f.name}` | {links} |")
         lines.append("")
@@ -383,9 +339,6 @@ def generate_code_page(day_num, code_assets):
             rel = f.relative_to(REPO)
             gh = f"{GITHUB_RAW_BASE}/{rel}"
             links = f"[:material-github: GitHub]({gh}){{ target=_blank }}"
-            if f.suffix.lower() in JUPYTER_EXTENSIONS or f.name == "Makefile":
-                jup = f"{JUPYTER_LAB_BASE}/{rel}"
-                links += f" · [:material-notebook: Open in Jupyter]({jup}){{ target=_blank }}"
             icon = _file_icon_md(f)
             lines.append(f"| {icon} `{f.name}` | {links} |")
         lines.append("")
@@ -421,8 +374,7 @@ def _exercise_label(ex_name):
 
 FILE_ICONS = {".v": ":material-chip:", ".sv": ":material-chip:",
               ".hex": ":material-hexadecimal:", ".pcf": ":material-pin:",
-              ".md": ":material-text:", ".py": ":material-language-python:",
-              ".ipynb": ":material-notebook:"}
+              ".md": ":material-text:", ".py": ":material-language-python:"}
 
 def _file_icon_md(f):
     if f.name == "Makefile":
@@ -474,24 +426,10 @@ def generate_lab_page(day_num, dir_name, code_assets):
 
     if has_code and assets.get("all_zip"):
         banner_lines.append(
-            f'!!! abstract "Starter Code & Notebooks"\n'
+            f'!!! abstract "Starter Code"\n'
             f'    [:material-folder-download: Download All Starter Code (.zip)]'
             f'({assets["all_zip"]}){{ .md-button .md-button--primary }}\n'
         )
-        # Notebook link
-        nb_path = REPO / "notebooks" / "labs" / f"lab_day{dz}.ipynb"
-        if nb_path.exists():
-            nb_rel = nb_path.relative_to(REPO)
-            nb_jup = f"{JUPYTER_LAB_BASE}/{nb_rel}"
-            nb_gh = f"{GITHUB_RAW_BASE}/{nb_rel}"
-            banner_lines.append(
-                f'    [:material-notebook: Open in JupyterLab]({nb_jup})'
-                f'{{ .md-button target=_blank }}\n'
-                f'    [:material-download: Download .ipynb](../../notebooks/labs/lab_day{dz}.ipynb)'
-                f'{{ .md-button target=_blank }}\n'
-                f'    [:material-github: View on GitHub]({nb_gh})'
-                f'{{ .md-button target=_blank }}\n'
-            )
         banner_lines.append(
             f'    Individual exercise downloads and file links are below each exercise.\n'
         )
@@ -518,17 +456,12 @@ def generate_lab_page(day_num, dir_name, code_assets):
                     f'[:material-check-circle: Solution .zip]({ex["solution_zip"]})'
                     f'{{ .md-button }}'
                 )
-            # GitHub + Jupyter links for all starter files
+            # GitHub links for all starter files
             for sf in ex.get("starter_files", []):
                 gh = f"{GITHUB_RAW_BASE}/{sf.relative_to(REPO)}"
                 parts.append(
                     f'[:material-github: `{sf.name}`]({gh}){{ target=_blank }}'
                 )
-                if sf.suffix.lower() in JUPYTER_EXTENSIONS or sf.name == "Makefile":
-                    jup = f"{JUPYTER_LAB_BASE}/{sf.relative_to(REPO)}"
-                    parts.append(
-                        f'[:material-notebook: Jupyter]({jup}){{ target=_blank }}'
-                    )
 
             if parts:
                 btns = " ".join(parts)
@@ -803,17 +736,6 @@ def post_build():
     theme_src = REPO / "lectures" / "theme"
     theme_dst = site / "lectures" / "theme"
     # Already copied by copytree above
-
-
-    # Copy notebooks (lab + lecture)
-    nb_src = REPO / "notebooks"
-    nb_dst = site / "notebooks"
-    if nb_src.exists():
-        if nb_dst.exists():
-            shutil.rmtree(nb_dst)
-        shutil.copytree(nb_src, nb_dst)
-        nb_count = sum(1 for _ in nb_dst.rglob("*.ipynb"))
-        print(f"  Copied: {nb_count} notebooks → _site/notebooks/")
 
     print(f"  Post-build complete. Site ready for deployment.")
 

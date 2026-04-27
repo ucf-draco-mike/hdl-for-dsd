@@ -14,14 +14,7 @@ cache:
 pages:
   stage: deploy
   script:
-    - pip install -r requirements.txt jupytext
-    # Generate Jupyter notebooks from lab markdown
-    - |
-      for readme in labs/week*_day*/README.md; do
-        lab_dir=$(dirname "$readme")
-        day_dir=$(basename "$lab_dir")
-        jupytext --to notebook --output "${lab_dir}/${day_dir}_lab.ipynb" "$readme"
-      done
+    - pip install -r requirements.txt
     - python3 scripts/prep_mkdocs.py
     - mkdocs build --site-dir public
     # Copy slides into deployed site so "View Slides" links work

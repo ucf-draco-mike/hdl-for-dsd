@@ -31,17 +31,13 @@ Session timeline & instructor notes
 </div>
 
 <div class="nav-card" markdown>
-:material-notebook:{ .card-icon }
+:material-folder-download:{ .card-icon }
 
-**Notebooks**
+**Starter Code**
 
-Lab notebook · lecture notebook
+All exercises bundled
 
-
-[:material-notebook: Lab Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/labs/lab_day16.ipynb){ target=_blank }
-
-[:material-notebook-outline: Lecture Notebook](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/notebooks/lectures/lecture_day16.ipynb){ target=_blank }
-
+[:octicons-arrow-right-16: Download .zip](../../downloads/day16/day16_all_starter.zip)
 </div>
 
 </div>
