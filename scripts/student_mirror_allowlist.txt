@@ -17,6 +17,7 @@
 flake.nix
 .envrc
 .gitignore
+.vscode/
 LICENSE
 labs/
 shared/
