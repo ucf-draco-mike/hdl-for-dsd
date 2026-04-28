@@ -15,4 +15,14 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   });
+
+  // Code blocks inside a closed <details> have empty innerText, which makes
+  // mkdocs-material's clipboard handler copy nothing. Material reads from a
+  // [data-copy] ancestor when present, so seed that with textContent.
+  document.querySelectorAll('details .highlight code').forEach(function (code) {
+    var pre = code.closest('pre');
+    if (pre && !pre.hasAttribute('data-copy')) {
+      pre.setAttribute('data-copy', code.textContent.replace(/\n+$/, ''));
+    }
+  });
 });
