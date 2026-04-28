@@ -227,7 +227,84 @@ You should see:
 
 ---
 
-## Step 4: Verify Everything Works
+## Step 4: Install & Configure VS Code
+
+VS Code is the recommended IDE for this course. The repo ships a workspace
+configuration (`.vscode/settings.json` and `.vscode/extensions.json`) that wires
+up `iverilog` linting with `-g2012 -Wall`, file associations for `.v`/`.sv`/
+`.svh`/`.vh`, an 80-column ruler, and a SystemVerilog formatter. Doing this step
+*before* verification means you'll catch syntax errors inline as you work
+through the verify script and Day 1 lab.
+
+### Install VS Code
+
+Download from [code.visualstudio.com](https://code.visualstudio.com) and follow
+the installer for your platform. On Linux/macOS, make sure the `code` command
+is on your `PATH` (VS Code → Command Palette → "Shell Command: Install 'code'
+command in PATH" if it isn't).
+
+### Required extensions
+
+| # | Extension ID | Purpose |
+|---|--------------|---------|
+| 1 | `mshr-h.VerilogHDL` | Syntax highlighting + iverilog linting (the primary HDL extension) |
+| 2 | `surfer-project.surfer` | In-editor VCD/FST waveform viewer for quick peeks (GTKWave is still the primary viewer — see Step 5) |
+| 3 | `usernamehw.errorlens` | Shows linting errors inline next to the offending line |
+| 4 | `ms-vscode.makefile-tools` | Clickable Makefile targets in the sidebar; parses `make` output |
+| 5 | `bmpenuelas.systemverilog-formatter-vscode` | Formatter wired to `[verilog]` and `[systemverilog]` in `.vscode/settings.json` |
+
+**Easiest install:** open the repo with `code .` and click **Install** on the
+"This workspace has extension recommendations" toast — VS Code reads
+`.vscode/extensions.json` and installs all five.
+
+**Or run the one-liner:**
+
+```bash
+code --install-extension mshr-h.VerilogHDL && \
+code --install-extension surfer-project.surfer && \
+code --install-extension usernamehw.errorlens && \
+code --install-extension ms-vscode.makefile-tools && \
+code --install-extension bmpenuelas.systemverilog-formatter-vscode
+```
+
+### Open the repo
+
+```bash
+cd hdl-for-dsd
+code .
+```
+
+> **Linting caveat.** The shipped settings include
+> `verilog.linting.iverilog.runAtFileLocation: true`, which lints the open file
+> in isolation. Testbenches that instantiate sibling modules will show
+> "module not found" warnings in the editor — that is expected. Rely on
+> `make sim` / `make prog` from the lab directory for full multi-file
+> verification; the in-editor linter is best-effort syntax checking only.
+
+> **VS Code on WSL2 (Windows).** Install **VS Code on the Windows host**, then
+> install the [Remote - WSL](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl)
+> extension on the host. From your WSL2 Ubuntu terminal — already inside
+> `nix develop` — run `code .`. VS Code will install its server *into* the WSL
+> environment so the extensions and `iverilog` from the Nix shell are picked up
+> correctly. Do **not** install the HDL extensions on the Windows host; they
+> need to live on the Linux side.
+
+### Other editors
+
+If you prefer a different editor, syntax highlighting is available via:
+
+| Editor | Plugin/Mode |
+|--------|-------------|
+| **Vim / Neovim** | Built-in syntax highlighting; optionally [verilog_systemverilog.vim](https://github.com/vhda/verilog_systemverilog.vim) |
+| **Emacs** | `verilog-mode` (built-in) |
+| **Sublime Text** | [SystemVerilog](https://packagecontrol.io/packages/SystemVerilog) package |
+
+The rest of this guide assumes VS Code, but every command works from any
+terminal.
+
+---
+
+## Step 5: Verify Everything Works
 
 Run the built-in verification script from inside the Nix shell:
 
@@ -285,7 +362,7 @@ echo "════════════════════════�
 
 ---
 
-## Step 5: Go Board Connection Test
+## Step 6: Go Board Connection Test
 
 1. Connect the Go Board to your computer via USB.
 2. Verify the FTDI device is recognized:
@@ -302,21 +379,6 @@ echo "════════════════════════�
    iceprog test.bin
    ```
    If this completes without errors, your full synthesis → program pipeline is working.
-
----
-
-## Text Editor Setup
-
-Any editor works. Here are recommended setups for Verilog syntax highlighting:
-
-| Editor | Plugin/Mode |
-|--------|-------------|
-| **VS Code** | [Verilog-HDL/SystemVerilog](https://marketplace.visualstudio.com/items?itemName=mshr-h.VerilogHDL) extension |
-| **Vim / Neovim** | Built-in syntax highlighting; optionally [verilog_systemverilog.vim](https://github.com/vhda/verilog_systemverilog.vim) |
-| **Emacs** | `verilog-mode` (built-in) |
-| **Sublime Text** | [SystemVerilog](https://packagecontrol.io/packages/SystemVerilog) package |
-
-> **VS Code + WSL2:** Install the [Remote - WSL](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) extension to edit and run everything inside WSL seamlessly.
 
 ---
 
@@ -394,6 +456,7 @@ The `build_all.sh` script runs each step in order:
 ```bash
 # ── Enter the course environment ──
 cd hdl-for-dsd && nix develop
+code .                                     # open the repo in VS Code
 
 # ── Simulation ──
 iverilog -o sim.vvp -g2012 tb_module.v module.v

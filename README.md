@@ -92,13 +92,21 @@ nix develop
 
 The first run downloads the toolchain (~5–15 min). Subsequent runs are instant. You'll see a banner confirming all tool versions.
 
-### 4. Verify
+### 4. Open in VS Code
+
+```bash
+code .
+```
+
+The repo ships `.vscode/settings.json` and `.vscode/extensions.json`, so VS Code will prompt you to install the five recommended extensions (Verilog-HDL, Surfer, Error Lens, Makefile Tools, SystemVerilog Formatter). Full IDE setup — including the install one-liner and WSL2 guidance — is in [`docs/course_setup_guide.md`](docs/course_setup_guide.md#step-4-install-configure-vs-code).
+
+### 5. Verify
 
 ```bash
 yosys --version && nextpnr-ice40 --version && iverilog -V
 ```
 
-### 5. First Build (Day 1)
+### 6. First Build (Day 1)
 
 ```bash
 cd labs/week1_day01

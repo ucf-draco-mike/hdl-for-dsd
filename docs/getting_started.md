@@ -91,7 +91,23 @@ nix develop          # first run: ~5-15 min download; instant after that
 
 ---
 
-## :material-numeric-4-circle: Verify
+## :material-numeric-4-circle: Open in VS Code
+
+VS Code is the recommended IDE. Open the repo and accept the
+"Install recommended extensions" prompt — the workspace ships
+`.vscode/settings.json` and `.vscode/extensions.json` that wire up iverilog
+linting, inline error display, in-editor waveforms, and clickable Makefile
+targets.
+
+```bash
+code .   # from inside the hdl-for-dsd directory
+```
+
+[:octicons-arrow-right-16: Full IDE setup (extensions, WSL2 notes, formatter)](setup.md#step-4-install-configure-vs-code){ .md-button }
+
+---
+
+## :material-numeric-5-circle: Verify
 
 ```bash
 yosys --version && nextpnr-ice40 --version && iverilog -V
@@ -101,7 +117,7 @@ All three should print version numbers without errors.
 
 ---
 
-## :material-numeric-5-circle: First Build
+## :material-numeric-6-circle: First Build
 
 Plug in the Go Board via USB, then:
 
@@ -113,7 +129,7 @@ make prog
 If an LED lights up on the board — **you're ready for Day 1**.
 
 !!! success "You're set"
-    If all five steps completed successfully, you have a fully working environment.
+    If all six steps completed successfully, you have a fully working environment.
     Head to [Day 1 →](days/day01/) when the course begins.
 
 !!! failure "Something broke?"
