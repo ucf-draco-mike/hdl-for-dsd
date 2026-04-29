@@ -61,13 +61,21 @@
         // The visible slide is the one reveal marked .present.
         var slide = document.querySelector('.reveal .slides section.present');
         if (!slide) return 1;
-        // scrollHeight is the unscaled layout height — transforms don't
-        // affect it, so we always measure the "natural" size even if a
-        // stale scale is still applied.
-        var natural = slide.scrollHeight;
-        var target  = window.innerHeight * SAFETY;
-        if (natural <= target) return 1;
-        var s = target / natural;
+        // Reveal already scales .slides to fit (width/height config →
+        // viewport). scrollHeight is unscaled (logical) px, but innerHeight
+        // is actual viewport px — so we have to factor reveal's scale in,
+        // otherwise we double-shrink and slides become tiny.
+        var revealScale = 1;
+        if (typeof Reveal !== 'undefined' && typeof Reveal.getScale === 'function') {
+            var r = Reveal.getScale();
+            if (isFinite(r) && r > 0) revealScale = r;
+        }
+        var visibleH = slide.scrollHeight * revealScale;
+        var visibleW = slide.scrollWidth  * revealScale;
+        var targetH  = window.innerHeight * SAFETY;
+        var targetW  = window.innerWidth  * SAFETY;
+        if (visibleH <= targetH && visibleW <= targetW) return 1;
+        var s = Math.min(targetH / visibleH, targetW / visibleW);
         return s < MIN_S ? MIN_S : s;
     }
 
@@ -75,6 +83,18 @@
         if (!enabled) { root.style.removeProperty('--fit-scale'); return; }
         var s = computeScale();
         root.style.setProperty('--fit-scale', s.toFixed(3));
+    }
+
+    function watchActiveSlideImages() {
+        var slide = document.querySelector('.reveal .slides section.present');
+        if (!slide) return;
+        var imgs = slide.querySelectorAll('img');
+        for (var i = 0; i < imgs.length; i++) {
+            var img = imgs[i];
+            if (img.complete) continue;
+            img.addEventListener('load',  applyScale, { once: true });
+            img.addEventListener('error', applyScale, { once: true });
+        }
     }
 
     function renderButton(btn) {
@@ -164,14 +184,27 @@
         // Initial state — button reflects saved pref; class + var reflect it too.
         if (enabled) body.classList.add('fit-mode');
 
-        Reveal.on('ready', applyScale);
+        function scheduleApply() { requestAnimationFrame(applyScale); }
+
+        Reveal.on('ready', scheduleApply);
         Reveal.on('slidechanged', function () {
             // Reveal updates .present synchronously before firing; rAF waits
-            // for layout so scrollHeight is accurate.
-            requestAnimationFrame(applyScale);
+            // for layout so scrollHeight is accurate. Also rebind image
+            // load watchers for the new active slide.
+            scheduleApply();
+            watchActiveSlideImages();
         });
-        Reveal.on('fragmentshown', applyScale);
-        Reveal.on('fragmenthidden', applyScale);
+        Reveal.on('fragmentshown', scheduleApply);
+        Reveal.on('fragmenthidden', scheduleApply);
+        // Reveal recomputes its own scale on resize — re-fit afterwards.
+        Reveal.on('resize', scheduleApply);
+
+        // Web fonts shift metrics after first paint; re-measure when ready.
+        if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+            document.fonts.ready.then(scheduleApply);
+        }
+        // Images in the initial active slide may still be loading.
+        watchActiveSlideImages();
 
         var resizeTimer;
         window.addEventListener('resize', function () {
