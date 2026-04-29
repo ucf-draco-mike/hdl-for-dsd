@@ -150,6 +150,34 @@ wire [8:0] sum = a + 1;  // what is sum?</code></pre>
     <aside class="notes">The signed/unsigned bug is the most common arithmetic bug in Verilog. Explicit <code>signed</code> declaration is mandatory in any signed-arithmetic design.</aside>
 </section>
 
+<section>
+    <h2><span style="color:#D4A843;">📐</span> LUT Cost Cheat Sheet (iCE40 LUT4)</h2>
+    <p style="font-size:0.72em;margin-top:0.2em;">
+        Back-of-the-envelope estimates <em>before</em> you run <code>make stat</code>.
+        Numbers are LUT4s on iCE40; <code>+</code> assumes the <code>SB_CARRY</code> chain is used.
+    </p>
+    <table style="font-size:0.66em;margin-top:0.3em;">
+        <thead><tr><th>Construct</th><th>Verilog</th><th>≈ LUT4 count</th><th>Why</th></tr></thead>
+        <tbody>
+            <tr><td>Single k-input gate</td><td><code>&amp;{a,b,c,...}</code> (k inputs)</td><td>⌈(k&minus;1)/3⌉</td><td>Cascade LUT4s, 3 new inputs each</td></tr>
+            <tr><td>N-bit adder (carry chain)</td><td><code>a + b</code></td><td>≈ N</td><td>1 LUT + 1 SB_CARRY per bit</td></tr>
+            <tr><td>N-bit adder (no carry chain)</td><td>hand-rolled ripple</td><td>≈ 2N</td><td>Sum + carry both eat LUTs</td></tr>
+            <tr><td>N-bit equality compare</td><td><code>a == b</code></td><td>≈ ⌈N/3⌉ + ⌈N/9⌉</td><td>XOR per bit, then OR-tree</td></tr>
+            <tr><td>N-bit magnitude compare</td><td><code>a &lt; b</code></td><td>≈ N</td><td>Subtractor + sign bit</td></tr>
+            <tr><td>M:1 mux, 1-bit data</td><td><code>case(sel)</code></td><td>≈ ⌈(M&minus;1)/3⌉</td><td>Tree of 4:1 muxes per output bit</td></tr>
+            <tr><td>M:1 mux, W-bit data</td><td>indexed select</td><td>≈ W · ⌈(M&minus;1)/3⌉</td><td>Replicated per bit</td></tr>
+            <tr><td>N-bit register</td><td><code>always @(posedge clk)</code></td><td>0 LUTs (N FFs)</td><td>FFs are free of LUTs</td></tr>
+            <tr><td>N×N parallel multiplier</td><td><code>a * b</code></td><td>≈ N² (no DSP block)</td><td>Partial products + carry tree</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>How to use it:</strong> estimate <em>before</em> you synthesize, then run <code>make stat</code> and check.
+        If your guess and the tool disagree by more than ~20%, something interesting happened — find out what
+        (carry chain not inferred? a constant-folded? case statement collapsed?). That gap is where the learning is.
+    </div>
+    <aside class="notes">This is the table I wish I&apos;d had on day one. None of these numbers are exact — synthesis will fold constants, share logic, and surprise you — but they&apos;re close enough to make a prediction before you hit the tool. The k-input gate row is the cascade rule from Day 1. The adder row tells you why an N-bit add costs roughly N LUTs on iCE40, not 2N: the carry chain takes half the work into dedicated routing. The compare and mux rows tell you why a wide case statement or a giant priority encoder can dominate your area. The multiplier row is the punchline of this whole video: parallel multiplication scales as N squared, which is why a 16x16 multiplier is already a quarter of the iCE40. Use this table to predict, then use yosys stat to verify. The gap between prediction and reality is where you actually learn how the synthesizer thinks.</aside>
+</section>
+
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
     <h2 style="color:#FFC904;">Adder &amp; Multiplier Synthesis Comparison</h2>
