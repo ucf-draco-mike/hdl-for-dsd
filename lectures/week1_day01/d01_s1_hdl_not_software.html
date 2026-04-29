@@ -147,10 +147,42 @@ assign d = a * 2;</code></pre>
 <!-- ==================== SLIDE 5: THE RIVER ANALOGY (with SVG) ==================== -->
 <section data-background-color="#FAFAFA">
     <h2>The River Analogy</h2>
-    <div style="margin-top: 0.5em;">
-        <img src="diagrams/d01_river_analogy.svg" alt="Software as recipe vs Hardware as river system" style="width: 100%; max-width: 850px; display: block; margin: 0 auto;">
+    <div style="margin-top: 0.3em;">
+        <img src="diagrams/d01_river_analogy.svg" alt="Software as recipe vs Hardware as river system" style="width: 100%; max-width: 720px; display: block; margin: 0 auto;">
     </div>
-    <div class="fragment golden-rule" style="margin-top: 0.5em;">
+    <div class="two-col fragment" style="margin-top: 0.4em; gap: 1.5em;">
+        <div class="col">
+            <p style="font-size: 0.65em; margin: 0 0 0.2em 0; color: #7B1FA2; font-weight: 700;">
+                Software (recipe) &nbsp;<span style="color:#666; font-weight: 400;">b=3, c=4</span>
+            </p>
+            <table style="font-size: 0.6em; margin: 0;">
+                <thead>
+                    <tr><th>Course of execution</th><th>a</th><th>d</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>before line 1</td><td>—</td><td>—</td></tr>
+                    <tr><td>after <code>a = b + c</code></td><td>7</td><td>—</td></tr>
+                    <tr><td>after <code>d = a * 2</code></td><td>7</td><td>14</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col">
+            <p style="font-size: 0.65em; margin: 0 0 0.2em 0; color: #1565C0; font-weight: 700;">
+                Hardware (river) &nbsp;<span style="color:#666; font-weight: 400;">inputs change over time</span>
+            </p>
+            <table style="font-size: 0.6em; margin: 0;">
+                <thead>
+                    <tr><th>Course of execution</th><th>a</th><th>d</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>always (b=3, c=4)</td><td>7</td><td>14</td></tr>
+                    <tr><td>always (b=5, c=4)</td><td>9</td><td>18</td></tr>
+                    <tr><td>always (b=5, c=1)</td><td>6</td><td>12</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="fragment golden-rule" style="margin-top: 0.4em; font-size: 0.85em;">
         You are not writing instructions.<br>
         You are describing the geography of the river.
     </div>
@@ -159,6 +191,10 @@ assign d = a * 2;</code></pre>
         Software is like following a recipe: do step 1, then step 2, then step 3. Sequential.
         Hardware is like a river system. Water flows through ALL tributaries simultaneously.
         If you add a dam here, it affects the flow over there. Everything is happening at once.
+        Look at the two small tables. On the software side, there's a moment where a exists
+        but d hasn't been computed yet — a real ordering. On the hardware side, a and d
+        always reflect the current inputs, simultaneously. There is no "before" and "after"
+        within a single set of inputs — only different river states for different inputs.
         [PAUSE — let this sink in]
         You are not writing instructions. You are describing the geography of the river.
         When you're confused about why Verilog behaves a certain way, come back to this analogy.
