@@ -87,6 +87,19 @@ endmodule</code></pre>
 </section>
 
 <section>
+    <h2>Debouncer as a State Machine</h2>
+    <div style="margin-top:0.2em;">
+        <img src="diagrams/d05_debounce_fsm.svg"
+             alt="Counter-based debouncer state diagram: STABLE_LOW and STABLE_HIGH states, with COUNTING_RISE and COUNTING_FALL transient states; bounces reset the counter, full count accepts the new value."
+             style="width:100%;max-width:760px;display:block;margin:0 auto;">
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Read the picture:</strong> Two stable states (output 0 / output 1). Two transient counting states sit between them. A clean press climbs all the way to <code>count == MAX</code> (green path → accept). A bounce drops back to <code>i_noisy = previous</code> (red dashed → reset counter). The 4-line <code>always</code> block on the previous slide is exactly this graph.
+    </div>
+    <aside class="notes">The code looks like &ldquo;3 if-branches&rdquo; — but conceptually it's a 4-state FSM. Drawing it makes the persistence-then-accept vs. bounce-resets-counter logic visible. Same pattern shows up in any &ldquo;debounce / glitch-filter / N-consecutive-samples&rdquo; design.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Complete Input Pipeline</h2>
     <pre class="synth"><code class="language-verilog">//  i_btn  →  [2-FF sync]  →  [debouncer]  →  [edge detect]  →  i_pressed_pulse
 //  (raw)      (metastable      (filter         (1-cycle

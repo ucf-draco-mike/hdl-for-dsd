@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C62828"/>
+    </marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/>
+    </marker>
+  </defs>
+
+  <text x="390" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">UART RX FSM — 16× Oversampling, Mid-Bit Sampling</text>
+  <text x="390" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">Advances on r_osx_tick (1 of 16 oversample slots per bit) · validates start &amp; stop</text>
+
+  <!-- Reset arrow -->
+  <line x1="110" y1="62" x2="110" y2="98" stroke="#C62828" stroke-width="2" marker-end="url(#arr-r)"/>
+  <text x="110" y="56" text-anchor="middle" font-size="10" fill="#C62828" font-weight="600">RESET</text>
+
+  <!-- ===== S_IDLE ===== -->
+  <circle cx="110" cy="170" r="64" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="110" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">S_IDLE</text>
+  <text x="110" y="176" text-anchor="middle" font-size="10" fill="#555">wait for fall</text>
+  <text x="110" y="192" text-anchor="middle" font-size="9" fill="#888" font-style="italic">r_rx_sync = 1</text>
+
+  <!-- Self-loop S_IDLE -->
+  <path d="M 60,140 Q 20,100 55,135" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="6" y="105" font-size="9" fill="#888">no falling edge</text>
+
+  <!-- S_IDLE → S_START -->
+  <path d="M 173,158 Q 250,105 318,150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="245" y="113" text-anchor="middle" font-size="9" fill="#333" font-weight="600">falling edge on rx_sync</text>
+  <text x="245" y="125" text-anchor="middle" font-size="8" fill="#888" font-style="italic">r_slot ← 0</text>
+
+  <!-- ===== S_START ===== -->
+  <circle cx="365" cy="170" r="68" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="365" y="156" text-anchor="middle" font-size="13" font-weight="700" fill="#F9A825">S_START</text>
+  <text x="365" y="174" text-anchor="middle" font-size="9" fill="#555">wait 8 osx ticks</text>
+  <text x="365" y="188" text-anchor="middle" font-size="9" fill="#555">verify line still 0</text>
+  <text x="365" y="200" text-anchor="middle" font-size="9" fill="#888" font-style="italic">(mid-start-bit)</text>
+
+  <!-- Self-loop S_START -->
+  <path d="M 320,138 Q 350,98 340,135" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="298" y="100" font-size="9" fill="#888">slot &lt; 8</text>
+
+  <!-- S_START → S_IDLE (false start - glitch) -->
+  <path d="M 305,205 Q 220,260 110,234" fill="none" stroke="#C62828" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#arr-r)"/>
+  <text x="220" y="252" text-anchor="middle" font-size="9" fill="#C62828" font-weight="600">slot==8 &amp; rx_sync=1</text>
+  <text x="220" y="265" text-anchor="middle" font-size="8" fill="#C62828" font-style="italic">false start (glitch)</text>
+
+  <!-- S_START → S_DATA -->
+  <path d="M 432,158 Q 510,105 580,150" fill="none" stroke="#2E7D32" stroke-width="2.2" marker-end="url(#arr-g)"/>
+  <text x="505" y="113" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="700">slot==8 &amp; rx_sync=0</text>
+  <text x="505" y="125" text-anchor="middle" font-size="8" fill="#888" font-style="italic">confirmed start · r_bit ← 0</text>
+
+  <!-- ===== S_DATA ===== -->
+  <circle cx="630" cy="170" r="68" fill="#FFEBEE" stroke="#C62828" stroke-width="2.5"/>
+  <text x="630" y="155" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">S_DATA</text>
+  <text x="630" y="172" text-anchor="middle" font-size="9" fill="#555">sample at slot 7</text>
+  <text x="630" y="185" text-anchor="middle" font-size="9" fill="#555">shift into r_data</text>
+  <text x="630" y="200" text-anchor="middle" font-size="9" fill="#888" font-style="italic">repeat 8 times</text>
+
+  <!-- Self-loop S_DATA -->
+  <path d="M 685,135 Q 730,95 700,135" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="700" y="95" font-size="9" fill="#888">slot &lt; 15  OR</text>
+  <text x="700" y="106" font-size="9" fill="#888">r_bit &lt; 7</text>
+
+  <!-- S_DATA → S_STOP -->
+  <path d="M 630,238 Q 630,295 478,310" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="630" y="278" text-anchor="end" font-size="9" fill="#333" font-weight="600">slot==15 &amp; r_bit==7</text>
+
+  <!-- ===== S_STOP ===== -->
+  <circle cx="415" cy="320" r="68" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="415" y="306" text-anchor="middle" font-size="13" font-weight="700" fill="#2E7D32">S_STOP</text>
+  <text x="415" y="324" text-anchor="middle" font-size="9" fill="#555">verify rx_sync=1</text>
+  <text x="415" y="337" text-anchor="middle" font-size="9" fill="#555">pulse o_valid</text>
+  <text x="415" y="351" text-anchor="middle" font-size="9" fill="#888" font-style="italic">(mid-stop-bit)</text>
+
+  <!-- Self-loop S_STOP -->
+  <path d="M 470,355 Q 510,388 490,358" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="495" y="385" font-size="9" fill="#888">slot &lt; 8</text>
+
+  <!-- S_STOP → S_IDLE (good frame) -->
+  <path d="M 350,310 Q 220,310 122,232" fill="none" stroke="#2E7D32" stroke-width="2.2" marker-end="url(#arr-g)"/>
+  <text x="225" y="298" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="700">slot==8 &amp; rx_sync=1</text>
+  <text x="225" y="310" text-anchor="middle" font-size="8" fill="#2E7D32" font-style="italic">o_valid ← 1, byte ready</text>
+
+  <!-- S_STOP → S_IDLE (framing error) -->
+  <path d="M 360,360 Q 220,380 100,236" fill="none" stroke="#C62828" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#arr-r)"/>
+  <text x="225" y="378" text-anchor="middle" font-size="9" fill="#C62828" font-weight="700">slot==8 &amp; rx_sync=0</text>
+  <text x="225" y="392" text-anchor="middle" font-size="8" fill="#C62828" font-style="italic">o_frame_err ← 1</text>
+
+  <!-- Legend -->
+  <rect x="555" y="280" width="215" height="105" rx="6" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
+  <text x="662" y="298" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Two-level counter</text>
+  <text x="565" y="316" font-size="9" fill="#555">• inner: cycles → r_osx_tick</text>
+  <text x="565" y="330" font-size="9" fill="#555">  (16× per bit)</text>
+  <text x="565" y="346" font-size="9" fill="#555">• outer: r_slot 0..15 (within bit)</text>
+  <text x="565" y="362" font-size="9" fill="#555">         r_bit  0..7  (data bit)</text>
+  <text x="565" y="378" font-size="8" fill="#888" font-style="italic">Sample at slot 7 = mid-bit</text>
+</svg>

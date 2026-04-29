@@ -105,6 +105,19 @@
 </section>
 
 <section>
+    <h2>SPI Master FSM &mdash; State Diagram</h2>
+    <div style="margin-top:0.2em;">
+        <img src="diagrams/d12_spi_master_fsm.svg"
+             alt="SPI master FSM (Mode 0): IDLE waits for i_start; ASSERT_CS lowers chip select and waits a setup time; SHIFT toggles SCK 8 times, driving MOSI bit-by-bit (MSB first) and capturing MISO; DEASSERT raises CS and pulses o_done; returns to IDLE."
+             style="width:100%;max-width:760px;display:block;margin:0 auto;">
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Read the picture:</strong> Four states wrap the transaction — assert CS, shift 8 bits, deassert CS. The <code>S_SHIFT</code> self-loop is the heart of SPI: each iteration is one SCK pulse, MSB-first (opposite of UART's LSB-first). MOSI changes on the falling SCK edge so it's stable when the slave samples on the rising edge. Compare with UART TX: same shape, different protocol &mdash; this is the &ldquo;FSM + datapath&rdquo; pattern again.
+    </div>
+    <aside class="notes">Like UART TX, SPI master decomposes cleanly into FSM (control) + shift register (datapath). The state machine handles CS framing and bit count; the shift register handles MOSI/MISO. Highlight the &ldquo;same-shape FSM, different protocol&rdquo; transfer.</aside>
+</section>
+
+<section>
     <h2>UART vs. SPI vs. I²C</h2>
     <table style="font-size:0.7em;">
         <thead><tr><th>Feature</th><th>UART</th><th>SPI</th><th>I²C</th></tr></thead>

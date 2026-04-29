@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C62828"/>
+    </marker>
+    <marker id="arr-y" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#F9A825"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">UART TX FSM — Moore Machine</text>
+  <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">10-bit frame: 1 start + 8 data + 1 stop · advances on baud_tick (CLKS_PER_BIT)</text>
+
+  <!-- Reset arrow -->
+  <line x1="100" y1="62" x2="100" y2="98" stroke="#C62828" stroke-width="2" marker-end="url(#arr-r)"/>
+  <text x="100" y="56" text-anchor="middle" font-size="10" fill="#C62828" font-weight="600">RESET</text>
+
+  <!-- ===== S_IDLE ===== -->
+  <circle cx="100" cy="170" r="62" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="100" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">S_IDLE</text>
+  <text x="100" y="176" text-anchor="middle" font-size="10" fill="#555">o_tx = 1</text>
+  <text x="100" y="192" text-anchor="middle" font-size="10" fill="#555">o_busy = 0</text>
+
+  <!-- Self-loop S_IDLE -->
+  <path d="M 50,140 Q 15,105 50,135" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="6" y="108" font-size="9" fill="#888">!i_valid</text>
+
+  <!-- S_IDLE → S_START -->
+  <path d="M 162,160 Q 245,105 318,150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="240" y="113" text-anchor="middle" font-size="9" fill="#333" font-weight="600">i_valid = 1</text>
+  <text x="240" y="125" text-anchor="middle" font-size="8" fill="#888" font-style="italic">latch r_shift ← i_data</text>
+
+  <!-- ===== S_START ===== -->
+  <circle cx="365" cy="170" r="62" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="365" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#F9A825">S_START</text>
+  <text x="365" y="176" text-anchor="middle" font-size="10" fill="#555">o_tx = 0</text>
+  <text x="365" y="192" text-anchor="middle" font-size="9" fill="#888" font-style="italic">1 bit time</text>
+
+  <!-- Self-loop S_START -->
+  <path d="M 320,135 Q 350,98 340,135" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="305" y="100" font-size="9" fill="#888">!baud_tick</text>
+
+  <!-- S_START → S_DATA -->
+  <path d="M 425,160 Q 510,110 580,150" fill="none" stroke="#F9A825" stroke-width="2" marker-end="url(#arr-y)"/>
+  <text x="500" y="113" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="600">baud_tick</text>
+  <text x="500" y="125" text-anchor="middle" font-size="8" fill="#888" font-style="italic">r_bit ← 0</text>
+
+  <!-- ===== S_DATA ===== -->
+  <circle cx="625" cy="170" r="62" fill="#FFEBEE" stroke="#C62828" stroke-width="2.5"/>
+  <text x="625" y="155" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">S_DATA</text>
+  <text x="625" y="173" text-anchor="middle" font-size="10" fill="#555">o_tx = r_shift[0]</text>
+  <text x="625" y="189" text-anchor="middle" font-size="9" fill="#888" font-style="italic">8 bit times (r_bit 0..7)</text>
+
+  <!-- Self-loop S_DATA: stay while bits left or no tick -->
+  <path d="M 670,138 Q 720,100 690,138" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="685" y="98" font-size="9" fill="#888">tick &amp; r_bit&lt;7</text>
+  <text x="685" y="110" font-size="8" fill="#888" font-style="italic">shift right</text>
+
+  <!-- S_DATA → S_STOP (loop down to S_STOP) -->
+  <path d="M 625,232 Q 625,275 478,275" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="620" y="262" text-anchor="end" font-size="9" fill="#333" font-weight="600">tick &amp; r_bit==7</text>
+
+  <!-- ===== S_STOP ===== -->
+  <circle cx="425" cy="290" r="62" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="425" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#2E7D32">S_STOP</text>
+  <text x="425" y="296" text-anchor="middle" font-size="10" fill="#555">o_tx = 1</text>
+  <text x="425" y="312" text-anchor="middle" font-size="9" fill="#888" font-style="italic">1 bit time</text>
+
+  <!-- Self-loop S_STOP -->
+  <path d="M 472,322 Q 510,355 488,328" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="495" y="350" font-size="9" fill="#888">!baud_tick</text>
+
+  <!-- S_STOP → S_IDLE (return) -->
+  <path d="M 363,290 Q 220,290 100,232" fill="none" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="220" y="313" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="600">baud_tick → frame done</text>
+  <text x="220" y="325" text-anchor="middle" font-size="8" fill="#888" font-style="italic">o_busy ← 0</text>
+
+  <!-- Side annotation: o_busy is high in START/DATA/STOP -->
+  <rect x="595" y="270" width="160" height="62" rx="6" fill="#F5F5F5" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="675" y="288" text-anchor="middle" font-size="10" font-weight="700" fill="#333">o_busy = 1</text>
+  <text x="675" y="304" text-anchor="middle" font-size="8" fill="#666">while in S_START,</text>
+  <text x="675" y="316" text-anchor="middle" font-size="8" fill="#666">S_DATA, or S_STOP</text>
+  <text x="675" y="328" text-anchor="middle" font-size="8" fill="#888" font-style="italic">(handshake to upstream)</text>
+</svg>
