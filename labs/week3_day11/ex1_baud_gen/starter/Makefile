@@ -23,4 +23,4 @@ wave: sim
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: all prog sim wave stat clean
+.PHONY: all sim wave clean

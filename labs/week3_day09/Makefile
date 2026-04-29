@@ -4,7 +4,7 @@
 # =============================================================================
 
 ex1:
-	$(MAKE) -C ex1_rom_sequencer/starter prog
+	$(MAKE) -C ex1_rom_sequencer/starter sim
 
 ex2:
 	$(MAKE) -C ex2_sync_ram/starter sim
@@ -13,7 +13,7 @@ ex3:
 	$(MAKE) -C ex3_initialized_ram/starter sim
 
 ex4:
-	$(MAKE) -C ex4_dual_display/starter prog
+	$(MAKE) -C ex4_dual_display/starter sim
 
 ex5:
 	$(MAKE) -C ex5_register_file/starter sim

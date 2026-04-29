@@ -21,4 +21,4 @@ stat: $(SRCS)
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: sim wave synth prog stat clean
+.PHONY: synth prog stat clean
