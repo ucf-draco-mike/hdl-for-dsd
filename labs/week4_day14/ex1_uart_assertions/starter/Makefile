@@ -2,6 +2,10 @@
 PROJECT  = uart_tx_asserted
 TOP      = uart_tx_asserted
 PCF      = ../../go_board.pcf
+
+FETCH_FROM_SOLUTION := tb_uart_tx_asserted.sv
+include ../../../auto_fetch.mk
+
 SRCS     = uart_tx_asserted.sv
 TB       = tb_uart_tx_asserted.sv
 

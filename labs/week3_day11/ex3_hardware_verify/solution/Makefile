@@ -2,7 +2,11 @@
 PROJECT  = top_uart_hello
 TOP      = top_uart_hello
 PCF      = ../../go_board.pcf
-SRCS     = top_uart_hello.v uart_tx.v debounce.v
+
+FETCH_FROM_SHARED := uart_tx.v debounce.v
+include ../../../auto_fetch.mk
+
+SRCS     = top_uart_hello.v $(FETCH_FROM_SHARED)
 TB       = tb_top_uart_hello.v
 
 DEVICE   = hx1k

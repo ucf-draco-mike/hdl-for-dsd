@@ -1,0 +1,3 @@
+# Files fetched from shared/lib and ../solution by auto_fetch.mk
+uart_tx.v
+tb_uart_rx.v

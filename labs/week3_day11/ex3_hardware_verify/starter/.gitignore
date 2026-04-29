@@ -1,0 +1,4 @@
+# Files fetched from shared/lib and ../solution by auto_fetch.mk
+uart_tx.v
+debounce.v
+tb_top_uart_hello.v
