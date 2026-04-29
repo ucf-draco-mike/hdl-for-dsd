@@ -27,22 +27,67 @@
 | 1.5 | Use a `.pcf` file to map HDL signals to physical Go Board pins |
 | 1.6 | Predict and verify the behavior of active-high LEDs and buttons |
 
+## Before You Start: Your Working Environment
+
+Every exercise in this course assumes you are working from inside the
+**course repo** with the **Nix dev shell active**. If this is your first
+time, complete the [Toolchain Setup Guide](../../setup.md) first — it
+walks through installing Nix, cloning `hdl-for-dsd`, and (optionally)
+configuring VS Code.
+
+**At the start of every lab session, do these four things:**
+
+```bash
+# 1. Open a terminal (on Windows: open the Ubuntu/WSL2 terminal).
+
+# 2. cd into your local clone of the course repo.
+cd ~/hdl-for-dsd        # adjust if you cloned elsewhere
+
+# 3. Activate the course toolchain (skip if you set up direnv).
+nix develop
+# You should see the "HDL for Digital System Design — Environment" banner.
+# All tools below (yosys, nextpnr-ice40, iverilog, gtkwave, …) are now on PATH.
+
+# 4. cd into today's lab directory. Every `make exN` command in this lab
+#    is run from here.
+cd labs/week1_day01
+```
+
+> **Plug in the Go Board now**, before running any `make exN prog`
+> targets. Linux/WSL2 users: confirm it shows up with
+> `lsusb | grep -i ftdi` (Linux) or `ls /dev/ttyUSB*` (WSL2 after
+> `usbipd attach`). macOS users: `ls /dev/cu.usbserial*`.
+
+> **VS Code users:** open the repo with `code .` from the `hdl-for-dsd`
+> directory (still inside `nix develop`) so the editor picks up the
+> Nix-provided `iverilog` for linting.
+
+---
+
 ## Exercises
 
 ### Setup Verification (15 min)
 
-Verify the full toolchain is installed and the Go Board is connected. Run the checklist in `starter/setup_check.sh` or verify manually:
+With the Nix shell active and the Go Board connected, confirm every tool
+in the toolchain reports a version. Run each command from the
+`labs/week1_day01` directory you just `cd`'d into:
 
 ```bash
 yosys --version
 nextpnr-ice40 --version
-icepack
-iceprog
+icepack -h        # icepack/iceprog have no --version; -h prints usage
+iceprog -h
 iverilog -V
 gtkwave --version
 ```
 
-If any tool is missing, **stop and fix it now** — don't proceed with a broken toolchain.
+Each command should print version info (or, for `icepack`/`iceprog`,
+usage text) and exit cleanly. If anything reports
+`command not found`, you are almost certainly **outside the Nix shell** —
+re-run `nix develop` from the repo root and try again. If a tool is
+genuinely missing after that, stop and revisit the
+[Toolchain Setup Guide](../../setup.md) before continuing — don't
+proceed with a broken toolchain.
 
 ---
 
@@ -55,8 +100,8 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 **Goal:** Write, synthesize, and program the absolute minimum Verilog design. Confirm the full toolchain works end-to-end.
 
-- Open `starter/w1d1_ex1_led_on.v` — the module is complete, just review it
-- Build and program: `make ex1`
+- Open `ex1_led_on/starter/ex1_led_on.v` — the module is complete, just review it
+- From `labs/week1_day01/`, build and program: `make ex1`
 - **Verify:** LED1 on the Go Board should be lit
 - **Reflection:** What did Yosys actually synthesize here? Run `make ex1_stat` to check LUT usage
 
@@ -71,8 +116,8 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 **Goal:** Use `assign` to create combinational connections between inputs and outputs.
 
-- Open `starter/w1d1_ex2_buttons_to_leds.v` — direct mapping provided
-- Build and program: `make ex2`
+- Open `ex2_buttons_to_leds/starter/ex2_buttons_to_leds.v` — direct mapping provided
+- From `labs/week1_day01/`, build and program: `make ex2`
 - **Verify:** Each button controls its corresponding LED
 - **Quick check:** Are any LUTs used? Why or why not?
 
@@ -87,9 +132,9 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 **Goal:** Implement concurrent combinational logic with multiple independent `assign` statements.
 
-- Open `starter/w1d1_ex3_button_logic.v` — fill in the `TODO` assignments
+- Open `ex3_button_logic/starter/ex3_button_logic.v` — fill in the `TODO` assignments
 - Predict the truth tables **on paper first**, then verify on hardware
-- Build and program: `make ex3`
+- From `labs/week1_day01/`, build and program: `make ex3`
 - **Discussion:** All four `assign` statements are active simultaneously
 
 | sw1 | sw2 | LED1 (AND) | LED3 (XOR) | LED4 (NOT) |
@@ -110,9 +155,9 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 **Goal:** Develop a clean boundary pattern for readable designs.
 
-- Open `starter/ex4_active_low_clean.v` — fill in the `TODO` sections
+- Open `ex4_active_low_clean/starter/ex4_active_low_clean.v` — fill in the `TODO` sections
 - The pattern: name inputs clearly at the boundary, keep internal logic readable, drive outputs directly
-- Build and program: `make ex4`
+- From `labs/week1_day01/`, build and program: `make ex4`
 - **Compare:** Does this produce more or fewer LUTs than Exercise 3? Run `make ex4_stat`
 
 ---
@@ -126,8 +171,9 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 **Goal:** Automate the build flow and experiment with more gate combinations.
 
-- Open `starter/w1d1_ex5_xor_pattern.v` — add creative logic combinations
-- The Makefile already supports all exercises; study how it works
+- Open `ex5_xor_pattern/starter/ex5_xor_pattern.v` — add creative logic combinations
+- The day-level `Makefile` in `labs/week1_day01/` dispatches to each exercise's own `Makefile`; open both and skim how `make ex5` becomes `make -C ex5_xor_pattern/starter prog`
+- From `labs/week1_day01/`, build and program: `make ex5`
 - **Challenge:** Can you make all 4 LEDs display a unique pattern based on the 4 buttons?
 
 ---
@@ -143,12 +189,24 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 
 ## Quick Reference
 
+All `make` commands below run from `labs/week1_day01/` with the Nix
+shell active (`nix develop` from the repo root):
+
+```bash
+cd ~/hdl-for-dsd && nix develop      # once per terminal session
+cd labs/week1_day01                  # once per lab
+
+make ex1                             # build and program Exercise 1
+make ex2                             # build and program Exercise 2
+make ex3                             # build and program Exercise 3
+make ex4                             # build and program Exercise 4
+make ex5                             # build and program Exercise 5 (stretch)
+make ex1_stat                        # show resource usage for Exercise 1
+make ex3_sim                         # run testbench simulation for Exercise 3
+make clean                           # remove all build artifacts
 ```
-make ex1 # Build and program Exercise 1
-make ex2 # Build and program Exercise 2
-make ex3 # Build and program Exercise 3
-make ex4 # Build and program Exercise 4
-make ex5 # Build and program Exercise 5 (stretch)
-make ex1_stat # Show resource usage for Exercise 1
-make clean # Remove all build artifacts
-```
+
+> Append `SOLUTION=1` to any target (e.g. `make ex1 SOLUTION=1`) to
+> build the reference solution instead of your starter — handy for
+> sanity-checking that the board and toolchain work before you start
+> editing.
