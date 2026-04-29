@@ -5,11 +5,11 @@
 | # | Segment | Duration | File | Slides |
 |---|---------|----------|------|--------|
 | 1 | HDL ≠ Software | ~12 min | `d01_s1_hdl_not_software.html` | 9 |
-| 2 | Synthesis vs. Simulation | ~10 min | `d01_s2_synthesis_vs_simulation.html` | 10 |
+| 2 | Synthesis vs. Simulation | ~10 min | `d01_s2_synthesis_vs_simulation.html` | 11 |
 | 3 | Anatomy of a Verilog Module | ~12 min | `d01_s3_anatomy_of_a_module.html` | 11 |
 | 4 | Digital Logic Refresher | ~8 min | `d01_s4_digital_logic_refresher.html` | 11 |
 
-**Total slides:** 41 (including title, bridge, and quiz slides)
+**Total slides:** 42 (including title, bridge, and quiz slides)
 
 ## Code Examples
 
@@ -32,6 +32,7 @@ yosys -p "synth_ice40 -top <module_name> -json out.json" <file>.v
 | `diagrams/d01_synth_vs_sim_flow.mmd` | Mermaid src | — | Mermaid source (documentation) |
 | `diagrams/d01_module_anatomy.svg` | SVG | Seg 3 | Module as labeled box with input/output ports |
 | `diagrams/d01_go_board_placeholder.svg` | SVG | Seg 2 | Go Board I/O layout (replace with photo) |
+| `diagrams/d01_fpga_anatomy.svg` | SVG | Seg 2 | FPGA fabric grid + zoom-in on a LUT4+FF logic cell |
 
 > **Note:** `d01_go_board_placeholder.svg` is a schematic placeholder. Replace with an actual
 > board photo before final recording. The SVG has a dashed border and label to remind you.
@@ -86,6 +87,7 @@ week1_day01/
     ├── d01_synth_vs_sim_flow.svg           ← two-path toolchain flowchart
     ├── d01_synth_vs_sim_flow.mmd           ← Mermaid source
     ├── d01_module_anatomy.svg              ← module box diagram with ports
+    ├── d01_fpga_anatomy.svg                ← FPGA fabric + LUT/FF zoom-in (Seg 2)
     └── d01_go_board_placeholder.svg        ← 📷 replace with photo before recording
 ```
 
