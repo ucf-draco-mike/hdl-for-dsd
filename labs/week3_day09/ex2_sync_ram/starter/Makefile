@@ -20,7 +20,10 @@ sim: $(TB) $(SRCS)
 wave: sim
 	gtkwave *.vcd &
 
+stat: $(SRCS)
+	yosys -p "synth_ice40 -top $(TOP); stat" $(SRCS)
+
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: all prog sim wave stat clean
+.PHONY: all sim wave stat clean
