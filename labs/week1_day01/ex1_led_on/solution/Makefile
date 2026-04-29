@@ -1,33 +1,19 @@
-# Auto-generated Makefile
+# Solution Makefile — operates on the ref/ + tb/ split introduced by the
+# CTF gating scheme. Reference DUTs live in ref/, testbench in tb/.
 TOP      = led_on
-SRCS     = ex1_led_on.v
+SRCS     = $(wildcard ref/*.v)
+TB_SRCS  = $(wildcard tb/tb_*.v)
 PCF      = ../../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
 
 sim:
-	@tb=$$(ls tb_*.v 2>/dev/null | head -n 1); \
-	if [ -z "$$tb" ]; then \
-		echo ""; \
-		echo "[sim] No testbench present in $$(pwd)."; \
-		echo ""; \
-		echo "      To add one, create 'tb_<top_module>.v' in this directory."; \
-		echo "      Skeleton:"; \
-		echo ""; \
-		echo "        \`timescale 1ns/1ps"; \
-		echo "        module tb_<top_module>;"; \
-		echo "          // declare regs/wires, instantiate the DUT,"; \
-		echo "          // drive stimulus, dump VCD via \$$dumpfile/\$$dumpvars,"; \
-		echo "          // and call \$$finish when done."; \
-		echo "        endmodule"; \
-		echo ""; \
-		echo "      Then re-run: make sim"; \
-		echo ""; \
+	@if [ -z "$(TB_SRCS)" ]; then \
+		echo "[sim] No testbench in tb/ — nothing to simulate."; \
 	else \
-		srcs=$$(ls *.v 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
-		echo "iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs"; \
-		iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs && vvp sim.vvp; \
+		echo "iverilog $(IVFLAGS) -o sim.vvp $(TB_SRCS) $(SRCS)"; \
+		iverilog $(IVFLAGS) -o sim.vvp $(TB_SRCS) $(SRCS) && vvp sim.vvp; \
 	fi
 
 wave: sim

@@ -66,4 +66,24 @@ show_beh8:
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: stat_rc8 stat_rc16 stat_beh8 stat_beh16 stat_all show_rc8 show_beh8 clean sim wave
+# CTF gating — see scripts/lab_ctf/README.md
+CTF_DIR := ../../../../scripts/lab_ctf
+
+# Run the published testbench against your DUT. On a passing run, prints
+# the per-exercise flag (which unlocks the next exercise's reference).
+test:
+	@bash $(CTF_DIR)/check_solution.sh
+
+# Decrypt this exercise's reference DUT into ../solution/ref/.
+# For the first sealed exercise, pass COURSE_KEY=...; for later exercises
+# pass FLAG=... (the flag emitted by the previous exercise's `make test`).
+unlock:
+	@key="$(FLAG)$(COURSE_KEY)"; \
+	if [ -z "$$key" ]; then \
+		echo "Usage: make unlock FLAG=<flag>     (chain unlock)"; \
+		echo "       make unlock COURSE_KEY=<k>  (first exercise only)"; \
+		exit 2; \
+	fi; \
+	bash $(CTF_DIR)/unlock_solution.sh "$$key"
+
+.PHONY: sim wave synth prog stat clean test unlock all

@@ -39,6 +39,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 ALLOWLIST = REPO / "scripts" / "student_mirror_allowlist.txt"
+DENYLIST = REPO / "scripts" / "student_mirror_denylist.txt"
 STUDENT_README = REPO / "scripts" / "student_mirror_README.md"
 SOURCE_REPO_SLUG = "ucf-draco-mike/hdl-for-dsd"
 
@@ -51,6 +52,37 @@ def load_allowlist(path: Path) -> list[str]:
             continue
         entries.append(line.rstrip("/"))
     return entries
+
+
+def load_denylist(path: Path) -> list[str]:
+    if not path.exists():
+        return []
+    patterns: list[str] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        patterns.append(line.rstrip("/"))
+    return patterns
+
+
+def apply_denylist(root: Path, patterns: list[str]) -> int:
+    """Remove any path under `root` matching one of the glob patterns.
+
+    Patterns are interpreted relative to `root` and support `**` for
+    crossing directory boundaries (Path.glob semantics). Both files and
+    directories are removed; missing patterns are silently ignored so a
+    denylist can stay relevant as the source tree evolves.
+    """
+    removed = 0
+    for pattern in patterns:
+        for match in sorted(root.glob(pattern), reverse=True):
+            if match.is_dir() and not match.is_symlink():
+                shutil.rmtree(match)
+            else:
+                match.unlink()
+            removed += 1
+    return removed
 
 
 def clean_dir(path: Path) -> None:
@@ -142,14 +174,16 @@ def git_push(root: Path, remote_url: str, source_sha: str | None) -> None:
     run(["git", "push", "--force", "mirror", "main"], cwd=root)
 
 
-def build_mirror(out: Path, allowlist: list[str]) -> None:
+def build_mirror(out: Path, allowlist: list[str], denylist: list[str]) -> int:
     clean_dir(out)
     for entry in allowlist:
         src = REPO / entry
         dst = out / entry
         copy_entry(src, dst)
     write_student_readme(out)
+    removed = apply_denylist(out, denylist)
     validate_symlinks(out)
+    return removed
 
 
 def main() -> int:
@@ -173,10 +207,11 @@ def main() -> int:
 
     out = args.out.resolve()
     allowlist = load_allowlist(ALLOWLIST)
+    denylist = load_denylist(DENYLIST)
     print(f"Building student mirror at {out}")
-    print(f"  {len(allowlist)} allowlist entries")
-    build_mirror(out, allowlist)
-    print(f"  mirror built and symlinks validated ({out})")
+    print(f"  {len(allowlist)} allowlist entries, {len(denylist)} deny patterns")
+    removed = build_mirror(out, allowlist, denylist)
+    print(f"  mirror built ({removed} paths stripped by denylist), symlinks validated")
 
     if args.push:
         print(f"Pushing to {args.push}")

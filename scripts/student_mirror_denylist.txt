@@ -1,0 +1,21 @@
+# Glob patterns (relative to mirror root) that get stripped AFTER the
+# allowlist copy. Supports `**` for crossing directory boundaries
+# (Python pathlib.Path.glob semantics).
+#
+# This is how we keep plaintext lab solutions out of the student mirror
+# while still shipping the rest of `labs/`. Anything under solution/ref/
+# is a reference DUT — it must not ship in plaintext; the encrypted
+# `solution/ref.tar.enc` ships instead and is unlocked by the CTF chain
+# (see scripts/lab_ctf/README.md).
+#
+# Missing matches are silently ignored, so leaving stale patterns here
+# is harmless.
+
+# Plaintext reference DUTs — only the .enc artefact should ship.
+labs/**/solution/ref
+
+# Instructor-only CTF tooling. The student mirror keeps just the runtime
+# helpers (check_solution.sh, unlock_solution.sh, README.md).
+scripts/lab_ctf/seal_exercise.sh
+scripts/lab_ctf/seal_all.py
+scripts/lab_ctf/chain.json
