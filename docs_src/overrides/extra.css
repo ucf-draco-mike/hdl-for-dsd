@@ -40,6 +40,22 @@
 }
 .highlight pre { border-left: 3px solid var(--ucf-gold); }
 
+/* Disable programming ligatures in code so HDL operators like `<=` render
+   as two separate characters rather than a single ≤ glyph (JetBrains Mono
+   and Fira Code both ship that ligature on by default). */
+.md-typeset code,
+.md-typeset pre,
+.md-typeset pre code,
+.md-typeset kbd,
+.highlight code,
+.highlight pre,
+.quiz-gate__input--code,
+.quiz-gate__preview-code,
+.quiz-gate__preview-code code {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+}
+
 /* ═══ Card Grid System ═══ */
 .card-grid {
     display: grid;

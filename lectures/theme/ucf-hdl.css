@@ -81,6 +81,11 @@
     box-sizing: border-box;
     white-space: pre;         /* never wrap code lines */
     overflow-wrap: normal;
+    /* Render HDL operators as their literal two-char form (e.g. `<=`)
+       instead of letting JetBrains Mono / Fira Code merge them into a
+       single math glyph (≤). */
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
 }
 .reveal code {
     font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
@@ -88,6 +93,8 @@
     background: var(--color-code-bg-light);
     padding: 0.1em 0.3em; border-radius: 3px;
     color: var(--ucf-dark-gray);
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
 }
 
 /* Code border-color variants */
