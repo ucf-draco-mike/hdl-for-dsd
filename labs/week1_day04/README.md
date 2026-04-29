@@ -53,12 +53,12 @@ Button-controlled counter on 7-seg. Will be bouncy without debouncing — this p
 ## Quick Reference
 
 ```
-make ex1_sim      # Simulate D flip-flop
-make ex2_sim      # Simulate register
-make ex3          # Program LED blinker
-make ex4          # Program 7-seg counter (capstone)
-make ex5          # Program dual blinker
-make ex6          # Program up/down counter (stretch)
+make ex1_sim # Simulate D flip-flop
+make ex2_sim # Simulate register
+make ex3 # Program LED blinker
+make ex4 # Program 7-seg counter (capstone)
+make ex5 # Program dual blinker
+make ex6 # Program up/down counter (stretch)
 make clean
 ```
 

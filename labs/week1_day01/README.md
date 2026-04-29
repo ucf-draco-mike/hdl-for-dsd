@@ -113,11 +113,11 @@ If any tool is missing, **stop and fix it now** — don't proceed with a broken 
 ## Quick Reference
 
 ```
-make ex1          # Build and program Exercise 1
-make ex2          # Build and program Exercise 2
-make ex3          # Build and program Exercise 3
-make ex4          # Build and program Exercise 4
-make ex5          # Build and program Exercise 5 (stretch)
-make ex1_stat     # Show resource usage for Exercise 1
-make clean        # Remove all build artifacts
+make ex1 # Build and program Exercise 1
+make ex2 # Build and program Exercise 2
+make ex3 # Build and program Exercise 3
+make ex4 # Build and program Exercise 4
+make ex5 # Build and program Exercise 5 (stretch)
+make ex1_stat # Show resource usage for Exercise 1
+make clean # Remove all build artifacts
 ```

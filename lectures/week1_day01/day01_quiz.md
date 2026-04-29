@@ -19,7 +19,7 @@
 ??? success "Answer"
     ```verilog
     module led_driver (
-        input  wire i_switch,
+        input wire i_switch,
         output wire o_led
     );
         assign o_led = i_switch;

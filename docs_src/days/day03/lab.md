@@ -81,7 +81,10 @@ Full system: ALU result displayed on 7-seg, flags on LEDs.
 ## Quick Reference
 
 ```
-make ex1_synth    # Check for latch warnings
-make ex2          make ex3          make ex4          make ex5
+make ex1_synth # Check for latch warnings
+make ex2
+make ex3
+make ex4
+make ex5
 make clean
 ```

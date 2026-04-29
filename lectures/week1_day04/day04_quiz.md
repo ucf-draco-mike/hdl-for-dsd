@@ -17,7 +17,7 @@
     ```verilog
     always @(posedge i_clk)
         if (i_reset) r_q <= 1'b0;
-        else         r_q <= r_d;
+        else r_q <= r_d;
     ```
 
 **Q4:** You want an LED to blink at ~2 Hz from a 25 MHz clock. What counter value do you count to?

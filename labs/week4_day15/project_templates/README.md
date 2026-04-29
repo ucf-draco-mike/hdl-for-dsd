@@ -12,7 +12,7 @@ cp ../module_library/uart_tx.v .
 cp ../module_library/uart_rx.v .
 cp ../module_library/debounce.v .
 cp ../module_library/hex_to_7seg.v .
-make   # should synthesize the skeleton immediately
+make # should synthesize the skeleton immediately
 ```
 
 ## Available Templates
