@@ -1,51 +1,53 @@
 # =============================================================================
-# Makefile — Day 5: Counters, Shift Registers & Debouncing
-# Accelerated HDL for Digital System Design · UCF ECE
+# Makefile — week2_day05 (dispatcher)
+# Day 5: Counters, Shift Registers & Debouncing
+# Delegates to per-exercise directories. Run from day directory.
+#
+# Routes to the starter/ folder by default. Pass SOLUTION=1 (or
+# VARIANT=solution) to route to the solution/ folder instead.
+#
+#   make ex1                 # build starter for exercise 1
+#   make ex1 SOLUTION=1      # build solution for exercise 1
+#   make ex2_sim SOLUTION=1  # simulate exercise 2 from solution/
 # =============================================================================
 
-PROJECT  ?= debounce
-TOP      ?= $(PROJECT)
-PCF      ?= go_board.pcf
-SRCS     ?= $(wildcard *.v)
-TB       ?= tb_$(PROJECT).v
-DEVICE   = hx1k
-PACKAGE  = vq100
+VARIANT ?= starter
+ifeq ($(SOLUTION),1)
+VARIANT := solution
+endif
 
-YOSYS_FLAGS   = -p "synth_ice40 -top $(TOP) -json $(PROJECT).json"
-NEXTPNR_FLAGS = --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) \
-                --json $(PROJECT).json --asc $(PROJECT).asc
-IVERILOG_FLAGS = -g2012 -Wall
+ex1:
+	$(MAKE) -C ex1_debounce_module/$(VARIANT) sim
 
-all: $(PROJECT).bin
+ex2:
+	$(MAKE) -C ex2_led_chase/$(VARIANT) prog
 
-$(PROJECT).json: $(SRCS)
-	yosys $(YOSYS_FLAGS) $(SRCS)
+ex3:
+	$(MAKE) -C ex3_button_counter/$(VARIANT) prog
 
-$(PROJECT).asc: $(PROJECT).json $(PCF)
-	nextpnr-ice40 $(NEXTPNR_FLAGS)
-
-$(PROJECT).bin: $(PROJECT).asc
-	icepack $< $@
-
-prog: $(PROJECT).bin
-	iceprog $<
-
-sim: $(TB) $(SRCS)
-	iverilog $(IVERILOG_FLAGS) -o sim.vvp $(TB) $(filter-out $(TB) $(wildcard top_*.v),$(SRCS))
-	vvp sim.vvp
-	@echo ""
-	@echo "=== Simulation complete. Open waveforms: gtkwave dump.vcd ==="
-
-wave: sim
-	gtkwave dump.vcd &
-
-show: $(SRCS)
-	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); show"
-
-stat: $(SRCS)
-	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); stat"
+ex4:
+	$(MAKE) -C ex4_lfsr_pattern/$(VARIANT) prog
 
 clean:
-	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
+	$(MAKE) -C ex1_debounce_module/$(VARIANT) clean
+	$(MAKE) -C ex2_led_chase/$(VARIANT) clean
+	$(MAKE) -C ex3_button_counter/$(VARIANT) clean
+	$(MAKE) -C ex4_lfsr_pattern/$(VARIANT) clean
 
-.PHONY: all prog sim wave show stat clean
+# Per-exercise sub-targets, e.g. `make ex1_sim` -> `make -C ex1_*/$(VARIANT) sim`
+ex%_stat:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) stat
+
+ex%_sim:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) sim
+
+ex%_synth:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) synth
+
+ex%_wave:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) wave
+
+ex%_prog:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) prog
+
+.PHONY: ex1 ex2 ex3 ex4 clean

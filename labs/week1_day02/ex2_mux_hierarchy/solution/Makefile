@@ -1,6 +1,10 @@
 # Auto-generated Makefile
-SRCS     = ex2_mux2to1.v ex2_mux4to1.v
+TOP      = top_mux
+SRCS     = ex2_mux2to1.v ex2_mux4to1.v ex2_top_mux.v
 TB       = tb_mux.v
+PCF      = ../../go_board.pcf
+DEVICE   = hx1k
+PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
 
 sim: $(TB) $(SRCS)
@@ -10,7 +14,21 @@ sim: $(TB) $(SRCS)
 wave: sim
 	gtkwave *.vcd &
 
-clean:
-	rm -f *.vvp *.vcd *.log
+synth: $(SRCS)
+	yosys -p "synth_ice40 -top $(TOP) -json $(TOP).json" $(SRCS)
 
-.PHONY: sim wave clean
+prog: synth
+	nextpnr-ice40 --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) --json $(TOP).json --asc $(TOP).asc --freq 25
+	icepack $(TOP).asc $(TOP).bin
+	iceprog $(TOP).bin
+
+stat: $(SRCS)
+	yosys -p "synth_ice40 -top $(TOP); stat" $(SRCS)
+
+show: $(SRCS)
+	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); show"
+
+clean:
+	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
+
+.PHONY: sim wave synth prog stat show clean all
