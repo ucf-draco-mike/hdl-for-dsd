@@ -83,7 +83,7 @@ content for those who finish early or want additional practice:
 - :material-chip: [`uart_tx_parity.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/uart_tx_parity.sv){ target=_blank }
 
 - **Earn the flag:** `cd ex2_uart_parity/starter && make test`. This is the last chained exercise of the course — keep the flag as the final completion proof.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-uart-assertions-332bb50bb1a7`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Ex 3 — Ai Constraint Tb
 
@@ -93,7 +93,7 @@ content for those who finish early or want additional practice:
 - :material-text: [`README.md`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank }
 - :material-chip: [`tb_uart_tx_ai.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/tb_uart_tx_ai.sv){ target=_blank }
 
-- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (`flag-ex2-uart-parity-07bad8d7b9f7`) — though there's no Day 15 chained exercise to unlock with it; capstones are ungated.
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (the flag from that exercise's `make test`) — though there's no Day 15 chained exercise to unlock with it; capstones are ungated.
 
 ### Ex 4 — Ppa Analysis
 

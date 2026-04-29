@@ -28,7 +28,7 @@ explore SPI master design or IP integration.
 
 ### Ex 1 — UART RX
 
-- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using the previous chained exercise's flag (Day 11 Exercise 3 — `flag-ex3-hardware-verify-94791dea7600`) to unlock Exercise 2's reference.
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using the previous chained exercise's flag (Day 11 Exercise 3 — the flag from that exercise's `make test`) to unlock Exercise 2's reference.
 
 ### Ex 2 — Loopback
 
@@ -37,7 +37,7 @@ explore SPI master design or IP integration.
 
 ### Ex 3 — SPI Master
 
-- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (`flag-ex2-loopback-fd4d0f924767`) to unlock Day 13 Exercise 1's reference.
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (the flag from that exercise's `make test`) to unlock Day 13 Exercise 1's reference.
 
 ## Deliverables
 1. UART RX with all test bytes passing in simulation

@@ -62,10 +62,11 @@ Use the starter file in `starter/debounce.v` — fill in the `YOUR CODE HERE` se
 
 ### Part B: Simulate with `tb_debounce.v`
 
-The testbench simulates bouncy press/release sequences. Run it:
+The testbench simulates bouncy press/release sequences. Run it from
+the day directory:
 
 ```bash
-make sim TB=tb_debounce.v SRCS="debounce.v"
+make ex1_sim
 ```
 
 ### Part C: Verify in GTKWave
@@ -93,8 +94,7 @@ Build a "Knight Rider" / Cylon LED pattern using a shift register with direction
 Use `starter/led_chase.v` — the clock divider and debounce instantiations are provided. You implement the bounce-back shift logic.
 
 ```bash
-make PROJECT=led_chase TOP=led_chase SRCS="led_chase.v debounce.v"
-make prog PROJECT=led_chase
+make ex2          # build + program (run from labs/week2_day05/)
 ```
 
 **Tasks:**
@@ -106,7 +106,7 @@ make prog PROJECT=led_chase
 **Extension:** Make the pattern 2 bits wide (two adjacent LEDs lit).
 
 - **Earn the flag:** `cd ex2_led_chase/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-debounce-module-864d5c70987b`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ---
 
@@ -130,13 +130,11 @@ Use `starter/button_counter.v` — provided complete (this is the reference inte
 3. **Record:** "With debounce: 16 presses → count reached 0 (wrapped). Without: 16 presses → count reached [X]."
 
 ```bash
-make PROJECT=button_counter TOP=button_counter \
-     SRCS="button_counter.v debounce.v hex_to_7seg.v"
-make prog PROJECT=button_counter
+make ex3          # build + program (run from labs/week2_day05/)
 ```
 
 - **Earn the flag:** `cd ex3_button_counter/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-led-chase-e5148a07a85a`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 
 ---
 
@@ -159,7 +157,7 @@ Use `starter/lfsr_8bit.v`. Create a top module that:
 **Simulation:** Write a testbench verifying 255-cycle period (returns to seed after exactly 255 enables).
 
 - **Earn the flag:** `cd ex4_lfsr_pattern/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 6 Exercise 1.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-button-counter-8642efdae706`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 3>`
 
 ---
 
@@ -171,7 +169,7 @@ Implement `debounce_shift.v` — an alternative architecture that samples the in
 
 **Comparison task:** Which approach (counter vs. shift register) uses more resources? Which responds faster? Which is easier to tune?
 
-- **Note:** This exercise isn't in the CTF chain — it's a paper/comparison stretch with no `starter/` directory under `labs/week2_day05/`, so there's no `make test` flag to capture for it. Keep using Exercise 4's flag (`flag-ex4-lfsr-pattern-177caf99dffa`) to unlock Day 6 Exercise 1's reference.
+- **Note:** This exercise isn't in the CTF chain — it's a paper/comparison stretch with no `starter/` directory under `labs/week2_day05/`, so there's no `make test` flag to capture for it. Keep using Exercise 4's flag (the flag from that exercise's `make test`) to unlock Day 6 Exercise 1's reference.
 
 ---
 
@@ -179,11 +177,14 @@ Implement `debounce_shift.v` — an alternative architecture that samples the in
 
 ```bash
 # ── from labs/week2_day05/ ──
-make sim TB=tb_debounce.v SRCS="debounce.v" # Simulate
-make wave # Open GTKWave
-make PROJECT=led_chase SRCS="led_chase.v debounce.v" # Synthesize
-make prog PROJECT=led_chase # Program board
-make stat PROJECT=led_chase SRCS="led_chase.v debounce.v" # Resources
+make ex1                             # build/sim ex1 (debounce module)
+make ex2                             # build + program ex2 (led chase)
+make ex3                             # build + program ex3 (button counter)
+make ex4                             # build + program ex4 (LFSR, stretch)
+make exN_sim                         # simulate exercise N
+make exN_wave                        # open GTKWave for exercise N
+make exN_stat                        # resource usage for exercise N
+make clean                           # remove build artifacts
 
 # ── from labs/week2_day05/exN_*/starter/ ──
 make test                            # run published testbench → flag on pass

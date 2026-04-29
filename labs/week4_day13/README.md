@@ -34,12 +34,12 @@ and synthesis results.
 ### Ex 2 — FSM Refactor
 
 - **Earn the flag:** `cd ex2_fsm_refactor/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-alu-refactor-24e40e8b3239`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Ex 3 — UART TX Refactor
 
 - **Earn the flag:** `cd ex3_uart_refactor/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 14 Exercise 1.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-fsm-refactor-ab5d8a57d211`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 
 ## Deliverables
 1. SV-refactored ALU passing all original tests

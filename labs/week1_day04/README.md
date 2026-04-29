@@ -36,31 +36,31 @@ Implement in `starter/w1d4_ex1_d_ff.v`, run testbench with `make ex1_sim`. Open 
 4-bit register with load enable. `make ex2_sim` to verify load/hold/reset behavior.
 
 - **Earn the flag:** `cd ex2_register/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-d-ff-e78c45cb9a99`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Exercise 3: LED Blinker (25 min) ★ KEY EXERCISE
 Free-running counter with multi-speed LED output. `make ex3` to program. LED1 slowest, LED4 fastest — visually demonstrates binary counting.
 
 - **Earn the flag:** `cd ex3_led_blinker/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-register-e10bccd88d9c`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 
 ### Exercise 4: 7-Segment Counter — Week 1 Capstone (30 min) ★ CAPSTONE
 Running hex counter on the display. Integrates clock division + counting + combinational decoding. `make ex4`.
 
 - **Earn the flag:** `cd ex4_seg_counter/starter && make test`. Save the printed flag for Exercise 5's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-led-blinker-56d3adb84c0d`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 3>`
 
 ### Exercise 5: Dual-Speed Blinker (15 min)
 Two independent dividers, complementary LED pairs. `make ex5`.
 
 - **Earn the flag:** `cd ex5_dual_blinker/starter && make test`. Save the printed flag for Exercise 6's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex4-seg-counter-31ca024cfbb4`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 4>`
 
 ### Exercise 6 — Stretch: Up/Down Counter (if time permits)
 Button-controlled counter on 7-seg. Will be bouncy without debouncing — this previews Day 5!
 
 - **Earn the flag:** `cd ex6_updown_counter/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 5 Exercise 1.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex5-dual-blinker-c7fd2f86e3c3`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 5>`
 
 ## Deliverable Checklist
 
