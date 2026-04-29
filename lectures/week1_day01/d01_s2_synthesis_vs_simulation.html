@@ -278,6 +278,23 @@ vvp sim.vvp</code></pre>
     <aside class="notes">This is the Nandland Go Board. It has a Lattice iCE40 HX1K FPGA with 1,280 LUTs and 16 block RAMs. Four LEDs, four pushbutton switches, a dual seven-segment display, VGA output, and USB which handles both programming and UART serial communication. Everything you need for this course fits on this little board. You'll get yours in class today.</aside>
 </section>
 
+<!-- WHAT'S ACTUALLY INSIDE AN FPGA -->
+<section data-background-color="#FAFAFA">
+    <h2>What&rsquo;s Actually <em>Inside</em> the FPGA?</h2>
+    <p style="font-size:0.72em;margin:0.1em 0 0.3em;">
+        That &ldquo;1,280 LUTs&rdquo; spec — what is a LUT? Where do flip-flops live?
+    </p>
+    <div style="margin-top:0.1em;">
+        <img src="diagrams/d01_fpga_anatomy.svg" alt="FPGA fabric: array of logic tiles, block RAMs, I/O blocks; zoom-in shows one logic cell with a 4-input LUT, flip-flop, and output mux" style="width:100%;max-width:920px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Key idea:</strong> An FPGA is a <em>sea of identical tiles</em>. Each tile holds a
+        <strong>LUT</strong> (look-up table — a 16-bit memory that can mimic any 4-input gate)
+        and a <strong>flip-flop</strong>. The bitstream just fills in the bits.
+    </div>
+    <aside class="notes">Quick detour, because we keep dropping the word LUT. So far we&apos;ve said &ldquo;the iCE40 has 1,280 LUTs.&rdquo; What does that mean? An FPGA isn&apos;t a CPU — there&apos;s no instruction decoder, no ALU, no program counter. It&apos;s a regular grid of identical, configurable tiles, surrounded by I/O blocks at the edges, with a few block RAMs sprinkled in. Look at the left side of the diagram. Each blue square is a logic tile. The orange ones at the borders are I/O blocks — those connect to the physical pins on the chip. The red ones are EBRs, embedded block RAMs, useful when you need real memory. Now look at the right side — that&apos;s a zoom-in on one logic tile. Two pieces. First, the LUT — look-up table. A 4-input LUT is literally a tiny 16-bit memory. The four inputs A, B, C, D are used as an address into that memory, and whatever bit lives at that address is the output. So you can store any 4-input truth table you want — AND, OR, XOR, a 4-bit majority function, anything — by writing the right 16 bits. That&apos;s how a LUT &ldquo;becomes&rdquo; a gate. Second, a D flip-flop, for one bit of state. State machines, counters, pipeline registers — they all live in those FFs. There&apos;s a little 2:1 mux at the output that picks whether you want the LUT result directly (combinational) or registered through the FF. That choice is a config bit too. Then the routing — those grid lines I drew — connects tile outputs to other tile inputs through programmable switches. That&apos;s how Yosys and nextpnr build a circuit: pick which LUTs implement which truth tables, decide which FFs to use, and program the routing switches to wire them up. The bitstream we keep mentioning is exactly that: every LUT&apos;s 16 config bits, every routing switch on or off, every I/O block&apos;s direction and pull-up. So when we say &ldquo;1,280 LUTs and 16 EBRs,&rdquo; that&apos;s the size of your raw budget. Every assign and every always-ff in your Verilog has to fit in that grid.</aside>
+</section>
+
 <!-- CHECK THE MACHINE -->
 <section data-background-color="#FFF8E1">
     <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>

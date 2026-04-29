@@ -1,0 +1,263 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" font-family="Inter, Segoe UI, Helvetica Neue, sans-serif">
+  <defs>
+    <filter id="fa-sh" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+    <marker id="fa-arw" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="7" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#5F6062"/>
+    </marker>
+  </defs>
+
+  <!-- =================== LEFT PANEL: FPGA FABRIC =================== -->
+  <text x="225" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#2C2A29">FPGA Fabric</text>
+  <text x="225" y="46" text-anchor="middle" font-size="10" fill="#5F6062" font-style="italic">grid of programmable tiles + routing + I/O</text>
+
+  <!-- Chip outline -->
+  <rect x="40" y="60" width="370" height="370" rx="10" fill="#FAFAFA" stroke="#2C2A29" stroke-width="2.5" filter="url(#fa-sh)"/>
+
+  <!-- I/O blocks: top row -->
+  <g fill="#FFE082" stroke="#C9A000" stroke-width="1">
+    <rect x="60"  y="72" width="32" height="20" rx="2"/>
+    <rect x="100" y="72" width="32" height="20" rx="2"/>
+    <rect x="140" y="72" width="32" height="20" rx="2"/>
+    <rect x="180" y="72" width="32" height="20" rx="2"/>
+    <rect x="220" y="72" width="32" height="20" rx="2"/>
+    <rect x="260" y="72" width="32" height="20" rx="2"/>
+    <rect x="300" y="72" width="32" height="20" rx="2"/>
+    <rect x="340" y="72" width="32" height="20" rx="2"/>
+  </g>
+  <!-- I/O blocks: bottom row -->
+  <g fill="#FFE082" stroke="#C9A000" stroke-width="1">
+    <rect x="60"  y="398" width="32" height="20" rx="2"/>
+    <rect x="100" y="398" width="32" height="20" rx="2"/>
+    <rect x="140" y="398" width="32" height="20" rx="2"/>
+    <rect x="180" y="398" width="32" height="20" rx="2"/>
+    <rect x="220" y="398" width="32" height="20" rx="2"/>
+    <rect x="260" y="398" width="32" height="20" rx="2"/>
+    <rect x="300" y="398" width="32" height="20" rx="2"/>
+    <rect x="340" y="398" width="32" height="20" rx="2"/>
+  </g>
+  <!-- I/O blocks: left col -->
+  <g fill="#FFE082" stroke="#C9A000" stroke-width="1">
+    <rect x="48" y="110" width="20" height="28" rx="2"/>
+    <rect x="48" y="148" width="20" height="28" rx="2"/>
+    <rect x="48" y="186" width="20" height="28" rx="2"/>
+    <rect x="48" y="224" width="20" height="28" rx="2"/>
+    <rect x="48" y="262" width="20" height="28" rx="2"/>
+    <rect x="48" y="300" width="20" height="28" rx="2"/>
+    <rect x="48" y="338" width="20" height="28" rx="2"/>
+    <rect x="48" y="376" width="20" height="28" rx="2"/>
+  </g>
+  <!-- I/O blocks: right col -->
+  <g fill="#FFE082" stroke="#C9A000" stroke-width="1">
+    <rect x="382" y="110" width="20" height="28" rx="2"/>
+    <rect x="382" y="148" width="20" height="28" rx="2"/>
+    <rect x="382" y="186" width="20" height="28" rx="2"/>
+    <rect x="382" y="224" width="20" height="28" rx="2"/>
+    <rect x="382" y="262" width="20" height="28" rx="2"/>
+    <rect x="382" y="300" width="20" height="28" rx="2"/>
+    <rect x="382" y="338" width="20" height="28" rx="2"/>
+    <rect x="382" y="376" width="20" height="28" rx="2"/>
+  </g>
+
+  <!-- Routing channels (light grey grid lines) -->
+  <g stroke="#CFD8DC" stroke-width="1">
+    <line x1="80"  y1="100" x2="370" y2="100"/>
+    <line x1="80"  y1="135" x2="370" y2="135"/>
+    <line x1="80"  y1="170" x2="370" y2="170"/>
+    <line x1="80"  y1="205" x2="370" y2="205"/>
+    <line x1="80"  y1="240" x2="370" y2="240"/>
+    <line x1="80"  y1="275" x2="370" y2="275"/>
+    <line x1="80"  y1="310" x2="370" y2="310"/>
+    <line x1="80"  y1="345" x2="370" y2="345"/>
+    <line x1="80"  y1="380" x2="370" y2="380"/>
+    <line x1="80"  y1="100" x2="80"  y2="395"/>
+    <line x1="115" y1="100" x2="115" y2="395"/>
+    <line x1="150" y1="100" x2="150" y2="395"/>
+    <line x1="185" y1="100" x2="185" y2="395"/>
+    <line x1="220" y1="100" x2="220" y2="395"/>
+    <line x1="255" y1="100" x2="255" y2="395"/>
+    <line x1="290" y1="100" x2="290" y2="395"/>
+    <line x1="325" y1="100" x2="325" y2="395"/>
+    <line x1="360" y1="100" x2="360" y2="395"/>
+  </g>
+
+  <!-- Logic tiles (LUT+FF cells) -->
+  <g>
+    <!-- Row 1 -->
+    <rect x="84"  y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="224" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="259" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="104" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 2 -->
+    <rect x="84"  y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="224" y="139" width="28" height="28" rx="2" fill="#C8E6C9" stroke="#2E7D32" stroke-width="1"/>
+    <rect x="259" y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="139" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 3 -->
+    <rect x="84"  y="174" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="174" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="174" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="174" width="63" height="28" rx="2" fill="#FFCCBC" stroke="#BF360C" stroke-width="1"/>
+    <text x="220" y="192" text-anchor="middle" font-size="9" font-weight="700" fill="#BF360C">EBR</text>
+    <rect x="259" y="174" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="174" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="174" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 4 -->
+    <rect x="84"  y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="224" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="259" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="209" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 5 -->
+    <rect x="84"  y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="224" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="259" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="244" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 6 -->
+    <rect x="84"  y="279" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="279" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="279" width="63" height="28" rx="2" fill="#FFCCBC" stroke="#BF360C" stroke-width="1"/>
+    <text x="185" y="297" text-anchor="middle" font-size="9" font-weight="700" fill="#BF360C">EBR</text>
+    <rect x="224" y="279" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="259" y="279" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="279" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="279" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 7 -->
+    <rect x="84"  y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="224" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="259" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="314" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <!-- Row 8 -->
+    <rect x="84"  y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="119" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="154" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="189" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="224" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="259" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="294" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+    <rect x="329" y="349" width="28" height="28" rx="2" fill="#BBDEFB" stroke="#1565C0" stroke-width="1"/>
+  </g>
+
+  <!-- Highlight ring around the "zoom" tile (row 2, col 5 - the green one) -->
+  <rect x="220" y="135" width="36" height="36" rx="3" fill="none" stroke="#FFC904" stroke-width="2.5" stroke-dasharray="3 2"/>
+
+  <!-- Legend -->
+  <g font-size="10" fill="#2C2A29">
+    <rect x="60" y="438" width="14" height="10" fill="#BBDEFB" stroke="#1565C0"/>
+    <text x="80" y="447">Logic tile (LUT+FF)</text>
+    <rect x="200" y="438" width="14" height="10" fill="#FFCCBC" stroke="#BF360C"/>
+    <text x="220" y="447">Block RAM</text>
+    <rect x="290" y="438" width="14" height="10" fill="#FFE082" stroke="#C9A000"/>
+    <text x="310" y="447">I/O block</text>
+  </g>
+
+  <!-- Connector arrow from highlighted tile to right panel -->
+  <path d="M 258 153 C 320 153, 380 165, 470 175" fill="none" stroke="#FFC904" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#fa-arw)"/>
+  <text x="370" y="148" font-size="10" fill="#C9A000" font-style="italic">zoom in →</text>
+
+  <!-- =================== RIGHT PANEL: ONE LOGIC CELL =================== -->
+  <text x="730" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#2C2A29">Inside one Logic Cell</text>
+  <text x="730" y="46" text-anchor="middle" font-size="10" fill="#5F6062" font-style="italic">a 4-input LUT  +  a flip-flop</text>
+
+  <!-- Logic cell box -->
+  <rect x="470" y="60" width="470" height="300" rx="10" fill="#FFFFFF" stroke="#2C2A29" stroke-width="2.5" filter="url(#fa-sh)"/>
+
+  <!-- 4 input wires -->
+  <g stroke="#2C2A29" stroke-width="1.5" fill="none">
+    <line x1="490" y1="120" x2="560" y2="120"/>
+    <line x1="490" y1="150" x2="560" y2="150"/>
+    <line x1="490" y1="180" x2="560" y2="180"/>
+    <line x1="490" y1="210" x2="560" y2="210"/>
+  </g>
+  <g font-size="11" font-family="JetBrains Mono, monospace" fill="#2C2A29">
+    <text x="486" y="123" text-anchor="end">a</text>
+    <text x="486" y="153" text-anchor="end">b</text>
+    <text x="486" y="183" text-anchor="end">c</text>
+    <text x="486" y="213" text-anchor="end">d</text>
+  </g>
+
+  <!-- LUT4 box (16 SRAM bits → MUX) -->
+  <rect x="560" y="100" width="150" height="130" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="635" y="120" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">4-input LUT</text>
+  <text x="635" y="135" text-anchor="middle" font-size="9" fill="#1565C0">16 config bits → 16-to-1 MUX</text>
+
+  <!-- Mini truth table inside LUT -->
+  <g font-size="8" font-family="JetBrains Mono, monospace" fill="#2C2A29">
+    <text x="572" y="152">abcd  y</text>
+    <text x="572" y="164">0000  0</text>
+    <text x="572" y="174">0001  1</text>
+    <text x="572" y="184">0010  1</text>
+    <text x="572" y="194">0011  0</text>
+    <text x="572" y="204">....  .</text>
+    <text x="572" y="214">1111  1</text>
+
+    <text x="640" y="152">addr  bit</text>
+    <text x="640" y="164">  0   0</text>
+    <text x="640" y="174">  1   1</text>
+    <text x="640" y="184">  2   1</text>
+    <text x="640" y="194">  3   0</text>
+    <text x="640" y="204">      ...</text>
+    <text x="640" y="214"> 15   1</text>
+  </g>
+
+  <!-- Wire from LUT to FF -->
+  <line x1="710" y1="165" x2="780" y2="165" stroke="#2C2A29" stroke-width="1.5"/>
+  <text x="745" y="158" text-anchor="middle" font-size="9" fill="#5F6062" font-style="italic">combinational</text>
+
+  <!-- Flip-flop box -->
+  <rect x="780" y="130" width="90" height="80" rx="4" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="825" y="155" text-anchor="middle" font-size="13" font-weight="700" fill="#E65100">D-FF</text>
+  <text x="825" y="172" text-anchor="middle" font-size="9" fill="#E65100">edge-triggered</text>
+  <text x="788" y="195" font-size="9" font-family="JetBrains Mono, monospace" fill="#2C2A29">D</text>
+  <text x="858" y="195" font-size="9" font-family="JetBrains Mono, monospace" fill="#2C2A29" text-anchor="end">Q</text>
+
+  <!-- Clock to FF -->
+  <line x1="825" y1="230" x2="825" y2="210" stroke="#2C2A29" stroke-width="1.5"/>
+  <text x="825" y="245" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#2C2A29">clk</text>
+
+  <!-- 2:1 mux selecting comb-or-registered output -->
+  <polygon points="880,150 920,165 920,195 880,210" fill="#F3E5F5" stroke="#6A1B9A" stroke-width="1.5"/>
+  <text x="900" y="185" text-anchor="middle" font-size="10" font-weight="700" fill="#6A1B9A">2:1</text>
+  <line x1="710" y1="165" x2="880" y2="165" stroke="#2C2A29" stroke-width="1.5"/>
+  <line x1="870" y1="170" x2="880" y2="180" stroke="#2C2A29" stroke-width="1.5"/>
+  <line x1="920" y1="180" x2="935" y2="180" stroke="#2C2A29" stroke-width="2"/>
+  <text x="938" y="184" font-size="11" font-family="JetBrains Mono, monospace" fill="#2C2A29">y</text>
+
+  <!-- Caption beneath -->
+  <g font-size="11" fill="#2C2A29">
+    <text x="490" y="265" font-weight="700" fill="#1565C0">LUT</text>
+    <text x="525" y="265">= tiny SRAM. Its 16 config bits hold the truth table for</text>
+    <text x="490" y="280">     <tspan font-weight="700">any</tspan> 4-input boolean function. The 4 inputs are the address.</text>
+    <text x="490" y="302" font-weight="700" fill="#E65100">FF</text>
+    <text x="510" y="302">= 1 bit of state. Captures D on each clock edge. State machines,</text>
+    <text x="490" y="317">    counters, registers, pipelines all live here.</text>
+    <text x="490" y="339" font-weight="700" fill="#6A1B9A">2:1 mux</text>
+    <text x="540" y="339">picks combinational vs. registered output (set by config bit).</text>
+  </g>
+
+  <!-- Bitstream caption (bottom strip) -->
+  <rect x="40" y="455" width="900" height="20" rx="4" fill="#000000"/>
+  <text x="490" y="470" text-anchor="middle" font-size="11" font-weight="700" fill="#FFC904">
+    The .bin bitstream = every LUT&apos;s 16 config bits + every routing switch + every I/O setting
+  </text>
+</svg>
