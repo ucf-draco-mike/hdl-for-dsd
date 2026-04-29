@@ -1,51 +1,56 @@
 # =============================================================================
-# Makefile — Day 6: Testbenches & Simulation-Driven Development
-# Accelerated HDL for Digital System Design · UCF ECE
+# Makefile — week2_day06 (dispatcher)
+# Day 6: Testbenches & Simulation-Driven Development
+# Delegates to per-exercise directories. Run from day directory.
+#
+# Routes to the starter/ folder by default. Pass SOLUTION=1 (or
+# VARIANT=solution) to route to the solution/ folder instead.
+#
+#   make ex1                 # simulate starter for exercise 1
+#   make ex1 SOLUTION=1      # simulate solution for exercise 1
 # =============================================================================
 
-PROJECT  ?= alu_4bit
-TOP      ?= $(PROJECT)
-PCF      ?= go_board.pcf
-SRCS     ?= $(wildcard *.v)
-TB       ?= tb_$(PROJECT).v
-DEVICE   = hx1k
-PACKAGE  = vq100
+VARIANT ?= starter
+ifeq ($(SOLUTION),1)
+VARIANT := solution
+endif
 
-YOSYS_FLAGS   = -p "synth_ice40 -top $(TOP) -json $(PROJECT).json"
-NEXTPNR_FLAGS = --$(DEVICE) --package $(PACKAGE) --pcf $(PCF) \
-                --json $(PROJECT).json --asc $(PROJECT).asc
-IVERILOG_FLAGS = -g2012 -Wall
+ex1:
+	$(MAKE) -C ex1_alu_testbench/$(VARIANT) sim
 
-all: $(PROJECT).bin
+ex2:
+	$(MAKE) -C ex2_debounce_testbench/$(VARIANT) sim
 
-$(PROJECT).json: $(SRCS)
-	yosys $(YOSYS_FLAGS) $(SRCS)
+ex3:
+	$(MAKE) -C ex3_counter_testbench/$(VARIANT) sim
 
-$(PROJECT).asc: $(PROJECT).json $(PCF)
-	nextpnr-ice40 $(NEXTPNR_FLAGS)
+ex4:
+	$(MAKE) -C ex4_file_driven_testing/$(VARIANT) sim
 
-$(PROJECT).bin: $(PROJECT).asc
-	icepack $< $@
-
-prog: $(PROJECT).bin
-	iceprog $<
-
-sim: $(TB) $(SRCS)
-	iverilog $(IVERILOG_FLAGS) -o sim.vvp $(TB) $(filter-out $(TB) $(wildcard top_*.v),$(SRCS))
-	vvp sim.vvp
-	@echo ""
-	@echo "=== Simulation complete. Open waveforms: gtkwave dump.vcd ==="
-
-wave: sim
-	gtkwave dump.vcd &
-
-show: $(SRCS)
-	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); show"
-
-stat: $(SRCS)
-	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); stat"
+ex5:
+	$(MAKE) -C ex5_exhaustive_alu/$(VARIANT) sim
 
 clean:
-	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
+	$(MAKE) -C ex1_alu_testbench/$(VARIANT) clean
+	$(MAKE) -C ex2_debounce_testbench/$(VARIANT) clean
+	$(MAKE) -C ex3_counter_testbench/$(VARIANT) clean
+	$(MAKE) -C ex4_file_driven_testing/$(VARIANT) clean
+	$(MAKE) -C ex5_exhaustive_alu/$(VARIANT) clean
 
-.PHONY: all prog sim wave show stat clean
+# Per-exercise sub-targets, e.g. `make ex1_sim` -> `make -C ex1_*/$(VARIANT) sim`
+ex%_stat:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) stat
+
+ex%_sim:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) sim
+
+ex%_synth:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) synth
+
+ex%_wave:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) wave
+
+ex%_prog:
+	$(MAKE) -C $(wildcard ex$*_*)/$(VARIANT) prog
+
+.PHONY: ex1 ex2 ex3 ex4 ex5 clean
