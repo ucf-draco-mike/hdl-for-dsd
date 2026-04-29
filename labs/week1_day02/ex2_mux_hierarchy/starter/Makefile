@@ -25,7 +25,10 @@ prog: synth
 stat: $(SRCS)
 	yosys -p "synth_ice40 -top $(TOP); stat" $(SRCS)
 
+show: $(SRCS)
+	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); show"
+
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: sim wave synth prog stat clean all
+.PHONY: sim wave synth prog stat show clean all

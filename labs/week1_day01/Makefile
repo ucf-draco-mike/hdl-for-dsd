@@ -25,4 +25,20 @@ clean:
 	$(MAKE) -C ex4_active_low_clean/starter clean
 	$(MAKE) -C ex5_xor_pattern/starter clean
 
+# Per-exercise sub-targets, e.g. `make ex1_stat` -> `make -C ex1_*/starter stat`
+ex%_stat:
+	$(MAKE) -C $(wildcard ex$*_*)/starter stat
+
+ex%_sim:
+	$(MAKE) -C $(wildcard ex$*_*)/starter sim
+
+ex%_synth:
+	$(MAKE) -C $(wildcard ex$*_*)/starter synth
+
+ex%_wave:
+	$(MAKE) -C $(wildcard ex$*_*)/starter wave
+
+ex%_prog:
+	$(MAKE) -C $(wildcard ex$*_*)/starter prog
+
 .PHONY: ex1 ex2 ex3 ex4 ex5 clean
