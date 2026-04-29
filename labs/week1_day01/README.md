@@ -68,14 +68,44 @@ Don't proceed with a broken toolchain.
 
 ---
 
+### How exercises are gated (CTF chain)
+
+Each exercise's reference DUT and self-checking testbench ship
+**encrypted** under `solution/ref.tar.enc` and `solution/.flag.enc`. The
+starter `Makefile` adds two new targets:
+
+- `make test` — compiles your DUT against the published testbench and,
+  on a passing run, prints the per-exercise flag. **Run this from the
+  exercise's `starter/` directory.**
+- `make unlock COURSE_KEY=<k>` (ex1) or `make unlock FLAG=<flag>` (ex2+)
+  — decrypts that exercise's reference DUT into `../solution/ref/` so
+  you can read it. Optional; only needed if you want to compare against
+  the official answer.
+
+Get your `COURSE_KEY` from the LMS / your instructor on Day 1. Each
+passing `make test` emits the unlock key for the *next* exercise, so
+write your flags down. `make test` works against the encrypted bundle
+directly — you don't have to unlock to make progress; the chain just
+gates *peeking at the reference*.
+
+> **If you cloned before the CTF rollout:** `git pull` from the repo
+> root before starting today's lab so the new `make test` / `make
+> unlock` targets are present.
+
+Full background: `scripts/lab_ctf/README.md`.
+
+---
+
 ### Exercise 1: LED On — The Simplest Possible Design (20 min)
 
 **Goal:** Write, synthesize, and program the absolute minimum Verilog design. Confirm the full toolchain works end-to-end.
 
 - Open `ex1_led_on/starter/ex1_led_on.v` — the module is complete, just review it
 - From `labs/week1_day01/`, build and program: `make ex1`
-- **Verify:** LED1 on the Go Board should be lit
-- **Reflection:** What did Yosys actually synthesize here? Run `make ex1_stat` to check LUT usage
+- **Verify on hardware:** LED1 on the Go Board should be lit
+- **Earn the flag:** `cd ex1_led_on/starter && make test` — save the printed flag for Exercise 2's unlock
+- **(Optional) Peek at the reference:** `make unlock COURSE_KEY=<your course key>` from the same directory
+- **Reflection:** What did Yosys actually synthesize here? Run `make ex1_stat` (from `labs/week1_day01/`) to check LUT usage
 
 ---
 
@@ -85,7 +115,9 @@ Don't proceed with a broken toolchain.
 
 - Open `ex2_buttons_to_leds/starter/ex2_buttons_to_leds.v` — direct mapping provided
 - From `labs/week1_day01/`, build and program: `make ex2`
-- **Verify:** Each button controls its corresponding LED
+- **Verify on hardware:** Each button controls its corresponding LED
+- **Earn the flag:** `cd ex2_buttons_to_leds/starter && make test` — save for Exercise 3
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 - **Quick check:** Are any LUTs used? Why or why not?
 
 ---
@@ -97,6 +129,8 @@ Don't proceed with a broken toolchain.
 - Open `ex3_button_logic/starter/ex3_button_logic.v` — fill in the `TODO` assignments
 - Predict the truth tables **on paper first**, then verify on hardware
 - From `labs/week1_day01/`, build and program: `make ex3`
+- **Earn the flag:** `cd ex3_button_logic/starter && make test`. The testbench is self-checking — a wrong truth table will print a mismatch and emit no flag. Save for Exercise 4.
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 - **Discussion:** All four `assign` statements are active simultaneously
 
 | sw1 | sw2 | LED1 (AND) | LED3 (XOR) | LED4 (NOT) |
@@ -115,6 +149,8 @@ Don't proceed with a broken toolchain.
 - Open `ex4_active_low_clean/starter/ex4_active_low_clean.v` — fill in the `TODO` sections
 - The pattern: name inputs clearly at the boundary, keep internal logic readable, drive outputs directly
 - From `labs/week1_day01/`, build and program: `make ex4`
+- **Earn the flag:** `cd ex4_active_low_clean/starter && make test` — save for Exercise 5
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 3>`
 - **Compare:** Does this produce more or fewer LUTs than Exercise 3? Run `make ex4_stat`
 
 ---
@@ -126,6 +162,8 @@ Don't proceed with a broken toolchain.
 - Open `ex5_xor_pattern/starter/ex5_xor_pattern.v` — add creative logic combinations
 - The day-level `Makefile` in `labs/week1_day01/` dispatches to each exercise's own `Makefile`; open both and skim how `make ex5` becomes `make -C ex5_xor_pattern/starter prog`
 - From `labs/week1_day01/`, build and program: `make ex5`
+- **Earn the flag:** `cd ex5_xor_pattern/starter && make test`. The flag here is the unlock key for Day 2 Exercise 1's reference — keep it.
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 4>`
 - **Challenge:** Can you make all 4 LEDs display a unique pattern based on the 4 buttons?
 
 ---
@@ -133,30 +171,38 @@ Don't proceed with a broken toolchain.
 ## Deliverable Checklist
 
 - [ ] Toolchain verified — all tools report version
-- [ ] Exercise 1: LED1 lit on board
-- [ ] Exercise 2: All 4 buttons control corresponding LEDs
-- [ ] Exercise 3: Truth table filled in and verified on hardware
-- [ ] Exercise 4: Active-low pattern implemented and working
+- [ ] Exercise 1: LED1 lit on board, `make test` flag captured
+- [ ] Exercise 2: All 4 buttons control corresponding LEDs, `make test` flag captured
+- [ ] Exercise 3: Truth table filled in, verified on hardware, `make test` flag captured
+- [ ] Exercise 4: Active-low pattern implemented and working, `make test` flag captured
 - [ ] At minimum: Exercise 3 or 4 programmed on board with logic modifications
 
 ## Quick Reference
 
-All `make` commands below run from `labs/week1_day01/` with the Nix
-shell active (`nix develop` from the repo root):
+All commands run inside the Nix shell (`nix develop` from the repo
+root). Programming and stat targets run from the **day directory**;
+test and unlock targets run from inside an **exercise's `starter/`
+directory**.
 
 ```bash
 cd ~/hdl-for-dsd && nix develop      # once per terminal session
-cd labs/week1_day01                  # once per lab
 
+# ── from labs/week1_day01/ ──
 make ex1                             # build and program Exercise 1
 make ex2                             # build and program Exercise 2
 make ex3                             # build and program Exercise 3
 make ex4                             # build and program Exercise 4
 make ex5                             # build and program Exercise 5 (stretch)
 make ex1_stat                        # show resource usage for Exercise 1
-make ex3_sim                         # run testbench simulation for Exercise 3
 make clean                           # remove all build artifacts
+
+# ── from labs/week1_day01/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock COURSE_KEY=<k>           # ex1 only: decrypt reference DUT
+make unlock FLAG=<previous-flag>     # ex2+: chain unlock with prior flag
 ```
 
-Append `SOLUTION=1` to any target (e.g. `make ex1 SOLUTION=1`) to build
-the reference solution instead of your starter.
+`make exN SOLUTION=1` (from the day directory) runs the reference DUT
+through the full toolchain. It now reads from `solution/ref/`, so it
+only works *after* you've unlocked that exercise. Plain `make exN`
+against your starter works without any unlocking.
