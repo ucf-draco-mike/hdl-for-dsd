@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#C62828"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">SPI Master FSM (Mode 0) — 8-Bit Transaction</text>
+  <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">CPOL=0, CPHA=0 · sample on rising SCK · MSB-first</text>
+
+  <!-- Reset arrow -->
+  <line x1="80" y1="62" x2="80" y2="98" stroke="#C62828" stroke-width="2" marker-end="url(#arr-r)"/>
+  <text x="80" y="56" text-anchor="middle" font-size="10" fill="#C62828" font-weight="600">RESET</text>
+
+  <!-- ===== S_IDLE ===== -->
+  <circle cx="80" cy="170" r="56" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="80" y="160" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">S_IDLE</text>
+  <text x="80" y="178" text-anchor="middle" font-size="9" fill="#555">cs_n = 1</text>
+  <text x="80" y="190" text-anchor="middle" font-size="9" fill="#555">sck = 0</text>
+
+  <!-- Self-loop -->
+  <path d="M 38,142 Q 8,108 36,138" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="0" y="115" font-size="9" fill="#888">!start</text>
+
+  <!-- IDLE → ASSERT -->
+  <path d="M 136,160 Q 195,110 240,150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="190" y="118" text-anchor="middle" font-size="9" fill="#333" font-weight="600">i_start = 1</text>
+  <text x="190" y="130" text-anchor="middle" font-size="8" fill="#888" font-style="italic">latch tx byte</text>
+
+  <!-- ===== S_ASSERT_CS ===== -->
+  <circle cx="280" cy="170" r="56" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="280" y="155" text-anchor="middle" font-size="11" font-weight="700" fill="#F9A825">S_ASSERT</text>
+  <text x="280" y="170" text-anchor="middle" font-size="9" fill="#555">cs_n ← 0</text>
+  <text x="280" y="184" text-anchor="middle" font-size="9" fill="#555">sck = 0</text>
+  <text x="280" y="200" text-anchor="middle" font-size="8" fill="#888" font-style="italic">setup time</text>
+
+  <!-- ASSERT → SHIFT -->
+  <path d="M 336,160 Q 390,110 440,150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="388" y="118" text-anchor="middle" font-size="9" fill="#333" font-weight="600">setup done</text>
+  <text x="388" y="130" text-anchor="middle" font-size="8" fill="#888" font-style="italic">r_bit ← 7 (MSB)</text>
+
+  <!-- ===== S_SHIFT ===== -->
+  <circle cx="480" cy="170" r="68" fill="#FFEBEE" stroke="#C62828" stroke-width="2.5"/>
+  <text x="480" y="153" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">S_SHIFT</text>
+  <text x="480" y="170" text-anchor="middle" font-size="9" fill="#555">toggle sck</text>
+  <text x="480" y="184" text-anchor="middle" font-size="9" fill="#555">drive mosi=tx[r_bit]</text>
+  <text x="480" y="198" text-anchor="middle" font-size="9" fill="#888" font-style="italic">sample miso → rx[r_bit]</text>
+
+  <!-- Self-loop S_SHIFT (8 cycles) -->
+  <path d="M 540,138 Q 590,98 558,138" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="555" y="98" font-size="9" fill="#888">r_bit &gt; 0</text>
+  <text x="555" y="110" font-size="9" fill="#888">(8 SCK pulses)</text>
+
+  <!-- SHIFT → DEASSERT -->
+  <path d="M 545,158 Q 605,108 660,150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="603" y="118" text-anchor="middle" font-size="9" fill="#333" font-weight="600">r_bit == 0</text>
+  <text x="603" y="130" text-anchor="middle" font-size="8" fill="#888" font-style="italic">last bit shifted</text>
+
+  <!-- ===== S_DEASSERT ===== -->
+  <circle cx="700" cy="170" r="52" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="700" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32">S_DEASSERT</text>
+  <text x="700" y="176" text-anchor="middle" font-size="9" fill="#555">cs_n ← 1</text>
+  <text x="700" y="190" text-anchor="middle" font-size="9" fill="#555">o_done = 1</text>
+
+  <!-- DEASSERT → IDLE (return) -->
+  <path d="M 648,195 Q 400,290 110,222" fill="none" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="380" y="285" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="600">hold time done → S_IDLE</text>
+
+  <!-- Bottom annotation -->
+  <rect x="40" y="240" width="270" height="60" rx="6" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
+  <text x="175" y="258" text-anchor="middle" font-size="10" font-weight="700" fill="#333">Inside S_SHIFT (per byte)</text>
+  <text x="55" y="274" font-size="9" fill="#555">• rising sck edge:  capture miso bit</text>
+  <text x="55" y="288" font-size="9" fill="#555">• falling sck edge: present next mosi bit</text>
+</svg>

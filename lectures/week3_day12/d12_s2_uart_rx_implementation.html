@@ -73,6 +73,19 @@
 </section>
 
 <section>
+    <h2>UART RX FSM &mdash; State Diagram</h2>
+    <div style="margin-top:0.2em;">
+        <img src="diagrams/d12_uart_rx_fsm.svg"
+             alt="UART RX FSM with four states. IDLE waits for falling edge then enters START; START verifies line is still LOW at slot 8 (else returns to IDLE as false start); DATA samples line at slot 7 of each bit, loops 8 times, then enters STOP; STOP verifies line is HIGH at slot 8 (success → IDLE with o_valid pulse, else IDLE with framing error)."
+             style="width:100%;max-width:780px;display:block;margin:0 auto;">
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Read the picture:</strong> Same four states as TX — but with two <em>guard checks</em> the TX never needs. The red dashed arrow out of <code>S_START</code> rejects glitches that aren't a real start bit. The red dashed arrow out of <code>S_STOP</code> raises <code>o_frame_err</code> when the stop bit isn't HIGH (baud mismatch / line noise). Everything advances on <code>r_osx_tick</code>, not the system clock.
+    </div>
+    <aside class="notes">Mirror image of the TX FSM, with two extra error-detection branches. Make sure students see that the TX FSM is open-loop (just emit the right level), but the RX FSM is closed-loop on the wire (validate at every gate). That's why RX is harder.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Key RX Code Pattern</h2>
     <pre class="synth" style="font-size:0.6em;"><code class="language-verilog">// Oversample generator
 reg [$clog2(CLKS_PER_OSX)-1:0] r_osx_cnt;

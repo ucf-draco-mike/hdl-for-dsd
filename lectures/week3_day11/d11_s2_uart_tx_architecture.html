@@ -96,6 +96,19 @@
 </section>
 
 <section>
+    <h2>UART TX FSM &mdash; State Diagram</h2>
+    <div style="margin-top:0.2em;">
+        <img src="diagrams/d11_uart_tx_fsm.svg"
+             alt="UART TX FSM with four states: S_IDLE, S_START, S_DATA, S_STOP. IDLE transitions to START on i_valid; START to DATA on baud tick; DATA loops 8 times then advances to STOP; STOP returns to IDLE on next baud tick."
+             style="width:100%;max-width:760px;display:block;margin:0 auto;">
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Read the picture:</strong> Four states, each producing a fixed <code>o_tx</code> value (Moore — outputs depend only on state). The whole frame is just &ldquo;walk the loop once&rdquo;: IDLE → START → DATA (×8) → STOP → IDLE. <code>baud_tick</code> is the only thing that advances state; everything between ticks is the bit-time wait. <code>o_busy</code> is high in any non-idle state.
+    </div>
+    <aside class="notes">The state diagram makes the &ldquo;walk once around the loop = transmit one byte&rdquo; intuition crisp. The DATA self-loop (with the bit counter) is where all 8 data bits live. Compare to the Day 7 traffic-light Moore FSM — same pattern, different domain.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">🤝</span> Valid / Busy Handshake</h2>
     <pre style="font-family:monospace;font-size:0.62em;text-align:left;background:none;border:none;color:#333;">
             ┌──────────────────────────┐
