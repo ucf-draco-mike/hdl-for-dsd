@@ -282,6 +282,131 @@ a.day-card.day-dim {
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
+/* ═══ Quiz Answer Gating ═══ */
+.quiz-gate {
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    border-left: 3px solid var(--ucf-gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 0.6em 0 0.4em;
+}
+.quiz-gate__label {
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+.quiz-gate__input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--md-default-bg-color);
+    color: var(--md-default-fg-color, var(--text-secondary));
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font: inherit;
+    font-size: 0.92em;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 4.5em;
+}
+.quiz-gate__input:focus {
+    outline: none;
+    border-color: var(--ucf-gold);
+    box-shadow: 0 0 0 2px rgba(255, 201, 4, 0.25);
+}
+.quiz-gate__input--code {
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    white-space: pre;
+    overflow-x: auto;
+}
+.quiz-gate__msg {
+    min-height: 1.2em;
+    margin-top: 8px;
+    font-size: 0.85em;
+}
+.quiz-gate__msg--err { color: #d93025; }
+.quiz-gate__msg--ok  { color: #1a7f37; }
+[data-md-color-scheme="slate"] .quiz-gate__msg--err { color: #ff7b72; }
+[data-md-color-scheme="slate"] .quiz-gate__msg--ok  { color: #7ee787; }
+
+.quiz-gate__submit,
+.quiz-gate__edit {
+    margin-top: 8px;
+    margin-right: 8px;
+    font-size: 0.85em;
+    padding: 4px 14px;
+}
+.quiz-gate__preview {
+    margin-top: 12px;
+}
+.quiz-gate__preview-label {
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.quiz-gate__preview-text {
+    background: var(--md-default-bg-color);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    white-space: pre-wrap;
+    font-size: 0.92em;
+    line-height: 1.5;
+}
+.quiz-gate__preview-code {
+    background: var(--md-default-bg-color);
+    border: 1px solid var(--card-border);
+    border-left: 3px solid var(--ucf-gold);
+    border-radius: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+    line-height: 1.5;
+    margin: 0;
+}
+.quiz-gate__preview-code code {
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+}
+
+/* Verilog highlight tokens for the recap pane */
+.qz-k { color: #cf222e; font-weight: 600; }   /* keyword */
+.qz-f { color: #8250df; }                      /* system task / $func */
+.qz-n { color: #0550ae; }                      /* number */
+.qz-s { color: #0a7d3a; }                      /* string */
+.qz-c { color: #6e7781; font-style: italic; }  /* comment */
+[data-md-color-scheme="slate"] .qz-k { color: #ff7b72; }
+[data-md-color-scheme="slate"] .qz-f { color: #d2a8ff; }
+[data-md-color-scheme="slate"] .qz-n { color: #79c0ff; }
+[data-md-color-scheme="slate"] .qz-s { color: #a5d6ff; }
+[data-md-color-scheme="slate"] .qz-c { color: #8b949e; }
+
+/* Lock the answer until the gate is unlocked */
+details.quiz-locked > summary {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+details.quiz-locked > summary::after {
+    content: " 🔒";
+    font-size: 0.9em;
+}
+details.quiz-locked > *:not(summary) {
+    display: none !important;
+}
+
 /* ═══ Clickable Cards (any card containing a link) ═══ */
 .nav-card--clickable,
 .feature-card--clickable {
