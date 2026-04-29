@@ -265,6 +265,34 @@ assign carry = a &amp; b;   // AND</code></pre>
     <div class="callout" style="font-size:0.7em;margin-top:0.4em;">
         Bigger circuits are <em>just more of this</em>. A 32-bit adder is 32 of these chained together (with a carry-in on each). The whole course is "compose primitives, name the result, reuse it."
     </div>
+    <div class="two-col" style="margin-top:0.4em;align-items:flex-start;">
+        <div class="col fragment" style="flex:1;">
+            <p style="font-size:0.65em;color:#666;margin:0 0 0.2em 0;">
+                <strong>① Wrap it.</strong> Same two assigns, now a named module with pins.
+            </p>
+            <pre class="synth" style="font-size:0.6em;margin:0;"><code class="language-verilog">module half_adder (
+    input  wire a, b,
+    output wire sum, carry
+);
+    assign sum   = a ^ b;
+    assign carry = a &amp; b;
+endmodule</code></pre>
+        </div>
+        <div class="col fragment" style="flex:1.15;">
+            <p style="font-size:0.65em;color:#666;margin:0 0 0.2em 0;">
+                <strong>② Reuse it.</strong> Two half-adders + an OR = full adder (with carry-in).
+            </p>
+            <pre class="synth" style="font-size:0.6em;margin:0;"><code class="language-verilog">module full_adder (
+    input  wire a, b, cin,
+    output wire sum, cout
+);
+    wire s1, c1, c2;
+    half_adder ha1 (.a(a),  .b(b),   .sum(s1),  .carry(c1));
+    half_adder ha2 (.a(s1), .b(cin), .sum(sum), .carry(c2));
+    assign cout = c1 | c2;
+endmodule</code></pre>
+        </div>
+    </div>
     <aside class="notes">
         This is the moment where digital logic stops feeling abstract. Two bits in, two bits out.
         Look at the truth table — the Sum column is exactly XOR, the Carry column is exactly AND.
@@ -272,7 +300,10 @@ assign carry = a &amp; b;   // AND</code></pre>
         a half-adder. Chain a stack of these with carries threaded through, and you have an
         arithmetic logic unit. Every CPU you've ever written code for has billions of transistors
         organized as variations on this pattern. The Verilog on the right is the entire module
-        body — two assigns, done. The point: gates compose, and Verilog lets you describe the
+        body — two assigns, done. Then we wrap those two lines in a module — same logic, now it
+        has a name and pins, so we can reuse it. Two of those modules plus an OR gate gives a
+        full adder that handles a carry-in, and that's the cell you chain 32 times for a 32-bit
+        adder. The point: gates compose, modules compose, and Verilog lets you describe the
         composition directly.
     </aside>
 </section>
