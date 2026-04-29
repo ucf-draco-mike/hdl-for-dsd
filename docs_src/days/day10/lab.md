@@ -19,6 +19,8 @@ final project report.
 
 ## Exercises
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 | # | Exercise | Time | Key SLOs |
 |---|----------|------|----------|
 | 1 | Adder Architecture Comparison | 30 min | 10.1, 10.4 |
@@ -27,39 +29,56 @@ final project report.
 | 4 | Timing Constraint Exercise | 10 min | 10.5 |
 | 5 | PLL & CDC (Stretch) | 15 min | 10.5 |
 
+### Ex 1 — Adder Comparison
+
+- **Earn the flag:** `cd ex1_adder_comparison/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex5-register-file-9018341dc27d` (Day 9 Exercise 5's flag).
+
+### Ex 2 — Shift-and-Add Multiplier
+
+- **Earn the flag:** `cd ex2_shift_add_multiplier/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-adder-comparison-c3fbea849e85`
+
+### Ex 3 — Fixed Point
+
+- **Earn the flag:** `cd ex3_fixed_point/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 11 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-shift-add-multiplier-2c5b106240d4`
+
+### Ex 4 — Timing Exercise
+
+- **Note:** This exercise isn't in the CTF chain — it's a paper/analysis worksheet with no `make test` target, so there's no flag to capture. Continue using Exercise 3's flag (`flag-ex3-fixed-point-9d0f6eb0df21`) to unlock Day 11 Exercise 1's reference.
+
+### Ex 5 — PLL & CDC (Stretch)
+
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 3's flag (`flag-ex3-fixed-point-9d0f6eb0df21`) to unlock Day 11 Exercise 1's reference.
+
 ## Deliverables
 1. **Adder/multiplier PPA comparison table** with real data (LUTs, FFs, Fmax)
 2. **Working shift-and-add multiplier** on FPGA with testbench
 3. **Fixed-point demo** showing correct Q4.4 multiplication result on 7-seg
 
-## Predict Before You Measure
-
-Before running `make stat`, fill in the **Predicted LUTs** column below using
-the LUT cost cheat sheet from the Day 10.2 lecture (iCE40 LUT4):
-
-- `a + b`, N-bit, with `SB_CARRY` chain → ≈ N LUT4s
-- Hand-rolled N-bit ripple-carry → ≈ 2N LUT4s
-- N×N parallel `a * b` (no DSP block) → ≈ N² LUT4s
-- k-input function (k > 4) → ⌈(k−1)/3⌉ cascaded LUT4s
-
-The point is calibration. After you measure, any row where prediction and
-reality disagree by more than ~20% is worth investigating — that's where the
-synthesizer is doing something you didn't expect.
-
 ## PPA Comparison Table Template
 
-| Module | Configuration | Predicted LUTs | Actual LUTs | FFs | Fmax (MHz) | Notes |
-|--------|---------------|:--------------:|:-----------:|-----|------------|-------|
-| Adder | Ripple-carry, 8-bit | | | | | Manual chain |
-| Adder | Ripple-carry, 16-bit | | | | | Manual chain |
-| Adder | Behavioral `+`, 8-bit | | | | | Tool-chosen |
-| Adder | Behavioral `+`, 16-bit | | | | | Tool-chosen |
-| Multiplier | Combinational `*`, 8-bit | | | | | 1 cycle |
-| Multiplier | Shift-and-add, 8-bit | | | | | 8 cycles |
+| Module | Configuration | LUTs | FFs | Fmax (MHz) | Notes |
+|--------|---------------|------|-----|------------|-------|
+| Adder | Ripple-carry, 8-bit | | | | Manual chain |
+| Adder | Ripple-carry, 16-bit | | | | Manual chain |
+| Adder | Behavioral `+`, 8-bit | | | | Tool-chosen |
+| Adder | Behavioral `+`, 16-bit | | | | Tool-chosen |
+| Multiplier | Combinational `*`, 8-bit | | | | 1 cycle |
+| Multiplier | Shift-and-add, 8-bit | | | | 8 cycles |
 
 ## Shared Resources
 - `go_board.pcf` — Pin constraint file
 - Reuse your `hex_to_7seg.v` and `full_adder.v` from previous labs
+
+## Build Commands Quick Reference
+
+```bash
+# ── from labs/week3_day10/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
+```
 
 
 ---

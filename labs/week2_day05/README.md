@@ -30,6 +30,8 @@ By the end of this lab, you will:
 
 **Primary deliverable:** Debounced button-controlled LED chase pattern on the Go Board.
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../week1_day01/README.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 ---
 
 ## Exercise 1: Debounce Module — Build and Simulate (30 min)
@@ -61,6 +63,9 @@ make sim TB=tb_debounce.v SRCS="debounce.v"
 2. Measure delay from input stabilization to clean output transition
 3. Change `CLKS_TO_STABLE` to 5 — does bounce sneak through? Why?
 
+- **Earn the flag:** `cd ex1_debounce_module/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex6-updown-counter-e594878da536` (Day 4 Exercise 6's flag).
+
 ---
 
 ## Exercise 2: Shift Register LED Chase (25 min)
@@ -84,6 +89,9 @@ make prog PROJECT=led_chase
 
 **Extension:** Make the pattern 2 bits wide (two adjacent LEDs lit).
 
+- **Earn the flag:** `cd ex2_led_chase/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-debounce-module-864d5c70987b`
+
 ---
 
 ## Exercise 3: Debounced Button Counter (25 min)
@@ -106,6 +114,9 @@ make PROJECT=button_counter TOP=button_counter \
 make prog PROJECT=button_counter
 ```
 
+- **Earn the flag:** `cd ex3_button_counter/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-led-chase-e5148a07a85a`
+
 ---
 
 ## Exercise 4 (Stretch): LFSR Pattern Generator (20 min)
@@ -121,6 +132,9 @@ Use `starter/lfsr_8bit.v`. Create a top module that:
 
 **Simulation:** Write a testbench verifying 255-cycle period (returns to seed after exactly 255 enables).
 
+- **Earn the flag:** `cd ex4_lfsr_pattern/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 6 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-button-counter-8642efdae706`
+
 ---
 
 ## Exercise 5 (Stretch): Shift Register Debounce (20 min)
@@ -131,14 +145,21 @@ Implement `debounce_shift.v` — an alternative architecture that samples the in
 
 **Comparison task:** Which approach (counter vs. shift register) uses more resources? Which responds faster? Which is easier to tune?
 
+- **Note:** This exercise isn't in the CTF chain — it's a paper/comparison stretch with no `starter/` directory under `labs/week2_day05/`, so there's no `make test` flag to capture for it. Keep using Exercise 4's flag (`flag-ex4-lfsr-pattern-177caf99dffa`) to unlock Day 6 Exercise 1's reference.
+
 ---
 
 ## Build Commands Quick Reference
 
 ```bash
+# ── from labs/week2_day05/ ──
 make sim TB=tb_debounce.v SRCS="debounce.v" # Simulate
 make wave # Open GTKWave
 make PROJECT=led_chase SRCS="led_chase.v debounce.v" # Synthesize
 make prog PROJECT=led_chase # Program board
 make stat PROJECT=led_chase SRCS="led_chase.v debounce.v" # Resources
+
+# ── from labs/week2_day05/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
 ```

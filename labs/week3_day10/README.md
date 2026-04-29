@@ -13,6 +13,8 @@ final project report.
 
 ## Exercises
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../week1_day01/README.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 | # | Exercise | Time | Key SLOs |
 |---|----------|------|----------|
 | 1 | Adder Architecture Comparison | 30 min | 10.1, 10.4 |
@@ -20,6 +22,29 @@ final project report.
 | 3 | Fixed-Point Arithmetic | 20 min | 10.3 |
 | 4 | Timing Constraint Exercise | 10 min | 10.5 |
 | 5 | PLL & CDC (Stretch) | 15 min | 10.5 |
+
+### Ex 1 — Adder Comparison
+
+- **Earn the flag:** `cd ex1_adder_comparison/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex5-register-file-9018341dc27d` (Day 9 Exercise 5's flag).
+
+### Ex 2 — Shift-and-Add Multiplier
+
+- **Earn the flag:** `cd ex2_shift_add_multiplier/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-adder-comparison-c3fbea849e85`
+
+### Ex 3 — Fixed Point
+
+- **Earn the flag:** `cd ex3_fixed_point/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 11 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-shift-add-multiplier-2c5b106240d4`
+
+### Ex 4 — Timing Exercise
+
+- **Note:** This exercise isn't in the CTF chain — it's a paper/analysis worksheet with no `make test` target, so there's no flag to capture. Continue using Exercise 3's flag (`flag-ex3-fixed-point-9d0f6eb0df21`) to unlock Day 11 Exercise 1's reference.
+
+### Ex 5 — PLL & CDC (Stretch)
+
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 3's flag (`flag-ex3-fixed-point-9d0f6eb0df21`) to unlock Day 11 Exercise 1's reference.
 
 ## Deliverables
 1. **Adder/multiplier PPA comparison table** with real data (LUTs, FFs, Fmax)
@@ -40,3 +65,11 @@ final project report.
 ## Shared Resources
 - `go_board.pcf` — Pin constraint file
 - Reuse your `hex_to_7seg.v` and `full_adder.v` from previous labs
+
+## Build Commands Quick Reference
+
+```bash
+# ── from labs/week3_day10/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
+```
