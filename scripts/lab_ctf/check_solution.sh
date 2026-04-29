@@ -104,9 +104,18 @@ if flag=$(openssl enc -d -aes-256-cbc -pbkdf2 \
     echo ""
     echo "🚩 Flag: $flag"
     echo ""
-    echo "   Use this with the next exercise:"
-    echo "     cd ../../<next_exercise>/starter"
-    echo "     make unlock FLAG=$flag"
+    next_starter=""
+    if [[ -f "$SOLN_DIR/.ctf_meta" ]]; then
+        next_starter=$(grep '^next_starter=' "$SOLN_DIR/.ctf_meta" | cut -d= -f2-)
+    fi
+    if [[ -n "$next_starter" ]]; then
+        echo "   Use this with the next exercise:"
+        echo "     cd $next_starter"
+        echo "     make unlock FLAG=$flag"
+    else
+        echo "   This is the last sealed exercise in the chain — there's no"
+        echo "   further reference to unlock. Nice work."
+    fi
 else
     echo ""
     echo "❌ Output did not match the reference. Keep iterating — your DUT"

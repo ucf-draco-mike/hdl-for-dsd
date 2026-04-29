@@ -1,0 +1,271 @@
+{
+  "course_key": "dsd-spring-2026",
+  "flag_seed": "dsd-spring-2026-seed-v1",
+  "chain": [
+    {
+      "path": "labs/week1_day01/ex1_led_on",
+      "unlock_key": "dsd-spring-2026",
+      "flag": "flag-ex1-led-on-ca01f67941de"
+    },
+    {
+      "path": "labs/week1_day01/ex2_buttons_to_leds",
+      "unlock_key": "flag-ex1-led-on-ca01f67941de",
+      "flag": "flag-ex2-buttons-to-leds-ba329ba4342f"
+    },
+    {
+      "path": "labs/week1_day01/ex3_button_logic",
+      "unlock_key": "flag-ex2-buttons-to-leds-ba329ba4342f",
+      "flag": "flag-ex3-button-logic-42be95a85809"
+    },
+    {
+      "path": "labs/week1_day01/ex4_active_low_clean",
+      "unlock_key": "flag-ex3-button-logic-42be95a85809",
+      "flag": "flag-ex4-active-low-clean-479706cd54bc"
+    },
+    {
+      "path": "labs/week1_day01/ex5_xor_pattern",
+      "unlock_key": "flag-ex4-active-low-clean-479706cd54bc",
+      "flag": "flag-ex5-xor-pattern-8a24f2740644"
+    },
+    {
+      "path": "labs/week1_day02/ex1_vector_ops",
+      "unlock_key": "flag-ex5-xor-pattern-8a24f2740644",
+      "flag": "flag-ex1-vector-ops-40d14d81f037"
+    },
+    {
+      "path": "labs/week1_day02/ex2_mux_hierarchy",
+      "unlock_key": "flag-ex1-vector-ops-40d14d81f037",
+      "flag": "flag-ex2-mux-hierarchy-656691519a59"
+    },
+    {
+      "path": "labs/week1_day02/ex3_ripple_adder",
+      "unlock_key": "flag-ex2-mux-hierarchy-656691519a59",
+      "flag": "flag-ex3-ripple-adder-11d49851b090"
+    },
+    {
+      "path": "labs/week1_day02/ex4_7seg_decoder",
+      "unlock_key": "flag-ex3-ripple-adder-11d49851b090",
+      "flag": "flag-ex4-7seg-decoder-45c49399cca9"
+    },
+    {
+      "path": "labs/week1_day02/ex5_top_adder_display",
+      "unlock_key": "flag-ex4-7seg-decoder-45c49399cca9",
+      "flag": "flag-ex5-top-adder-display-46654043b4dc"
+    },
+    {
+      "path": "labs/week1_day03/ex1_latch_bugs",
+      "unlock_key": "flag-ex5-top-adder-display-46654043b4dc",
+      "flag": "flag-ex1-latch-bugs-e6b67a75d072"
+    },
+    {
+      "path": "labs/week1_day03/ex2_priority_encoder",
+      "unlock_key": "flag-ex1-latch-bugs-e6b67a75d072",
+      "flag": "flag-ex2-priority-encoder-0328ca963316"
+    },
+    {
+      "path": "labs/week1_day03/ex3_alu",
+      "unlock_key": "flag-ex2-priority-encoder-0328ca963316",
+      "flag": "flag-ex3-alu-4d49c938d59e"
+    },
+    {
+      "path": "labs/week1_day03/ex4_bcd_7seg",
+      "unlock_key": "flag-ex3-alu-4d49c938d59e",
+      "flag": "flag-ex4-bcd-7seg-34abdfeff601"
+    },
+    {
+      "path": "labs/week1_day03/ex5_top_alu_display",
+      "unlock_key": "flag-ex4-bcd-7seg-34abdfeff601",
+      "flag": "flag-ex5-top-alu-display-9839cc15885d"
+    },
+    {
+      "path": "labs/week1_day04/ex1_d_ff",
+      "unlock_key": "flag-ex5-top-alu-display-9839cc15885d",
+      "flag": "flag-ex1-d-ff-e78c45cb9a99"
+    },
+    {
+      "path": "labs/week1_day04/ex2_register",
+      "unlock_key": "flag-ex1-d-ff-e78c45cb9a99",
+      "flag": "flag-ex2-register-e10bccd88d9c"
+    },
+    {
+      "path": "labs/week1_day04/ex3_led_blinker",
+      "unlock_key": "flag-ex2-register-e10bccd88d9c",
+      "flag": "flag-ex3-led-blinker-56d3adb84c0d"
+    },
+    {
+      "path": "labs/week1_day04/ex4_seg_counter",
+      "unlock_key": "flag-ex3-led-blinker-56d3adb84c0d",
+      "flag": "flag-ex4-seg-counter-31ca024cfbb4"
+    },
+    {
+      "path": "labs/week1_day04/ex5_dual_blinker",
+      "unlock_key": "flag-ex4-seg-counter-31ca024cfbb4",
+      "flag": "flag-ex5-dual-blinker-c7fd2f86e3c3"
+    },
+    {
+      "path": "labs/week1_day04/ex6_updown_counter",
+      "unlock_key": "flag-ex5-dual-blinker-c7fd2f86e3c3",
+      "flag": "flag-ex6-updown-counter-e594878da536"
+    },
+    {
+      "path": "labs/week2_day05/ex1_debounce_module",
+      "unlock_key": "flag-ex6-updown-counter-e594878da536",
+      "flag": "flag-ex1-debounce-module-864d5c70987b"
+    },
+    {
+      "path": "labs/week2_day05/ex2_led_chase",
+      "unlock_key": "flag-ex1-debounce-module-864d5c70987b",
+      "flag": "flag-ex2-led-chase-e5148a07a85a"
+    },
+    {
+      "path": "labs/week2_day05/ex3_button_counter",
+      "unlock_key": "flag-ex2-led-chase-e5148a07a85a",
+      "flag": "flag-ex3-button-counter-8642efdae706"
+    },
+    {
+      "path": "labs/week2_day05/ex4_lfsr_pattern",
+      "unlock_key": "flag-ex3-button-counter-8642efdae706",
+      "flag": "flag-ex4-lfsr-pattern-177caf99dffa"
+    },
+    {
+      "path": "labs/week2_day06/ex1_alu_testbench",
+      "unlock_key": "flag-ex4-lfsr-pattern-177caf99dffa",
+      "flag": "flag-ex1-alu-testbench-6ef73ca753d9"
+    },
+    {
+      "path": "labs/week2_day06/ex2_debounce_testbench",
+      "unlock_key": "flag-ex1-alu-testbench-6ef73ca753d9",
+      "flag": "flag-ex2-debounce-testbench-b83c402e0bb3"
+    },
+    {
+      "path": "labs/week2_day06/ex3_counter_testbench",
+      "unlock_key": "flag-ex2-debounce-testbench-b83c402e0bb3",
+      "flag": "flag-ex3-counter-testbench-ec4db31675bb"
+    },
+    {
+      "path": "labs/week2_day06/ex4_file_driven_testing",
+      "unlock_key": "flag-ex3-counter-testbench-ec4db31675bb",
+      "flag": "flag-ex4-file-driven-testing-32418b75b645"
+    },
+    {
+      "path": "labs/week2_day06/ex5_exhaustive_alu",
+      "unlock_key": "flag-ex4-file-driven-testing-32418b75b645",
+      "flag": "flag-ex5-exhaustive-alu-917092005656"
+    },
+    {
+      "path": "labs/week2_day07/ex1_traffic_light_fsm",
+      "unlock_key": "flag-ex5-exhaustive-alu-917092005656",
+      "flag": "flag-ex1-traffic-light-fsm-117125e78ba1"
+    },
+    {
+      "path": "labs/week2_day07/ex2_pattern_detector",
+      "unlock_key": "flag-ex1-traffic-light-fsm-117125e78ba1",
+      "flag": "flag-ex2-pattern-detector-09545aabd178"
+    },
+    {
+      "path": "labs/week2_day08/ex1_parameterized_counter",
+      "unlock_key": "flag-ex2-pattern-detector-09545aabd178",
+      "flag": "flag-ex1-parameterized-counter-7f815e0c7741"
+    },
+    {
+      "path": "labs/week2_day08/ex2_generate_debounce",
+      "unlock_key": "flag-ex1-parameterized-counter-7f815e0c7741",
+      "flag": "flag-ex2-generate-debounce-a9df322bf97e"
+    },
+    {
+      "path": "labs/week2_day08/ex3_capstone_lab_instrument",
+      "unlock_key": "flag-ex2-generate-debounce-a9df322bf97e",
+      "flag": "flag-ex3-capstone-lab-instrument-6a74ff6ba63c"
+    },
+    {
+      "path": "labs/week2_day08/ex4_lfsr_generic",
+      "unlock_key": "flag-ex3-capstone-lab-instrument-6a74ff6ba63c",
+      "flag": "flag-ex4-lfsr-generic-e51428a33715"
+    },
+    {
+      "path": "labs/week3_day09/ex1_rom_sequencer",
+      "unlock_key": "flag-ex4-lfsr-generic-e51428a33715",
+      "flag": "flag-ex1-rom-sequencer-42c85a49f63b"
+    },
+    {
+      "path": "labs/week3_day09/ex2_sync_ram",
+      "unlock_key": "flag-ex1-rom-sequencer-42c85a49f63b",
+      "flag": "flag-ex2-sync-ram-f2e8dadae1d4"
+    },
+    {
+      "path": "labs/week3_day09/ex3_initialized_ram",
+      "unlock_key": "flag-ex2-sync-ram-f2e8dadae1d4",
+      "flag": "flag-ex3-initialized-ram-133e839b9cbf"
+    },
+    {
+      "path": "labs/week3_day09/ex4_dual_display",
+      "unlock_key": "flag-ex3-initialized-ram-133e839b9cbf",
+      "flag": "flag-ex4-dual-display-f647776d8ef4"
+    },
+    {
+      "path": "labs/week3_day09/ex5_register_file",
+      "unlock_key": "flag-ex4-dual-display-f647776d8ef4",
+      "flag": "flag-ex5-register-file-9018341dc27d"
+    },
+    {
+      "path": "labs/week3_day10/ex1_adder_comparison",
+      "unlock_key": "flag-ex5-register-file-9018341dc27d",
+      "flag": "flag-ex1-adder-comparison-c3fbea849e85"
+    },
+    {
+      "path": "labs/week3_day10/ex2_shift_add_multiplier",
+      "unlock_key": "flag-ex1-adder-comparison-c3fbea849e85",
+      "flag": "flag-ex2-shift-add-multiplier-2c5b106240d4"
+    },
+    {
+      "path": "labs/week3_day10/ex3_fixed_point",
+      "unlock_key": "flag-ex2-shift-add-multiplier-2c5b106240d4",
+      "flag": "flag-ex3-fixed-point-9d0f6eb0df21"
+    },
+    {
+      "path": "labs/week3_day11/ex1_baud_gen",
+      "unlock_key": "flag-ex3-fixed-point-9d0f6eb0df21",
+      "flag": "flag-ex1-baud-gen-b95798a722ef"
+    },
+    {
+      "path": "labs/week3_day11/ex2_uart_tx",
+      "unlock_key": "flag-ex1-baud-gen-b95798a722ef",
+      "flag": "flag-ex2-uart-tx-e14d8d736ddc"
+    },
+    {
+      "path": "labs/week3_day11/ex3_hardware_verify",
+      "unlock_key": "flag-ex2-uart-tx-e14d8d736ddc",
+      "flag": "flag-ex3-hardware-verify-94791dea7600"
+    },
+    {
+      "path": "labs/week3_day12/ex2_loopback",
+      "unlock_key": "flag-ex3-hardware-verify-94791dea7600",
+      "flag": "flag-ex2-loopback-fd4d0f924767"
+    },
+    {
+      "path": "labs/week4_day13/ex1_alu_refactor",
+      "unlock_key": "flag-ex2-loopback-fd4d0f924767",
+      "flag": "flag-ex1-alu-refactor-24e40e8b3239"
+    },
+    {
+      "path": "labs/week4_day13/ex2_fsm_refactor",
+      "unlock_key": "flag-ex1-alu-refactor-24e40e8b3239",
+      "flag": "flag-ex2-fsm-refactor-ab5d8a57d211"
+    },
+    {
+      "path": "labs/week4_day13/ex3_uart_refactor",
+      "unlock_key": "flag-ex2-fsm-refactor-ab5d8a57d211",
+      "flag": "flag-ex3-uart-refactor-763b6584598e"
+    },
+    {
+      "path": "labs/week4_day14/ex1_uart_assertions",
+      "unlock_key": "flag-ex3-uart-refactor-763b6584598e",
+      "flag": "flag-ex1-uart-assertions-332bb50bb1a7"
+    },
+    {
+      "path": "labs/week4_day14/ex2_uart_parity",
+      "unlock_key": "flag-ex1-uart-assertions-332bb50bb1a7",
+      "flag": "flag-ex2-uart-parity-07bad8d7b9f7"
+    }
+  ]
+}

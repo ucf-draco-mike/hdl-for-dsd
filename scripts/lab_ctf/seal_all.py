@@ -246,6 +246,36 @@ def run_canonical(input_files: list[Path]) -> bytes | None:
         return r2.stdout
 
 
+def write_chain_pointers(chain: list[dict]) -> None:
+    """Second pass: write each exercise's `next_starter` pointer into its
+    .ctf_meta. The pointer is a relative path from THIS exercise's
+    starter/ to the NEXT exercise's starter/, so check_solution.sh can
+    print a copy-pasteable `cd <path>` after a successful run.
+
+    Last exercise in the chain gets an empty next_starter.
+    """
+    import re
+    for i, entry in enumerate(chain):
+        ctf_meta = REPO / entry["path"] / "solution" / ".ctf_meta"
+        if not ctf_meta.exists():
+            continue
+        if i + 1 < len(chain):
+            this_starter = REPO / entry["path"] / "starter"
+            next_starter = REPO / chain[i + 1]["path"] / "starter"
+            rel = os.path.relpath(next_starter, this_starter)
+            line = f"next_starter={rel}\n"
+        else:
+            line = "next_starter=\n"
+        text = ctf_meta.read_text()
+        if "next_starter=" in text:
+            text = re.sub(r"next_starter=.*\n?", line, text)
+        else:
+            if not text.endswith("\n"):
+                text += "\n"
+            text += line
+        ctf_meta.write_text(text)
+
+
 def seal_one(ex: Path, unlock_key: str, flag: str) -> bool:
     """Return True if sealed successfully, False otherwise. Mutates the tree."""
     soln = ex / "solution"
@@ -337,6 +367,8 @@ def main() -> int:
             })
             prev_flag = flag
             print(f"  OK: {ex.relative_to(REPO)}  flag={flag}")
+
+    write_chain_pointers(chain)
 
     CHAIN_JSON.write_text(json.dumps({
         "course_key": args.course_key,
