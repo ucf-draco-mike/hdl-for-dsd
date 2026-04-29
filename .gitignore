@@ -23,7 +23,9 @@
 
 # Nix
 result
+result-*
 .direnv/
+.envrc.local
 
 # Python
 __pycache__/
