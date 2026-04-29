@@ -1,8 +1,12 @@
 # Makefile — top_uart_cmd
 PROJECT  = top_uart_cmd
 TOP      = top_uart_cmd
-PCF      = ../../go_board.pcf
-SRCS     = $(wildcard *.v)
+PCF      = ../../../go_board.pcf
+
+FETCH_FROM_SHARED := uart_tx.v uart_rx.v hex_to_7seg.v
+include ../../../auto_fetch.mk
+
+SRCS     = top_uart_cmd.v $(FETCH_FROM_SHARED)
 TB       = tb_top_uart_cmd.v
 
 DEVICE   = hx1k

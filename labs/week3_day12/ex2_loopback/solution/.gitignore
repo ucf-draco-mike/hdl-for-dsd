@@ -1,0 +1,4 @@
+# Files fetched from shared/lib by auto_fetch.mk
+uart_tx.v
+uart_rx.v
+hex_to_7seg.v

@@ -2,7 +2,11 @@
 PROJECT  = top_uart_loopback
 TOP      = top_uart_loopback
 PCF      = ../../go_board.pcf
-SRCS     = top_uart_loopback.v uart_tx.v uart_rx.v hex_to_7seg.v
+
+FETCH_FROM_SHARED := uart_tx.v uart_rx.v hex_to_7seg.v
+include ../../../auto_fetch.mk
+
+SRCS     = top_uart_loopback.v $(FETCH_FROM_SHARED)
 TB       = tb_top_uart_loopback.v
 
 DEVICE   = hx1k
