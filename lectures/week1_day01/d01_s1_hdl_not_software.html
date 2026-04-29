@@ -172,14 +172,17 @@ assign d = a * 2;</code></pre>
             </p>
             <table style="font-size: 0.6em; margin: 0;">
                 <thead>
-                    <tr><th>Course of execution</th><th>a</th><th>d</th></tr>
+                    <tr><th>State of the river</th><th>a</th><th>d</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>always (b=3, c=4)</td><td>7</td><td>14</td></tr>
-                    <tr><td>always (b=5, c=4)</td><td>9</td><td>18</td></tr>
-                    <tr><td>always (b=5, c=1)</td><td>6</td><td>12</td></tr>
+                    <tr><td>steady<sup>*</sup> (b=3, c=4)</td><td>7</td><td>14</td></tr>
+                    <tr><td>steady<sup>*</sup> (b=5, c=4)</td><td>9</td><td>18</td></tr>
+                    <tr><td>steady<sup>*</sup> (b=5, c=1)</td><td>6</td><td>12</td></tr>
                 </tbody>
             </table>
+            <p style="font-size: 0.5em; margin: 0.2em 0 0 0; color: #666; font-style: italic;">
+                <sup>*</sup> after the river settles &mdash; see next slide
+            </p>
         </div>
     </div>
     <div class="fragment golden-rule" style="margin-top: 0.4em; font-size: 0.85em;">
@@ -193,11 +196,149 @@ assign d = a * 2;</code></pre>
         If you add a dam here, it affects the flow over there. Everything is happening at once.
         Look at the two small tables. On the software side, there's a moment where a exists
         but d hasn't been computed yet — a real ordering. On the hardware side, a and d
-        always reflect the current inputs, simultaneously. There is no "before" and "after"
-        within a single set of inputs — only different river states for different inputs.
+        reflect the current inputs simultaneously — once the river has settled.
+        Notice I said "steady" rather than "always." That asterisk matters.
+        Concurrent does not mean instantaneous. The next slide unpacks that.
         [PAUSE — let this sink in]
         You are not writing instructions. You are describing the geography of the river.
         When you're confused about why Verilog behaves a certain way, come back to this analogy.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 5b: THE RIVER TAKES TIME TO FLOW ==================== -->
+<section data-background-color="#FAFAFA">
+    <h2>&hellip;But the River Takes Time to Flow</h2>
+    <p style="font-size: 0.78em; margin-top: 0.2em;">
+        Concurrent does not mean <em>instantaneous</em>. When an input changes, the
+        downstream water level doesn't snap to its new value &mdash; it <strong>settles</strong>.
+    </p>
+
+    <!-- Inline timing diagram: b changes, then a settles, then d settles -->
+    <div style="margin: 0.4em auto 0.3em auto; max-width: 760px;">
+    <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif" style="width: 100%;">
+        <!-- time axis -->
+        <line x1="110" y1="200" x2="730" y2="200" stroke="#5F6062" stroke-width="1.2"/>
+        <polygon points="730,200 722,196 722,204" fill="#5F6062"/>
+        <text x="735" y="204" font-size="11" fill="#5F6062">time</text>
+
+        <!-- vertical event markers -->
+        <line x1="180" y1="20" x2="180" y2="200" stroke="#C62828" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="184" y="30" font-size="11" fill="#C62828" font-weight="600">b changes</text>
+        <line x1="320" y1="60" x2="320" y2="200" stroke="#1565C0" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="324" y="70" font-size="11" fill="#1565C0" font-weight="600">a settles</text>
+        <line x1="500" y1="120" x2="500" y2="200" stroke="#2E7D32" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="504" y="130" font-size="11" fill="#2E7D32" font-weight="600">d settles</text>
+
+        <!-- waveform: b -->
+        <text x="20" y="55" font-size="13" font-weight="700" fill="#2C2A29">b</text>
+        <path d="M 110 60 L 180 60 L 180 40 L 730 40" fill="none" stroke="#C62828" stroke-width="2"/>
+
+        <!-- waveform: a = b + c -->
+        <text x="20" y="115" font-size="13" font-weight="700" fill="#2C2A29">a</text>
+        <text x="20" y="130" font-size="9" fill="#666">= b+c</text>
+        <path d="M 110 120 L 180 120" fill="none" stroke="#1565C0" stroke-width="2"/>
+        <!-- transient hatched region from b-change to a-settle -->
+        <rect x="180" y="92" width="140" height="36" fill="#FFC904" fill-opacity="0.35" stroke="#C9A000" stroke-dasharray="3 2"/>
+        <text x="250" y="115" font-size="10" fill="#7A5A00" text-anchor="middle" font-style="italic">in flight</text>
+        <path d="M 320 100 L 730 100" fill="none" stroke="#1565C0" stroke-width="2"/>
+
+        <!-- waveform: d = a * 2 -->
+        <text x="20" y="175" font-size="13" font-weight="700" fill="#2C2A29">d</text>
+        <text x="20" y="190" font-size="9" fill="#666">= a&times;2</text>
+        <path d="M 110 180 L 320 180" fill="none" stroke="#2E7D32" stroke-width="2"/>
+        <rect x="320" y="152" width="180" height="36" fill="#FFC904" fill-opacity="0.35" stroke="#C9A000" stroke-dasharray="3 2"/>
+        <text x="410" y="175" font-size="10" fill="#7A5A00" text-anchor="middle" font-style="italic">in flight</text>
+        <path d="M 500 160 L 730 160" fill="none" stroke="#2E7D32" stroke-width="2"/>
+
+        <!-- delay annotations -->
+        <path d="M 180 218 L 320 218" stroke="#5F6062" stroke-width="1" marker-end="url(#arr2)" marker-start="url(#arr2)"/>
+        <text x="250" y="215" font-size="10" fill="#5F6062" text-anchor="middle">t<tspan font-size="7" baseline-shift="sub">pd, adder</tspan></text>
+        <defs>
+            <marker id="arr2" viewBox="0 0 10 7" refX="5" refY="3.5" markerWidth="6" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 3.5 L 0 7 z" fill="#5F6062"/>
+            </marker>
+        </defs>
+    </svg>
+    </div>
+
+    <div class="two-col fragment" style="gap: 1.2em; font-size: 0.7em;">
+        <div class="col">
+            <p style="margin: 0;"><strong>Where the delay comes from:</strong></p>
+            <ul style="margin: 0.2em 0 0 1em; padding: 0;">
+                <li>Each gate has <strong>propagation delay</strong> (t<sub>pd</sub>) &mdash; ns or ps.</li>
+                <li>Each wire adds delay too &mdash; charge has to redistribute.</li>
+                <li>Delays <strong>add up</strong> along a path (b &rarr; a &rarr; d).</li>
+            </ul>
+        </div>
+        <div class="col">
+            <p style="margin: 0;"><strong>What the table on the last slide showed:</strong></p>
+            <ul style="margin: 0.2em 0 0 1em; padding: 0;">
+                <li>The <strong>steady state</strong> &mdash; values <em>after</em> the river settles.</li>
+                <li>During settling, downstream signals are briefly stale or glitchy.</li>
+                <li>Truth tables describe steady state, not the transient.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="fragment golden-rule" style="margin-top: 0.5em; font-size: 0.85em;">
+        Concurrent &ne; instantaneous. The river flows in parallel &mdash; but it still takes time.
+    </div>
+
+    <aside class="notes">
+        Here's the nuance the previous slide hid behind the word "always."
+        Concurrent does not mean instantaneous. When b changes, a doesn't update at the same instant.
+        The adder gate has a propagation delay — a few nanoseconds for typical FPGA logic, picoseconds in modern ASICs.
+        And d, which depends on a, can't settle until a has settled — so its delay is the adder delay plus the shifter delay.
+        The yellow "in flight" regions are real. During those windows the downstream signal is briefly wrong or transitioning.
+        Wires add delay too — moving charge through metal isn't free.
+        So when we draw a truth table or write "a = 7 when b = 3 and c = 4," we mean the steady-state value, after the river has settled.
+        The whole truth-table view of digital logic assumes you wait long enough between input changes for everything to settle.
+        That's almost always a safe assumption in this course — but it is an assumption, and it's the foundation of everything we'll do with clocks in week three.
+    </aside>
+</section>
+
+<!-- ==================== SLIDE 5c: WHY THIS MATTERS LATER ==================== -->
+<section>
+    <h2>Why This Will Matter</h2>
+    <p style="font-size: 0.85em; margin-top: 0.3em;">
+        For most of this week, &ldquo;wait long enough for the river to settle&rdquo; is implicit.
+        But that settling time is what limits how fast a real chip can run.
+    </p>
+    <div class="two-col" style="margin-top: 0.4em; gap: 1.2em; font-size: 0.75em;">
+        <div class="col">
+            <h3 style="color: #1565C0;">The path determines the speed</h3>
+            <p style="margin: 0.2em 0;">
+                The longest chain of gates between two storage elements (the
+                <strong>critical path</strong>) sets the minimum clock period:
+            </p>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85em; background: #F5F5F5; padding: 0.4em 0.6em; border-left: 3px solid #1565C0; margin: 0.3em 0;">
+                T<sub>clk</sub> &ge; t<sub>clk-to-Q</sub> + &Sigma; t<sub>pd</sub> + t<sub>setup</sub>
+            </p>
+            <p style="margin: 0;">More logic between flops &rarr; longer river &rarr; slower max clock.</p>
+        </div>
+        <div class="col">
+            <h3 style="color: #2E7D32;">For now, just remember:</h3>
+            <ul style="margin: 0.2em 0 0 1em; padding: 0;">
+                <li>Every gate adds a small delay.</li>
+                <li>Delays accumulate along a path.</li>
+                <li>Truth-table thinking = steady state.</li>
+                <li>Clocks (week 3) are how we make sure the river always has time to settle before sampling.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size: 0.78em; margin-top: 0.5em;">
+        <strong>Foreshadow:</strong> When a synthesis tool reports
+        &ldquo;F<sub>max</sub> = 161 MHz, slack = 33.8 ns,&rdquo; it's measuring exactly this &mdash;
+        how long the longest river takes to settle. We'll quantify it in <strong>Day 10: Timing Essentials</strong>.
+    </div>
+    <aside class="notes">
+        I don't want you to leave this video thinking delay is a footnote.
+        It's the reason clocks exist. The longest chain of combinational logic between two flip-flops — what we call the critical path — sets your maximum clock frequency.
+        The clock period has to be at least the clock-to-Q delay of the source flop, plus the sum of gate delays along the path, plus the setup time of the destination flop.
+        More logic between flops means a longer river, which means a slower maximum clock.
+        For week one, we'll mostly let this sit in the background — combinational logic settles, and we move on.
+        But when you see synthesis reports later in the course saying things like "Fmax 161 megahertz, slack 33.8 nanoseconds," that's exactly what's being measured: how long the longest river takes to settle.
+        We come back to this in detail on Day 10.
     </aside>
 </section>
 
