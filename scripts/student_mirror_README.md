@@ -14,9 +14,9 @@ for Digital System Design** course. It is the repo you clone as a student.
 All lectures, quizzes, daily plans, notebooks, the full setup guide, and
 information on how to get help live on the course site:
 
-**[https://ucf-draco-mike.github.io/hdl-for-dsd/][site]**
+**[https://hdl4dsd.com/][site]**
 
-[site]: https://ucf-draco-mike.github.io/hdl-for-dsd/
+[site]: https://hdl4dsd.com/
 
 This repository ships only the code you need on your laptop.
 
@@ -25,7 +25,7 @@ This repository ships only the code you need on your laptop.
 ## Quick Start
 
 Follow the full setup guide at
-<https://ucf-draco-mike.github.io/hdl-for-dsd/setup/> the first time. In
+<https://hdl4dsd.com/setup/> the first time. In
 short:
 
 ```bash
@@ -110,4 +110,4 @@ git fetch origin && git rebase origin/main
 
 ## Getting Help
 
-See the course website: <https://ucf-draco-mike.github.io/hdl-for-dsd/>
+See the course website: <https://hdl4dsd.com/>
