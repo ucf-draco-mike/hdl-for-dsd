@@ -3,19 +3,16 @@
 This repository contains the hands-on lab materials for the **Accelerated HDL
 for Digital System Design** course. It is the repo you clone as a student.
 
-> **This repo is auto-generated.** It is rebuilt on every push to `main` of
-> the source repo, [`ucf-draco-mike/hdl-for-dsd`][source]. **Do not open pull
-> requests here** — they will be overwritten by the next sync. File issues
-> and propose changes against the source repo instead.
-
-[source]: https://github.com/ucf-draco-mike/hdl-for-dsd
+> **This repo is auto-generated.** Do not open pull requests here — they will
+> be overwritten by the next sync. See the course website for how to ask
+> questions or report problems.
 
 ---
 
 ## Course Website
 
-All lectures, quizzes, daily plans, notebooks, and the full setup guide live
-on the course site:
+All lectures, quizzes, daily plans, notebooks, the full setup guide, and
+information on how to get help live on the course site:
 
 **[https://ucf-draco-mike.github.io/hdl-for-dsd/][site]**
 
@@ -90,8 +87,7 @@ Reference for the full toolchain command list.
 
 ## Updating the Repo
 
-The source repo pushes fixes to this mirror on every change. To pull the
-latest:
+This mirror is refreshed regularly. To pull the latest:
 
 ```bash
 git fetch origin
@@ -114,6 +110,4 @@ git fetch origin && git rebase origin/main
 
 ## Getting Help
 
-- **Course site:** <https://ucf-draco-mike.github.io/hdl-for-dsd/>
-- **Issues / questions about lab code or the dev shell:** file against
-  [`ucf-draco-mike/hdl-for-dsd`][source].
+See the course website: <https://ucf-draco-mike.github.io/hdl-for-dsd/>
