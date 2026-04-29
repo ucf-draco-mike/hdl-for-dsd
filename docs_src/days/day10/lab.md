@@ -32,16 +32,30 @@ final project report.
 2. **Working shift-and-add multiplier** on FPGA with testbench
 3. **Fixed-point demo** showing correct Q4.4 multiplication result on 7-seg
 
+## Predict Before You Measure
+
+Before running `make stat`, fill in the **Predicted LUTs** column below using
+the LUT cost cheat sheet from the Day 10.2 lecture (iCE40 LUT4):
+
+- `a + b`, N-bit, with `SB_CARRY` chain → ≈ N LUT4s
+- Hand-rolled N-bit ripple-carry → ≈ 2N LUT4s
+- N×N parallel `a * b` (no DSP block) → ≈ N² LUT4s
+- k-input function (k > 4) → ⌈(k−1)/3⌉ cascaded LUT4s
+
+The point is calibration. After you measure, any row where prediction and
+reality disagree by more than ~20% is worth investigating — that's where the
+synthesizer is doing something you didn't expect.
+
 ## PPA Comparison Table Template
 
-| Module | Configuration | LUTs | FFs | Fmax (MHz) | Notes |
-|--------|---------------|------|-----|------------|-------|
-| Adder | Ripple-carry, 8-bit | | | | Manual chain |
-| Adder | Ripple-carry, 16-bit | | | | Manual chain |
-| Adder | Behavioral `+`, 8-bit | | | | Tool-chosen |
-| Adder | Behavioral `+`, 16-bit | | | | Tool-chosen |
-| Multiplier | Combinational `*`, 8-bit | | | | 1 cycle |
-| Multiplier | Shift-and-add, 8-bit | | | | 8 cycles |
+| Module | Configuration | Predicted LUTs | Actual LUTs | FFs | Fmax (MHz) | Notes |
+|--------|---------------|:--------------:|:-----------:|-----|------------|-------|
+| Adder | Ripple-carry, 8-bit | | | | | Manual chain |
+| Adder | Ripple-carry, 16-bit | | | | | Manual chain |
+| Adder | Behavioral `+`, 8-bit | | | | | Tool-chosen |
+| Adder | Behavioral `+`, 16-bit | | | | | Tool-chosen |
+| Multiplier | Combinational `*`, 8-bit | | | | | 1 cycle |
+| Multiplier | Shift-and-add, 8-bit | | | | | 8 cycles |
 
 ## Shared Resources
 - `go_board.pcf` — Pin constraint file

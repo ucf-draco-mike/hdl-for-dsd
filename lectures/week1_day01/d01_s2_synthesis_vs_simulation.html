@@ -295,6 +295,41 @@ vvp sim.vvp</code></pre>
     <aside class="notes">Quick detour, because we keep dropping the word LUT. So far we&apos;ve said &ldquo;the iCE40 has 1,280 LUTs.&rdquo; What does that mean? An FPGA isn&apos;t a CPU — there&apos;s no instruction decoder, no ALU, no program counter. It&apos;s a regular grid of identical, configurable tiles, surrounded by I/O blocks at the edges, with a few block RAMs sprinkled in. Look at the left side of the diagram. Each blue square is a logic tile. The orange ones at the borders are I/O blocks — those connect to the physical pins on the chip. The red ones are EBRs, embedded block RAMs, useful when you need real memory. Now look at the right side — that&apos;s a zoom-in on one logic tile. Two pieces. First, the LUT — look-up table. A 4-input LUT is literally a tiny 16-bit memory. The four inputs A, B, C, D are used as an address into that memory, and whatever bit lives at that address is the output. So you can store any 4-input truth table you want — AND, OR, XOR, a 4-bit majority function, anything — by writing the right 16 bits. That&apos;s how a LUT &ldquo;becomes&rdquo; a gate. Second, a D flip-flop, for one bit of state. State machines, counters, pipeline registers — they all live in those FFs. There&apos;s a little 2:1 mux at the output that picks whether you want the LUT result directly (combinational) or registered through the FF. That choice is a config bit too. Then the routing — those grid lines I drew — connects tile outputs to other tile inputs through programmable switches. That&apos;s how Yosys and nextpnr build a circuit: pick which LUTs implement which truth tables, decide which FFs to use, and program the routing switches to wire them up. The bitstream we keep mentioning is exactly that: every LUT&apos;s 16 config bits, every routing switch on or off, every I/O block&apos;s direction and pull-up. So when we say &ldquo;1,280 LUTs and 16 EBRs,&rdquo; that&apos;s the size of your raw budget. Every assign and every always-ff in your Verilog has to fit in that grid.</aside>
 </section>
 
+<!-- WHEN ONE LUT ISN'T ENOUGH -->
+<section data-background-color="#FAFAFA">
+    <h2>When One LUT Isn&rsquo;t Enough</h2>
+    <p style="font-size:0.72em;margin:0.1em 0 0.3em;">
+        A LUT4 holds <em>any</em> 4-input function. So what about a 6-input AND?
+    </p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col">
+            <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// 6-input AND
+assign y = a &amp; b &amp; c &amp; d &amp; e &amp; f;</code></pre>
+            <p style="font-size:0.7em;margin-top:0.3em;">
+                Six inputs &gt; four LUT inputs &rArr; <strong>does not fit in one LUT4</strong>.
+                Synthesis splits it across two LUT4s and wires the first&rsquo;s output into the second:
+            </p>
+            <pre style="font-size:0.65em;background:#F4F4F4;padding:0.5em;border-radius:6px;"><code>LUT4_A(a,b,c,d) &rarr; t      // 4-input AND
+LUT4_B(t,e,f,1) &rarr; y      // 3-input AND of t,e,f</code></pre>
+        </div>
+        <div class="col">
+            <div class="callout" style="font-size:0.7em;">
+                <strong>Rule of thumb (iCE40, LUT4):</strong> a function of <em>k</em> inputs costs about
+                <code>&lceil;(k&minus;1)/3&rceil;</code> LUT4s once you cascade. So:
+                <ul style="margin-top:0.3em;">
+                    <li>1&ndash;4 inputs &rarr; <strong>1</strong> LUT4</li>
+                    <li>5&ndash;7 inputs &rarr; <strong>2</strong> LUT4s</li>
+                    <li>8&ndash;10 inputs &rarr; <strong>3</strong> LUT4s</li>
+                </ul>
+            </div>
+            <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.3em;">
+                <strong>And it costs delay too:</strong> each extra LUT in the chain adds one more LUT-delay before the signal reaches a flip-flop &mdash; that shows up as a lower Fmax in your nextpnr report.
+            </div>
+        </div>
+    </div>
+    <aside class="notes">A single LUT4 can implement any function of up to four inputs. The moment you exceed four, the synthesizer has to decompose the function and use more than one LUT, with the output of one feeding the input of the next. The 6-input AND is the simplest example: take four of the inputs into one LUT, send that result plus the remaining two inputs into a second LUT. Two LUT4s, one extra level of logic. The general rule on a 4-LUT architecture is that a k-input function takes roughly ceiling of (k minus 1) over 3 LUT4s, because each new LUT can absorb three more inputs while reusing one input for the cascaded result. That&apos;s your back-of-the-envelope tool for the rest of the course. And it&apos;s not just an area cost — every cascaded LUT adds one more LUT-delay to the combinational path, which is exactly what shrinks your Fmax. We&apos;ll come back to this on Day 10 when we look at adder and multiplier architectures.</aside>
+</section>
+
 <!-- CHECK THE MACHINE -->
 <section data-background-color="#FFF8E1">
     <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
