@@ -25,6 +25,6 @@
     always @(posedge i_clk) begin
         if (i_write_en)
             r_mem[i_addr] <= i_write_data;
-        o_read_data <= r_mem[i_addr];  // reads old value during write
+        o_read_data <= r_mem[i_addr]; // reads old value during write
     end
     ```

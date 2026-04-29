@@ -100,8 +100,8 @@
    ```systemverilog
    typedef struct packed {
        logic [15:0] clks_per_bit;
-       logic        parity_en;   // preview for Day 14
-       logic        parity_type; // preview for Day 14
+       logic parity_en; // preview for Day 14
+       logic parity_type; // preview for Day 14
    } uart_config_t;
    ```
 4. Compile with `-g2012`.

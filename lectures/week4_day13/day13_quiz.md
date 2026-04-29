@@ -21,7 +21,7 @@ reg [1:0] state;
     ```systemverilog
     typedef enum logic [1:0] {
         S_IDLE = 2'b00,
-        S_RUN  = 2'b01,
+        S_RUN = 2'b01,
         S_DONE = 2'b10
     } my_state_t;
 

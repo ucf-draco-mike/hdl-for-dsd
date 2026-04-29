@@ -81,7 +81,11 @@ Combine the adder and decoder into a single design that displays the sum on 7-se
 ## Quick Reference
 
 ```
-make ex1          make ex2          make ex3
-make ex4          make ex5          make ex2_show
+make ex1
+make ex2
+make ex3
+make ex4
+make ex5
+make ex2_show
 make clean
 ```

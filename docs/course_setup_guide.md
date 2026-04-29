@@ -20,11 +20,11 @@ Before installing Nix, your operating system needs a few things in place. Find y
 
 ```bash
 # 1. Install prerequisites (most systems already have these)
-sudo apt update && sudo apt install -y curl xz-utils   # Debian/Ubuntu
-# or: sudo dnf install -y curl xz                       # Fedora
+sudo apt update && sudo apt install -y curl xz-utils # Debian/Ubuntu
+# or: sudo dnf install -y curl xz # Fedora
 
 # 2. Set up USB permissions for the Go Board FTDI chip
-#    This avoids needing sudo every time you program the board.
+# This avoids needing sudo every time you program the board.
 sudo tee /etc/udev/rules.d/99-fpga-boards.rules > /dev/null << 'EOF'
 # Nandland Go Board / iCEstick / iCE40 — FTDI FT2232H
 ACTION=="add", ATTR{idVendor}=="0403", ATTR{idProduct}=="6010", MODE="0666"
@@ -54,8 +54,8 @@ xcode-select --install
 # Follow the dialog that appears. If already installed, you'll see a message saying so.
 
 # 2. Allow apps from "identified developers" (needed for GTKWave)
-#    System Settings → Privacy & Security → Security → Allow
-#    (You may be prompted again the first time you launch GTKWave)
+# System Settings → Privacy & Security → Security → Allow
+# (You may be prompted again the first time you launch GTKWave)
 ```
 
 **USB driver note:** macOS recognizes the Go Board FTDI chip natively via the built-in AppleUSBFTDI driver. No additional drivers are needed. Verify with:
@@ -83,7 +83,7 @@ Windows support works through **WSL2** (Windows Subsystem for Linux). You'll run
 wsl --install
 
 # 2. After reboot, open "Ubuntu" from the Start menu.
-#    Set your UNIX username and password when prompted.
+# Set your UNIX username and password when prompted.
 ```
 
 Now **inside the Ubuntu/WSL2 terminal**:
@@ -108,8 +108,8 @@ usbipd list
 # Find the line with "FTDI" or "USB Serial Converter" — note its BUSID (e.g., 2-1)
 
 # 6. Bind and attach to WSL (repeat step 6b each time you reconnect the board)
-usbipd bind --busid <BUSID>       # one-time: makes device shareable
-usbipd attach --wsl --busid <BUSID>  # each session: forwards to WSL
+usbipd bind --busid <BUSID> # one-time: makes device shareable
+usbipd attach --wsl --busid <BUSID> # each session: forwards to WSL
 ```
 
 Then **inside WSL2**:
@@ -219,7 +219,7 @@ You should see:
 > If you'd like the shell to activate automatically whenever you `cd` into the repo:
 > ```bash
 > nix profile install nixpkgs#direnv nixpkgs#nix-direnv
-> echo 'eval "$(direnv hook bash)"' >> ~/.bashrc   # or ~/.zshrc
+> echo 'eval "$(direnv hook bash)"' >> ~/.bashrc # or ~/.zshrc
 > mkdir -p ~/.config/direnv && echo 'source $HOME/.nix-profile/share/nix-direnv/direnvrc' >> ~/.config/direnv/direnvrc
 > cd hdl-for-dsd && direnv allow
 > ```
@@ -356,7 +356,7 @@ cd ~ && rm -rf /tmp/hdl-verify
 
 echo ""
 echo "════════════════════════════════════════"
-echo "  All tools verified. You're ready."
+echo " All tools verified. You're ready."
 echo "════════════════════════════════════════"
 ```
 
@@ -375,7 +375,7 @@ echo "════════════════════════�
 
 3. **First-program test** (after verification above):
    ```bash
-   cd /tmp/hdl-verify  # or wherever you built test.bin
+   cd /tmp/hdl-verify # or wherever you built test.bin
    iceprog test.bin
    ```
    If this completes without errors, your full synthesis → program pipeline is working.
@@ -439,8 +439,8 @@ nix develop .#full
 ./scripts/build_all.sh
 
 # Or individual steps:
-./scripts/build_all.sh --quick      # skip standalone site (build_site.py)
-./scripts/build_all.sh --serve      # build then live-preview at localhost:8000
+./scripts/build_all.sh --quick # skip standalone site (build_site.py)
+./scripts/build_all.sh --serve # build then live-preview at localhost:8000
 ```
 
 The `build_all.sh` script runs each step in order:
@@ -456,7 +456,7 @@ The `build_all.sh` script runs each step in order:
 ```bash
 # ── Enter the course environment ──
 cd hdl-for-dsd && nix develop
-code .                                     # open the repo in VS Code
+code . # open the repo in VS Code
 
 # ── Simulation ──
 iverilog -o sim.vvp -g2012 tb_module.v module.v

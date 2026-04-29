@@ -136,9 +136,9 @@ Implement `debounce_shift.v` — an alternative architecture that samples the in
 ## Build Commands Quick Reference
 
 ```bash
-make sim TB=tb_debounce.v SRCS="debounce.v"         # Simulate
-make wave                                              # Open GTKWave
-make PROJECT=led_chase SRCS="led_chase.v debounce.v"  # Synthesize
-make prog PROJECT=led_chase                            # Program board
-make stat PROJECT=led_chase SRCS="led_chase.v debounce.v"  # Resources
+make sim TB=tb_debounce.v SRCS="debounce.v" # Simulate
+make wave # Open GTKWave
+make PROJECT=led_chase SRCS="led_chase.v debounce.v" # Synthesize
+make prog PROJECT=led_chase # Program board
+make stat PROJECT=led_chase SRCS="led_chase.v debounce.v" # Resources
 ```

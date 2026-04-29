@@ -86,7 +86,7 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 # Open a NEW terminal, then:
 git clone https://github.com/ucf-draco-mike/hdl-for-dsd-student.git hdl-for-dsd
 cd hdl-for-dsd
-nix develop          # first run: ~5-15 min download; instant after that
+nix develop # first run: ~5-15 min download; instant after that
 ```
 
 ---
@@ -100,7 +100,7 @@ linting, inline error display, in-editor waveforms, and clickable Makefile
 targets.
 
 ```bash
-code .   # from inside the hdl-for-dsd directory
+code . # from inside the hdl-for-dsd directory
 ```
 
 [:octicons-arrow-right-16: Full IDE setup (extensions, WSL2 notes, formatter)](setup.md#step-4-install-configure-vs-code){ .md-button }

@@ -126,10 +126,10 @@ endmodule
 
 Run the following commands and confirm output:
 ```bash
-yosys -V                    # Should print version
-nextpnr-ice40 --version     # Should print version
-iverilog -V                 # Should print version
-iceprog                     # Should print usage (or error if no board connected)
+yosys -V # Should print version
+nextpnr-ice40 --version # Should print version
+iverilog -V # Should print version
+iceprog # Should print usage (or error if no board connected)
 ```
 
 Connect the Go Board via USB. Verify it's recognized.
@@ -156,10 +156,10 @@ Connect the Go Board via USB. Verify it's recognized.
 
 ```verilog
 module buttons_to_leds (
-    input  wire i_Switch_1,
-    input  wire i_Switch_2,
-    input  wire i_Switch_3,
-    input  wire i_Switch_4,
+    input wire i_Switch_1,
+    input wire i_Switch_2,
+    input wire i_Switch_3,
+    input wire i_Switch_4,
     output wire o_LED_1,
     output wire o_LED_2,
     output wire o_LED_3,
@@ -188,7 +188,7 @@ Starting from the buttons-to-LEDs design, make these modifications:
 **Simulation checkpoint:** Before programming the board, run the provided testbench:
 ```bash
 cd labs/week1_day01/ex3_button_logic/starter
-make sim     # should print "16 passed, 0 failed"
+make sim # should print "16 passed, 0 failed"
 ```
 If any tests fail, fix your logic before going to hardware.
 
