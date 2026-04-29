@@ -92,6 +92,191 @@
     <aside class="notes">Checklist of prerequisites. Logic gates and truth tables. Boolean algebra — especially DeMorgan's. Combinational versus sequential distinction. Truth tables to expressions and back. And the D flip-flop. If any of these are fuzzy, review your digital logic notes before class.</aside>
 </section>
 
+<!-- GATE ZOO: SYMBOLS + TRUTH TABLES -->
+<section>
+    <h2>The Four Gates You'll See Most</h2>
+    <p style="font-size:0.7em;color:#666;margin-top:-0.3em;">Symbol on top, truth table below. <code>0</code> = low voltage, <code>1</code> = high voltage. That's it — gates are physics, not metaphor.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.8em;margin-top:0.5em;font-size:0.65em;">
+
+        <!-- AND -->
+        <div style="text-align:center;">
+            <strong style="color:#1565C0;">AND &nbsp;<code>&amp;</code></strong>
+            <svg viewBox="0 0 90 60" style="width:100%;max-width:120px;display:block;margin:0.2em auto;">
+                <line x1="0" y1="20" x2="25" y2="20" stroke="#000" stroke-width="2"/>
+                <line x1="0" y1="40" x2="25" y2="40" stroke="#000" stroke-width="2"/>
+                <path d="M 25 5 L 45 5 A 25 25 0 0 1 45 55 L 25 55 Z" fill="none" stroke="#000" stroke-width="2"/>
+                <line x1="70" y1="30" x2="90" y2="30" stroke="#000" stroke-width="2"/>
+                <text x="6" y="16" font-size="9" font-family="JetBrains Mono">A</text>
+                <text x="6" y="36" font-size="9" font-family="JetBrains Mono">B</text>
+                <text x="80" y="26" font-size="9" font-family="JetBrains Mono">Y</text>
+            </svg>
+            <table style="font-size:0.85em;margin:0 auto;">
+                <thead><tr><th>A</th><th>B</th><th>Y</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td></tr>
+                    <tr><td>0</td><td>1</td><td>0</td></tr>
+                    <tr><td>1</td><td>0</td><td>0</td></tr>
+                    <tr><td>1</td><td>1</td><td><strong>1</strong></td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:0.3em;font-size:0.85em;color:#1565C0;">"both"</p>
+        </div>
+
+        <!-- OR -->
+        <div style="text-align:center;">
+            <strong style="color:#1565C0;">OR &nbsp;<code>|</code></strong>
+            <svg viewBox="0 0 90 60" style="width:100%;max-width:120px;display:block;margin:0.2em auto;">
+                <line x1="0" y1="20" x2="30" y2="20" stroke="#000" stroke-width="2"/>
+                <line x1="0" y1="40" x2="30" y2="40" stroke="#000" stroke-width="2"/>
+                <path d="M 18 5 Q 35 30 18 55 Q 50 55 78 30 Q 50 5 18 5 Z" fill="none" stroke="#000" stroke-width="2"/>
+                <line x1="78" y1="30" x2="90" y2="30" stroke="#000" stroke-width="2"/>
+                <text x="6" y="16" font-size="9" font-family="JetBrains Mono">A</text>
+                <text x="6" y="36" font-size="9" font-family="JetBrains Mono">B</text>
+                <text x="82" y="26" font-size="9" font-family="JetBrains Mono">Y</text>
+            </svg>
+            <table style="font-size:0.85em;margin:0 auto;">
+                <thead><tr><th>A</th><th>B</th><th>Y</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td></tr>
+                    <tr><td>0</td><td>1</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>1</td><td><strong>1</strong></td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:0.3em;font-size:0.85em;color:#1565C0;">"either"</p>
+        </div>
+
+        <!-- NOT -->
+        <div style="text-align:center;">
+            <strong style="color:#1565C0;">NOT &nbsp;<code>~</code></strong>
+            <svg viewBox="0 0 90 60" style="width:100%;max-width:120px;display:block;margin:0.2em auto;">
+                <line x1="0" y1="30" x2="22" y2="30" stroke="#000" stroke-width="2"/>
+                <path d="M 22 10 L 22 50 L 60 30 Z" fill="none" stroke="#000" stroke-width="2"/>
+                <circle cx="65" cy="30" r="5" fill="none" stroke="#000" stroke-width="2"/>
+                <line x1="70" y1="30" x2="90" y2="30" stroke="#000" stroke-width="2"/>
+                <text x="6" y="26" font-size="9" font-family="JetBrains Mono">A</text>
+                <text x="80" y="26" font-size="9" font-family="JetBrains Mono">Y</text>
+            </svg>
+            <table style="font-size:0.85em;margin:0 auto;">
+                <thead><tr><th>A</th><th>Y</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>0</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:0.3em;font-size:0.85em;color:#1565C0;">"flip it"</p>
+            <p style="font-size:0.8em;color:#888;">(the bubble = invert)</p>
+        </div>
+
+        <!-- XOR -->
+        <div style="text-align:center;">
+            <strong style="color:#1565C0;">XOR &nbsp;<code>^</code></strong>
+            <svg viewBox="0 0 90 60" style="width:100%;max-width:120px;display:block;margin:0.2em auto;">
+                <line x1="0" y1="20" x2="25" y2="20" stroke="#000" stroke-width="2"/>
+                <line x1="0" y1="40" x2="25" y2="40" stroke="#000" stroke-width="2"/>
+                <path d="M 12 5 Q 29 30 12 55" fill="none" stroke="#000" stroke-width="2"/>
+                <path d="M 18 5 Q 35 30 18 55 Q 50 55 78 30 Q 50 5 18 5 Z" fill="none" stroke="#000" stroke-width="2"/>
+                <line x1="78" y1="30" x2="90" y2="30" stroke="#000" stroke-width="2"/>
+                <text x="6" y="16" font-size="9" font-family="JetBrains Mono">A</text>
+                <text x="6" y="36" font-size="9" font-family="JetBrains Mono">B</text>
+                <text x="82" y="26" font-size="9" font-family="JetBrains Mono">Y</text>
+            </svg>
+            <table style="font-size:0.85em;margin:0 auto;">
+                <thead><tr><th>A</th><th>B</th><th>Y</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td></tr>
+                    <tr><td>0</td><td>1</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+                    <tr><td>1</td><td>1</td><td>0</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top:0.3em;font-size:0.85em;color:#1565C0;">"different"</p>
+        </div>
+    </div>
+    <p style="font-size:0.65em;color:#888;margin-top:0.4em;text-align:center;">
+        NAND, NOR, XNOR are just these with a NOT bubble on the output. Same gates, complement output.
+    </p>
+    <aside class="notes">
+        If you took a CS path that skipped digital logic, this is your anchor. Each gate is a small
+        physical circuit — a few transistors — that turns input voltages into one output voltage. AND
+        outputs 1 only when both inputs are 1. OR outputs 1 if any input is 1. NOT flips its input —
+        the bubble on the output is the universal "inverted" marker, you'll see it on every NAND and
+        NOR too. XOR — exclusive OR — outputs 1 when the inputs differ; it's the "are these two bits
+        the same?" gate, and it's the heart of every adder, every parity check, every comparator.
+        Memorize the symbols. You'll be sketching these on a whiteboard for the rest of your career.
+    </aside>
+</section>
+
+<!-- COMPOSITION EXAMPLE: HALF-ADDER -->
+<section>
+    <h2>Gates Compose: A 1-bit Adder</h2>
+    <p style="font-size:0.7em;color:#666;margin-top:-0.3em;">
+        Add two 1-bit numbers. <code>1 + 1 = 10</code> (binary) — a sum bit and a carry bit.
+    </p>
+    <div class="two-col" style="margin-top:0.4em;">
+        <div class="col" style="flex:1.1;">
+            <table style="font-size:0.75em;">
+                <thead><tr><th>A</th><th>B</th><th>Sum</th><th>Carry</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                    <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+                    <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+                    <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:0.7em;margin-top:0.5em;">
+                <strong>Sum</strong> column = XOR truth table.<br>
+                <strong>Carry</strong> column = AND truth table.<br>
+                <em>That's the whole circuit.</em>
+            </p>
+        </div>
+        <div class="col" style="flex:1.4;">
+            <svg viewBox="0 0 240 130" style="width:100%;max-width:340px;display:block;">
+                <!-- input lines -->
+                <line x1="0" y1="25" x2="50" y2="25" stroke="#000" stroke-width="2"/>
+                <line x1="0" y1="55" x2="50" y2="55" stroke="#000" stroke-width="2"/>
+                <text x="4" y="20" font-size="11" font-family="JetBrains Mono">A</text>
+                <text x="4" y="50" font-size="11" font-family="JetBrains Mono">B</text>
+                <!-- branch dots -->
+                <circle cx="30" cy="25" r="2.5" fill="#000"/>
+                <circle cx="40" cy="55" r="2.5" fill="#000"/>
+                <!-- branch wires down to AND -->
+                <line x1="30" y1="25" x2="30" y2="95" stroke="#000" stroke-width="2"/>
+                <line x1="30" y1="95" x2="50" y2="95" stroke="#000" stroke-width="2"/>
+                <line x1="40" y1="55" x2="40" y2="105" stroke="#000" stroke-width="2"/>
+                <line x1="40" y1="105" x2="50" y2="105" stroke="#000" stroke-width="2"/>
+                <!-- XOR (top) -->
+                <path d="M 44 10 Q 61 40 44 70" fill="none" stroke="#000" stroke-width="2"/>
+                <path d="M 50 10 Q 67 40 50 70 Q 82 70 110 40 Q 82 10 50 10 Z" fill="none" stroke="#000" stroke-width="2"/>
+                <line x1="110" y1="40" x2="220" y2="40" stroke="#000" stroke-width="2"/>
+                <text x="115" y="35" font-size="10" font-family="JetBrains Mono" fill="#888">XOR</text>
+                <!-- AND (bottom) -->
+                <path d="M 50 80 L 70 80 A 20 20 0 0 1 70 120 L 50 120 Z" fill="none" stroke="#000" stroke-width="2"/>
+                <line x1="90" y1="100" x2="220" y2="100" stroke="#000" stroke-width="2"/>
+                <text x="115" y="95" font-size="10" font-family="JetBrains Mono" fill="#888">AND</text>
+                <!-- output labels -->
+                <text x="195" y="35" font-size="11" font-family="JetBrains Mono" fill="#1565C0">Sum</text>
+                <text x="190" y="115" font-size="11" font-family="JetBrains Mono" fill="#E65100">Carry</text>
+            </svg>
+            <pre class="synth" style="font-size:0.7em;margin-top:0.3em;"><code class="language-verilog">assign sum   = a ^ b;   // XOR
+assign carry = a &amp; b;   // AND</code></pre>
+        </div>
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.4em;">
+        Bigger circuits are <em>just more of this</em>. A 32-bit adder is 32 of these chained together (with a carry-in on each). The whole course is "compose primitives, name the result, reuse it."
+    </div>
+    <aside class="notes">
+        This is the moment where digital logic stops feeling abstract. Two bits in, two bits out.
+        Look at the truth table — the Sum column is exactly XOR, the Carry column is exactly AND.
+        So the circuit is literally those two gates wired in parallel from the same inputs. That's
+        a half-adder. Chain a stack of these with carries threaded through, and you have an
+        arithmetic logic unit. Every CPU you've ever written code for has billions of transistors
+        organized as variations on this pattern. The Verilog on the right is the entire module
+        body — two assigns, done. The point: gates compose, and Verilog lets you describe the
+        composition directly.
+    </aside>
+</section>
+
 <!-- GATES → VERILOG TRANSLATION TABLE -->
 <section>
     <h2>Gates → Verilog: The Translation Table</h2>
