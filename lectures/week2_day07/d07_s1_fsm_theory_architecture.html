@@ -395,19 +395,19 @@ make stat      # yosys synth_ice40 + stat</code></pre>
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.5em; margin-top: 0.5em;">
         <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #8E6BBF;">
             <p style="color:#8E6BBF; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TASK</p>
-            <p style="font-size: 0.62em; margin: 0;">Paste the code to the AI with the default line removed.</p>
+            <p class="fragment" style="font-size: 0.62em; margin: 0;">Paste the code to the AI with the default line removed.</p>
         </div>
         <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #5A7FA0;">
             <p style="color:#5A7FA0; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">BEFORE</p>
-            <p style="font-size: 0.62em; margin: 0;">Your prediction: &ldquo;Simulation still works, every state case is covered.&rdquo;</p>
+            <p class="fragment" style="font-size: 0.62em; margin: 0;">Your prediction: &ldquo;Simulation still works, every state case is covered.&rdquo;</p>
         </div>
         <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #D4A843;">
             <p style="color:#D4A843; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">AFTER</p>
-            <p style="font-size: 0.62em; margin: 0;">AI should flag: without <code>default</code>, the <code>case</code> incompletely assigns <code>r_next</code> in some paths → latch inferred.</p>
+            <p class="fragment" style="font-size: 0.62em; margin: 0;">AI should flag: without <code>default</code>, the <code>case</code> incompletely assigns <code>r_next</code> in some paths → latch inferred.</p>
         </div>
         <div style="background: #fff; padding: 0.5em; border-radius: 6px; border: 2px solid #27AE60;">
             <p style="color:#27AE60; font-size: 0.55em; margin:0 0 0.2em 0; font-weight: 700; letter-spacing: 0.1em;">TAKEAWAY</p>
-            <p style="font-size: 0.62em; margin: 0;">Yosys reports the same via <code>synth_ice40 -verbose</code>. AI catches it from code alone.</p>
+            <p class="fragment" style="font-size: 0.62em; margin: 0;">Yosys reports the same via <code>synth_ice40 -verbose</code>. AI catches it from code alone.</p>
         </div>
     </div>
 
