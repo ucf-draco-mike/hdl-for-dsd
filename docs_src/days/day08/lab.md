@@ -34,6 +34,8 @@ By the end of this lab, you will:
 
 **Primary deliverable:** Hierarchical design with 3+ levels, parameterized, running on Go Board.
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 ---
 
 ## Exercise 1: Parameterized Counter Module (25 min)
@@ -59,6 +61,9 @@ Use the starter file. Test at N=10, N=16, and N=60 in a single testbench.
 make sim TB=tb_counter_mod_n.v SRCS="counter_mod_n.v"
 ```
 
+- **Earn the flag:** `cd ex1_parameterized_counter/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-pattern-detector-09545aabd178` (Day 7 Exercise 2's flag).
+
 ---
 
 ## Exercise 2: Generate-Based Multi-Debounce (25 min)
@@ -73,6 +78,9 @@ make sim TB=tb_counter_mod_n.v SRCS="counter_mod_n.v"
 Create `go_board_input.v` using `generate for` to stamp out N debounce + edge-detect channels.
 
 Test with a top module that uses all 4 buttons for different counter operations.
+
+- **Earn the flag:** `cd ex2_generate_debounce/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-parameterized-counter-7f815e0c7741`
 
 ---
 
@@ -106,6 +114,9 @@ top_lab_instrument
 - Display 1: lower 4 bits (hex)
 - Display 2: upper 4 bits (hex)
 
+- **Earn the flag:** `cd ex3_capstone_lab_instrument/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-generate-debounce-a9df322bf97e`
+
 ---
 
 ## Exercise 4 (Stretch): Parameterized LFSR (20 min)
@@ -118,3 +129,16 @@ top_lab_instrument
 **SLOs: 8.2, 8.4, 8.5**
 
 Create `lfsr_generic.v` with `generate if` for width-dependent tap selection. Verify maximal-length at WIDTH=4 (15 states), WIDTH=8 (255), WIDTH=16 (65535).
+
+- **Earn the flag:** `cd ex4_lfsr_generic/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 9 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-capstone-lab-instrument-6a74ff6ba63c`
+
+---
+
+## Build Commands Quick Reference
+
+```bash
+# ── from labs/week2_day08/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
+```

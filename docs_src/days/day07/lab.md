@@ -38,6 +38,8 @@ By the end of this lab, you will:
 
 **Primary deliverable:** Traffic light FSM running on board with waveform-verified testbench.
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 ---
 
 ## Exercise 1: Traffic Light Controller (40 min)
@@ -76,6 +78,9 @@ make PROJECT=traffic_light
 make prog PROJECT=traffic_light
 ```
 
+- **Earn the flag:** `cd ex1_traffic_light_fsm/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex5-exhaustive-alu-917092005656` (Day 6 Exercise 5's flag).
+
 ---
 
 ## Exercise 2: Button Pattern Detector (35 min)
@@ -100,6 +105,9 @@ Use `starter/pattern_detector.v` and `starter/top_pattern.v`.
 4. Double press: btn1→btn1→btn2→btn3 → still detects
 5. Reset mid-sequence
 
+- **Earn the flag:** `cd ex2_pattern_detector/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 8 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-traffic-light-fsm-117125e78ba1`
+
 ---
 
 ## Exercise 3: Testbench Deep Dive (25 min)
@@ -112,6 +120,8 @@ Extend the traffic light testbench with:
 3. **Full cycle test:** Run 3 complete cycles, verify consistent timing
 4. **State check:** Use hierarchical access (`uut.r_state`) to verify no illegal states
 
+- **Note:** This exercise isn't in the CTF chain — it extends the Exercise 1 testbench rather than shipping its own DUT, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (`flag-ex2-pattern-detector-09545aabd178`) to unlock Day 8 Exercise 1's reference.
+
 ---
 
 ## Exercise 4 (Stretch): Moore vs. Mealy Comparison (20 min)
@@ -119,3 +129,15 @@ Extend the traffic light testbench with:
 **SLO: 7.1**
 
 Implement a "10" sequence detector in both Moore and Mealy styles. Show in GTKWave that the Mealy output appears 1 clock cycle earlier.
+
+- **Note:** This exercise isn't in the CTF chain — it's a paper/comparison stretch with no `starter/` directory under `labs/week2_day07/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (`flag-ex2-pattern-detector-09545aabd178`) to unlock Day 8 Exercise 1's reference.
+
+---
+
+## Build Commands Quick Reference
+
+```bash
+# ── from labs/week2_day07/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
+```

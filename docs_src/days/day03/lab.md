@@ -30,6 +30,8 @@
 
 ## Exercises
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 ### Exercise 1: Latch Hunting (20 min) ⚠️ MOST IMPORTANT
 
 !!! code "Exercise 1 — Code"
@@ -37,6 +39,9 @@
 
 
 Find and fix intentional latch bugs. Run `make ex1_synth` and read every Yosys warning. Fix each bug in `starter/w1d3_ex1_latch_bugs.v`. Bug 3 is a trick question — explain why!
+
+- **Earn the flag:** `cd ex1_latch_bugs/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex5-top-adder-display-46654043b4dc` (Day 2 Exercise 5's flag).
 
 ### Exercise 2: Priority Encoder (20 min)
 
@@ -46,6 +51,9 @@ Find and fix intentional latch bugs. Run `make ex1_synth` and read every Yosys w
 
 Implement using `if/else` in `starter/w1d3_ex2_priority_encoder.v`. Compare with the provided `casez` alternative. Program and verify on board with `make ex2`.
 
+- **Earn the flag:** `cd ex2_priority_encoder/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-latch-bugs-e6b67a75d072`
+
 ### Exercise 3: 4-Bit ALU (35 min)
 
 !!! code "Exercise 3 — Code"
@@ -53,6 +61,9 @@ Implement using `if/else` in `starter/w1d3_ex2_priority_encoder.v`. Compare with
 
 
 Four operations: ADD, SUB, AND, OR. Fill in `starter/w1d3_ex3_alu_4bit.v`. Fill in the verification matrix on paper before programming. Wire to board with `make ex3`.
+
+- **Earn the flag:** `cd ex3_alu/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-priority-encoder-0328ca963316`
 
 ### Exercise 4: BCD-to-7-Seg Decoder (20 min)
 
@@ -62,6 +73,9 @@ Four operations: ADD, SUB, AND, OR. Fill in `starter/w1d3_ex3_alu_4bit.v`. Fill 
 
 Case-based decoder with error display. Compare readability with Day 2's nested conditional.
 
+- **Earn the flag:** `cd ex4_bcd_7seg/starter && make test`. Save the printed flag for Exercise 5's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-alu-4d49c938d59e`
+
 ### Exercise 5 — Stretch: ALU + 7-Seg Integration (25 min)
 
 !!! code "Exercise 5 — Code"
@@ -69,6 +83,9 @@ Case-based decoder with error display. Compare readability with Day 2's nested c
 
 
 Full system: ALU result displayed on 7-seg, flags on LEDs.
+
+- **Earn the flag:** `cd ex5_top_alu_display/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 4 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex4-bcd-7seg-34abdfeff601`
 
 ## Deliverable Checklist
 
@@ -80,11 +97,16 @@ Full system: ALU result displayed on 7-seg, flags on LEDs.
 
 ## Quick Reference
 
-```
+```bash
+# ── from labs/week1_day03/ ──
 make ex1_synth # Check for latch warnings
 make ex2
 make ex3
 make ex4
 make ex5
 make clean
+
+# ── from labs/week1_day03/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
 ```

@@ -44,6 +44,8 @@ By the end of this lab, you will:
 
 **Primary deliverable:** Self-checking ALU testbench with automated pass/fail report.
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer.
+
 ---
 
 ## Exercise 1: Self-Checking ALU Testbench (35 min)
@@ -75,6 +77,9 @@ make sim TB=tb_alu_4bit.v SRCS="alu_4bit.v"
 
 Change SUB to `a + b` in the ALU. Re-run the testbench. Confirm SUB tests fail.
 
+- **Earn the flag:** `cd ex1_alu_testbench/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex4-lfsr-pattern-177caf99dffa` (Day 5 Exercise 4's flag).
+
 ---
 
 ## Exercise 2: Debounce Module Testbench (25 min)
@@ -91,6 +96,9 @@ Write `tb_debounce_thorough.v` with four test scenarios:
 2. **Bounce rejection:** 6+ toggles within threshold window, verify single transition
 3. **Glitch rejection:** Input low for less than threshold, verify no transition
 4. **Clean release:** After stable press, verify release transition
+
+- **Earn the flag:** `cd ex2_debounce_testbench/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-alu-testbench-6ef73ca753d9`
 
 ---
 
@@ -109,6 +117,9 @@ Write `tb_counter.v` for a simple 4-bit counter. Verify:
 3. Rollover from F to 0
 4. Enable=0 holds the count
 
+- **Earn the flag:** `cd ex3_counter_testbench/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-debounce-testbench-b83c402e0bb3`
+
 ---
 
 ## Exercise 4 (Stretch): File-Driven Testing (15 min)
@@ -122,6 +133,9 @@ Write `tb_counter.v` for a simple 4-bit counter. Verify:
 
 Use `$readmemh` to load test vectors from `hex_vectors.hex`. Verify the hex-to-7seg decoder against file-based expected outputs.
 
+- **Earn the flag:** `cd ex4_file_driven_testing/starter && make test`. Save the printed flag for Exercise 5's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-counter-testbench-ec4db31675bb`
+
 ---
 
 ## Exercise 5 (Stretch): Exhaustive Combinational Test (20 min)
@@ -134,3 +148,16 @@ Use `$readmemh` to load test vectors from `hex_vectors.hex`. Verify the hex-to-7
 **SLO: 6.2**
 
 Test all 1024 ALU input combinations (4-bit a × 4-bit b × 2-bit opcode). Report: "Tested 1024 combinations, 0 failures."
+
+- **Earn the flag:** `cd ex5_exhaustive_alu/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 7 Exercise 1.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex4-file-driven-testing-32418b75b645`
+
+---
+
+## Build Commands Quick Reference
+
+```bash
+# ── from labs/week2_day06/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
+```
