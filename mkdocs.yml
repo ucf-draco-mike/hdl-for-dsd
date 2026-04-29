@@ -1,6 +1,6 @@
 site_name: "HDL for Digital System Design"
 site_description: "Accelerated HDL for Digital System Design — UCF ECE"
-site_url: "https://ucf-draco-mike.github.io/hdl-for-dsd/"
+site_url: "https://hdl4dsd.com/"
 
 docs_dir: docs_src
 site_dir: _site
