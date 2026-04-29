@@ -22,3 +22,7 @@ LICENSE
 labs/
 shared/
 projects/README.md
+# CTF gating helpers — students need check_solution.sh and unlock_solution.sh
+# to run `make test` / `make unlock`. Instructor-only files in this dir are
+# stripped via student_mirror_denylist.txt.
+scripts/lab_ctf/
