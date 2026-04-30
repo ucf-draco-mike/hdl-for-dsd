@@ -21,6 +21,7 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
+| :material-file: `.gitignore` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/.gitignore){ target=_blank } |
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/Makefile){ target=_blank } |
 | :material-chip: `uart_tx_asserted.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/uart_tx_asserted.sv){ target=_blank } |
 
