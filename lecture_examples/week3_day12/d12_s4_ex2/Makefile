@@ -5,7 +5,7 @@ SRCS     = day12_ex02_uart_loopback.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
-IVFLAGS  = -g2012 -Wall
+IVFLAGS  = -g2012 -Wall -DSIMULATION
 
 sim:
 	@tb=$$(ls tb_*.v tb_*.sv 2>/dev/null | head -n 1); \

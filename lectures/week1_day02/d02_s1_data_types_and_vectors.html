@@ -273,18 +273,16 @@ wire [7:0] sign_ext = {{4{nibble_a[3]}}, nibble_a};</code></pre>
     <div class="demo-label">▶ LIVE DEMO</div>
     <h2 style="color: #FFC904;">Vector Operations in iverilog</h2>
     <p style="font-size: 0.65em; color: #E8E8E4; margin-top: 0.2em;">
-        <code style="color:#FFC904;">lectures/week1_day02/code/day02_ex01_vector_ops.v</code> · ~4 minutes
+        <code style="color:#FFC904;">lecture_examples/week1_day02/d02_s1_ex1/</code> · ~4 minutes
     </p>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; margin-top: 0.6em; text-align: left;">
         <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
             <p style="color:#FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ COMMANDS (from the lecture dir)</p>
-<pre style="background: transparent; margin: 0;"><code class="language-bash" style="font-size: 0.52em; color: #E8E8E4;">cd lectures/week1_day02/code/
-iverilog -g2012 -o vec.vvp \
-    day02_ex01_vector_ops.v \
-    tb_vector_ops.v
-vvp vec.vvp            # prints PASS/FAIL
-gtkwave dump.vcd &     # open waveforms</code></pre>
+<pre style="background: transparent; margin: 0;"><code class="language-bash" style="font-size: 0.52em; color: #E8E8E4;">cd lecture_examples/week1_day02/d02_s1_ex1/
+make sim     # iverilog + vvp (prints PASS/FAIL)
+make wave    # GTKWave on the VCD
+make stat    # yosys synth_ice40 stat report</code></pre>
         </div>
         <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
             <p style="color:#27AE60; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ EXPECTED STDOUT</p>
@@ -309,7 +307,7 @@ PASS: lower     = 4'h2
 
     <aside class="notes">
         [SWITCH TO TERMINAL] Navigate to the code dir. If you haven't built a
-        testbench yet, use the one in the labs folder (<code>labs/week1_day02/ex1_vector_ops/</code>)
+        testbench yet, use the one in the labs folder (<code>labs/week1_day02/ex1_vector_ops/</code> or the lecture_examples copy at <code>lecture_examples/week1_day02/d02_s1_ex1/</code>)
         or the shared tb_vector_ops.v from our library. Run iverilog, then vvp.
         Five PASS lines.
         [SWITCH TO GTKWAVE] Hex radix is the move. Binary is unreadable for 8-bit
