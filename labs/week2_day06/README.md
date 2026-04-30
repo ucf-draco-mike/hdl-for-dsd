@@ -59,7 +59,7 @@ Requirements:
 ### Part B: Run and verify all tests pass
 
 ```bash
-make sim TB=tb_alu_4bit.v SRCS="alu_4bit.v"
+make ex1_sim          # from labs/week2_day06/
 ```
 
 ### Part C: Intentional bug injection
@@ -82,7 +82,7 @@ Write `tb_debounce_thorough.v` with four test scenarios:
 4. **Clean release:** After stable press, verify release transition
 
 - **Earn the flag:** `cd ex2_debounce_testbench/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-alu-testbench-6ef73ca753d9`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ---
 
@@ -97,7 +97,7 @@ Write `tb_counter.v` for a simple 4-bit counter. Verify:
 4. Enable=0 holds the count
 
 - **Earn the flag:** `cd ex3_counter_testbench/starter && make test`. Save the printed flag for Exercise 4's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-debounce-testbench-b83c402e0bb3`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 
 ---
 
@@ -108,7 +108,7 @@ Write `tb_counter.v` for a simple 4-bit counter. Verify:
 Use `$readmemh` to load test vectors from `hex_vectors.hex`. Verify the hex-to-7seg decoder against file-based expected outputs.
 
 - **Earn the flag:** `cd ex4_file_driven_testing/starter && make test`. Save the printed flag for Exercise 5's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-counter-testbench-ec4db31675bb`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 3>`
 
 ---
 
@@ -119,7 +119,7 @@ Use `$readmemh` to load test vectors from `hex_vectors.hex`. Verify the hex-to-7
 Test all 1024 ALU input combinations (4-bit a × 4-bit b × 2-bit opcode). Report: "Tested 1024 combinations, 0 failures."
 
 - **Earn the flag:** `cd ex5_exhaustive_alu/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 7 Exercise 1.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex4-file-driven-testing-32418b75b645`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 4>`
 
 ---
 

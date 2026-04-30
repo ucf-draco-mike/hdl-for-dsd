@@ -37,20 +37,20 @@ final project report.
 ### Ex 2 — Shift-and-Add Multiplier
 
 - **Earn the flag:** `cd ex2_shift_add_multiplier/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-adder-comparison-c3fbea849e85`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Ex 3 — Fixed Point
 
 - **Earn the flag:** `cd ex3_fixed_point/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 11 Exercise 1.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-shift-add-multiplier-2c5b106240d4`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 
 ### Ex 4 — Timing Exercise
 
-- **Note:** This exercise isn't in the CTF chain — it's a paper/analysis worksheet with no `make test` target, so there's no flag to capture. Continue using Exercise 3's flag (`flag-ex3-fixed-point-9d0f6eb0df21`) to unlock Day 11 Exercise 1's reference.
+- **Note:** This exercise isn't in the CTF chain — it's a paper/analysis worksheet with no `make test` target, so there's no flag to capture. Continue using Exercise 3's flag (the flag from that exercise's `make test`) to unlock Day 11 Exercise 1's reference.
 
 ### Ex 5 — PLL & CDC (Stretch)
 
-- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 3's flag (`flag-ex3-fixed-point-9d0f6eb0df21`) to unlock Day 11 Exercise 1's reference.
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 3's flag (the flag from that exercise's `make test`) to unlock Day 11 Exercise 1's reference.
 
 ## Deliverables
 1. **Adder/multiplier PPA comparison table** with real data (LUTs, FFs, Fmax)

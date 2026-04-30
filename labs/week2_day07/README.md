@@ -62,9 +62,8 @@ Use `tb_traffic_light.v` starter. Implement the `check_state` task and verify:
 Synthesize with real timer values (remove `SIMULATION` define). Watch the LEDs cycle.
 
 ```bash
-make sim TB=tb_traffic_light.v SRCS="traffic_light.v"
-make PROJECT=traffic_light
-make prog PROJECT=traffic_light
+make ex1_sim          # simulate (run from labs/week2_day07/)
+make ex1              # synthesize + program
 ```
 
 - **Earn the flag:** `cd ex1_traffic_light_fsm/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
@@ -90,7 +89,7 @@ Use `starter/pattern_detector.v` and `starter/top_pattern.v`.
 5. Reset mid-sequence
 
 - **Earn the flag:** `cd ex2_pattern_detector/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 8 Exercise 1.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-traffic-light-fsm-117125e78ba1`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ---
 
@@ -104,7 +103,7 @@ Extend the traffic light testbench with:
 3. **Full cycle test:** Run 3 complete cycles, verify consistent timing
 4. **State check:** Use hierarchical access (`uut.r_state`) to verify no illegal states
 
-- **Note:** This exercise isn't in the CTF chain — it extends the Exercise 1 testbench rather than shipping its own DUT, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (`flag-ex2-pattern-detector-09545aabd178`) to unlock Day 8 Exercise 1's reference.
+- **Note:** This exercise isn't in the CTF chain — it extends the Exercise 1 testbench rather than shipping its own DUT, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (the flag from that exercise's `make test`) to unlock Day 8 Exercise 1's reference.
 
 ---
 
@@ -114,7 +113,7 @@ Extend the traffic light testbench with:
 
 Implement a "10" sequence detector in both Moore and Mealy styles. Show in GTKWave that the Mealy output appears 1 clock cycle earlier.
 
-- **Note:** This exercise isn't in the CTF chain — it's a paper/comparison stretch with no `starter/` directory under `labs/week2_day07/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (`flag-ex2-pattern-detector-09545aabd178`) to unlock Day 8 Exercise 1's reference.
+- **Note:** This exercise isn't in the CTF chain — it's a paper/comparison stretch with no `starter/` directory under `labs/week2_day07/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (the flag from that exercise's `make test`) to unlock Day 8 Exercise 1's reference.
 
 ---
 

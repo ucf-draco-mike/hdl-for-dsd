@@ -37,7 +37,7 @@ a structured PPA analysis.
 ### Ex 2 — UART Parity
 
 - **Earn the flag:** `cd ex2_uart_parity/starter && make test`. This is the last chained exercise of the course — keep the flag as the final completion proof.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-uart-assertions-332bb50bb1a7`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Ex 3 — AI Constraint TB
 

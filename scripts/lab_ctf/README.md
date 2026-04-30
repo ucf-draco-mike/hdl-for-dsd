@@ -14,8 +14,9 @@ once one student posts the flag chain online it's broken for the cohort.
 
 What it does buy us:
 
-- Solutions are not browsable in the student mirror — copy-paste from
-  the repo no longer works.
+- Reference DUTs ship encrypted in the student mirror — copy-paste from
+  the public repo no longer works without first earning (or being
+  handed) an unlock key.
 - Self-checking testbenches gate flag-claiming on actual correctness:
   wrong DUT produces different `vvp` stdout → wrong key → no flag.
 - Observational testbenches (signal-dumping only, no `$display` of DUT
@@ -23,6 +24,21 @@ What it does buy us:
   than no gate.
 - Per-cohort key rotation is cheap (re-run `seal_all.py` with a new
   `--course-key` and `--flag-seed`).
+
+### Publication policy for unlock keys
+
+The published READMEs and the docs site only reveal a *bootstrap* key
+per day: the COURSE_KEY for Day 1 (handed out via the LMS) and, on
+Days 2–14, the prior day's last chained flag (called out in the first
+exercise's "Peek at the reference" bullet). Within a day, the
+intra-exercise flags are **not** printed in the docs — students earn
+each one by passing `make test` and then use it to unlock the next
+reference.
+
+This keeps the chain a soft gate (a student who skipped yesterday can
+still start today by using the published bootstrap flag) without
+publishing the entire chain. The instructor-only `chain.json` retains
+the full mapping for re-sealing.
 
 ## Layout
 

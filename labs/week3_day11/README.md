@@ -29,12 +29,12 @@ Go Board to your PC terminal.
 ### Ex 2 — UART TX Module
 
 - **Earn the flag:** `cd ex2_uart_tx/starter && make test`. Save the printed flag for Exercise 3's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex1-baud-gen-b95798a722ef`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Ex 3 — Hardware Verification
 
 - **Earn the flag:** `cd ex3_hardware_verify/starter && make test`. This is the last chained exercise of the day; keep the flag for Day 12 Exercise 2 (Day 12 Exercise 1 is not in the chain).
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex2-uart-tx-e14d8d736ddc`
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 2>`
 
 ## Deliverables
 1. Baud generator verified in simulation
