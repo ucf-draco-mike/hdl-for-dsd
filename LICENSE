@@ -1,22 +1,39 @@
-MIT License
-
-Copyright (c) 2026 Mike Borowczak - University of Central Florida -
+Accelerated HDL for Digital System Design
+Copyright (c) 2026 Mike Borowczak <mike.borowczak@ucf.edu>
+University of Central Florida — College of Engineering & Computer Science
 Department of Electrical & Computer Engineering
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This repository is dual-licensed:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  • Course materials — lecture decks, slide content, daily plans, lab
+    write-ups, READMEs, the MkDocs site source, images, and any other
+    non-code documentation — are licensed under the
+        Creative Commons Attribution-ShareAlike 4.0 International License
+        (CC BY-SA 4.0).
+    See LICENSE-DOCS for the full text, or
+        https://creativecommons.org/licenses/by-sa/4.0/
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  • Source code — Verilog/SystemVerilog HDL, testbenches, Makefiles,
+    Python helper scripts, the Nix flake, and any other executable
+    artifact — is licensed under the
+        GNU General Public License v3.0 (GPL-3.0-or-later).
+    See LICENSE-CODE for the full text, or
+        https://www.gnu.org/licenses/gpl-3.0.html
+
+Both licenses are share-alike: derivative works must be released under
+compatible terms, and attribution to Mike Borowczak <mike.borowczak@ucf.edu>
+must be preserved.
+
+Attribution
+-----------
+When reusing or adapting this material, please credit:
+
+    Dr. Mike Borowczak <mike.borowczak@ucf.edu>
+    Department of Electrical & Computer Engineering
+    University of Central Florida
+    https://github.com/ucf-draco-mike/hdl-for-dsd
+
+Contact
+-------
+Questions, corrections, or collaboration requests:
+    mike.borowczak@ucf.edu

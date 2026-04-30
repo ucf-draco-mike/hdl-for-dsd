@@ -1,6 +1,6 @@
 # Accelerated HDL for Digital System Design
 
-> **Dr. Mike Borowczak · UCF · College of Engineering & Computer Science · Department of Electrical & Computer Engineering**
+> **Dr. Mike Borowczak · [mike.borowczak@ucf.edu](mailto:mike.borowczak@ucf.edu) · UCF · College of Engineering & Computer Science · Department of Electrical & Computer Engineering**
 
 A 4-week, 16-session accelerated course in Verilog and digital system design using the Nandland Go Board (Lattice iCE40 HX1K) and a fully open-source toolchain.
 
@@ -156,4 +156,21 @@ iceprog top.bin
 
 ## License
 
-All materials released under the MIT License. See [LICENSE](LICENSE) for details.
+This repository is **dual-licensed** under share-alike open source terms:
+
+| Scope | License | File |
+|-------|---------|------|
+| Course materials — lectures, slides, daily plans, lab write-ups, READMEs, MkDocs site, images | [Creative Commons Attribution-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/) (CC BY-SA 4.0) | [LICENSE-DOCS](LICENSE-DOCS) |
+| Source code — Verilog/SystemVerilog HDL, testbenches, Makefiles, Python scripts, Nix flake | [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.html) (GPL-3.0-or-later) | [LICENSE-CODE](LICENSE-CODE) |
+
+Derivative works must be released under compatible share-alike terms and must preserve attribution.
+
+**Attribution**
+
+> Dr. Mike Borowczak &lt;[mike.borowczak@ucf.edu](mailto:mike.borowczak@ucf.edu)&gt;
+> Department of Electrical & Computer Engineering, University of Central Florida
+> https://github.com/ucf-draco-mike/hdl-for-dsd
+
+See [LICENSE](LICENSE) for the dual-license summary, or the linked files above for the full legal text.
+
+**Contact** — questions, corrections, or collaboration: [mike.borowczak@ucf.edu](mailto:mike.borowczak@ucf.edu)

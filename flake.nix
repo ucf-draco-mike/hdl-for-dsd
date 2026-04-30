@@ -96,7 +96,9 @@
 
           echo ""
           echo "╔══════════════════════════════════════════════════╗"
-          echo "║  HDL for Digital System Design — Environment    ║"
+          echo "║  HDL for Digital System Design — Environment     ║"
+          echo "║  © Mike Borowczak · mike.borowczak@ucf.edu       ║"
+          echo "║  Licensed: CC BY-SA 4.0 (docs) + GPL-3.0 (code)  ║"
           echo "╚══════════════════════════════════════════════════╝"
           echo ""
           __ver yosys    yosys --version
@@ -106,8 +108,7 @@
           __ver gtkwave  gtkwave --version
           __ver emacs    emacs --version
           echo ""
-          echo "  Run 'make sim' in any lab directory to simulate."
-          echo "  Run 'make prog' to synthesize and program the Go Board."
+          echo "  See the README in each lab/lecture/project directory for usage."
           echo ""
           unset -f __ver
         '';
