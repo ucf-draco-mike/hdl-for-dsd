@@ -61,6 +61,38 @@
     <aside class="notes">Active-low is the #1 Day 2 lab failure. Students expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
 </section>
 
+<!-- How to tell: active-low vs active-high -->
+<section>
+    <h2><span style="color:#2E86AB;">🔍</span> How to Tell: Active-Low vs Active-High</h2>
+    <div class="two-col" style="margin-top:0.4em;">
+        <div class="col panel">
+            <h3 style="color:#2E7D32;font-size:0.95em;">Active-High (1 = ON)</h3>
+            <p style="font-size:0.7em;">Typical for <strong>common-cathode</strong> displays: cathodes tied to GND, FPGA pin <em>sources</em> current up through the LED. Logic mirrors light: <code>1</code> bit → segment glows.</p>
+        </div>
+        <div class="col panel">
+            <h3 style="color:#C62828;font-size:0.95em;">Active-Low (0 = ON)</h3>
+            <p style="font-size:0.7em;">Typical for <strong>common-anode</strong> displays (and the Go Board): anodes tied to VCC, FPGA pin <em>sinks</em> current down through the LED. Logic is inverted: <code>0</code> bit → segment glows.</p>
+        </div>
+    </div>
+    <div class="fragment" style="margin-top:0.4em;font-size:0.7em;">
+        <strong>Five ways to figure out which one you have — in order of reliability:</strong>
+        <ol style="margin-top:0.2em;">
+            <li><strong>Read the schematic.</strong> Trace one segment pin. If it goes through a resistor to the LED's <em>cathode</em> and the anode is on VCC → active-low. If anode-side and cathode is on GND → active-high.</li>
+            <li><strong>Read the constraints / pin file.</strong> Good <code>.pcf</code> / <code>.xdc</code> files annotate it (ours does: <code># 7-Segment Display 1 (active low segments)</code>).</li>
+            <li><strong>Read the vendor's example code.</strong> If their top-level wraps the decoder with <code>~</code> or <code>!</code> (e.g. Nandland's <code>assign o_Segment1_A = !w_Seg_A;</code>), the board is active-low.</li>
+            <li><strong>Read the part datasheet.</strong> Common-anode vs common-cathode is right on page 1.</li>
+            <li><strong>Empirical test.</strong> Drive one pin constant <code>0</code>; if the segment lights, it's active-low. (Last resort — the schematic should never be a mystery.)</li>
+        </ol>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Why both exist:</strong> FPGA I/O typically <em>sinks</em> more current than it <em>sources</em>, so common-anode (active-low) is mechanically friendlier for LED arrays. Buttons and resets are often active-low for the same reason: a pull-up to VCC plus a switch to GND is the cheapest reliable circuit.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Same board, both polarities:</strong> The Go Board's 4 discrete LEDs and 4 push-buttons are active-<em>high</em> (<code>1 = on</code>, <code>1 = pressed</code>) — see Day 1's <code>buttons_to_leds</code>. The 7-segment segments on the very same FPGA are active-<em>low</em>. Polarity is per-peripheral, not per-board.
+    </div>
+    <aside class="notes">Active-low is not arbitrary — it falls out of how CMOS output drivers and pull-up resistors are easiest to build. Once students see the pattern (LEDs, resets, chip-selects, button inputs all tend active-low), it stops feeling like a gotcha and starts feeling like a convention. The schematic is always ground truth; the constraint file's comment is a hint, not a contract.</aside>
+</section>
+
 <!-- Segment map diagram -->
 <section>
     <h2>7-Segment Display: Segment Map</h2>

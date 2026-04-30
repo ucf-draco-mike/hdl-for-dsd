@@ -6,8 +6,10 @@
 // Goal: Wire each button directly to its corresponding LED using assign.
 //
 // Go Board: Buttons and LEDs are both active-high.
-//   Button pressed = 0, LED on = 0
+//   Button pressed = 1, LED on = 1
 //   Direct connection gives intuitive behavior (press → light)
+//   (Note: the 7-segment displays on the same board are active-LOW —
+//    polarity is per-peripheral, not per-board. Always check the .pcf.)
 // =============================================================================
 
 module buttons_to_leds (
