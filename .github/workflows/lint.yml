@@ -25,19 +25,20 @@ jobs:
           ERRORS=0
           CHECKED=0
 
-          # Find every directory that contains at least one .v or .sv file,
-          # then compile all HDL in that directory as a unit.
-          while IFS= read -r dir; do
-            srcs=$(find "$dir" -maxdepth 1 \( -name "*.v" -o -name "*.sv" \) -not -type l | sort)
-            # Also include symlinked HDL (e.g. debounce.v → shared/lib/)
-            syms=$(find "$dir" -maxdepth 1 \( -name "*.v" -o -name "*.sv" \) -type l | sort)
+          # Compile a directory's HDL as a single unit. $2 is the find depth
+          # control: empty for recursive, "-maxdepth 1" to stay in $1 only.
+          check_dir() {
+            local dir="$1"
+            local depth_args="$2"
+            local srcs syms all_srcs
+            srcs=$(find "$dir" $depth_args \( -name "*.v" -o -name "*.sv" \) -not -type l | sort)
+            syms=$(find "$dir" $depth_args \( -name "*.v" -o -name "*.sv" \) -type l | sort)
             all_srcs="$srcs $syms"
-            [ -z "$(echo $all_srcs | tr -d ' ')" ] && continue
+            [ -z "$(echo $all_srcs | tr -d ' ')" ] && return 0
 
-            # Skip directories that use Lattice FPGA primitives (iverilog can't resolve them)
             if grep -ql 'SB_PLL40\|SB_IO\|SB_GB' $all_srcs 2>/dev/null; then
               echo "SKIP: $dir/ (contains Lattice primitives)"
-              continue
+              return 0
             fi
 
             CHECKED=$((CHECKED + 1))
@@ -46,6 +47,24 @@ jobs:
               sed 's/^/  /' /tmp/iv_err | head -20
               ERRORS=$((ERRORS + 1))
             fi
+          }
+
+          # Each lab's starter/ or solution/ is one compile unit so that a
+          # testbench in solution/tb/ sees its DUT in solution/ref/. Walking
+          # those directories non-recursively (as the old logic did) caused
+          # the tb to look up the module via -y "$LIB" and either miss it or
+          # bind to a stale shared/lib version with a different port list.
+          while IFS= read -r dir; do
+            check_dir "$dir" ""
+          done < <(find labs/ -type d \( -name starter -o -name solution \) | sort)
+
+          # Other HDL-bearing directories (e.g. shared/lib/, the week 15
+          # project_templates) compile per-directory as before.
+          while IFS= read -r dir; do
+            case "$dir" in
+              */starter|*/solution|*/starter/*|*/solution/*) continue ;;
+            esac
+            check_dir "$dir" "-maxdepth 1"
           done < <(find labs/ shared/lib/ -type d | sort)
 
           echo ""
