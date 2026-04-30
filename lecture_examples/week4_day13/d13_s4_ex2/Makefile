@@ -2,7 +2,7 @@
 # Demo: alu_sv  (segment s4, example 2)
 TOP      = alu_sv
 SRCS     = day13_ex02_alu_sv.sv
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: latch_fixed  (segment s3, example 3)
 TOP      = latch_fixed
 SRCS     = day03_ex02_latch_fixed.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

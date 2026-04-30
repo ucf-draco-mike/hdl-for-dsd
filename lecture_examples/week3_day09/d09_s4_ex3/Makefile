@@ -2,7 +2,7 @@
 # Demo: pattern_sequencer  (segment s4, example 3)
 TOP      = pattern_sequencer
 SRCS     = day09_ex03_pattern_sequencer.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

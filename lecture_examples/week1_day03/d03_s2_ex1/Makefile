@@ -2,7 +2,7 @@
 # Demo: alu_4bit  (segment s2, example 1)
 TOP      = alu_4bit
 SRCS     = day03_ex03_alu_4bit.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: counter_mod_n  (segment s1, example 1)
 TOP      = counter_mod_n
 SRCS     = day05_ex01_counter_mod_n.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

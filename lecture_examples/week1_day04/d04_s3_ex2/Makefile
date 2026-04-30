@@ -2,7 +2,7 @@
 # Demo: d_flip_flop  (segment s3, example 2)
 TOP      = d_flip_flop
 SRCS     = day04_ex01_d_flip_flop.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

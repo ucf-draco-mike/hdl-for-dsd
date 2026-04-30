@@ -2,7 +2,7 @@
 # Demo: uart_loopback  (segment s4, example 2)
 TOP      = uart_loopback
 SRCS     = day12_ex02_uart_loopback.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

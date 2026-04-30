@@ -2,7 +2,7 @@
 # Demo: uart_rx  (segment s2, example 1)
 TOP      = uart_rx
 SRCS     = day12_ex01_uart_rx.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

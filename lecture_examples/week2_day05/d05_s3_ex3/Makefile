@@ -2,7 +2,7 @@
 # Demo: synchronizer  (segment s3, example 3)
 TOP      = synchronizer
 SRCS     = day05_ex03_synchronizer.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

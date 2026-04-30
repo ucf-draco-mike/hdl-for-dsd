@@ -2,7 +2,7 @@
 # Demo: traffic_light  (segment s2, example 1)
 TOP      = traffic_light
 SRCS     = day07_ex01_fsm_template.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

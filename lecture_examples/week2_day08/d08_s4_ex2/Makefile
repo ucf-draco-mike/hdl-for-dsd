@@ -2,7 +2,7 @@
 # Demo: parallel_debounce  (segment s4, example 2)
 TOP      = parallel_debounce
 SRCS     = day08_ex01_parallel_debounce.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

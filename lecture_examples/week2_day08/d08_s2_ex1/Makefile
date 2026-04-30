@@ -2,7 +2,7 @@
 # Demo: param_alu  (segment s2, example 1)
 TOP      = param_alu
 SRCS     = day08_ex02_param_alu.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: hex_to_7seg  (segment s4, example 3)
 TOP      = hex_to_7seg
 SRCS     = day02_ex03_hex_to_7seg.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

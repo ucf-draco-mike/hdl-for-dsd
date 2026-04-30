@@ -2,7 +2,7 @@
 # Demo: mux_2to1  (segment s2, example 2)
 TOP      = mux_2to1
 SRCS     = day02_ex02_mux_2to1.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

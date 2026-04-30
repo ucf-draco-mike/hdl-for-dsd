@@ -2,7 +2,7 @@
 # Demo: pattern_detector  (segment s4, example 2)
 TOP      = pattern_detector
 SRCS     = day07_ex02_pattern_detector.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

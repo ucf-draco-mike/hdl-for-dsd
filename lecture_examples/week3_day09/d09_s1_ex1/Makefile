@@ -2,7 +2,7 @@
 # Demo: rom_sync  (segment s1, example 1)
 TOP      = rom_sync
 SRCS     = day09_ex01_rom_sync.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
