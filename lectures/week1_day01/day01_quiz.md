@@ -14,15 +14,15 @@
     - **Simulation:** The simulator waits 10 time units before continuing.
     - **Synthesis:** Completely ignored. The synthesizer cannot create physical delays from `#` statements. This is why you should never use `#delay` in synthesizable design code — it causes a simulation/synthesis mismatch.
 
-**Q3:** Write a complete Verilog module (from `module` to `endmodule`) that connects an input `i_switch` to an output `o_led`.
+**Q3:** Write a complete Verilog module (from `module` to `endmodule`) that connects an input `i_switch1` to an output `o_led1`.
 
 ??? success "Answer"
     ```verilog
     module led_driver (
-        input wire i_switch,
-        output wire o_led
+        input wire i_switch1,
+        output wire o_led1
     );
-        assign o_led = i_switch;
+        assign o_led1 = i_switch1;
     endmodule
     ```
 

@@ -15,11 +15,28 @@ module uart_loopback #(
     parameter BAUD_RATE = 115_200
 )(
     input  wire       i_clk,
-    input  wire       i_rx,          // UART RX from FTDI
-    output wire       o_tx,          // UART TX to FTDI
-    output wire [3:0] o_led,         // lower nibble of last byte
-    output wire [6:0] o_seg1,        // upper nibble hex display
-    output wire [6:0] o_seg2         // lower nibble hex display
+    input  wire       i_uart_rx,     // UART RX from FTDI
+    output wire       o_uart_tx,     // UART TX to FTDI
+    output wire       o_led1,        // bit 0 of last byte
+    output wire       o_led2,        // bit 1 of last byte
+    output wire       o_led3,        // bit 2 of last byte
+    output wire       o_led4,        // bit 3 of last byte
+    // 7-segment display 1 (upper nibble) — active-low segments
+    output wire       o_segment1_a,
+    output wire       o_segment1_b,
+    output wire       o_segment1_c,
+    output wire       o_segment1_d,
+    output wire       o_segment1_e,
+    output wire       o_segment1_f,
+    output wire       o_segment1_g,
+    // 7-segment display 2 (lower nibble) — active-low segments
+    output wire       o_segment2_a,
+    output wire       o_segment2_b,
+    output wire       o_segment2_c,
+    output wire       o_segment2_d,
+    output wire       o_segment2_e,
+    output wire       o_segment2_f,
+    output wire       o_segment2_g
 );
 
     wire [7:0] w_rx_data;
@@ -33,7 +50,7 @@ module uart_loopback #(
     ) rx_inst (
         .i_clk   (i_clk),
         .i_reset (1'b0),
-        .i_rx    (i_rx),
+        .i_rx    (i_uart_rx),
         .o_data  (w_rx_data),
         .o_valid (w_rx_valid)
     );
@@ -63,7 +80,7 @@ module uart_loopback #(
         .i_valid (w_tx_valid),
         .i_data  (r_tx_data),
         .o_busy  (w_tx_busy),
-        .o_tx    (o_tx)
+        .o_tx    (o_uart_tx)
     );
 
     // ---- Display last received byte ----
@@ -71,14 +88,24 @@ module uart_loopback #(
     always @(posedge i_clk)
         if (w_rx_valid) r_display <= w_rx_data;
 
-    assign o_led = r_display[3:0];   // active-high LEDs
+    assign o_led1 = r_display[0];   // active-high LEDs
+    assign o_led2 = r_display[1];
+    assign o_led3 = r_display[2];
+    assign o_led4 = r_display[3];
 
     // 7-segment decoders (if available in your library)
-    // hex_to_7seg seg_hi (.i_hex(r_display[7:4]), .o_seg(o_seg1));
-    // hex_to_7seg seg_lo (.i_hex(r_display[3:0]), .o_seg(o_seg2));
+    // wire [6:0] w_seg1, w_seg2;
+    // hex_to_7seg seg_hi (.i_hex(r_display[7:4]), .o_seg(w_seg1));
+    // hex_to_7seg seg_lo (.i_hex(r_display[3:0]), .o_seg(w_seg2));
+    // assign {o_segment1_a, o_segment1_b, o_segment1_c,
+    //         o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = w_seg1;
+    // assign {o_segment2_a, o_segment2_b, o_segment2_c,
+    //         o_segment2_d, o_segment2_e, o_segment2_f, o_segment2_g} = w_seg2;
 
-    // Placeholder if hex_to_7seg is not yet wired:
-    assign o_seg1 = 7'h7F;
-    assign o_seg2 = 7'h7F;
+    // Placeholder if hex_to_7seg is not yet wired (active-low: 1 = segment off):
+    assign {o_segment1_a, o_segment1_b, o_segment1_c,
+            o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = 7'h7F;
+    assign {o_segment2_a, o_segment2_b, o_segment2_c,
+            o_segment2_d, o_segment2_e, o_segment2_f, o_segment2_g} = 7'h7F;
 
 endmodule

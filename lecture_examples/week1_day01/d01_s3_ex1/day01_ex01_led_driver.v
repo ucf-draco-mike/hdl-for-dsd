@@ -19,13 +19,13 @@
 //-----------------------------------------------------------------------------
 
 module led_driver (
-    input  wire i_switch,   // active-high pushbutton (directly from pin)
-    output wire o_led        // LED output (active high on Go Board)
+    input  wire i_switch1,   // active-high pushbutton (directly from pin)
+    output wire o_led1       // LED output (active high on Go Board)
 );
 
-    // Continuous assignment: o_led is ALWAYS connected to i_switch.
+    // Continuous assignment: o_led1 is ALWAYS connected to i_switch1.
     // This is not a one-time computation — it's a permanent wire.
-    // Changing i_switch instantly changes o_led (after propagation delay).
-    assign o_led = i_switch;
+    // Changing i_switch1 instantly changes o_led1 (after propagation delay).
+    assign o_led1 = i_switch1;
 
 endmodule

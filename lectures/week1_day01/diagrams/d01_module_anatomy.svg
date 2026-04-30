@@ -21,7 +21,7 @@
   <text x="400" y="346" text-anchor="middle" font-size="11" fill="#5F6062" font-style="italic">endmodule</text>
 
   <!-- INPUT ports (left side) -->
-  <text x="60" y="140" text-anchor="end" font-size="14" font-weight="600" fill="#1565C0">i_switch</text>
+  <text x="60" y="140" text-anchor="end" font-size="14" font-weight="600" fill="#1565C0">i_switch1</text>
   <text x="60" y="156" text-anchor="end" font-size="10" fill="#5F6062">input wire</text>
   <line x1="68" y1="136" x2="220" y2="136" stroke="#1565C0" stroke-width="2.5" marker-end="url(#arw)"/>
 
@@ -37,7 +37,7 @@
   <line x1="68" y1="271" x2="220" y2="271" stroke="#1565C0" stroke-width="2.5" marker-end="url(#arw)"/>
 
   <!-- OUTPUT ports (right side) -->
-  <text x="740" y="140" text-anchor="start" font-size="14" font-weight="600" fill="#2E7D32">o_led</text>
+  <text x="740" y="140" text-anchor="start" font-size="14" font-weight="600" fill="#2E7D32">o_led1</text>
   <text x="740" y="156" text-anchor="start" font-size="10" fill="#5F6062">output wire</text>
   <line x1="580" y1="136" x2="732" y2="136" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arw)"/>
 
@@ -48,8 +48,8 @@
   <!-- Internal behavior label -->
   <text x="400" y="150" text-anchor="middle" font-size="12" fill="#5F6062">Behavior</text>
   <rect x="290" y="162" width="220" height="80" rx="6" fill="#FFF8E1" stroke="#FFC904" stroke-width="1.5" stroke-dasharray="4 3"/>
-  <text x="400" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#2C2A29">assign o_led =</text>
-  <text x="400" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#2C2A29">  i_switch;</text>
+  <text x="400" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#2C2A29">assign o_led1 =</text>
+  <text x="400" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#2C2A29">  i_switch1;</text>
   <text x="400" y="232" text-anchor="middle" font-size="10" fill="#888">( assign / always / instances )</text>
 
   <!-- Legend -->
