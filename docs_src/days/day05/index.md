@@ -82,10 +82,15 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Counter Mod N** — [`day05_ex01_counter_mod_n.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex01_counter_mod_n.v){ target=_blank }
-- :material-chip: **Ex02 Shift Reg Piso** — [`day05_ex02_shift_reg_piso.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex02_shift_reg_piso.v){ target=_blank }
-- :material-chip: **Ex03 Synchronizer** — [`day05_ex03_synchronizer.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex03_synchronizer.v){ target=_blank }
-- :material-chip: **Ex04 Debounce** — [`day05_ex04_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day05/code/day05_ex04_debounce.v){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d05_s1_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s1_ex1){ target=_blank }
+    - :material-chip: [`day05_ex01_counter_mod_n.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s1_ex1/day05_ex01_counter_mod_n.v){ target=_blank }
+- :material-folder-open: **d05_s2_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s2_ex2){ target=_blank }
+    - :material-chip: [`day05_ex02_shift_reg_piso.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s2_ex2/day05_ex02_shift_reg_piso.v){ target=_blank }
+- :material-folder-open: **d05_s3_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s3_ex3){ target=_blank }
+    - :material-chip: [`day05_ex03_synchronizer.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s3_ex3/day05_ex03_synchronizer.v){ target=_blank }
+- :material-folder-open: **d05_s4_ex4** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s4_ex4){ target=_blank }
+    - :material-chip: [`day05_ex04_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day05/d05_s4_ex4/day05_ex04_debounce.v){ target=_blank }

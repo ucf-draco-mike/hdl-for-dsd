@@ -84,7 +84,9 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Tb Alu Template** — [`day06_ex01_tb_alu_template.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week2_day06/code/day06_ex01_tb_alu_template.v){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d06_s1_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day06/d06_s1_ex1){ target=_blank }
+    - :material-chip: [`day06_ex01_tb_alu_template.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day06/d06_s1_ex1/day06_ex01_tb_alu_template.v){ target=_blank }

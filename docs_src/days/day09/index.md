@@ -82,10 +82,14 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Rom Sync** — [`day09_ex01_rom_sync.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day09/code/day09_ex01_rom_sync.v){ target=_blank }
-- :material-chip: **Ex02 Ram Sp** — [`day09_ex02_ram_sp.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day09/code/day09_ex02_ram_sp.v){ target=_blank }
-- :material-chip: **Ex03 Pattern Sequencer** — [`day09_ex03_pattern_sequencer.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day09/code/day09_ex03_pattern_sequencer.v){ target=_blank }
-- :material-file: **Pattern** — [`pattern.mem`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day09/code/pattern.mem){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d09_s1_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s1_ex1){ target=_blank }
+    - :material-chip: [`day09_ex01_rom_sync.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s1_ex1/day09_ex01_rom_sync.v){ target=_blank }
+- :material-folder-open: **d09_s2_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s2_ex2){ target=_blank }
+    - :material-chip: [`day09_ex02_ram_sp.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s2_ex2/day09_ex02_ram_sp.v){ target=_blank }
+- :material-folder-open: **d09_s4_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s4_ex3){ target=_blank }
+    - :material-chip: [`day09_ex03_pattern_sequencer.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s4_ex3/day09_ex03_pattern_sequencer.v){ target=_blank }
+    - :material-file: [`pattern.mem`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day09/d09_s4_ex3/pattern.mem){ target=_blank }

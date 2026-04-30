@@ -140,22 +140,29 @@ def generate_day_page(day_num, dir_name, title, yt_ids, code_assets=None):
                 lines.append(f'[:material-presentation: View Slides]({s["slide_path"]})'
                              f'{{ .md-button .md-button--primary target="_blank" }}\n')
 
-    # Lecture examples section
-    lec_code_dir = REPO / "lectures" / dir_name / "code"
-    if lec_code_dir.exists():
-        code_files = sorted(lec_code_dir.glob("*.*"))
-        code_files = [f for f in code_files if f.suffix in {".v", ".sv", ".mem", ".hex"}]
-        if code_files:
+    # Lecture examples section — scan lecture_examples/<dir>/d<dz>_s*_ex*/
+    lec_examples_dir = REPO / "lecture_examples" / dir_name
+    if lec_examples_dir.exists():
+        ex_dirs = sorted(p for p in lec_examples_dir.iterdir()
+                         if p.is_dir() and p.name.startswith(f"d{dz}_s"))
+        if ex_dirs:
             lines.append("## :material-code-braces: Lecture Code Examples\n")
-            lines.append("Code shown during the pre-class video. Use these as reference ")
-            lines.append("when working on the lab exercises.\n")
-            for f in code_files:
-                rel = f.relative_to(REPO)
-                gh = f"{GITHUB_RAW_BASE}/{rel}"
-                icon = ":material-chip:" if f.suffix in {".v", ".sv"} else ":material-file:"
-                # Derive a human-readable label
-                label = f.stem.replace(f"day{dz}_", "").replace("_", " ").title()
-                lines.append(f"- {icon} **{label}** — [`{f.name}`]({gh}){{ target=_blank }}")
+            lines.append("Code shown during the pre-class video. Each example is a runnable\n")
+            lines.append("subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).\n")
+            for ex_dir in ex_dirs:
+                code_files = sorted(f for f in ex_dir.iterdir()
+                                    if f.suffix in {".v", ".sv", ".mem", ".hex"})
+                if not code_files:
+                    continue
+                ex_rel = ex_dir.relative_to(REPO)
+                ex_gh = f"{GITHUB_RAW_BASE}/{ex_rel}"
+                lines.append(f"- :material-folder-open: **{ex_dir.name}** — "
+                             f"[browse]({ex_gh}){{ target=_blank }}")
+                for f in code_files:
+                    rel = f.relative_to(REPO)
+                    gh = f"{GITHUB_RAW_BASE}/{rel}"
+                    icon = ":material-chip:" if f.suffix in {".v", ".sv"} else ":material-file:"
+                    lines.append(f"    - {icon} [`{f.name}`]({gh}){{ target=_blank }}")
             lines.append("")
 
     return "\n".join(lines)
