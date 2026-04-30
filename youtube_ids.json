@@ -1,0 +1,8 @@
+{
+  "_comment": "Maps lecture segment keys (dNN_sN) to YouTube video IDs. Loaded by scripts/prep_mkdocs.py and scripts/build_site.py. Keys prefixed with '_' and empty values are ignored.",
+
+  "d01_s1": "8eM55QLzmJQ",
+  "d01_s2": "F4JJvEmydcQ",
+  "d01_s3": "VQJe9yQ8orc",
+  "d01_s4": "OLdvLrW1W6Y"
+}
