@@ -66,25 +66,29 @@
 <!-- Operator table (kept from original) -->
 <section>
     <h2>The Operator Cost Table</h2>
-    <table style="font-size:0.6em;">
-        <thead><tr><th>Category</th><th>Operators</th><th>Hardware Cost</th><th>On iCE40 HX1K</th></tr></thead>
+    <table style="font-size:0.55em;">
+        <thead><tr><th>Category</th><th>Operators</th><th>Shape &amp; Result Width</th><th>Example (8-bit <code>a</code>, <code>b</code>)</th><th>Hardware Cost</th><th>On iCE40 HX1K</th></tr></thead>
         <tbody>
-            <tr><td>Bitwise</td><td><code>&amp;</code> <code>|</code> <code>^</code> <code>~</code></td><td>1 LUT per bit</td><td>Cheap</td></tr>
-            <tr><td>Logical</td><td><code>&amp;&amp;</code> <code>||</code> <code>!</code></td><td>Reduction + 1 LUT</td><td>Cheap</td></tr>
-            <tr><td>Reduction (unary)</td><td><code>&amp;</code> <code>|</code> <code>^</code></td><td>Tree of LUTs</td><td>Cheap (log N)</td></tr>
-            <tr><td>Arithmetic +/-</td><td><code>+</code> <code>-</code></td><td>Adder chain (carry)</td><td>Moderate (N LUTs + N SB_CARRY)</td></tr>
-            <tr><td>Arithmetic *</td><td><code>*</code></td><td>Multiplier tree</td><td><strong>Expensive</strong> (~N<sup>2</sup> LUTs)</td></tr>
-            <tr><td>Relational</td><td><code>==</code> <code>&lt;</code> <code>&gt;</code></td><td>Comparator</td><td>Moderate</td></tr>
-            <tr><td>Shift (constant)</td><td><code>&lt;&lt; 3</code></td><td>Rewiring only</td><td><strong>Free</strong></td></tr>
-            <tr><td>Shift (variable)</td><td><code>&lt;&lt; n</code></td><td>Barrel shifter</td><td><strong>Expensive</strong></td></tr>
-            <tr><td>Conditional</td><td><code>? :</code></td><td>2:1 mux</td><td>Cheap (1 LUT)</td></tr>
+            <tr><td>Bitwise</td><td><code>&amp;</code> <code>|</code> <code>^</code> <code>~</code></td><td>Binary, <strong>per-bit</strong>; result = operand width</td><td><code>a &amp; b</code> → 8-bit (each bit AND'd independently)</td><td>1 LUT per bit</td><td>Cheap</td></tr>
+            <tr><td>Logical</td><td><code>&amp;&amp;</code> <code>||</code> <code>!</code></td><td>Binary, <strong>whole-operand boolean</strong> (any bit set = true); result = <strong>1 bit</strong></td><td><code>a &amp;&amp; b</code> → 1-bit (true iff both nonzero)</td><td>Reduction + 1 LUT</td><td>Cheap</td></tr>
+            <tr><td>Reduction (unary)</td><td><code>&amp;</code> <code>|</code> <code>^</code></td><td><strong>Unary</strong>, folds across all bits of one operand; result = <strong>1 bit</strong></td><td><code>&amp;a</code> → 1-bit (AND of all 8 bits of <code>a</code>)</td><td>Tree of LUTs</td><td>Cheap (log N)</td></tr>
+            <tr><td>Arithmetic +/-</td><td><code>+</code> <code>-</code></td><td>Binary, per-bit + carry chain</td><td><code>a + b</code> → 8-bit (sum, with carry)</td><td>Adder chain (carry)</td><td>Moderate (N LUTs + N SB_CARRY)</td></tr>
+            <tr><td>Arithmetic *</td><td><code>*</code></td><td>Binary, full multiplier</td><td><code>a * b</code> → up to 16-bit</td><td>Multiplier tree</td><td><strong>Expensive</strong> (~N<sup>2</sup> LUTs)</td></tr>
+            <tr><td>Relational</td><td><code>==</code> <code>&lt;</code> <code>&gt;</code></td><td>Binary, compare; result = 1 bit</td><td><code>a &gt; b</code> → 1-bit</td><td>Comparator</td><td>Moderate</td></tr>
+            <tr><td>Shift (constant)</td><td><code>&lt;&lt; 3</code></td><td>Unary w/ literal; pure rewiring</td><td><code>a &lt;&lt; 3</code> → bits relabeled, no gates</td><td>Rewiring only</td><td><strong>Free</strong></td></tr>
+            <tr><td>Shift (variable)</td><td><code>&lt;&lt; n</code></td><td>Binary; needs full barrel shifter</td><td><code>a &lt;&lt; n</code> → mux tree on every bit</td><td>Barrel shifter</td><td><strong>Expensive</strong></td></tr>
+            <tr><td>Conditional</td><td><code>? :</code></td><td>Ternary; selects between two values</td><td><code>sel ? a : b</code> → 8-bit</td><td>2:1 mux</td><td>Cheap (1 LUT)</td></tr>
         </tbody>
     </table>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Watch the first three rows.</strong> <code>&amp;</code> means three different things depending on shape: <code>a &amp; b</code> is bitwise (per-bit), <code>a &amp;&amp; b</code> is logical (boolean of each operand), <code>&amp;a</code> is reduction (fold one operand). Same symbol family, very different hardware and result widths.
+    </div>
     <div class="fragment callout" style="font-size:0.72em;">
         <strong>Mental shortcut:</strong> Bitwise/logical/reduction/conditional = cheap. Arithmetic +/- = moderate. Multiply / variable-shift / wide comparators = expensive. Constant shifts = free.
     </div>
     <aside class="notes">
         Print this table. Put it on your wall. &ldquo;Cheap&rdquo; means it fits easily. &ldquo;Expensive&rdquo; means you should check your utilization. Multiply is particularly nasty without DSP blocks — iCE40 HX1K has no hard multipliers, so <code>*</code> gets built out of LUTs.
+        Spend extra time on the top three rows: bitwise, logical, and reduction all look like the same symbols but produce different result widths and different hardware. The shape (binary vs unary, single vs double symbol) is what disambiguates them — Verilog won't warn you if you pick the wrong one.
     </aside>
 </section>
 
