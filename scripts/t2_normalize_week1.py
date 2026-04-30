@@ -99,7 +99,7 @@ def generate_exercise_makefile(top, srcs, build_type, tb_file=None):
     lines.append(f"SRCS     = {' '.join(design_srcs)}")
     if tb_file:
         lines.append(f"TB       = {tb_file}")
-    lines.append("PCF      = ../../go_board.pcf")
+    lines.append("PCF      = ../go_board.pcf")
     lines.append("DEVICE   = hx1k")
     lines.append("PACKAGE  = vq100")
     lines.append("IVFLAGS  = -g2012 -Wall")

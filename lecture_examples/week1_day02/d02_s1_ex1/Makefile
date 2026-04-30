@@ -2,7 +2,7 @@
 # Demo: vector_ops  (segment s1, example 1)
 TOP      = vector_ops
 SRCS     = day02_ex01_vector_ops.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: shift_nonblocking  (segment s2, example 1)
 TOP      = shift_nonblocking
 SRCS     = day04_ex03_shift_register_demo.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: led_blinker  (segment s4, example 3)
 TOP      = led_blinker
 SRCS     = day04_ex02_led_blinker.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

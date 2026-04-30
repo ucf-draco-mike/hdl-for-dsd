@@ -2,7 +2,7 @@
 # Demo: ram_sp  (segment s2, example 2)
 TOP      = ram_sp
 SRCS     = day09_ex02_ram_sp.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: uart_tx_asserted  (segment s1, example 1)
 TOP      = uart_tx_asserted
 SRCS     = day14_ex01_uart_tx_assertions.sv
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

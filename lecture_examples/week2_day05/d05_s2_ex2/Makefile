@@ -2,7 +2,7 @@
 # Demo: shift_reg_piso  (segment s2, example 2)
 TOP      = shift_reg_piso
 SRCS     = day05_ex02_shift_reg_piso.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

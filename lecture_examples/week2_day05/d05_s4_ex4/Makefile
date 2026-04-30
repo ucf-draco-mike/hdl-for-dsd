@@ -2,7 +2,7 @@
 # Demo: debounce  (segment s4, example 4)
 TOP      = debounce
 SRCS     = day05_ex04_debounce.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

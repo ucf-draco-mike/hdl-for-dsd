@@ -2,7 +2,7 @@
 # Demo: latch_demo  (segment s3, example 2)
 TOP      = latch_demo
 SRCS     = day03_ex01_latch_demo.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

@@ -2,7 +2,7 @@
 # Demo: uart_tx  (segment s3, example 1)
 TOP      = uart_tx
 SRCS     = day11_ex01_uart_tx.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

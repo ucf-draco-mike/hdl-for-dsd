@@ -2,7 +2,7 @@
 # Demo: button_logic  (segment s3, example 2)
 TOP      = button_logic
 SRCS     = day01_ex02_button_logic.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

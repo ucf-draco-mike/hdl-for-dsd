@@ -2,7 +2,7 @@
 # Demo: led_driver  (segment s3, example 1)
 TOP      = led_driver
 SRCS     = day01_ex01_led_driver.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

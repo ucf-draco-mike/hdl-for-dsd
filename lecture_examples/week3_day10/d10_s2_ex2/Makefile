@@ -2,7 +2,7 @@
 # Demo: mult_4bit  (segment s2, example 2)
 TOP      = mult_4bit
 SRCS     = day10_mult_widths.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall

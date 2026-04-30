@@ -2,7 +2,7 @@
 # Demo: adder_4bit  (segment s2, example 1)
 TOP      = adder_4bit
 SRCS     = day10_adder_widths.v
-PCF      = ../../go_board.pcf
+PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
