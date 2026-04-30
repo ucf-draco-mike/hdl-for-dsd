@@ -96,6 +96,24 @@ Full background: `scripts/lab_ctf/README.md`.
 
 ---
 
+### Simulate before you program (optional but recommended)
+
+Every Day 1 exercise ships a plaintext testbench under
+`exN_*/solution/tb/`. From `labs/week1_day01/`:
+
+```bash
+make exN_sim     # compile your starter DUT against the published tb, run vvp
+make exN_wave    # same, then open the resulting VCD in GTKWave
+```
+
+If you drop your own `tb_<top_module>.v` into the exercise's `starter/`
+directory, that one wins; otherwise the published testbench is used
+automatically. This is the same testbench `make test` runs under the
+CTF gate — using it via `make sim` lets you inspect waveforms as you
+debug, without touching the flag chain.
+
+---
+
 ### Exercise 1: LED On — The Simplest Possible Design (20 min)
 
 **Goal:** Write, synthesize, and program the absolute minimum Verilog design. Confirm the full toolchain works end-to-end.
@@ -114,6 +132,7 @@ Full background: `scripts/lab_ctf/README.md`.
 **Goal:** Use `assign` to create combinational connections between inputs and outputs.
 
 - Open `ex2_buttons_to_leds/starter/ex2_buttons_to_leds.v` — direct mapping provided
+- **Simulate first:** `make ex2_sim` (or `make ex2_wave` for GTKWave) — sweeps all 16 input combos against your DUT
 - From `labs/week1_day01/`, build and program: `make ex2`
 - **Verify on hardware:** Each button controls its corresponding LED
 - **Earn the flag:** `cd ex2_buttons_to_leds/starter && make test` — save for Exercise 3
@@ -193,6 +212,8 @@ make ex2                             # build and program Exercise 2
 make ex3                             # build and program Exercise 3
 make ex4                             # build and program Exercise 4
 make ex5                             # build and program Exercise 5 (stretch)
+make exN_sim                         # simulate (uses solution/tb/ if no local tb)
+make exN_wave                        # simulate + open VCD in GTKWave
 make ex1_stat                        # show resource usage for Exercise 1
 make clean                           # remove all build artifacts
 

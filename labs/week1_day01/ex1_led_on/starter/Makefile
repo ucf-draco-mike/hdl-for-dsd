@@ -7,12 +7,18 @@ PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
 
 sim:
-	@tb=$$(ls tb_*.v 2>/dev/null | head -n 1); \
-	if [ -z "$$tb" ]; then \
+	@local_tb=$$(ls tb_*.v 2>/dev/null); \
+	if [ -n "$$local_tb" ]; then \
+		tb="$$local_tb"; \
+		tb_src="$$(pwd)"; \
+	elif ls ../solution/tb/tb_*.v >/dev/null 2>&1; then \
+		tb=$$(ls ../solution/tb/tb_*.v); \
+		tb_src="../solution/tb"; \
+	else \
 		echo ""; \
-		echo "[sim] No testbench present in $$(pwd)."; \
+		echo "[sim] No testbench found in $$(pwd) or ../solution/tb/."; \
 		echo ""; \
-		echo "      To add one, create 'tb_<top_module>.v' in this directory."; \
+		echo "      To write your own, drop 'tb_<top_module>.v' here."; \
 		echo "      Skeleton:"; \
 		echo ""; \
 		echo "        \`timescale 1ns/1ps"; \
@@ -22,13 +28,12 @@ sim:
 		echo "          // and call \$$finish when done."; \
 		echo "        endmodule"; \
 		echo ""; \
-		echo "      Then re-run: make sim"; \
-		echo ""; \
-	else \
-		srcs=$$(ls *.v 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
-		echo "iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs"; \
-		iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs && vvp sim.vvp; \
-	fi
+		exit 0; \
+	fi; \
+	echo "[sim] using testbench from $$tb_src"; \
+	srcs=$$(ls *.v 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
+	echo "iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs"; \
+	iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs && vvp sim.vvp
 
 wave: sim
 	@if ls *.vcd >/dev/null 2>&1; then gtkwave *.vcd & else echo "[wave] No VCD produced."; fi
