@@ -18,6 +18,10 @@
 # version control even though it's a .json file.
 !scripts/lab_ctf/chain.json
 
+# Carve out YouTube ID map (consumed by scripts/prep_mkdocs.py and
+# scripts/build_site.py to wire lecture segments to recorded videos).
+!youtube_ids.json
+
 # Editor / IDE
 *.swp
 *.swo
