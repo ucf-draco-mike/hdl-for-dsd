@@ -17,6 +17,16 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
+        # ---------- Emacs with HDL/Verilog support ----------
+        # Bundles Emacs together with the MELPA `verilog-mode` package.
+        # Emacs already ships verilog-mode in core (auto-activated for
+        # .v / .sv via auto-mode-alist); pulling it in via withPackages
+        # registers the upstream package's autoloads so opening a Verilog
+        # or SystemVerilog file enters verilog-mode automatically.
+        emacsWithHdl = (pkgs.emacs.pkgs.withPackages (epkgs: with epkgs; [
+          verilog-mode
+        ]));
+
         # ---------- Python environment (shared) ----------
         pythonEnv = pkgs.python3.withPackages (ps: with ps; [
           # Lightweight set used by lab/simulation helper scripts.
@@ -50,6 +60,9 @@
           # Serial terminal (UART — Week 3+)
           screen
           minicom
+
+          # Editor (with verilog-mode for HDL syntax highlighting)
+          emacsWithHdl
         ];
 
         # ---------- Linux-only packages ----------
@@ -91,6 +104,7 @@
           __ver icestorm icepack
           __ver iverilog iverilog -V
           __ver gtkwave  gtkwave --version
+          __ver emacs    emacs --version
           echo ""
           echo "  Run 'make sim' in any lab directory to simulate."
           echo "  Run 'make prog' to synthesize and program the Go Board."
