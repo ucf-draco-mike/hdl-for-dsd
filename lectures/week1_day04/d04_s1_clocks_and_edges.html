@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 4.1: Clocks &amp; Edges [ENHANCED]</title>
+    <title>Topic 4.1: Clocks &amp; Edges [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,13 +14,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 4 · Sequential Logic Fundamentals</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 4 · Sequential Logic Fundamentals</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Clocks &amp; Edges</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">Clocks &amp; Edges</span><span class="seg-label">Nonblocking</span><span class="seg-label">FF Variants</span><span class="seg-label">Counters</span></div>
-    <aside class="notes">Video 1 of 4 for Day 4. We move from combinational to sequential. Time enters the picture — and so does memory.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 4. We move from combinational to sequential. Time enters the picture — and so does memory.</aside>
 </section>
 
 <!-- CONTEXTUALIZE -->
@@ -33,7 +33,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every sequential lab from here uses a clock. Day 4 counter. Day 5 debouncer. Day 6 testbench stimulus. Day 7 FSM. Day 11 UART. Day 14 assertions. Get the clock mental model right today and everything downstream falls into place.</p>
+            <p style="font-size:0.75em;">Every sequential lab from here uses a clock. Topic 4 counter. Topic 5 debouncer. Topic 6 testbench stimulus. Topic 7 FSM. Topic 11 UART. Topic 14 assertions. Get the clock mental model right today and everything downstream falls into place.</p>
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
@@ -130,7 +130,7 @@ always @(*) q &lt;= d;</code></pre>
         <strong>(2)</strong> Triggers on <em>any</em> transition of clk (both edges) — synthesis warns, behavior unpredictable. Wrong.
         <strong>(3)</strong> Combinational sensitivity with nonblocking — pointless and produces a latch. Very wrong.
     </div>
-    <aside class="notes">Common failed variations. The correct pattern is non-negotiable. Attempt 1 is the most tempting because it looks &ldquo;cleaner&rdquo; — but it's a Day 3 rule violation waiting to cause a bug.</aside>
+    <aside class="notes">Common failed variations. The correct pattern is non-negotiable. Attempt 1 is the most tempting because it looks &ldquo;cleaner&rdquo; — but it's a Topic 3 rule violation waiting to cause a bug.</aside>
 </section>
 
 <!-- You Do -->
@@ -141,12 +141,12 @@ always @(*) q &lt;= d;</code></pre>
 d   ──────┐___________┌─────────
 q   ?</pre>
     <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answer:</strong> <code>q</code> updates on each <em>posedge clk</em>, capturing whatever <code>d</code> was a <em>few picoseconds before</em> the edge. Since <code>d</code> isn't synchronized to clk, <code>q</code> may sample either high or low depending on exact alignment. This is a <strong>metastability hazard</strong> — covered in detail on Day 5.
+        <strong>Answer:</strong> <code>q</code> updates on each <em>posedge clk</em>, capturing whatever <code>d</code> was a <em>few picoseconds before</em> the edge. Since <code>d</code> isn't synchronized to clk, <code>q</code> may sample either high or low depending on exact alignment. This is a <strong>metastability hazard</strong> — covered in detail on Topic 5.
     </div>
     <div class="fragment callout-warning" style="font-size:0.68em;">
-        <strong>Lesson:</strong> A clocked register only updates on the clock's edge, but the <em>value</em> it captures depends on whether the input was stable at that moment. Sampling an asynchronous input is dangerous — Day 5 shows the synchronizer pattern that fixes it.
+        <strong>Lesson:</strong> A clocked register only updates on the clock's edge, but the <em>value</em> it captures depends on whether the input was stable at that moment. Sampling an asynchronous input is dangerous — Topic 5 shows the synchronizer pattern that fixes it.
     </div>
-    <aside class="notes">Good teaser for Day 5 metastability. The q waveform depends on unseen timing relationships — this is the first hint that asynchronous inputs are problematic.</aside>
+    <aside class="notes">Good teaser for Topic 5 metastability. The q waveform depends on unseen timing relationships — this is the first hint that asynchronous inputs are problematic.</aside>
 </section>
 
 <!-- LIVE DEMO -->

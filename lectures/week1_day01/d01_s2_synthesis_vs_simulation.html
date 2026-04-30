@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1.2: Synthesis vs. Simulation — Accelerated HDL for Digital System Design</title>
+    <title>Topic 1.2: Synthesis vs. Simulation — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -18,7 +18,7 @@
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;">
         <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 1 · Welcome to Hardware Thinking
+            Topic 1 · Welcome to Hardware Thinking
         </span>
     </div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Synthesis vs. Simulation</h1>
@@ -36,7 +36,7 @@
         <span class="seg-label">Module Anatomy</span>
         <span class="seg-label">Logic Refresher</span>
     </div>
-    <aside class="notes">Welcome to Video 2 of 4 for Day 1. This one's about 15 minutes. We're going to look at how the same Verilog file gets consumed by two fundamentally different tools — synthesis and simulation — why understanding the difference is critical, and then you'll see your first testbench so you know exactly what you're running when you type make-sim in lab.</aside>
+    <aside class="notes">Welcome to Video 2 of 4 for Topic 1. This one's about 15 minutes. We're going to look at how the same Verilog file gets consumed by two fundamentally different tools — synthesis and simulation — why understanding the difference is critical, and then you'll see your first testbench so you know exactly what you're running when you type make-sim in lab.</aside>
 </section>
 
 <!-- ONE SOURCE, TWO CONSUMERS -->
@@ -327,7 +327,7 @@ LUT4_B(t,e,f,1) &rarr; y      // 3-input AND of t,e,f</code></pre>
             </div>
         </div>
     </div>
-    <aside class="notes">A single LUT4 can implement any function of up to four inputs. The moment you exceed four, the synthesizer has to decompose the function and use more than one LUT, with the output of one feeding the input of the next. The 6-input AND is the simplest example: take four of the inputs into one LUT, send that result plus the remaining two inputs into a second LUT. Two LUT4s, one extra level of logic. The general rule on a 4-LUT architecture is that a k-input function takes roughly ceiling of (k minus 1) over 3 LUT4s, because each new LUT can absorb three more inputs while reusing one input for the cascaded result. That&apos;s your back-of-the-envelope tool for the rest of the course. And it&apos;s not just an area cost — every cascaded LUT adds one more LUT-delay to the combinational path, which is exactly what shrinks your Fmax. We&apos;ll come back to this on Day 10 when we look at adder and multiplier architectures.</aside>
+    <aside class="notes">A single LUT4 can implement any function of up to four inputs. The moment you exceed four, the synthesizer has to decompose the function and use more than one LUT, with the output of one feeding the input of the next. The 6-input AND is the simplest example: take four of the inputs into one LUT, send that result plus the remaining two inputs into a second LUT. Two LUT4s, one extra level of logic. The general rule on a 4-LUT architecture is that a k-input function takes roughly ceiling of (k minus 1) over 3 LUT4s, because each new LUT can absorb three more inputs while reusing one input for the cascaded result. That&apos;s your back-of-the-envelope tool for the rest of the course. And it&apos;s not just an area cost — every cascaded LUT adds one more LUT-delay to the combinational path, which is exactly what shrinks your Fmax. We&apos;ll come back to this on Topic 10 when we look at adder and multiplier architectures.</aside>
 </section>
 
 <!-- CHECK THE MACHINE -->
@@ -390,7 +390,7 @@ LUT4_B(t,e,f,1) &rarr; y      // 3-input AND of t,e,f</code></pre>
             <strong>Always simulate first</strong> — <code>make sim</code> before <code>make prog</code>.
         </p>
     </div>
-    <aside class="notes">Recap. One: same source, two paths — synthesis makes hardware, simulation tests behavior. Two: not all Verilog synthesizes. Hash-delay, dollar-display, initial are simulation only. Three: a testbench drives your design's inputs, checks its outputs, and prints PASS or FAIL — you'll run these from Day 1. Four: always simulate first. make-sim before make-prog. In the next video, we'll look at the anatomy of a Verilog module.</aside>
+    <aside class="notes">Recap. One: same source, two paths — synthesis makes hardware, simulation tests behavior. Two: not all Verilog synthesizes. Hash-delay, dollar-display, initial are simulation only. Three: a testbench drives your design's inputs, checks its outputs, and prints PASS or FAIL — you'll run these from Topic 1. Four: always simulate first. make-sim before make-prog. In the next video, we'll look at the anatomy of a Verilog module.</aside>
 </section>
 
 <!-- BRIDGE (ENHANCED TRANSFER) -->
@@ -400,7 +400,7 @@ LUT4_B(t,e,f,1) &rarr; y      // 3-input AND of t,e,f</code></pre>
             🔗 Transfer
         </p>
         <h2 style="color: #FFFFFF; font-size: 1.8em;">Anatomy of a Module</h2>
-        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Day 1, Video 3 of 4 · ~12 minutes</p>
+        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Topic 1, Video 3 of 4 · ~12 minutes</p>
         <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
             <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
             <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">

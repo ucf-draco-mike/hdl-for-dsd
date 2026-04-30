@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 6.1: Testbench Anatomy — Accelerated HDL for Digital System Design</title>
+<title>Topic 6.1: Testbench Anatomy — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 6 · Verification Methodology</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 6 · Verification Methodology</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Testbench Anatomy</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">Anatomy</span><span class="seg-label">Self-Checking</span><span class="seg-label">Tasks</span><span class="seg-label">File-Driven</span></div>
-    <aside class="notes">Video 1 of 4 for Day 6. We've been running testbenches all week. Today we start writing them.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 6. We've been running testbenches all week. Today we start writing them.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every <code>make sim</code> you've run used a testbench someone wrote. Today you start writing them yourself. Day 6 videos 2-4 add self-checking, tasks for organization, and file-driven test vectors. By Day 14 you'll write assertions. You become the verification engineer.</p>
+            <p style="font-size:0.75em;">Every <code>make sim</code> you've run used a testbench someone wrote. Today you start writing them yourself. Topic 6 videos 2-4 add self-checking, tasks for organization, and file-driven test vectors. By Topic 14 you'll write assertions. You become the verification engineer.</p>
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.72em;margin-top:0.5em;">
@@ -98,7 +98,7 @@ endmodule</code></pre>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The reg/wire Rule</h2>
     <p style="font-size:0.78em;">In a testbench, why must DUT <em>inputs</em> be declared as <code>reg</code> in the testbench?</p>
     <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Answer:</strong> The testbench <strong>drives</strong> those signals procedurally (inside <code>initial</code>). Day 2 rule: anything assigned in an <code>always</code>/<code>initial</code> block must be declared <code>reg</code>. DUT outputs are driven <em>by the DUT</em>, so they must be <code>wire</code> on the testbench side.
+        <strong>Answer:</strong> The testbench <strong>drives</strong> those signals procedurally (inside <code>initial</code>). Topic 2 rule: anything assigned in an <code>always</code>/<code>initial</code> block must be declared <code>reg</code>. DUT outputs are driven <em>by the DUT</em>, so they must be <code>wire</code> on the testbench side.
     </div>
     <div class="fragment callout-warning" style="font-size:0.7em;">
         <strong>Common bug:</strong> Declaring a DUT input as <code>wire</code> in the testbench. The simulator will refuse to let you assign to it. Easy fix, confusing error message.
@@ -166,7 +166,7 @@ ERROR: Module `\tb_adder' is not synthesizable.
     <div class="fragment callout" style="font-size:0.68em;">
         <strong>Checkpoint:</strong> Yosys being this specific about what's unsynthesizable is useful — if your DUT contains any of these constructs, you have a bug.
     </div>
-    <aside class="notes">Important distinction: the testbench is sim-only. Day 1 Video 2 told you this; now you're writing both and seeing the split in action. If your DUT synth fails with these errors, you have sim constructs in your design code — bug.</aside>
+    <aside class="notes">Important distinction: the testbench is sim-only. Topic 1 Video 2 told you this; now you're writing both and seeing the split in action. If your DUT synth fails with these errors, you have sim constructs in your design code — bug.</aside>
 </section>
 
 <section data-background-color="#FFF8E1">

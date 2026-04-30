@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1.4: Digital Logic Refresher — Accelerated HDL for Digital System Design</title>
+    <title>Topic 1.4: Digital Logic Refresher — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -25,7 +25,7 @@
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;">
         <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 1 · Welcome to Hardware Thinking
+            Topic 1 · Welcome to Hardware Thinking
         </span>
     </div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Digital Logic Refresher</h1>
@@ -43,7 +43,7 @@
         <span class="seg-label">Module Anatomy</span>
         <span class="seg-label active">Logic Refresher</span>
     </div>
-    <aside class="notes">Last video for Day 1. About 8 minutes. This is a targeted refresher — not a re-teach. If any of this feels unfamiliar, review your digital logic notes before class.</aside>
+    <aside class="notes">Last video for Topic 1. About 8 minutes. This is a targeted refresher — not a re-teach. If any of this feels unfamiliar, review your digital logic notes before class.</aside>
 </section>
 
 <!-- CONTEXTUALIZE: WHY WE REFRESH -->
@@ -72,7 +72,7 @@
     </div>
     <aside class="notes">
         The refresher feels dusty but it's load-bearing. When I say &ldquo;let's build
-        a priority encoder&rdquo; on Day 3, I need everyone to picture the same thing.
+        a priority encoder&rdquo; on Topic 3, I need everyone to picture the same thing.
         This video locks that vocabulary.
     </aside>
 </section>
@@ -371,10 +371,10 @@ assign y = a & b;</code></pre>
 // the clock edge
 always @(posedge clk)
     q <= d;</code></pre>
-            <p style="font-size:0.65em;">Clock-driven. Has memory. <strong>Introduced Day 4.</strong></p>
+            <p style="font-size:0.65em;">Clock-driven. Has memory. <strong>Introduced Topic 4.</strong></p>
         </div>
     </div>
-    <aside class="notes">Preview of combinational versus sequential in Verilog. Combinational: assign, no clock, no memory. Output changes whenever inputs change. That's our focus for the first few days. Sequential: always at posedge clk, clock-driven, has memory. Output only changes on the rising edge of the clock. We introduce this properly on Day 4. For now, just know both exist.</aside>
+    <aside class="notes">Preview of combinational versus sequential in Verilog. Combinational: assign, no clock, no memory. Output changes whenever inputs change. That's our focus for the first few days. Sequential: always at posedge clk, clock-driven, has memory. Output only changes on the rising edge of the clock. We introduce this properly on Topic 4. For now, just know both exist.</aside>
 </section>
 
 <!-- YOU ALREADY KNOW THE HARDWARE -->
@@ -486,23 +486,23 @@ assign y1 = a & b;</code></pre>
 <section data-background-color="#000000">
     <div style="text-align: center;">
         <p style="color: #FFC904; font-size: 0.7em; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">
-            🔗 End of Day 1
+            🔗 End of Topic 1
         </p>
         <h2 style="color: #FFFFFF; font-size: 1.8em;">Tomorrow: Data Types &amp; Operators</h2>
-        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Day 2 · Combinational Building Blocks</p>
+        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Topic 2 · Combinational Building Blocks</p>
         <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
             <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
             <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">
                 You now have the <em>mental model</em>: Verilog describes concurrent
                 hardware, two tools consume it (synthesis vs simulation), and modules
-                are chips with named pins. Day 2 gives you the <em>working vocabulary</em>
-                &mdash; how to declare signals and combine them. By end of Day 2 you'll
+                are chips with named pins. Topic 2 gives you the <em>working vocabulary</em>
+                &mdash; how to declare signals and combine them. By end of Topic 2 you'll
                 decode a hex digit to a 7-segment display on the Go Board. Real hardware.
                 Real output. Tomorrow.
             </p>
         </div>
     </div>
-    <aside class="notes">That's all four pre-class videos for Day 1. Bring your laptop to class with the toolchain installed — Yosys, nextpnr, Icarus Verilog, GTKWave. You'll get your Go Board and program it for the first time today. See you in class!</aside>
+    <aside class="notes">That's all four pre-class videos for Topic 1. Bring your laptop to class with the toolchain installed — Yosys, nextpnr, Icarus Verilog, GTKWave. You'll get your Go Board and program it for the first time today. See you in class!</aside>
 </section>
 
 </div></div>

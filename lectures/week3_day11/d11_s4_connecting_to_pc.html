@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 11.4: Connecting to a PC — Accelerated HDL</title>
+<title>Topic 11.4: Connecting to a PC — Accelerated HDL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 11 · UART Transmitter</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Connecting to a PC</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Protocol</span><span class="seg-label">TX Architecture</span><span class="seg-label">Implementation</span><span class="seg-label active">PC Connection</span></div>
-    <aside class="notes">Video 4 of 4 for Day 11. Crossing the boundary: your Verilog talks to software on a computer.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 11. Crossing the boundary: your Verilog talks to software on a computer.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Today's setup is your lifeline. Your capstone will print debug info over UART, read configuration over UART, or stream sensor data over UART. Day 12 RX lets you receive bytes FROM the PC. By the end of the week, you have full bidirectional communication.</p>
+            <p style="font-size:0.75em;">Today's setup is your lifeline. Your capstone will print debug info over UART, read configuration over UART, or stream sensor data over UART. Topic 12 RX lets you receive bytes FROM the PC. By the end of the week, you have full bidirectional communication.</p>
         </div>
     </div>
     <aside class="notes">The USB-UART bridge is standard equipment. Every FPGA dev board has one. pyserial on the laptop side, your Verilog UART on the board side, USB between them.</aside>
@@ -197,12 +197,12 @@ HELLOHELLO...</code></pre>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 11</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 11</p>
         <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Receiving Bytes</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 12 · UART RX · SPI · IP Integration · Week 3 Capstone</p>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 12 · UART RX · SPI · IP Integration · Week 3 Capstone</p>
         <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You transmit. Day 12 is <strong>receiving</strong> — harder than transmitting, because you don't control the timing. You'll learn 16× oversampling (the standard UART RX trick), start-bit detection, and then round out Week 3 with SPI (a different serial protocol) and a full IP-integration methodology. By Friday: bidirectional UART + SPI = you can talk to any peripheral in the embedded world.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You transmit. Topic 12 is <strong>receiving</strong> — harder than transmitting, because you don't control the timing. You'll learn 16× oversampling (the standard UART RX trick), start-bit detection, and then round out Week 3 with SPI (a different serial protocol) and a full IP-integration methodology. By Friday: bidirectional UART + SPI = you can talk to any peripheral in the embedded world.</p>
         </div>
     </div>
 </section>

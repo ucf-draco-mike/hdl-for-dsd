@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.3: The Latch Problem [ENHANCED]</title>
+    <title>Topic 3.3: The Latch Problem [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,7 +14,7 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The Latch Problem</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 3 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
@@ -33,7 +33,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every Day 3+ lab checks for latch warnings during <code>make stat</code>. If Yosys reports &ldquo;inferred latch,&rdquo; your grader sees it. This video is your insurance policy: three independent techniques, each of which alone prevents the bug.</p>
+            <p style="font-size:0.75em;">Every Topic 3+ lab checks for latch warnings during <code>make stat</code>. If Yosys reports &ldquo;inferred latch,&rdquo; your grader sees it. This video is your insurance policy: three independent techniques, each of which alone prevents the bug.</p>
         </div>
     </div>
     <aside class="notes">Latches aren't &ldquo;wrong&rdquo; in isolation — they're valid hardware. But <em>inferring</em> them from code that was meant to be combinational almost always means a bug. The industry convention is: if you want a latch, write it explicitly. If you accidentally get one, that's a latch bug.</aside>
@@ -262,7 +262,7 @@ SB_LUT4      4
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~6 minutes</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've seen <code>=</code> (blocking) inside every <code>always @(*)</code> so far. Tomorrow we introduce <code>&lt;=</code> (nonblocking) for sequential logic. Video 4 previews the rule: <code>=</code> for combinational, <code>&lt;=</code> for sequential, never mix. Day 4 will prove <em>why</em>, but you need the rule in memory before you get there.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've seen <code>=</code> (blocking) inside every <code>always @(*)</code> so far. Tomorrow we introduce <code>&lt;=</code> (nonblocking) for sequential logic. Video 4 previews the rule: <code>=</code> for combinational, <code>&lt;=</code> for sequential, never mix. Topic 4 will prove <em>why</em>, but you need the rule in memory before you get there.</p>
         </div>
     </div>
 </section>

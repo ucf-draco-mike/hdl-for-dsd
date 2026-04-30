@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2.4: 7-Segment Display [ENHANCED]</title>
+    <title>Topic 2.4: 7-Segment Display [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,13 +14,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 2 · Combinational Building Blocks</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 2 · Combinational Building Blocks</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The 7-Segment Display</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Data Types</span><span class="seg-label">Operators</span><span class="seg-label">Sized Literals</span><span class="seg-label active">7-Seg Display</span></div>
-    <aside class="notes">Video 4 of 4. Your first real peripheral. Everything we've built in Day 1 and Day 2 culminates here: you press buttons on the Go Board, and a real 7-segment digit lights up.</aside>
+    <aside class="notes">Video 4 of 4. Your first real peripheral. Everything we've built in Topic 1 and Topic 2 culminates here: you press buttons on the Go Board, and a real 7-segment digit lights up.</aside>
 </section>
 
 <!-- CONTEXTUALIZE -->
@@ -33,7 +33,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Active-low logic, case statements, pin mapping — all three concepts land today. The <code>case</code> pattern shows up again in Day 3 (ALU), Day 7 (FSMs), Day 11 (UART state logic). Pin mapping with <code>.pcf</code> files is every lab from now on.</p>
+            <p style="font-size:0.75em;">Active-low logic, case statements, pin mapping — all three concepts land today. The <code>case</code> pattern shows up again in Topic 3 (ALU), Topic 7 (FSMs), Topic 11 (UART state logic). Pin mapping with <code>.pcf</code> files is every lab from now on.</p>
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
@@ -58,7 +58,7 @@
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
         <strong>The failure mode:</strong> Students write the logical (active-high) version, flash the board, and see an &ldquo;inverted&rdquo; or &ldquo;solid&rdquo; display. The fix is always to flip every bit. Adding <code>~</code> once is better than rewriting every case.
     </div>
-    <aside class="notes">Active-low is the #1 Day 2 lab failure. Students expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
+    <aside class="notes">Active-low is the #1 Topic 2 lab failure. Students expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
 </section>
 
 <!-- How to tell: active-low vs active-high -->
@@ -88,7 +88,7 @@
         <strong>Why both exist:</strong> FPGA I/O typically <em>sinks</em> more current than it <em>sources</em>, so common-anode (active-low) is mechanically friendlier for LED arrays. Buttons and resets are often active-low for the same reason: a pull-up to VCC plus a switch to GND is the cheapest reliable circuit.
     </div>
     <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
-        <strong>Same board, both polarities:</strong> The Go Board's 4 discrete LEDs and 4 push-buttons are active-<em>high</em> (<code>1 = on</code>, <code>1 = pressed</code>) — see Day 1's <code>buttons_to_leds</code>. The 7-segment segments on the very same FPGA are active-<em>low</em>. Polarity is per-peripheral, not per-board.
+        <strong>Same board, both polarities:</strong> The Go Board's 4 discrete LEDs and 4 push-buttons are active-<em>high</em> (<code>1 = on</code>, <code>1 = pressed</code>) — see Topic 1's <code>buttons_to_leds</code>. The 7-segment segments on the very same FPGA are active-<em>low</em>. Polarity is per-peripheral, not per-board.
     </div>
     <aside class="notes">Active-low is not arbitrary — it falls out of how CMOS output drivers and pull-up resistors are easiest to build. Once students see the pattern (LEDs, resets, chip-selects, button inputs all tend active-low), it stops feeling like a gotcha and starts feeling like a convention. The schematic is always ground truth; the constraint file's comment is a hint, not a contract.</aside>
 </section>
@@ -328,12 +328,12 @@ FPGA programmed OK.</code></pre>
 <!-- End of Week 1 prep -->
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 2</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 2</p>
         <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Procedural Combinational Logic</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 3 · always @(*), if/else, case, and the latch trap</p>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 3 · always @(*), if/else, case, and the latch trap</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You just used <code>always @(*)</code> and <code>case</code> without really understanding them. Day 3 is the formal treatment — including <em>the latch problem</em>, the #1 silent bug in combinational RTL. By tomorrow's end you'll recognize latch-inducing patterns on sight, and know three independent ways to prevent them.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You just used <code>always @(*)</code> and <code>case</code> without really understanding them. Topic 3 is the formal treatment — including <em>the latch problem</em>, the #1 silent bug in combinational RTL. By tomorrow's end you'll recognize latch-inducing patterns on sight, and know three independent ways to prevent them.</p>
         </div>
     </div>
 </section>

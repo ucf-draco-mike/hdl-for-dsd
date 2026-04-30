@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.1: The always @(*) Block [ENHANCED]</title>
+    <title>Topic 3.1: The always @(*) Block [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,13 +14,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">The always @(*) Block</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~12 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">always @(*)</span><span class="seg-label">if/else &amp; case</span><span class="seg-label">Latch Problem</span><span class="seg-label">Block vs Nonblock</span></div>
-    <aside class="notes">Video 1 of 4 for Day 3. You used <code>always @(*)</code> yesterday without really understanding it. Today we formalize it.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 3. You used <code>always @(*)</code> yesterday without really understanding it. Today we formalize it.</aside>
 </section>
 
 <!-- CONTEXTUALIZE -->
@@ -33,7 +33,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Day 3 ALU. Day 7 FSM output logic (Block 3). Day 11 UART state-to-output. Day 14 assertion fire-logic. Every remaining day builds on <code>always @(*)</code>. Get the syntax clean now and you're set for the rest of the course.</p>
+            <p style="font-size:0.75em;">Topic 3 ALU. Topic 7 FSM output logic (Block 3). Topic 11 UART state-to-output. Topic 14 assertion fire-logic. Every remaining day builds on <code>always @(*)</code>. Get the syntax clean now and you're set for the rest of the course.</p>
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
@@ -209,7 +209,7 @@ Both: 4 SB_LUT4, 0 SB_DFF</code></pre>
     <div class="fragment callout" style="font-size:0.72em;">
         <strong>Re-confirm:</strong> <code>reg [3:0] r_y</code> + <code>always @(*)</code> + <code>case</code> → zero flops. The <code>reg</code> keyword is syntactic: whether it becomes a flip-flop depends entirely on the sensitivity list. No <code>posedge clk</code>, no flops.
     </div>
-    <aside class="notes">Re-hammer the Day 2 lesson with a concrete example. reg + always@* = combinational. Seeing 0 flops in stat output is the receipt.</aside>
+    <aside class="notes">Re-hammer the Topic 2 lesson with a concrete example. reg + always@* = combinational. Seeing 0 flops in stat output is the receipt.</aside>
 </section>
 
 <!-- CHECK THE MACHINE -->

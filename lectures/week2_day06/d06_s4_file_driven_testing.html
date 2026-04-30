@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 6.4: File-Driven Testing — Accelerated HDL for Digital System Design</title>
+<title>Topic 6.4: File-Driven Testing — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 6 · Verification Methodology</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 6 · Verification Methodology</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">File-Driven Testing</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Anatomy</span><span class="seg-label">Self-Checking</span><span class="seg-label">Tasks</span><span class="seg-label active">File-Driven</span></div>
-    <aside class="notes">Video 4 of 4 for Day 6. Scaling up — test vectors in external files so your testbench can run thousands of cases.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 6. Scaling up — test vectors in external files so your testbench can run thousands of cases.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Day 11 UART bring-up uses a file of received-byte test patterns. Day 14 capstone verification leans on this pattern. Any time you have &ldquo;I need to test N cases and N is big,&rdquo; file-driven testing is the answer.</p>
+            <p style="font-size:0.75em;">Topic 11 UART bring-up uses a file of received-byte test patterns. Topic 14 capstone verification leans on this pattern. Any time you have &ldquo;I need to test N cases and N is big,&rdquo; file-driven testing is the answer.</p>
         </div>
     </div>
     <aside class="notes">File-driven testing is how real verification scales. You can't hand-write a million test cases — you write a generator, dump to a file, then consume the file in a loop.</aside>
@@ -195,12 +195,12 @@ tail -1 logs/sim.log</code></pre>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 6</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 6</p>
         <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Finite State Machines</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 7 · FSM Design &amp; The 3-Block Template</p>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 7 · FSM Design &amp; The 3-Block Template</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You can now verify any design you build. Day 7 is the week's intellectual peak: <strong>finite state machines</strong>. The sequential control pattern that underlies every protocol, every controller, every CPU. You'll learn the 3-block template that makes FSMs reliable — and your self-checking testbench skills will earn their keep, because FSMs have lots of states to verify.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You can now verify any design you build. Topic 7 is the week's intellectual peak: <strong>finite state machines</strong>. The sequential control pattern that underlies every protocol, every controller, every CPU. You'll learn the 3-block template that makes FSMs reliable — and your self-checking testbench skills will earn their keep, because FSMs have lots of states to verify.</p>
         </div>
     </div>
 </section>

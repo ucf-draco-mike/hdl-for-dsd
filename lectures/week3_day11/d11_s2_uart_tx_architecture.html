@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 11.2: UART TX Architecture — Accelerated HDL</title>
+<title>Topic 11.2: UART TX Architecture — Accelerated HDL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,7 +13,7 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 11 · UART Transmitter</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 11 · UART Transmitter</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">UART TX Architecture</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Today's UART TX is the first time you'll see this pattern applied end-to-end. Day 12 UART RX uses it again. Day 12 SPI uses it again. Your capstone protocol controllers will use it again. Learn the decomposition once; reach for it forever.</p>
+            <p style="font-size:0.75em;">Today's UART TX is the first time you'll see this pattern applied end-to-end. Topic 12 UART RX uses it again. Topic 12 SPI uses it again. Your capstone protocol controllers will use it again. Learn the decomposition once; reach for it forever.</p>
         </div>
     </div>
     <aside class="notes">FSM + datapath is the canonical protocol controller shape. Separating control from data is a universal design pattern.</aside>
@@ -73,7 +73,7 @@
      FSM signals:         load, shift, sel_idle/start/data/stop
     </pre>
     <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> The FSM is ~15 lines; the datapath is ~15 lines. Each testable alone. The baud counter is your Week 2 <code>mod_n_counter</code>. The shift register is your Week 2 <code>piso_shift</code>. The FSM is a 4-state 3-block template from Week 2 Day 7. <strong>No new primitives — only composition.</strong>
+        <strong>My thinking:</strong> The FSM is ~15 lines; the datapath is ~15 lines. Each testable alone. The baud counter is your Week 2 <code>mod_n_counter</code>. The shift register is your Week 2 <code>piso_shift</code>. The FSM is a 4-state 3-block template from Week 2 Topic 7. <strong>No new primitives — only composition.</strong>
     </div>
     <aside class="notes">The decomposition in one diagram. Each block is one you've already built. The whole UART is composition, not new invention.</aside>
 </section>
@@ -105,7 +105,7 @@
     <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
         <strong>Read the picture:</strong> Four states, each producing a fixed <code>o_tx</code> value (Moore — outputs depend only on state). The whole frame is just &ldquo;walk the loop once&rdquo;: IDLE → START → DATA (×8) → STOP → IDLE. <code>baud_tick</code> is the only thing that advances state; everything between ticks is the bit-time wait. <code>o_busy</code> is high in any non-idle state.
     </div>
-    <aside class="notes">The state diagram makes the &ldquo;walk once around the loop = transmit one byte&rdquo; intuition crisp. The DATA self-loop (with the bit counter) is where all 8 data bits live. Compare to the Day 7 traffic-light Moore FSM — same pattern, different domain.</aside>
+    <aside class="notes">The state diagram makes the &ldquo;walk once around the loop = transmit one byte&rdquo; intuition crisp. The DATA self-loop (with the bit counter) is where all 8 data bits live. Compare to the Topic 7 traffic-light Moore FSM — same pattern, different domain.</aside>
 </section>
 
 <section>
@@ -207,7 +207,7 @@ PASS: back to S_IDLE
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 3 of 4 · ~12 minutes</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have the architecture. Video 3 is the live build: you'll write the Verilog from scratch, watch it simulate, watch it synthesize. By the end: a working, simulated UART TX. Day 11 video 4 hooks it up to your computer.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have the architecture. Video 3 is the live build: you'll write the Verilog from scratch, watch it simulate, watch it synthesize. By the end: a working, simulated UART TX. Topic 11 video 4 hooks it up to your computer.</p>
         </div>
     </div>
 </section>

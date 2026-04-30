@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 12.1: RX Oversampling — Accelerated HDL</title>
+<title>Topic 12.1: RX Oversampling — Accelerated HDL</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX · SPI · Integration</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 12 · UART RX · SPI · Integration</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">RX Oversampling</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">RX Oversampling</span><span class="seg-label">RX Impl</span><span class="seg-label">SPI</span><span class="seg-label">IP Integration</span></div>
-    <aside class="notes">Video 1 of 4 for Day 12. Receiving is harder than transmitting — here's why, and the clever trick that fixes it.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 12. Receiving is harder than transmitting — here's why, and the clever trick that fixes it.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Day 11 TX was straightforward — you controlled the timing. Today's RX is the hard part, and the &ldquo;16× oversampling&rdquo; trick is what makes it work. Once you have RX working (Video 2), you have full-duplex UART on your Go Board. Day 12 Video 3 introduces SPI; Video 4 integrates everything.</p>
+            <p style="font-size:0.75em;">Topic 11 TX was straightforward — you controlled the timing. Today's RX is the hard part, and the &ldquo;16× oversampling&rdquo; trick is what makes it work. Once you have RX working (Video 2), you have full-duplex UART on your Go Board. Topic 12 Video 3 introduces SPI; Video 4 integrates everything.</p>
         </div>
     </div>
     <aside class="notes">Oversampling is the universal technique. Learn once, apply to every UART / SerDes / modem receiver you'll ever encounter.</aside>
@@ -78,7 +78,7 @@
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Start-Bit Detection</h2>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// 1. Synchronize the async RX line (2-FF sync — Day 5 lesson returns!)
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// 1. Synchronize the async RX line (2-FF sync — Topic 5 lesson returns!)
 reg r_rx_sync1, r_rx_sync2, r_rx_sync3;
 always @(posedge i_clk) begin
     r_rx_sync1 &lt;= i_rx;      // metastability flop 1

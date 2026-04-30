@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 2.1: Data Types and Vectors [ENHANCED] — Accelerated HDL for Digital System Design</title>
+    <title>Topic 2.1: Data Types and Vectors [ENHANCED] — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -18,7 +18,7 @@
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;">
         <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 2 · Combinational Building Blocks
+            Topic 2 · Combinational Building Blocks
         </span>
     </div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Data Types &amp; Vectors</h1>
@@ -37,7 +37,7 @@
         <span class="seg-label">7-Seg Display</span>
     </div>
     <aside class="notes">
-        Welcome to Video 1 of 4 for Day 2. Today we move from &ldquo;what is HDL&rdquo; to
+        Welcome to Video 1 of 4 for Topic 2. Today we move from &ldquo;what is HDL&rdquo; to
         actually declaring signals and pushing bits around. This video is about 15 minutes.
         The single biggest piece of baggage from yesterday: Verilog has two confusingly named
         types — <code>wire</code> and <code>reg</code> — and neither name matches its actual
@@ -63,7 +63,7 @@
             <p style="font-size: 0.75em;">
                 Every lab from today forward uses vectors (<code>[7:0]</code>,
                 <code>[31:0]</code>). Concatenation and sign extension show up on
-                Day 3 (ALU), Day 9 (memory addressing), Day 11 (UART framing), and
+                Topic 3 (ALU), Topic 9 (memory addressing), Topic 11 (UART framing), and
                 your capstone. This is working vocabulary.
             </p>
         </div>
@@ -149,7 +149,7 @@ always @(*) if (enable) r_broken = data;  // ⚠ latch</code></pre>
     <div class="callout" style="font-size: 0.7em; margin-top: 0.3em;">
         <strong>My thinking:</strong> I use the <code>w_</code> and <code>r_</code>
         prefix convention because <em>the synthesizer doesn't care, but the reader does</em>.
-        Case 4 is the bug you'll hit 50+ times this semester. Video 3 of Day 3 is all about
+        Case 4 is the bug you'll hit 50+ times this semester. Video 3 of Topic 3 is all about
         spotting it.
     </div>
     <div class="callout" style="font-size: 0.65em; margin-top: 0.25em; background: #1a1a1a; color: #E8E8E4; border-left: 4px solid #FFC904;">
@@ -168,7 +168,7 @@ always @(*) if (enable) r_broken = data;  // ⚠ latch</code></pre>
         Case 4 is the disaster case: the <code>if</code> has no <code>else</code>,
         so when <code>enable=0</code>, <code>r_broken</code> must &ldquo;hold its value&rdquo; —
         and the only hardware that holds a value without a clock is a latch.
-        Inferred latches are bad. We'll spend a whole video on them on Day 3.
+        Inferred latches are bad. We'll spend a whole video on them on Topic 3.
     </aside>
 </section>
 
@@ -186,7 +186,7 @@ always @(*) if (enable) r_broken = data;  // ⚠ latch</code></pre>
         4 → reg-comb-but-broken.)
     </div>
     <div class="fragment callout" style="font-size:0.7em;">
-        SystemVerilog's <code>logic</code> type (Day 13) collapses both branches into one —
+        SystemVerilog's <code>logic</code> type (Topic 13) collapses both branches into one —
         you still get latch warnings, but you stop playing &ldquo;which keyword is it today?&rdquo;
     </div>
     <aside class="notes">
@@ -365,7 +365,7 @@ PASS: lower     = 4'h2
     </div>
 
     <aside class="notes">
-        This is the &ldquo;aha&rdquo; slide for Day 2. Zero cells. Students expect some logic
+        This is the &ldquo;aha&rdquo; slide for Topic 2. Zero cells. Students expect some logic
         because the <code>{...}</code> and <code>{N{...}}</code> syntax looks computational.
         It isn't. It's wire relabeling. That's why concat/replicate/sign-extend are so
         cheap and used everywhere. They cost nothing.

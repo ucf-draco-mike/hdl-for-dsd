@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.4: Blocking vs. Nonblocking [ENHANCED]</title>
+    <title>Topic 3.4: Blocking vs. Nonblocking [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,13 +14,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Blocking vs. Nonblocking</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">always @(*)</span><span class="seg-label">if/else &amp; case</span><span class="seg-label">Latch Problem</span><span class="seg-label active">Block vs Nonblock</span></div>
-    <aside class="notes">Video 4 of 4 for Day 3. A short, rule-focused video. Tomorrow's Day 4 will prove the rule with waveforms; today we just want you to have the rule in memory.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 3. A short, rule-focused video. Tomorrow's Topic 4 will prove the rule with waveforms; today we just want you to have the rule in memory.</aside>
 </section>
 
 <!-- CONTEXTUALIZE -->
@@ -33,7 +33,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Day 4 proves this rule with waveforms. Day 5 shift registers depend on it. Day 7 FSMs require it. The rule is absolute for the rest of the course — and the rest of your career.</p>
+            <p style="font-size:0.75em;">Topic 4 proves this rule with waveforms. Topic 5 shift registers depend on it. Topic 7 FSMs require it. The rule is absolute for the rest of the course — and the rest of your career.</p>
         </div>
     </div>
     <aside class="notes">Cummings's paper is a rite of passage for every junior RTL engineer. It's worth reading once. The rule appears simple but its implications ripple through everything sequential.</aside>
@@ -78,7 +78,7 @@
     <div class="fragment golden-rule" style="margin-top:0.5em;font-size:0.95em;">
         <code>=</code> in <code>always @(*)</code>. &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code>. &ensp; Never mix.
     </div>
-    <aside class="notes">Two operators. Two homes. One rule. Write it on your palm. Day 4 will show you a waveform that <em>proves</em> mixing them produces visibly wrong behavior.</aside>
+    <aside class="notes">Two operators. Two homes. One rule. Write it on your palm. Topic 4 will show you a waveform that <em>proves</em> mixing them produces visibly wrong behavior.</aside>
 </section>
 
 <!-- We Do: the pipeline -->
@@ -195,7 +195,7 @@ Cycle 4: blocking q=00 | nb q=10
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing causes functional bugs — pipelines collapse.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;The synthesizer builds what you wrote, not what you meant.</p>
     </div>
-    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">= for combinational, &lt;= for sequential. Never mix. Day 4 proves it.</div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">= for combinational, &lt;= for sequential. Never mix. Topic 4 proves it.</div>
 </section>
 
 <!-- Pre-class self-check (kept from original) -->
@@ -222,12 +222,12 @@ Cycle 4: blocking q=00 | nb q=10
 <!-- Transfer -->
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 3</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 3</p>
         <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Sequential Logic</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 4 · Clocks, flip-flops, and your first blinking LED</p>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 4 · Clocks, flip-flops, and your first blinking LED</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Days 1-3 covered combinational logic &mdash; logic with no memory. Day 4 adds <strong>time</strong>: flip-flops, clocks, sequential design. You'll build a counter that turns 25 MHz into a 1 Hz LED blink, and see with your own eyes why <code>&lt;=</code> is the rule.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Topics 1-3 covered combinational logic &mdash; logic with no memory. Topic 4 adds <strong>time</strong>: flip-flops, clocks, sequential design. You'll build a counter that turns 25 MHz into a 1 Hz LED blink, and see with your own eyes why <code>&lt;=</code> is the rule.</p>
         </div>
     </div>
 </section>

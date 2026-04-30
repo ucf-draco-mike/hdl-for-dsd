@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 12.4: IP Integration — Accelerated HDL for Digital System Design</title>
+<title>Topic 12.4: IP Integration — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 12 · UART RX, SPI &amp; Integration</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 12 · UART RX, SPI &amp; Integration</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">IP Integration</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes · <em>Week 3 Capstone</em></p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">UART RX Oversampling</span><span class="seg-label">UART RX Implementation</span><span class="seg-label">SPI Protocol</span><span class="seg-label active">IP Integration</span></div>
-    <aside class="notes">Video 4 of 4 for Day 12. The Week 3 capstone. Brings together everything: Week 1-2's module library, Week 3's protocols, and the integration mindset that carries into Week 4 and beyond.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 12. The Week 3 capstone. Brings together everything: Week 1-2's module library, Week 3's protocols, and the integration mindset that carries into Week 4 and beyond.</aside>
 </section>
 
 <section>
@@ -103,8 +103,8 @@
                 <li><code>mod_n_counter</code> — baud rate generation</li>
                 <li><code>piso_shift</code> / <code>sipo_shift</code> — frame shifters</li>
                 <li><code>fifo</code> — buffer between RX and TX</li>
-                <li><code>uart_tx</code> — Day 11 composition</li>
-                <li><code>uart_rx</code> — Day 12 composition</li>
+                <li><code>uart_tx</code> — Topic 11 composition</li>
+                <li><code>uart_rx</code> — Topic 12 composition</li>
             </ul>
         </div>
         <div style="background:#fff8e1;padding:0.6em;border-radius:6px;border:2px solid #D4A843;">
@@ -236,7 +236,7 @@
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Design Space Exploration · Full-Stack Capstone</p>
         <div style="max-width:840px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have a <em>complete personal IP library</em> — primitives from Weeks 1-2, protocols from Week 3. Week 4 asks the question every product team asks: <strong>how good is it?</strong> You'll run the PPA exercise on a real integrated design, explore the tradeoff space (speed vs. area vs. power), and compose your library into a <strong>capstone integration</strong> — something demonstrable on the Go Board that's more than a homework problem. This is where the course stops teaching you RTL and starts teaching you <em>product engineering</em>. See you Day 13.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have a <em>complete personal IP library</em> — primitives from Weeks 1-2, protocols from Week 3. Week 4 asks the question every product team asks: <strong>how good is it?</strong> You'll run the PPA exercise on a real integrated design, explore the tradeoff space (speed vs. area vs. power), and compose your library into a <strong>capstone integration</strong> — something demonstrable on the Go Board that's more than a homework problem. This is where the course stops teaching you RTL and starts teaching you <em>product engineering</em>. See you Topic 13.</p>
         </div>
     </div>
 </section>
