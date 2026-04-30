@@ -449,15 +449,15 @@ always @(posedge clk)
             <strong>Simulation:</strong> waits 10 time units. <strong>Synthesis:</strong> completely ignored.
             This is why you never use <code>#delay</code> in synthesizable code.
         </div>
-        <p style="margin-top:0.8em;"><strong>Q3:</strong> Write a complete Verilog module that connects <code>i_switch</code> to <code>o_led</code>.</p>
+        <p style="margin-top:0.8em;"><strong>Q3:</strong> Write a complete Verilog module that connects <code>i_switch1</code> to <code>o_led1</code>.</p>
         <div class="fragment quiz-answer" style="font-family:'JetBrains Mono',monospace;font-size:0.9em;white-space:pre;line-height:1.5;">module led_driver (
-    input  wire i_switch,
-    output wire o_led
+    input  wire i_switch1,
+    output wire o_led1
 );
-    assign o_led = i_switch;
+    assign o_led1 = i_switch1;
 endmodule</div>
     </div>
-    <aside class="notes">Question 2: hash-10 in simulation waits 10 time units. In synthesis, it's completely ignored. That's why you never use it in design code. Question 3: write the module. Module led_driver, input wire i_switch, output wire o_led, semicolon, assign o_led equals i_switch, endmodule. If this felt hard, re-watch Video 3.</aside>
+    <aside class="notes">Question 2: hash-10 in simulation waits 10 time units. In synthesis, it's completely ignored. That's why you never use it in design code. Question 3: write the module. Module led_driver, input wire i_switch1, output wire o_led1, semicolon, assign o_led1 equals i_switch1, endmodule. If this felt hard, re-watch Video 3.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">

@@ -93,11 +93,11 @@
 <section>
     <h2>The Module Template</h2>
     <pre class="synth"><code class="language-verilog" data-noescape><span class="fragment" data-fragment-index="1">module led_driver (</span>
-<span class="fragment" data-fragment-index="2">    input  wire i_switch,</span>
-<span class="fragment" data-fragment-index="3">    output wire o_led</span>
+<span class="fragment" data-fragment-index="2">    input  wire i_switch1,</span>
+<span class="fragment" data-fragment-index="3">    output wire o_led1</span>
 <span class="fragment" data-fragment-index="4">);</span>
 <span class="fragment" data-fragment-index="5">
-    assign o_led = i_switch;</span>
+    assign o_led1 = i_switch1;</span>
 <span class="fragment" data-fragment-index="6">
 endmodule</span></code></pre>
     <div style="font-size:0.7em;margin-top:0.5em;">
@@ -160,8 +160,8 @@ endmodule</code></pre>
         <table>
             <thead><tr><th>Prefix</th><th>Meaning</th><th>Example</th></tr></thead>
             <tbody>
-                <tr><td><code>i_</code></td><td>Input port</td><td><code>i_switch</code></td></tr>
-                <tr><td><code>o_</code></td><td>Output port</td><td><code>o_led</code></td></tr>
+                <tr><td><code>i_</code></td><td>Input port</td><td><code>i_switch1</code></td></tr>
+                <tr><td><code>o_</code></td><td>Output port</td><td><code>o_led1</code></td></tr>
                 <tr><td><code>w_</code></td><td>Internal wire</td><td><code>w_sum</code></td></tr>
                 <tr><td><code>r_</code></td><td>Register (assigned in <code>always</code>)</td><td><code>r_count</code></td></tr>
             </tbody>

@@ -72,14 +72,14 @@
 <section>
     <h2>Step 2: Skeleton Top Module</h2>
     <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module capstone_top (
-    input  logic       i_clk,
-    input  logic [3:0] i_sw,
-    output logic [3:0] o_led,
-    output logic       o_uart_tx
+    input  logic i_clk,
+    input  logic i_switch1, i_switch2, i_switch3, i_switch4,
+    output logic o_led1, o_led2, o_led3, o_led4,
+    output logic o_uart_tx
 );
     // Reset synchronizer (Week 2) — bring up first
     logic r_rst_sync;
-    reset_sync u_rst   (.i_clk, .i_rst_async(i_sw[0]), .o_rst_sync(r_rst_sync));
+    reset_sync u_rst   (.i_clk, .i_rst_async(i_switch1), .o_rst_sync(r_rst_sync));
 
     // UART TX (Week 3) — add after reset works
     logic       w_tx_valid, w_tx_busy;
@@ -93,8 +93,8 @@
     // FSM controller (new for capstone) — add last
     capstone_fsm u_fsm (
         .i_clk, .i_rst(r_rst_sync),
-        .i_sw(i_sw[3:1]),
-        .o_led(o_led),
+        .i_sw({i_switch4, i_switch3, i_switch2}),
+        .o_led({o_led4, o_led3, o_led2, o_led1}),
         .o_tx_valid(w_tx_valid), .o_tx_data(w_tx_data),
         .i_tx_busy(w_tx_busy)
     );
