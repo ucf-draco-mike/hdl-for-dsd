@@ -85,7 +85,10 @@
         </ol>
     </div>
     <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.3em;">
-        <strong>Why both exist:</strong> FPGA I/O typically <em>sinks</em> more current than it <em>sources</em>, so common-anode (active-low) is mechanically friendlier for LED arrays. Buttons and resets are usually active-low for the same reason: a pull-up to VCC plus a switch to GND is the cheapest reliable circuit.
+        <strong>Why both exist:</strong> FPGA I/O typically <em>sinks</em> more current than it <em>sources</em>, so common-anode (active-low) is mechanically friendlier for LED arrays. Buttons and resets are often active-low for the same reason: a pull-up to VCC plus a switch to GND is the cheapest reliable circuit.
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Same board, both polarities:</strong> The Go Board's 4 discrete LEDs and 4 push-buttons are active-<em>high</em> (<code>1 = on</code>, <code>1 = pressed</code>) — see Day 1's <code>buttons_to_leds</code>. The 7-segment segments on the very same FPGA are active-<em>low</em>. Polarity is per-peripheral, not per-board.
     </div>
     <aside class="notes">Active-low is not arbitrary — it falls out of how CMOS output drivers and pull-up resistors are easiest to build. Once students see the pattern (LEDs, resets, chip-selects, button inputs all tend active-low), it stops feeling like a gotcha and starts feeling like a convention. The schematic is always ground truth; the constraint file's comment is a hint, not a contract.</aside>
 </section>
