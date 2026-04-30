@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 10.2: Numerical Architecture Trade-offs — Accelerated HDL for Digital System Design</title>
+<title>Topic 10.2: Numerical Architecture Trade-offs — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,7 +13,7 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 10 · Timing, Numerics &amp; PPA</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 10 · Timing, Numerics &amp; PPA</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Numerical Architecture Trade-offs</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~15 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Your Day 5 counter uses <code>a + 1</code>. Your Day 11 UART uses <code>baud_cnt &lt; HALF_PERIOD</code>. Your capstone with filters or transforms will need real multipliers. Choosing the right arithmetic architecture for the job is the difference between &ldquo;fits at 25 MHz&rdquo; and &ldquo;doesn't fit.&rdquo;</p>
+            <p style="font-size:0.75em;">Your Topic 5 counter uses <code>a + 1</code>. Your Topic 11 UART uses <code>baud_cnt &lt; HALF_PERIOD</code>. Your capstone with filters or transforms will need real multipliers. Choosing the right arithmetic architecture for the job is the difference between &ldquo;fits at 25 MHz&rdquo; and &ldquo;doesn't fit.&rdquo;</p>
         </div>
     </div>
     <aside class="notes">Arithmetic architecture is where modern accelerators live and die. Picking the right adder/multiplier/MAC architecture determines performance. This video: the fundamental structures.</aside>
@@ -175,7 +175,7 @@ wire [8:0] sum = a + 1;  // what is sum?</code></pre>
         If your guess and the tool disagree by more than ~20%, something interesting happened — find out what
         (carry chain not inferred? a constant-folded? case statement collapsed?). That gap is where the learning is.
     </div>
-    <aside class="notes">This is the table I wish I&apos;d had on day one. None of these numbers are exact — synthesis will fold constants, share logic, and surprise you — but they&apos;re close enough to make a prediction before you hit the tool. The k-input gate row is the cascade rule from Day 1. The adder row tells you why an N-bit add costs roughly N LUTs on iCE40, not 2N: the carry chain takes half the work into dedicated routing. The compare and mux rows tell you why a wide case statement or a giant priority encoder can dominate your area. The multiplier row is the punchline of this whole video: parallel multiplication scales as N squared, which is why a 16x16 multiplier is already a quarter of the iCE40. Use this table to predict, then use yosys stat to verify. The gap between prediction and reality is where you actually learn how the synthesizer thinks.</aside>
+    <aside class="notes">This is the table I wish I&apos;d had on day one. None of these numbers are exact — synthesis will fold constants, share logic, and surprise you — but they&apos;re close enough to make a prediction before you hit the tool. The k-input gate row is the cascade rule from Topic 1. The adder row tells you why an N-bit add costs roughly N LUTs on iCE40, not 2N: the carry chain takes half the work into dedicated routing. The compare and mux rows tell you why a wide case statement or a giant priority encoder can dominate your area. The multiplier row is the punchline of this whole video: parallel multiplication scales as N squared, which is why a 16x16 multiplier is already a quarter of the iCE40. Use this table to predict, then use yosys stat to verify. The gap between prediction and reality is where you actually learn how the synthesizer thinks.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

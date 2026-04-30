@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 9.1: ROM in Verilog — Accelerated HDL for Digital System Design</title>
+<title>Topic 9.1: ROM in Verilog — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 9 · Memory Architecture</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 9 · Memory Architecture</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">ROM in Verilog</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">ROM</span><span class="seg-label">RAM</span><span class="seg-label">iCE40 EBRs</span><span class="seg-label">Applications</span></div>
-    <aside class="notes">Video 1 of 4 for Day 9. Read-only memory in Verilog — two idioms, two different hardware outcomes.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 9. Read-only memory in Verilog — two idioms, two different hardware outcomes.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Today's ROM patterns appear in Day 9.4 (LED pattern sequencer), Day 10.2 (lookup-based multipliers), Day 11.3 (UART character ROM for HELLO demo), and every capstone design. ROM isn't a nice-to-have — it's the <em>first</em> memory you'll reach for.</p>
+            <p style="font-size:0.75em;">Today's ROM patterns appear in Topic 9.4 (LED pattern sequencer), Topic 10.2 (lookup-based multipliers), Topic 11.3 (UART character ROM for HELLO demo), and every capstone design. ROM isn't a nice-to-have — it's the <em>first</em> memory you'll reach for.</p>
         </div>
     </div>
     <aside class="notes">ROMs are everywhere in industry. Boot code, lookup tables, microcode. &ldquo;Computed at compile time, read at runtime&rdquo; is always cheaper than &ldquo;computed at runtime.&rdquo;</aside>
@@ -96,7 +96,7 @@ endmodule</code></pre>
     always @(posedge i_clk) o_data &lt;= mem[i_addr];  // synchronous read
 endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> Three features: <strong>(1)</strong> parameterized depth and width, <strong>(2)</strong> content loaded from external hex file — same <code>$readmemh</code> you saw in Day 6 testbenches, but here it's used at <em>synthesis</em>, <strong>(3)</strong> <em>synchronous</em> read — <code>o_data</code> appears one cycle after <code>i_addr</code>. That synchronous read is the magic word: it's what triggers block RAM inference.
+        <strong>Together:</strong> Three features: <strong>(1)</strong> parameterized depth and width, <strong>(2)</strong> content loaded from external hex file — same <code>$readmemh</code> you saw in Topic 6 testbenches, but here it's used at <em>synthesis</em>, <strong>(3)</strong> <em>synchronous</em> read — <code>o_data</code> appears one cycle after <code>i_addr</code>. That synchronous read is the magic word: it's what triggers block RAM inference.
     </div>
     <aside class="notes">The scalable pattern. Parameters + external file + synchronous read. Each of these matters. Sync read is the critical one for block RAM — without it you get LUT RAM or distributed logic.</aside>
 </section>

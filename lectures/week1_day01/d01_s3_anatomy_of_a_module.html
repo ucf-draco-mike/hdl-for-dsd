@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1.3: Anatomy of a Verilog Module — Accelerated HDL for Digital System Design</title>
+    <title>Topic 1.3: Anatomy of a Verilog Module — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -18,7 +18,7 @@
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;">
         <span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">
-            Day 1 · Welcome to Hardware Thinking
+            Topic 1 · Welcome to Hardware Thinking
         </span>
     </div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Anatomy of a Verilog Module</h1>
@@ -36,7 +36,7 @@
         <span class="seg-label active">Module Anatomy</span>
         <span class="seg-label">Logic Refresher</span>
     </div>
-    <aside class="notes">Video 3 of 4 for Day 1. About 12 minutes. Now we get to write actual Verilog. Every design is composed of modules — the fundamental building block. Think of a module as a chip on a circuit board with labeled pins.</aside>
+    <aside class="notes">Video 3 of 4 for Topic 1. About 12 minutes. Now we get to write actual Verilog. Every design is composed of modules — the fundamental building block. Think of a module as a chip on a circuit board with labeled pins.</aside>
 </section>
 
 <!-- MODULE = CHIP -->
@@ -85,7 +85,7 @@
         The &ldquo;module as chip&rdquo; mental model is load-bearing for the whole course.
         When students later instantiate a module inside another module, they need
         to think of it as placing a chip on a board — named wires run between ports.
-        The function-call metaphor fails badly at hierarchy (Day 8).
+        The function-call metaphor fails badly at hierarchy (Topic 8).
     </aside>
 </section>
 
@@ -217,9 +217,9 @@ endmodule</code></pre>
 endmodule</code></pre>
     <div class="fragment callout-warning" style="font-size:0.8em;">
         Verilog silently truncates or zero-extends when widths don't match.
-        No error — just quiet data loss. We'll cover this in detail on Day 2.
+        No error — just quiet data loss. We'll cover this in detail on Topic 2.
     </div>
-    <aside class="notes">Second common error: mismatched widths. Here, an 8-bit input is assigned to a 4-bit output. Verilog silently truncates — the upper 4 bits just vanish. No error, no warning by default. Just quiet data loss. Width mismatches are a major source of bugs. We'll cover this properly on Day 2.</aside>
+    <aside class="notes">Second common error: mismatched widths. Here, an 8-bit input is assigned to a 4-bit output. Verilog silently truncates — the upper 4 bits just vanish. No error, no warning by default. Just quiet data loss. Width mismatches are a major source of bugs. We'll cover this properly on Topic 2.</aside>
 </section>
 
 <!-- ▶ LIVE DEMO CUE 2 -->
@@ -296,7 +296,7 @@ endmodule</code></pre>
             🔗 Transfer
         </p>
         <h2 style="color: #FFFFFF; font-size: 1.8em;">Digital Logic Refresher</h2>
-        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Day 1, Video 4 of 4 · ~8 minutes</p>
+        <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.3em;">Topic 1, Video 4 of 4 · ~8 minutes</p>
         <div style="max-width: 800px; margin: 1.2em auto 0; background: #1a1a1a; padding: 1em; border-radius: 8px; border-left: 4px solid #FFC904; text-align: left;">
             <p style="color: #FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ WHY THIS MATTERS NEXT</p>
             <p style="color: #E8E8E4; font-size: 0.72em; margin: 0;">
@@ -308,7 +308,7 @@ endmodule</code></pre>
             </p>
         </div>
     </div>
-    <aside class="notes">Last video for Day 1: a targeted digital logic refresher. We're not re-teaching gates and truth tables — you already know those. We're showing you how those concepts map directly to Verilog. See you in the next video.</aside>
+    <aside class="notes">Last video for Topic 1: a targeted digital logic refresher. We're not re-teaching gates and truth tables — you already know those. We're showing you how those concepts map directly to Verilog. See you in the next video.</aside>
 </section>
 
 </div></div>

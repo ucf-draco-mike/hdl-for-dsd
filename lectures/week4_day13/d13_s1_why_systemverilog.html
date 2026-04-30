@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 13.1: Why SystemVerilog — Accelerated HDL for Digital System Design</title>
+<title>Topic 13.1: Why SystemVerilog — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 13 · SystemVerilog Transition</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 13 · SystemVerilog Transition</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Why SystemVerilog?</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~9 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">Why SV</span><span class="seg-label">logic type</span><span class="seg-label">always_*</span><span class="seg-label">enum/struct/package</span></div>
-    <aside class="notes">Video 1 of 4 for Day 13. Twelve days of pure Verilog behind you. Time to learn the superset you'll actually write in your career.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 13. Twelve days of pure Verilog behind you. Time to learn the superset you'll actually write in your career.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Days 13-14 transition you from the Verilog subset you've been using to the SV superset you'll need. Everything you've written compiles unchanged — SV is backwards-compatible. The new features reduce bug surface, improve readability, and unlock verification capabilities you can't get in Verilog at all.</p>
+            <p style="font-size:0.75em;">Topics 13-14 transition you from the Verilog subset you've been using to the SV superset you'll need. Everything you've written compiles unchanged — SV is backwards-compatible. The new features reduce bug surface, improve readability, and unlock verification capabilities you can't get in Verilog at all.</p>
         </div>
     </div>
     <aside class="notes">The transition isn't a reset — it's a lift. Your Week 1-3 modules are already valid SV. Today adds new tools; the old ones still work.</aside>
@@ -107,7 +107,7 @@ end</code></pre>
     <div class="fragment callout" style="font-size:0.68em;">
         <strong>Why this matters:</strong> <em>Intent-based coding.</em> <code>always @(*)</code> means &ldquo;execute whenever inputs change,&rdquo; which permits latches as a side effect. <code>always_comb</code> means &ldquo;I want combinational logic,&rdquo; which forbids them. Saying what you want lets the tool check whether you got it.
     </div>
-    <aside class="notes">The central insight of SV design: declare your intent, let the tool check you. Every SV always_* variant forbids the wrong thing at compile time. This is the philosophy behind everything in Day 13.</aside>
+    <aside class="notes">The central insight of SV design: declare your intent, let the tool check you. Every SV always_* variant forbids the wrong thing at compile time. This is the philosophy behind everything in Topic 13.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">

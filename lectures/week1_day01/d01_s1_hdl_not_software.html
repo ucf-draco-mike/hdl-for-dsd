@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 1.1: HDL ≠ Software — Accelerated HDL for Digital System Design</title>
+    <title>Topic 1.1: HDL ≠ Software — Accelerated HDL for Digital System Design</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -26,7 +26,7 @@
         HDL ≠ Software
     </h1>
     <p class="subtitle" style="color: #E8E8E4;">
-        Day 1, Video 1 of 4 &nbsp;·&nbsp; ~12 minutes
+        Topic 1, Video 1 of 4 &nbsp;·&nbsp; ~12 minutes
     </p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <!-- Segment breadcrumb -->
@@ -44,7 +44,7 @@
     </div>
     <aside class="notes">
         Welcome to the first video in the Accelerated HDL for Digital System Design course.
-        This is Video 1 of 4 for Day 1. It's about 12 minutes long.
+        This is Video 1 of 4 for Topic 1. It's about 12 minutes long.
         This video tackles the single most important concept you need to internalize
         before you write your first line of Verilog.
     </aside>
@@ -329,7 +329,7 @@ assign d = a * 2;</code></pre>
     <div class="fragment callout" style="font-size: 0.78em; margin-top: 0.5em;">
         <strong>Foreshadow:</strong> When a synthesis tool reports
         &ldquo;F<sub>max</sub> = 161 MHz, slack = 33.8 ns,&rdquo; it's measuring exactly this &mdash;
-        how long the longest river takes to settle. We'll quantify it in <strong>Day 10: Timing Essentials</strong>.
+        how long the longest river takes to settle. We'll quantify it in <strong>Topic 10: Timing Essentials</strong>.
     </div>
     <aside class="notes">
         I don't want you to leave this video thinking delay is a footnote.
@@ -338,7 +338,7 @@ assign d = a * 2;</code></pre>
         More logic between flops means a longer river, which means a slower maximum clock.
         For week one, we'll mostly let this sit in the background — combinational logic settles, and we move on.
         But when you see synthesis reports later in the course saying things like "Fmax 161 megahertz, slack 33.8 nanoseconds," that's exactly what's being measured: how long the longest river takes to settle.
-        We come back to this in detail on Day 10.
+        We come back to this in detail on Topic 10.
     </aside>
 </section>
 
@@ -489,7 +489,7 @@ assign result   = sum | product; // OR gate</code></pre>
         </p>
         <h2 style="color: #FFFFFF; font-size: 1.8em;">Synthesis vs. Simulation</h2>
         <p style="color: #E8E8E4; font-size: 0.8em; margin-top: 0.5em;">
-            Day 1, Video 2 of 4 &nbsp;·&nbsp; ~10 minutes
+            Topic 1, Video 2 of 4 &nbsp;·&nbsp; ~10 minutes
         </p>
         <p style="color: #888; font-size: 0.6em; margin-top: 2em;">
             The same Verilog file, two very different tools, two very different purposes.

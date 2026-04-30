@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 14.1: Assertions — Accelerated HDL for Digital System Design</title>
+<title>Topic 14.1: Assertions — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Advanced Verification &amp; Road Ahead</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 14 · Advanced Verification &amp; Road Ahead</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Assertions — Executable Specs</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~11 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">Assertions</span><span class="seg-label">AI Verification</span><span class="seg-label">PPA</span><span class="seg-label">Road Ahead</span></div>
-    <aside class="notes">Video 1 of 4 for Day 14. Assertions — executable contracts between you and the hardware. Watch for protocol violations continuously, fail loudly when they happen.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 14. Assertions — executable contracts between you and the hardware. Watch for protocol violations continuously, fail loudly when they happen.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Today you add assertions to your UART and FSM designs. Your testbench catches explicit output values; assertions catch invariant violations <em>continuously</em>. By end of Day 14.1 your UART has protocol-level checks that no amount of input variation can silently violate.</p>
+            <p style="font-size:0.75em;">Today you add assertions to your UART and FSM designs. Your testbench catches explicit output values; assertions catch invariant violations <em>continuously</em>. By end of Topic 14.1 your UART has protocol-level checks that no amount of input variation can silently violate.</p>
         </div>
     </div>
     <aside class="notes">Assertion-heavy verification is an industry-dominant approach. DV (Design Verification) is a whole career track built on these techniques. Today is your introduction.</aside>
@@ -113,7 +113,7 @@ a_start_then_busy: assert property (p_start_then_busy);</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Write an Assertion for UART TX</h2>
-    <p style="font-size:0.78em;">Your Day 11 UART TX has signals <code>i_valid</code>, <code>o_busy</code>, and <code>o_tx_line</code>. Write a concurrent assertion: <em>&ldquo;Once the TX asserts busy, <code>tx_line</code> must stay low for exactly <code>CLKS_PER_BIT</code> cycles (the start bit).&rdquo;</em></p>
+    <p style="font-size:0.78em;">Your Topic 11 UART TX has signals <code>i_valid</code>, <code>o_busy</code>, and <code>o_tx_line</code>. Write a concurrent assertion: <em>&ldquo;Once the TX asserts busy, <code>tx_line</code> must stay low for exactly <code>CLKS_PER_BIT</code> cycles (the start bit).&rdquo;</em></p>
     <div class="fragment callout" style="font-size:0.68em;">
         <pre style="font-size:0.85em;"><code class="language-verilog">property p_start_bit_length;
     @(posedge clk) disable iff (rst)

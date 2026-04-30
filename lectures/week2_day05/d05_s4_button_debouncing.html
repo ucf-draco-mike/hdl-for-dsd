@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 5.4: Button Debouncing — Accelerated HDL for Digital System Design</title>
+<title>Topic 5.4: Button Debouncing — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 5 · Counters, Shifters &amp; Sync</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 5 · Counters, Shifters &amp; Sync</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Button Debouncing</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Counter Variations</span><span class="seg-label">Shift Registers</span><span class="seg-label">Metastability</span><span class="seg-label active">Debouncing</span></div>
-    <aside class="notes">Video 4 of 4 for Day 5. The capstone: combining yesterday's synchronizer with a debounce counter to produce the universal input-processing pipeline.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 5. The capstone: combining yesterday's synchronizer with a debounce counter to produce the universal input-processing pipeline.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every lab with a pushbutton input. Day 7 FSM input demo. Day 10 PPA comparison (is your debouncer efficient?). Your capstone project will use this pattern verbatim on at least one input.</p>
+            <p style="font-size:0.75em;">Every lab with a pushbutton input. Topic 7 FSM input demo. Topic 10 PPA comparison (is your debouncer efficient?). Your capstone project will use this pattern verbatim on at least one input.</p>
         </div>
     </div>
     <aside class="notes">Debouncing is everywhere. Every device with a physical button needs it. The counter-based pattern you build today is the canonical solution — direct from textbook to tapeout.</aside>
@@ -173,9 +173,9 @@ With debounce:
      SB_DFFESR                      20    ← 19 counter + 1 clean output
      SB_LUT4                         9</code></pre>
     <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
-        <strong>Scaling:</strong> ~40 cells per debouncer. An 8-button input array = 320 cells = ~25% of an iCE40 HX1K. Pattern efficiency matters when you instantiate it many times. (Day 8 shows how to use <code>generate</code> to instantiate an array without copy-paste.)
+        <strong>Scaling:</strong> ~40 cells per debouncer. An 8-button input array = 320 cells = ~25% of an iCE40 HX1K. Pattern efficiency matters when you instantiate it many times. (Topic 8 shows how to use <code>generate</code> to instantiate an array without copy-paste.)
     </div>
-    <aside class="notes">A debouncer per button gets expensive fast on a small FPGA. For a 10-button array, you'd consider sharing debounce logic across buttons with a round-robin sampler — advanced optimization for Day 14 PPA.</aside>
+    <aside class="notes">A debouncer per button gets expensive fast on a small FPGA. For a 10-button array, you'd consider sharing debounce logic across buttons with a round-robin sampler — advanced optimization for Topic 14 PPA.</aside>
 </section>
 
 <section data-background-color="#FFF8E1">
@@ -223,12 +223,12 @@ With debounce:
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 5</p>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 5</p>
         <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Testbenches</h2>
-        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Day 6 · Writing the tests that protect your designs</p>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 6 · Writing the tests that protect your designs</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've been running <code>make sim</code> all week and trusting PASS/FAIL reports. Someone wrote those testbenches for you. Day 6 is when you start writing them yourself. Verification is larger than design at most ASIC companies — you're about to learn the craft that makes real silicon work.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've been running <code>make sim</code> all week and trusting PASS/FAIL reports. Someone wrote those testbenches for you. Topic 6 is when you start writing them yourself. Verification is larger than design at most ASIC companies — you're about to learn the craft that makes real silicon work.</p>
         </div>
     </div>
 </section>

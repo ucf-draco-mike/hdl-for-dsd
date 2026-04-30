@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 14.4: Coverage &amp; The Road Ahead — Accelerated HDL for Digital System Design</title>
+<title>Topic 14.4: Coverage &amp; The Road Ahead — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 14 · Advanced Verification &amp; Road Ahead</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 14 · Advanced Verification &amp; Road Ahead</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Coverage &amp; The Road Ahead</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Assertions</span><span class="seg-label">AI Verification</span><span class="seg-label">PPA</span><span class="seg-label active">Road Ahead</span></div>
-    <aside class="notes">Video 4 of 4 for Day 14. Closing the verification loop with coverage, then looking forward at where the field goes next.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 14. Closing the verification loop with coverage, then looking forward at where the field goes next.</aside>
 </section>
 
 <section>
@@ -123,7 +123,7 @@ uart_cg cov_instance = new();</code></pre>
         <p class="fragment"><strong>UVM (Universal Verification Methodology)</strong> — the industry standard for building reusable testbench environments. Object-oriented SV. Overkill for small designs; essential for large teams.</p>
         <p class="fragment"><strong>High-Level Synthesis (HLS)</strong> — writes RTL from C/C++/SystemC. Productivity win for data-path designs (filters, vision accelerators). Growing, but RTL is not going away.</p>
         <p class="fragment"><strong>Open-source silicon</strong> — Skywater 130nm PDK, OpenROAD, OpenLane, Google's MPW shuttle program. You can now <em>tape out your own chip for free</em> (small area). This was impossible 5 years ago. Revolutionary for education and hobbyists.</p>
-        <p class="fragment"><strong>AI-assisted design</strong> — not just verification (Day 14.2) but RTL generation, debugging, floorplanning. Still maturing; watch closely.</p>
+        <p class="fragment"><strong>AI-assisted design</strong> — not just verification (Topic 14.2) but RTL generation, debugging, floorplanning. Still maturing; watch closely.</p>
     </div>
     <aside class="notes">Five trends. Students should know the vocabulary even if they won't touch each one immediately. Open-source silicon is genuinely new and exciting.</aside>
 </section>
@@ -192,12 +192,12 @@ uart_cg cov_instance = new();</code></pre>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Day 14 · Transition to Capstone</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">Day 15: Build Day</h2>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 14 · Transition to Capstone</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Topic 15: Build Day</h2>
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">The capstone integration — your library, on silicon</p>
         <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have <em>every tool</em>: RTL fluency, SystemVerilog, assertions, coverage, PPA discipline. Day 15 is when you use them. The briefing covers the #1 failure mode of integration projects, the incremental discipline that avoids it, common late-stage panics and their fixes, and UART printf-debugging as your primary silicon telemetry tool. Then you build.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You now have <em>every tool</em>: RTL fluency, SystemVerilog, assertions, coverage, PPA discipline. Topic 15 is when you use them. The briefing covers the #1 failure mode of integration projects, the incremental discipline that avoids it, common late-stage panics and their fixes, and UART printf-debugging as your primary silicon telemetry tool. Then you build.</p>
         </div>
     </div>
 </section>

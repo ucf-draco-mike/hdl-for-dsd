@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 8.1: Module Hierarchy — Accelerated HDL for Digital System Design</title>
+<title>Topic 8.1: Module Hierarchy — Accelerated HDL for Digital System Design</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -13,13 +13,13 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 8 · Hierarchy &amp; Reuse</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 8 · Hierarchy &amp; Reuse</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Module Hierarchy</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 1 of 4 · ~10 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label active">Hierarchy</span><span class="seg-label">Parameters</span><span class="seg-label">Generate</span><span class="seg-label">Reuse</span></div>
-    <aside class="notes">Video 1 of 4 for Day 8. Modules inside modules: how real designs manage complexity.</aside>
+    <aside class="notes">Video 1 of 4 for Topic 8. Modules inside modules: how real designs manage complexity.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Day 5 button pipeline: sync + debounce + edge-detect are three modules. Day 7 traffic light used a sub-module timer. Day 11 UART top has TX + RX + control as sub-modules. Day 12 SPI is the same. The pattern scales from this week to the capstone.</p>
+            <p style="font-size:0.75em;">Topic 5 button pipeline: sync + debounce + edge-detect are three modules. Topic 7 traffic light used a sub-module timer. Topic 11 UART top has TX + RX + control as sub-modules. Topic 12 SPI is the same. The pattern scales from this week to the capstone.</p>
         </div>
     </div>
     <aside class="notes">Hierarchy isn't optional at scale. Every real design uses it. Learning to instantiate modules, connect them properly, and give them descriptive names is a fundamental skill.</aside>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3.2: if/else and case [ENHANCED]</title>
+    <title>Topic 3.2: if/else and case [ENHANCED]</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
@@ -14,7 +14,7 @@
 <div class="reveal"><div class="slides">
 
 <section class="title-slide" data-background-color="#000000">
-    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Day 3 · Procedural Combinational Logic</span></div>
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 3 · Procedural Combinational Logic</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">if/else and case</h1>
     <p class="subtitle" style="color:#E8E8E4;">Video 2 of 4 · ~14 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
@@ -33,7 +33,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Day 3 ALU: <code>case</code> on opcode. Day 7 FSM: <code>case</code> on state. Day 9 memory: <code>if/else</code> for address decoding. Day 11 UART framing: <code>case</code> on state. The pattern recurs across nearly every lab.</p>
+            <p style="font-size:0.75em;">Topic 3 ALU: <code>case</code> on opcode. Topic 7 FSM: <code>case</code> on state. Topic 9 memory: <code>if/else</code> for address decoding. Topic 11 UART framing: <code>case</code> on state. The pattern recurs across nearly every lab.</p>
         </div>
     </div>
     <aside class="notes">Decision logic is ubiquitous. The right choice between if/else and case is diagnostic of senior vs junior RTL engineers.</aside>
@@ -183,7 +183,7 @@ PASS: OR   5|A  = F
             Signals: <code>opcode · a · b · result</code>. Set <code>opcode</code> to enum display (2'b00=ADD, 2'b01=SUB, 2'b10=AND, 2'b11=OR). Watch <code>result</code> switch instantly as <code>opcode</code> changes — parallel mux in action.
         </p>
     </div>
-    <aside class="notes">[Terminal] Run the 4-op ALU. [GTKWave] Show the opcode-driven switch. Zero latency — this is combinational. Reinforces Day 1/Day 2 lessons.</aside>
+    <aside class="notes">[Terminal] Run the 4-op ALU. [GTKWave] Show the opcode-driven switch. Zero latency — this is combinational. Reinforces Topic 1/Topic 2 lessons.</aside>
 </section>
 
 <!-- TOOL OUTPUT -->
