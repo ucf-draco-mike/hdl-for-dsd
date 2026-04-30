@@ -25,6 +25,8 @@ a structured PPA analysis.
 
 ## Exercises
 
+> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer. **Note:** Today only Exercises 1 and 2 are in the CTF chain — Exercises 3 (AI constraint TB) and 4 (PPA analysis) ship plaintext.
+
 | # | Exercise | Time | Key SLOs |
 |---|----------|------|----------|
 | 1 | Assertion-Enhanced UART TX | 25 min | 14.1 |
@@ -33,11 +35,27 @@ a structured PPA analysis.
 | 4 | PPA Analysis Exercise | 25 min | 14.4, 14.5 |
 | 5 | Project Work Time | 15 min | — |
 
+### Ex 1 — UART Assertions
+
+- **Earn the flag:** `cd ex1_uart_assertions/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
+- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-uart-refactor-763b6584598e` (Day 13 Exercise 3's flag).
+
+### Ex 2 — UART Parity
+
+- **Earn the flag:** `cd ex2_uart_parity/starter && make test`. This is the last chained exercise of the course — keep the flag as the final completion proof.
+- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
+
+### Ex 3 — AI Constraint TB
+
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Capstones (Days 15–16) are ungated, so Exercise 2's flag is the final chained marker.
+
+### Ex 4 — PPA Analysis
+
+- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Capstones (Days 15–16) are ungated, so Exercise 2's flag is the final chained marker.
+
 > **Instructor note:** Exercise 2 has an escape valve — those behind on their
 > final project may skip it and use the time for Exercises 3–4. Parity can be
 > completed as homework.
-
-> **CTF flow.** Today's exercises continue the flag chain you started on [Day 1](../day01/lab.md#how-exercises-are-gated-ctf-chain). For each chained exercise, run `make test` from inside the exercise's `starter/` directory to confirm correctness and earn the per-exercise flag. The flag from one exercise unlocks the *next* exercise's reference DUT via `make unlock FLAG=<flag>`. You don't have to unlock to make progress — the chain just gates peeking at the official answer. **Note:** Today only Exercises 1 and 2 are in the CTF chain — Exercises 3 (AI constraint TB) and 4 (PPA analysis) ship plaintext.
 
 ## Deliverables
 
@@ -58,6 +76,14 @@ content for those who finish early or want additional practice:
 - `go_board.pcf` — Pin constraint file
 - Reuse modules from `shared/lib/` for PPA analysis targets
 
+## Build Commands Quick Reference
+
+```bash
+# ── from labs/week4_day14/exN_*/starter/ ──
+make test                            # run published testbench → flag on pass (Exercises 1 & 2 only)
+make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
+```
+
 
 ---
 
@@ -71,9 +97,6 @@ content for those who finish early or want additional practice:
 - :material-cog: [`Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/Makefile){ target=_blank }
 - :material-chip: [`uart_tx_asserted.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex1_uart_assertions/starter/uart_tx_asserted.sv){ target=_blank }
 
-- **Earn the flag:** `cd ex1_uart_assertions/starter && make test`. Save the printed flag for Exercise 2's optional unlock.
-- **(Optional) Peek at the reference:** `make unlock FLAG=flag-ex3-uart-refactor-763b6584598e` (Day 13 Exercise 3's flag).
-
 ### Ex 2 — Uart Parity
 
 [:material-download: Starter .zip](../../downloads/day14/ex2_uart_parity_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day14/ex2_uart_parity_solution.zip){ .md-button }
@@ -81,9 +104,6 @@ content for those who finish early or want additional practice:
 - :material-cog: [`Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/Makefile){ target=_blank }
 - :material-chip: [`tb_uart_tx_parity.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/tb_uart_tx_parity.sv){ target=_blank }
 - :material-chip: [`uart_tx_parity.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex2_uart_parity/starter/uart_tx_parity.sv){ target=_blank }
-
-- **Earn the flag:** `cd ex2_uart_parity/starter && make test`. This is the last chained exercise of the course — keep the flag as the final completion proof.
-- **(Optional) Peek at the reference:** `make unlock FLAG=<flag from Exercise 1>`
 
 ### Ex 3 — Ai Constraint Tb
 
@@ -93,23 +113,9 @@ content for those who finish early or want additional practice:
 - :material-text: [`README.md`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/README.md){ target=_blank }
 - :material-chip: [`tb_uart_tx_ai.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex3_ai_constraint_tb/starter/tb_uart_tx_ai.sv){ target=_blank }
 
-- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Continue using Exercise 2's flag (the flag from that exercise's `make test`) — though there's no Day 15 chained exercise to unlock with it; capstones are ungated.
-
 ### Ex 4 — Ppa Analysis
 
 [:material-download: Starter .zip](../../downloads/day14/ex4_ppa_analysis_starter.zip){ .md-button } [:material-check-circle: Solution .zip](../../downloads/day14/ex4_ppa_analysis_solution.zip){ .md-button }
 
 - :material-cog: [`Makefile`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/Makefile){ target=_blank }
 - :material-text: [`ppa_exercise.md`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day14/ex4_ppa_analysis/starter/ppa_exercise.md){ target=_blank }
-
-- **Note:** This exercise isn't in the CTF chain — its reference solution ships unencrypted in `solution/`, so there's no `make test` flag to capture for it. Capstones (Days 15–16) are ungated, so Exercise 2's flag is the final chained marker.
-
----
-
-## Build Commands Quick Reference
-
-```bash
-# ── from labs/week4_day14/exN_*/starter/ ──
-make test                            # run published testbench → flag on pass (Exercises 1 & 2 only)
-make unlock FLAG=<previous-flag>     # peek at reference DUT (optional)
-```

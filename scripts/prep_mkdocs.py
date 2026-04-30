@@ -421,6 +421,19 @@ def generate_lab_page(day_num, dir_name, code_assets):
     has_code = day_num in code_assets
     assets = code_assets.get(day_num, {})
 
+    # Rewrite cross-doc links so they resolve from docs_src/days/dayNN/lab.md
+    # instead of labs/<dir>/README.md. The README's link targets are correct
+    # for GitHub viewing; lab.md sits one directory deeper and points at the
+    # symlinked docs_src tree.
+    #   (../../docs_src/X)            → (../../X)
+    #   (../weekN_dayNN/README.md…)   → (../dayNN/lab.md…)
+    content = re.sub(r'\((\.\./\.\./)docs_src/', r'(\1', content)
+    content = re.sub(
+        r'\(\.\./week\d+_day(\d+)/README\.md',
+        r'(../day\1/lab.md',
+        content,
+    )
+
     # ── Build download banner ──────────────────────────────────────
     banner_lines = []
 

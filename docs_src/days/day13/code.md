@@ -39,5 +39,6 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
+| :material-file: `.gitignore` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day13/ex3_uart_refactor/starter/.gitignore){ target=_blank } |
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day13/ex3_uart_refactor/starter/Makefile){ target=_blank } |
 | :material-chip: `uart_tx_sv.sv` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week4_day13/ex3_uart_refactor/starter/uart_tx_sv.sv){ target=_blank } |

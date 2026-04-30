@@ -41,5 +41,6 @@ These files are shared across all exercises for this day.
 
 | File | Links |
 |------|-------|
+| :material-file: `.gitignore` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week3_day11/ex3_hardware_verify/starter/.gitignore){ target=_blank } |
 | :material-cog: `Makefile` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week3_day11/ex3_hardware_verify/starter/Makefile){ target=_blank } |
 | :material-chip: `top_uart_hello.v` | [:material-github: GitHub](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/labs/week3_day11/ex3_hardware_verify/starter/top_uart_hello.v){ target=_blank } |
