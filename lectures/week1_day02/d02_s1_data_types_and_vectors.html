@@ -152,6 +152,14 @@ always @(*) if (enable) r_broken = data;  // ⚠ latch</code></pre>
         Case 4 is the bug you'll hit 50+ times this semester. Video 3 of Day 3 is all about
         spotting it.
     </div>
+    <div class="callout" style="font-size: 0.65em; margin-top: 0.25em; background: #1a1a1a; color: #E8E8E4; border-left: 4px solid #FFC904;">
+        <span style="color:#FFC904; font-weight:700; letter-spacing:0.1em;">▶ RUNNABLE</span>
+        &nbsp;<code style="color:#FFC904;">lecture_examples/week1_day02/d02_s1_ex4/</code>
+        — all four cases in one synthesizable module + testbench.
+        <code>make sim</code> prints PASS/FAIL per case;
+        <code>make stat</code> shows Case 2 emits flops, Case 4 emits a latch,
+        and Cases 1 &amp; 3 emit zero sequential cells.
+    </div>
     <aside class="notes">
         Walk through each: Case 1 is trivially combinational — an adder gate.
         Case 2 has <code>posedge clk</code> so Yosys infers a flop.
