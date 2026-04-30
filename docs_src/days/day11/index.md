@@ -82,7 +82,9 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Uart Tx** — [`day11_ex01_uart_tx.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week3_day11/code/day11_ex01_uart_tx.v){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d11_s3_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day11/d11_s3_ex1){ target=_blank }
+    - :material-chip: [`day11_ex01_uart_tx.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day11/d11_s3_ex1/day11_ex01_uart_tx.v){ target=_blank }

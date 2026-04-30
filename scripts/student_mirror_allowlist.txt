@@ -20,6 +20,7 @@ flake.nix
 .vscode/
 LICENSE
 labs/
+lecture_examples/
 shared/
 projects/README.md
 # CTF gating helpers — students need check_solution.sh and unlock_solution.sh

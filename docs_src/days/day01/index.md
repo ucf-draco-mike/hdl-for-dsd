@@ -82,8 +82,11 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Led Driver** — [`day01_ex01_led_driver.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day01/code/day01_ex01_led_driver.v){ target=_blank }
-- :material-chip: **Ex02 Button Logic** — [`day01_ex02_button_logic.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day01/code/day01_ex02_button_logic.v){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d01_s3_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day01/d01_s3_ex1){ target=_blank }
+    - :material-chip: [`day01_ex01_led_driver.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day01/d01_s3_ex1/day01_ex01_led_driver.v){ target=_blank }
+- :material-folder-open: **d01_s3_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day01/d01_s3_ex2){ target=_blank }
+    - :material-chip: [`day01_ex02_button_logic.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day01/d01_s3_ex2/day01_ex02_button_logic.v){ target=_blank }

@@ -82,9 +82,13 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Vector Ops** — [`day02_ex01_vector_ops.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day02/code/day02_ex01_vector_ops.v){ target=_blank }
-- :material-chip: **Ex02 Mux 2To1** — [`day02_ex02_mux_2to1.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day02/code/day02_ex02_mux_2to1.v){ target=_blank }
-- :material-chip: **Ex03 Hex To 7Seg** — [`day02_ex03_hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day02/code/day02_ex03_hex_to_7seg.v){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d02_s1_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day02/d02_s1_ex1){ target=_blank }
+    - :material-chip: [`day02_ex01_vector_ops.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day02/d02_s1_ex1/day02_ex01_vector_ops.v){ target=_blank }
+- :material-folder-open: **d02_s2_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day02/d02_s2_ex2){ target=_blank }
+    - :material-chip: [`day02_ex02_mux_2to1.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day02/d02_s2_ex2/day02_ex02_mux_2to1.v){ target=_blank }
+- :material-folder-open: **d02_s4_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day02/d02_s4_ex3){ target=_blank }
+    - :material-chip: [`day02_ex03_hex_to_7seg.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day02/d02_s4_ex3/day02_ex03_hex_to_7seg.v){ target=_blank }

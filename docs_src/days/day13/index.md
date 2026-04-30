@@ -82,8 +82,11 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 Uart Tx Sv** — [`day13_ex01_uart_tx_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week4_day13/code/day13_ex01_uart_tx_sv.sv){ target=_blank }
-- :material-chip: **Ex02 Alu Sv** — [`day13_ex02_alu_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week4_day13/code/day13_ex02_alu_sv.sv){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d13_s3_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s3_ex1){ target=_blank }
+    - :material-chip: [`day13_ex01_uart_tx_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s3_ex1/day13_ex01_uart_tx_sv.sv){ target=_blank }
+- :material-folder-open: **d13_s4_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s4_ex2){ target=_blank }
+    - :material-chip: [`day13_ex02_alu_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s4_ex2/day13_ex02_alu_sv.sv){ target=_blank }

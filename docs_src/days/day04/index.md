@@ -82,9 +82,13 @@ All exercises bundled
 
 ## :material-code-braces: Lecture Code Examples
 
-Code shown during the pre-class video. Use these as reference 
-when working on the lab exercises.
+Code shown during the pre-class video. Each example is a runnable
 
-- :material-chip: **Ex01 D Flip Flop** — [`day04_ex01_d_flip_flop.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day04/code/day04_ex01_d_flip_flop.v){ target=_blank }
-- :material-chip: **Ex02 Led Blinker** — [`day04_ex02_led_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day04/code/day04_ex02_led_blinker.v){ target=_blank }
-- :material-chip: **Ex03 Shift Register Demo** — [`day04_ex03_shift_register_demo.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lectures/week1_day04/code/day04_ex03_shift_register_demo.v){ target=_blank }
+subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
+
+- :material-folder-open: **d04_s2_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s2_ex1){ target=_blank }
+    - :material-chip: [`day04_ex03_shift_register_demo.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s2_ex1/day04_ex03_shift_register_demo.v){ target=_blank }
+- :material-folder-open: **d04_s3_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s3_ex2){ target=_blank }
+    - :material-chip: [`day04_ex01_d_flip_flop.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s3_ex2/day04_ex01_d_flip_flop.v){ target=_blank }
+- :material-folder-open: **d04_s4_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s4_ex3){ target=_blank }
+    - :material-chip: [`day04_ex02_led_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s4_ex3/day04_ex02_led_blinker.v){ target=_blank }
