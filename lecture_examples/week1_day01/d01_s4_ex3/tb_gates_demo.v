@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_gates_demo.v — Exhaustive 2-input truth-table check for gates_demo
+// tb_gates_demo.v -- Exhaustive 2-input truth-table check for gates_demo
 // =============================================================================
 //   Walks all 4 (a,b) input combinations, prints the truth table, and asserts
 //   that the SOP and DeMorgan forms produce identical outputs for every case.

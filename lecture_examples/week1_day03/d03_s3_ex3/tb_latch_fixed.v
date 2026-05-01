@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_latch_fixed.v — Confirms the fixes are pure combinational (no holding).
+// tb_latch_fixed.v -- Confirms the fixes are pure combinational (no holding).
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -18,7 +18,7 @@ module tb_latch_fixed;
     integer fails = 0;
     task check(input [3:0] exp, input [3:0] act, input [255:0] name);
         if (act !== exp) begin
-            $display("FAIL: %0s — expected %h, got %h", name, exp, act);
+            $display("FAIL: %0s -- expected %h, got %h", name, exp, act);
             fails = fails + 1;
         end else
             $display("PASS: %0s = %h", name, act);
@@ -32,7 +32,7 @@ module tb_latch_fixed;
         a = 4'hA; sel = 1'b1; opcode = 2'b00; #5; check(4'hA, fix1, "fix1 sel=1 -> a");
         sel = 1'b0; a = 4'hF; #5; check(4'h0, fix1, "fix1 sel=0 -> default 0");
 
-        // FIX2: complete case — no held values
+        // FIX2: complete case -- no held values
         a = 4'h6; b = 4'h3;
         opcode = 2'b00; #5; check(4'h6, fix2, "fix2 op=00 -> a");
         opcode = 2'b01; #5; check(4'h3, fix2, "fix2 op=01 -> b");

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_traffic_light.v — Traffic Light FSM Testbench (Solution)
+// tb_traffic_light.v -- Traffic Light FSM Testbench (Solution)
 // Day 7, Exercise 1
 // =============================================================================
 
@@ -28,7 +28,7 @@ module tb_traffic_light;
         @(posedge clk); #1;
         if (light !== expected_light) begin
             fail_count = fail_count + 1;
-            $display("FAIL [%0t]: %0s — expected %b, got %b",
+            $display("FAIL [%0t]: %0s -- expected %b, got %b",
                      $time, label, expected_light, light);
         end else begin
             $display("PASS [%0t]: %0s (light=%b)", $time, label, light);

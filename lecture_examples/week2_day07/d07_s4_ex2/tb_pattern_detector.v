@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_pattern_detector.v — Smoke testbench for pattern_detector ('101' Moore)
+// tb_pattern_detector.v -- Smoke testbench for pattern_detector ('101' Moore)
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -27,10 +27,10 @@ module tb_pattern_detector;
         begin
             #1;
             if (detected !== exp) begin
-                $display("FAIL: %0s — got %b, expected %b", name, detected, exp);
+                $display("FAIL: %0s -- got %b, expected %b", name, detected, exp);
                 fails = fails + 1;
             end else
-                $display("PASS: %0s — detected=%b", name, detected);
+                $display("PASS: %0s -- detected=%b", name, detected);
         end
     endtask
 
@@ -42,12 +42,12 @@ module tb_pattern_detector;
         @(posedge clk); @(posedge clk);
         reset = 1'b0;
 
-        // Send "101" — detected should be high in cycle following the final '1'
+        // Send "101" -- detected should be high in cycle following the final '1'
         send(1'b1);  check_after_settle(1'b0, "after '1'");
         send(1'b0);  check_after_settle(1'b0, "after '10'");
         send(1'b1);  check_after_settle(1'b1, "after '101'  -> detected");
 
-        // Continue with '0' — Moore output drops back
+        // Continue with '0' -- Moore output drops back
         send(1'b0);  check_after_settle(1'b0, "after '1010'");
 
         // Overlap test: send another '1' immediately after '0'

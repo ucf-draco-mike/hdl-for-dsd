@@ -1,4 +1,4 @@
-// Minimal testbench for lfsr_generic — runs default 8-bit configuration.
+// Minimal testbench for lfsr_generic -- runs default 8-bit configuration.
 `timescale 1ns/1ps
 
 module tb_lfsr_generic;

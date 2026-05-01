@@ -1,4 +1,4 @@
-// tb_pattern_sequencer.v — Testbench for ROM pattern sequencer (SOLUTION)
+// tb_pattern_sequencer.v -- Testbench for ROM pattern sequencer (SOLUTION)
 `timescale 1ns / 1ps
 
 module tb_pattern_sequencer;

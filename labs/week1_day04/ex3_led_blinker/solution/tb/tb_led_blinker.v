@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_led_blinker.v — Baseline TB for led_blinker — verifies counter toggles (Day 4, Ex 3)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_led_blinker.v -- Baseline TB for led_blinker -- verifies counter toggles (Day 4, Ex 3)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -45,7 +45,7 @@ module tb_led_blinker;
             $display("PASS: LEDs toggled %0d times in 4096 cycles", toggle_count);
             pass_count = pass_count + 1;
         end else begin
-            $display("FAIL: LEDs never toggled in 4096 cycles — counter stuck?");
+            $display("FAIL: LEDs never toggled in 4096 cycles -- counter stuck?");
             fail_count = fail_count + 1;
         end
 

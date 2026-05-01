@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_adder.v — Baseline TB for full_adder + ripple_adder_4bit (Day 2, Ex 3)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_adder.v -- Baseline TB for full_adder + ripple_adder_4bit (Day 2, Ex 3)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 

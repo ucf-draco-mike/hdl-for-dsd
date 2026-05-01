@@ -1,4 +1,4 @@
-// Minimal SystemVerilog testbench for uart_tx_asserted — sends one byte and
+// Minimal SystemVerilog testbench for uart_tx_asserted -- sends one byte and
 // dumps a VCD. Assertions inside the DUT will check protocol invariants.
 `timescale 1ns/1ps
 

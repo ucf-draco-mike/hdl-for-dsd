@@ -1,4 +1,4 @@
-// Minimal testbench for updown_counter — toggles up/down buttons across a
+// Minimal testbench for updown_counter -- toggles up/down buttons across a
 // short clock window so the counter produces visible activity.
 `timescale 1ns/1ps
 

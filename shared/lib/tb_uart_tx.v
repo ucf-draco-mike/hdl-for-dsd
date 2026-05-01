@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_tx.v — Self-checking testbench for uart_tx
+// tb_uart_tx.v -- Self-checking testbench for uart_tx
 // =============================================================================
 `timescale 1ns/1ps
 module tb_uart_tx;
@@ -53,7 +53,7 @@ module tb_uart_tx;
             end
 
             if (received !== data) begin
-                $display("FAIL: send %h — received %h (serial decode)", data, received);
+                $display("FAIL: send %h -- received %h (serial decode)", data, received);
                 fail_count = fail_count + 1;
             end else begin
                 $display("PASS: uart_tx sent byte %h correctly", data);

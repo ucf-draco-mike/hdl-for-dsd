@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_button_logic.v — Smoke testbench for button_logic
+// tb_button_logic.v -- Smoke testbench for button_logic
 // =============================================================================
 `timescale 1ns/1ps
 

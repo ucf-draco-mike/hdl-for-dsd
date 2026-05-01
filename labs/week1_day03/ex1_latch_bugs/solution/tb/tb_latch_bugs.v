@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_latch_bugs.v — Baseline TB for latch_bugs — verifies latch-free behavior (Day 3, Ex 1)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_latch_bugs.v -- Baseline TB for latch_bugs -- verifies latch-free behavior (Day 3, Ex 1)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -41,7 +41,7 @@ module tb_latch_bugs;
         for (i = 0; i < 4; i = i + 1) begin
             sel = i[1:0]; #1;
             if (flag !== 1'bx) begin
-                $display("PASS: sel=%b flag=%b (no X — no latch)", sel, flag);
+                $display("PASS: sel=%b flag=%b (no X -- no latch)", sel, flag);
                 pass_count = pass_count + 1;
             end else begin
                 $display("FAIL: sel=%b flag=%bx (latch detected!)", sel, flag);
@@ -56,7 +56,7 @@ module tb_latch_bugs;
                 $display("PASS: sel=%b encoded=%b (no X)", sel, encoded);
                 pass_count = pass_count + 1;
             end else begin
-                $display("FAIL: sel=%b encoded=%b (X detected — latch?)", sel, encoded);
+                $display("FAIL: sel=%b encoded=%b (X detected -- latch?)", sel, encoded);
                 fail_count = fail_count + 1;
             end
         end

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_shift_register_demo.v — Compares blocking vs nonblocking shift behavior.
+// tb_shift_register_demo.v -- Compares blocking vs nonblocking shift behavior.
 // Drives a single 1-cycle pulse and shows how nonblocking creates a pipeline,
 // while blocking collapses to a single-cycle latency.
 // =============================================================================

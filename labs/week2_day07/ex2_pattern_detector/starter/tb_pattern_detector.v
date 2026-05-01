@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_pattern_detector.v — Pattern Detector Testbench (Starter)
+// tb_pattern_detector.v -- Pattern Detector Testbench (Starter)
 // Day 7, Exercise 2
 // =============================================================================
 
@@ -36,13 +36,13 @@ module tb_pattern_detector;
         btn1 = 0; btn2 = 0; btn3 = 0;
         reset = 1; repeat (3) @(posedge clk); reset = 0;
 
-        // ---- TODO: Test 1 — Correct sequence btn1->btn2->btn3 ----
+        // ---- TODO: Test 1 -- Correct sequence btn1->btn2->btn3 ----
 
-        // ---- TODO: Test 2 — Wrong sequence (btn2 first) ----
+        // ---- TODO: Test 2 -- Wrong sequence (btn2 first) ----
 
-        // ---- TODO: Test 3 — Partial correct then btn1 ----
+        // ---- TODO: Test 3 -- Partial correct then btn1 ----
 
-        // ---- TODO: Test 4 — Reset mid-sequence ----
+        // ---- TODO: Test 4 -- Reset mid-sequence ----
 
         $display("");
         $display("========================================");

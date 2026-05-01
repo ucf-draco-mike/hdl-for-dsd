@@ -1,4 +1,4 @@
-// Minimal testbench for top_uart_hello — drives clk and one button press.
+// Minimal testbench for top_uart_hello -- drives clk and one button press.
 // Note: real debounce uses 250k cycles; this stub mainly produces a VCD.
 `timescale 1ns/1ps
 

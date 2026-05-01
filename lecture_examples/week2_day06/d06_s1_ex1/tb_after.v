@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_after.v — d06_s3 demo, "AFTER" snapshot
+// tb_after.v -- d06_s3 demo, "AFTER" snapshot
 // =============================================================================
 //   Same 12 cases as tb_before.v, but the repetitive stimulus + check
 //   pattern is collapsed into a `check` task. Half the line count, and

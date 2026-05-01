@@ -1,4 +1,4 @@
-// Minimal testbench for top_lab_instrument — drives clock and a few button
+// Minimal testbench for top_lab_instrument -- drives clock and a few button
 // presses to exercise debounce + state changes for waveform viewing.
 // Note: real debounce uses 10ms which is impractical in sim; this testbench
 // just produces a viewable VCD rather than verifying full behavior.

@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_heartbeat.v — Self-checking testbench for heartbeat
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_heartbeat.v -- Self-checking testbench for heartbeat
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 // Verifies:
 //   1. LED toggles at the expected rate (every 2^(WIDTH-1) cycles)
@@ -52,7 +52,7 @@ module tb_heartbeat;
         end
 
         // With WIDTH=4, expect ~8 toggles in 64 cycles (toggle every 8 cycles)
-        // Allow ±1 for boundary effects
+        // Allow +/-1 for boundary effects
         if (toggle_count >= 7 && toggle_count <= 9) begin
             $display("PASS: LED toggled %0d times in 64 cycles (expected ~8)", toggle_count);
             pass_count = pass_count + 1;

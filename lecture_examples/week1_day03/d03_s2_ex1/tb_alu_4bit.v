@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_alu_4bit.v — Self-checking testbench for alu_4bit
+// tb_alu_4bit.v -- Self-checking testbench for alu_4bit
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -17,7 +17,7 @@ module tb_alu_4bit;
     integer fails = 0;
     task check(input [3:0] exp_r, input exp_c, input [255:0] name);
         if (result !== exp_r || carry !== exp_c) begin
-            $display("FAIL: %0s — expected r=%h c=%b, got r=%h c=%b",
+            $display("FAIL: %0s -- expected r=%h c=%b, got r=%h c=%b",
                      name, exp_r, exp_c, result, carry);
             fails = fails + 1;
         end else

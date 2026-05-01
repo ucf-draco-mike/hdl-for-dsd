@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_shift_reg_piso.v — extracted from day05_ex02_shift_reg_piso.v
+// tb_shift_reg_piso.v -- extracted from day05_ex02_shift_reg_piso.v
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -26,7 +26,7 @@ module tb_shift_reg_piso;
         $dumpvars(0, tb_shift_reg_piso);
 
         #100; reset = 0;
-        test_byte = 8'hA5;  // 10100101 — good mix of 0s and 1s
+        test_byte = 8'hA5;  // 10100101 -- good mix of 0s and 1s
 
         // Load the byte
         @(posedge clk);
@@ -41,7 +41,7 @@ module tb_shift_reg_piso;
             expected_bit = test_byte[i];
             #1;
             if (serial_out !== expected_bit) begin
-                $display("FAIL: Bit %0d — expected %b, got %b", i, expected_bit, serial_out);
+                $display("FAIL: Bit %0d -- expected %b, got %b", i, expected_bit, serial_out);
                 fail_count = fail_count + 1;
             end else
                 $display("PASS: Bit %0d = %b", i, serial_out);

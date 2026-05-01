@@ -1,4 +1,4 @@
-// Minimal testbench for top_uart_loopback — drives clk and an idle UART RX line.
+// Minimal testbench for top_uart_loopback -- drives clk and an idle UART RX line.
 // Note: this design instantiates uart_tx, uart_rx, hex_to_7seg from shared/lib.
 // To run sim, ensure those source files are visible (see Makefile SRCS list).
 `timescale 1ns/1ps

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_pattern_sequencer.v — extracted from day09_ex03_pattern_sequencer.v
+// tb_pattern_sequencer.v -- extracted from day09_ex03_pattern_sequencer.v
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -46,7 +46,7 @@ module tb_pattern_sequencer;
         next = 1; @(posedge clk); next = 0; @(posedge clk); #1;
         test_count = test_count + 1;
         if (pattern !== 8'b00000001) begin
-            $display("FAIL: wrap — expected 00000001, got %b", pattern);
+            $display("FAIL: wrap -- expected 00000001, got %b", pattern);
             fail_count = fail_count + 1;
         end else
             $display("PASS: Wrapped back to addr 0");

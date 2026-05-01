@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_counter_mod_n.v — extracted from day05_ex01_counter_mod_n.v
+// tb_counter_mod_n.v -- extracted from day05_ex01_counter_mod_n.v
 // =============================================================================
 `timescale 1ns/1ps
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_shift_add_mult.v — Testbench for Shift-and-Add Multiplier
+// tb_shift_add_mult.v -- Testbench for Shift-and-Add Multiplier
 // Day 10, Exercise 2
 // =============================================================================
 `timescale 1ns/1ps

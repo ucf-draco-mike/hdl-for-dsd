@@ -15,7 +15,7 @@ module tb_traffic_light_sv;
         repeat(50) @(posedge clk);
 
         // Check we see all three states
-        $display("Traffic Light SV test complete — check waveform");
+        $display("Traffic Light SV test complete -- check waveform");
         $finish;
     end
 endmodule

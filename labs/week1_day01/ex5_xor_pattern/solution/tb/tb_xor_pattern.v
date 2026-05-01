@@ -1,4 +1,4 @@
-// Minimal testbench for xor_pattern — sweeps all 16 input combinations.
+// Minimal testbench for xor_pattern -- sweeps all 16 input combinations.
 `timescale 1ns/1ps
 
 module tb_xor_pattern;

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_alu_4bit.v — Self-Checking ALU Testbench (Solution)
+// tb_alu_4bit.v -- Self-Checking ALU Testbench (Solution)
 // Day 6, Exercise 1
 // =============================================================================
 

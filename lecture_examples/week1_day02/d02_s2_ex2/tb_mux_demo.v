@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_mux_demo.v — Unified Mux Testbench (2:1 + 4:1 + cost comparison)
+// tb_mux_demo.v -- Unified Mux Testbench (2:1 + 4:1 + cost comparison)
 // =============================================================================
 //   Slide: d02_s2 "Building a 4:1 Mux + Cost Comparison" Live Demo
 //
@@ -70,7 +70,7 @@ module tb_mux_demo;
 
         a = 4'hA; b = 4'hB; c = 4'hC; d = 4'hD;
 
-        // ---- 2:1 mux: 2 select values × 2 a/b combos = 4 cases -----------
+        // ---- 2:1 mux: 2 select values x 2 a/b combos = 4 cases -----------
         check2(1'b0, 4'hB, "2:1 mux sel=0 -> b");
         check2(1'b1, 4'hA, "2:1 mux sel=1 -> a");
         a = 4'hF; b = 4'h0;
@@ -80,7 +80,7 @@ module tb_mux_demo;
         // restore canonical inputs for the 4:1 sweep
         a = 4'hA; b = 4'hB; c = 4'hC; d = 4'hD;
 
-        // ---- 4:1 mux: nested + case at all four selects = 4 cases × 2 = 8
+        // ---- 4:1 mux: nested + case at all four selects = 4 cases x 2 = 8
         check4(2'b00, 4'hA, "4:1 mux sel=00 -> a");
         check4(2'b01, 4'hB, "4:1 mux sel=01 -> b");
         check4(2'b10, 4'hC, "4:1 mux sel=10 -> c");

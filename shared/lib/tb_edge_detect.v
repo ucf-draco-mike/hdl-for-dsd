@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_edge_detect.v — Self-checking testbench for edge_detect
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_edge_detect.v -- Self-checking testbench for edge_detect
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 // Verifies:
 //   1. Rising edge produces one-cycle pulse on o_rising
@@ -37,11 +37,11 @@ module tb_edge_detect;
         begin
             @(posedge clk); #1;
             if (rising === exp_rise && falling === exp_fall && any_edge === exp_any) begin
-                $display("PASS: %0s — rise=%b fall=%b any=%b",
+                $display("PASS: %0s -- rise=%b fall=%b any=%b",
                          label, rising, falling, any_edge);
                 pass_count = pass_count + 1;
             end else begin
-                $display("FAIL: %0s — rise=%b(exp %b) fall=%b(exp %b) any=%b(exp %b)",
+                $display("FAIL: %0s -- rise=%b(exp %b) fall=%b(exp %b) any=%b(exp %b)",
                          label, rising, exp_rise, falling, exp_fall, any_edge, exp_any);
                 fail_count = fail_count + 1;
             end
@@ -55,25 +55,25 @@ module tb_edge_detect;
         // Let r_prev initialize
         @(posedge clk); @(posedge clk);
 
-        // Steady low — no edges
+        // Steady low -- no edges
         signal = 0;
         check(0, 0, 0, "steady low");
 
-        // Rising edge: 0 → 1
+        // Rising edge: 0 -> 1
         signal = 1;
         check(1, 0, 1, "0->1 rising");
 
-        // Steady high — no edges (pulse should be gone)
+        // Steady high -- no edges (pulse should be gone)
         check(0, 0, 0, "steady high");
 
-        // Falling edge: 1 → 0
+        // Falling edge: 1 -> 0
         signal = 0;
         check(0, 1, 1, "1->0 falling");
 
         // Steady low again
         check(0, 0, 0, "steady low again");
 
-        // Rapid toggle: 0→1→0 across two cycles
+        // Rapid toggle: 0->1->0 across two cycles
         signal = 1;
         check(1, 0, 1, "rapid toggle rise");
         signal = 0;

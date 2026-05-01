@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_adder_file.v — d06_s4 "1000-Vector Adder Test" Live Demo
+// tb_adder_file.v -- d06_s4 "1000-Vector Adder Test" Live Demo
 // =============================================================================
 //   Reads `vectors.hex` (produced by gen_vectors.py) into a 32-bit-wide
 //   memory, applies each line's a/b operands to the adder, and asserts
@@ -68,7 +68,7 @@ module tb_adder_file;
         end
 
         if (count == 0)
-            $display("ERROR: 0 vectors loaded — did you run gen_vectors.py?");
+            $display("ERROR: 0 vectors loaded -- did you run gen_vectors.py?");
         $display("=== %0d passed, %0d failed ===", passes, fails);
         $finish;
     end

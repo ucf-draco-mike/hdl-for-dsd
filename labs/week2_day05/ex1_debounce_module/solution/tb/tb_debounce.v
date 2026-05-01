@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_debounce.v — Testbench for Debounce Module (Solution)
+// tb_debounce.v -- Testbench for Debounce Module (Solution)
 // Day 5, Exercise 1
 // =============================================================================
 
@@ -47,7 +47,7 @@ module tb_debounce;
         bouncy = 1; #30;
         bouncy = 0; #50;
         bouncy = 1; #20;
-        bouncy = 0;        // final press — stays low
+        bouncy = 0;        // final press -- stays low
         #2000;             // wait well beyond threshold
 
         // Bouncy release: toggle, then settle high
@@ -55,7 +55,7 @@ module tb_debounce;
         bouncy = 0; #30;
         bouncy = 1; #60;
         bouncy = 0; #20;
-        bouncy = 1;        // final release — stays high
+        bouncy = 1;        // final release -- stays high
         #2000;
 
         // Report

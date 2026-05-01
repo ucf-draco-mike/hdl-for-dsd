@@ -1,4 +1,4 @@
-// Minimal testbench for top_alu_display — exercises the 4 opcode combinations.
+// Minimal testbench for top_alu_display -- exercises the 4 opcode combinations.
 `timescale 1ns/1ps
 
 module tb_top_alu_display;

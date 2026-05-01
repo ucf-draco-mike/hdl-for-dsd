@@ -1,4 +1,4 @@
-// tb_register_file.v — Testbench for register file (SOLUTION)
+// tb_register_file.v -- Testbench for register file (SOLUTION)
 `timescale 1ns / 1ps
 
 module tb_register_file;
@@ -52,7 +52,7 @@ module tb_register_file;
         end
         we = 0;
 
-        // Read pairs and verify (async — no latency)
+        // Read pairs and verify (async -- no latency)
         $display("\n--- Dual-port read verification ---");
         raddr_a = 3'd0; raddr_b = 3'd7; #1;
         check_ab(8'h05, 8'h75, "regs 0,7");

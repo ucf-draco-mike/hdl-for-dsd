@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_hex_to_7seg.v — Baseline TB for hex_to_7seg (Day 2, Ex 4)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_hex_to_7seg.v -- Baseline TB for hex_to_7seg (Day 2, Ex 4)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 

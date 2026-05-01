@@ -1,4 +1,4 @@
-// Minimal testbench — exercises the 8-bit ripple-carry and behavioral adders
+// Minimal testbench -- exercises the 8-bit ripple-carry and behavioral adders
 // with a few sample inputs to produce a viewable VCD.
 `timescale 1ns/1ps
 

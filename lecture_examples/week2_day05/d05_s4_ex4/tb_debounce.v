@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_debounce.v — Smoke testbench for debounce
+// tb_debounce.v -- Smoke testbench for debounce
 // The DUT has no explicit reset, so we initialize internal state via force/
 // release to put the synchronizer + counter in a known state at t=0.
 // =============================================================================

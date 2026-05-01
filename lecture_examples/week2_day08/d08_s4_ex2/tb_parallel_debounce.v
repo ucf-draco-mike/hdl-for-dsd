@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_parallel_debounce.v — Smoke testbench for the generate-based pipeline.
+// tb_parallel_debounce.v -- Smoke testbench for the generate-based pipeline.
 // Confirms each lane debounces independently and produces edge pulses.
 // =============================================================================
 `timescale 1ns/1ps

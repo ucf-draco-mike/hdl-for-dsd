@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_traffic_light.v — extracted from day07_ex01_fsm_template.v
+// tb_traffic_light.v -- extracted from day07_ex01_fsm_template.v
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -22,11 +22,11 @@ module tb_traffic_light;
     begin
         test_count = test_count + 1;
         if (red !== exp_r || yellow !== exp_y || green !== exp_g) begin
-            $display("FAIL: %0s — R=%b Y=%b G=%b (expected R=%b Y=%b G=%b)",
+            $display("FAIL: %0s -- R=%b Y=%b G=%b (expected R=%b Y=%b G=%b)",
                      name, red, yellow, green, exp_r, exp_y, exp_g);
             fail_count = fail_count + 1;
         end else
-            $display("PASS: %0s — R=%b Y=%b G=%b", name, red, yellow, green);
+            $display("PASS: %0s -- R=%b Y=%b G=%b", name, red, yellow, green);
     end
     endtask
 
@@ -48,20 +48,20 @@ module tb_traffic_light;
         @(posedge clk); #1;
         check_state(0, 0, 1, "After reset: GREEN");
 
-        // Wait for GREEN → YELLOW transition (GREEN_TIME = 10 cycles)
+        // Wait for GREEN -> YELLOW transition (GREEN_TIME = 10 cycles)
         wait_cycles(10);
         @(posedge clk); #1;
-        check_state(0, 1, 0, "GREEN→YELLOW");
+        check_state(0, 1, 0, "GREEN->YELLOW");
 
-        // Wait for YELLOW → RED transition (YELLOW_TIME = 4 cycles)
+        // Wait for YELLOW -> RED transition (YELLOW_TIME = 4 cycles)
         wait_cycles(4);
         @(posedge clk); #1;
-        check_state(1, 0, 0, "YELLOW→RED");
+        check_state(1, 0, 0, "YELLOW->RED");
 
-        // Wait for RED → GREEN transition (RED_TIME = 10 cycles)
+        // Wait for RED -> GREEN transition (RED_TIME = 10 cycles)
         wait_cycles(10);
         @(posedge clk); #1;
-        check_state(0, 0, 1, "RED→GREEN (cycle 2)");
+        check_state(0, 0, 1, "RED->GREEN (cycle 2)");
 
         // Test mid-cycle reset
         wait_cycles(5);
@@ -69,7 +69,7 @@ module tb_traffic_light;
         @(posedge clk); #1;
         reset = 0;
         @(posedge clk); #1;
-        check_state(0, 0, 1, "Mid-cycle reset → GREEN");
+        check_state(0, 0, 1, "Mid-cycle reset -> GREEN");
 
         // Summary
         $display("\n=== TEST SUMMARY ===");

@@ -1,4 +1,4 @@
-// tb_pattern_sequencer.v — Testbench for ROM pattern sequencer
+// tb_pattern_sequencer.v -- Testbench for ROM pattern sequencer
 `timescale 1ns / 1ps
 
 module tb_pattern_sequencer;
@@ -7,7 +7,7 @@ module tb_pattern_sequencer;
     wire [7:0] pattern;
     wire [3:0] index;
 
-    // Fast simulation: CLK_FREQ=100, AUTO_RATE_HZ=10 → 10 clocks per tick
+    // Fast simulation: CLK_FREQ=100, AUTO_RATE_HZ=10 -> 10 clocks per tick
     pattern_sequencer #(
         .CLK_FREQ     (100),
         .N_PATTERNS   (16),
@@ -46,13 +46,13 @@ module tb_pattern_sequencer;
         reset = 0;
         @(posedge clk); #1;
 
-        // ── Test 1: Reset state ──
+        // -- Test 1: Reset state --
         // TODO: Verify index=0, pattern=0x01 after reset
         //       Use: check(4'd0, 8'h01, "reset state");
         //
         // ---- YOUR CODE HERE ----
 
-        // ── Test 2: Manual advance through all 16 patterns ──
+        // -- Test 2: Manual advance through all 16 patterns --
         // TODO: Pulse i_next for one clock, then check each pattern
         //       Expected sequence from patterns.hex:
         //       idx 0=0x01, 1=0x12, 2=0x24, 3=0x38, ...
@@ -60,14 +60,14 @@ module tb_pattern_sequencer;
         //
         // ---- YOUR CODE HERE ----
 
-        // ── Test 3: Auto-advance mode ──
+        // -- Test 3: Auto-advance mode --
         // TODO: Set auto_mode=1, wait for tick period (10 clocks),
         //       verify pattern advances automatically.
         //       Run for several ticks and check at least 3 advances.
         //
         // ---- YOUR CODE HERE ----
 
-        // ── Report ──
+        // -- Report --
         $display("\n=================================");
         if (fail_count == 0)
             $display("ALL %0d TESTS PASSED", test_count);

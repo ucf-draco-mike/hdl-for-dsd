@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_param_alu.v — extracted from day08_ex02_param_alu.v
+// tb_param_alu.v -- extracted from day08_ex02_param_alu.v
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -33,7 +33,7 @@ module tb_param_alu;
     begin
         test_count = test_count + 1;
         if (result4 !== exp) begin
-            $display("FAIL [4-bit]: %0s — expected %h, got %h", name, exp, result4);
+            $display("FAIL [4-bit]: %0s -- expected %h, got %h", name, exp, result4);
             fail_count = fail_count + 1;
         end else
             $display("PASS [4-bit]: %0s = %h", name, result4);
@@ -46,7 +46,7 @@ module tb_param_alu;
     begin
         test_count = test_count + 1;
         if (result8 !== exp) begin
-            $display("FAIL [8-bit]: %0s — expected %h, got %h", name, exp, result8);
+            $display("FAIL [8-bit]: %0s -- expected %h, got %h", name, exp, result8);
             fail_count = fail_count + 1;
         end else
             $display("PASS [8-bit]: %0s = %h", name, result8);

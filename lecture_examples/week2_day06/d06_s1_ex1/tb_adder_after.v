@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_adder_after.v — d06_s2 demo, "AFTER" snapshot
+// tb_adder_after.v -- d06_s2 demo, "AFTER" snapshot
 // =============================================================================
 //   Same stimulus as tb_adder_before.v but every check is now self-checking:
 //   each test computes the expected value, compares it to the DUT, and

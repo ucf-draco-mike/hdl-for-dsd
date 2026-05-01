@@ -1,4 +1,4 @@
-// tb_ram_init.v — Testbench for initialized RAM
+// tb_ram_init.v -- Testbench for initialized RAM
 `timescale 1ns / 1ps
 
 module tb_ram_init;
@@ -55,18 +55,18 @@ module tb_ram_init;
         we = 0; addr = 0; wdata = 0;
         #100;
 
-        // TODO: Test 1 — Verify all 16 initial values
+        // TODO: Test 1 -- Verify all 16 initial values
         //       Loop through addresses, read each, compare to init_vals[]
         //       Remember the one-cycle read latency!
         //
         // ---- YOUR CODE HERE ----
 
-        // TODO: Test 2 — Write new values to addresses 2 and 5
+        // TODO: Test 2 -- Write new values to addresses 2 and 5
         //       addr=2, wdata=8'hBE; addr=5, wdata=8'hEF
         //
         // ---- YOUR CODE HERE ----
 
-        // TODO: Test 3 — Verify writes took effect at addr 2 and 5
+        // TODO: Test 3 -- Verify writes took effect at addr 2 and 5
         //       AND verify untouched addresses still hold initial values
         //       (Check at least addresses 0, 1, 3, 4 are unchanged)
         //

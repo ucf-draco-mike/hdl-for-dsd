@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_tx_assertions.sv — extracted from day14_ex01_uart_tx_assertions.sv
+// tb_uart_tx_assertions.sv -- extracted from day14_ex01_uart_tx_assertions.sv
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -36,7 +36,7 @@ module tb_uart_tx_assertions;
         reset = 0;
         repeat(5) @(posedge clk);
 
-        // Normal transmission — assertions should NOT fire
+        // Normal transmission -- assertions should NOT fire
         $display("--- Test 1: Normal byte 'A' (0x41) ---");
         data = 8'h41;
         valid = 1;
@@ -47,7 +47,7 @@ module tb_uart_tx_assertions;
         @(negedge busy);
         repeat(CLKS_PER_BIT * 2) @(posedge clk);
 
-        // Normal transmission — boundary value 0xFF
+        // Normal transmission -- boundary value 0xFF
         $display("--- Test 2: Boundary byte 0xFF ---");
         data = 8'hFF;
         valid = 1;
@@ -57,7 +57,7 @@ module tb_uart_tx_assertions;
         @(negedge busy);
         repeat(CLKS_PER_BIT * 2) @(posedge clk);
 
-        // Normal transmission — boundary value 0x00
+        // Normal transmission -- boundary value 0x00
         $display("--- Test 3: Boundary byte 0x00 ---");
         data = 8'h00;
         valid = 1;

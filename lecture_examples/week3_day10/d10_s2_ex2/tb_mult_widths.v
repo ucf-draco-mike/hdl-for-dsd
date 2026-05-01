@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_mult_widths.v — Smoke testbench for the three-width multipliers
+// tb_mult_widths.v -- Smoke testbench for the three-width multipliers
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -14,15 +14,15 @@ module tb_mult_widths;
 
     integer fails = 0;
     task check_p4 (input [7:0]  exp, input [7:0]  act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
     task check_p8 (input [15:0] exp, input [15:0] act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
     task check_p16(input [31:0] exp, input [31:0] act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
 

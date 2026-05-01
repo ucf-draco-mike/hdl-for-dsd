@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_alu_exhaustive.v — Exhaustive ALU Test (Solution)
+// tb_alu_exhaustive.v -- Exhaustive ALU Test (Solution)
 // Day 6, Exercise 5 (Stretch)
 // =============================================================================
 

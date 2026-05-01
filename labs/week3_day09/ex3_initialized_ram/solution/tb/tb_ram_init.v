@@ -1,4 +1,4 @@
-// tb_ram_init.v — Testbench for initialized RAM (SOLUTION)
+// tb_ram_init.v -- Testbench for initialized RAM (SOLUTION)
 `timescale 1ns / 1ps
 
 module tb_ram_init;

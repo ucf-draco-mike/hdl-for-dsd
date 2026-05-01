@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_tx.v — Smoke testbench for uart_tx
+// tb_uart_tx.v -- Smoke testbench for uart_tx
 // Drives a single byte and samples the serial frame at bit centers.
 // Assumes -DSIMULATION (CLKS_PER_BIT = 10).
 // =============================================================================

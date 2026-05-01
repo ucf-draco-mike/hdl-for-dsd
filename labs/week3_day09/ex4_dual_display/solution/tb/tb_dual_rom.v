@@ -1,4 +1,4 @@
-// tb_dual_rom.v — Testbench for dual-display ROM player (SOLUTION)
+// tb_dual_rom.v -- Testbench for dual-display ROM player (SOLUTION)
 `timescale 1ns / 1ps
 
 module tb_dual_rom;

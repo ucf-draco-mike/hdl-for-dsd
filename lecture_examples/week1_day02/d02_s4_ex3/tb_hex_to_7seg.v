@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_hex_to_7seg.v — Sweep-all-16 testbench for hex_to_7seg
+// tb_hex_to_7seg.v -- Sweep-all-16 testbench for hex_to_7seg
 // =============================================================================
 `timescale 1ns/1ps
 

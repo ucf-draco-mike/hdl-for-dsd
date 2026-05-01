@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_debounce_thorough.v — Thorough Debounce Testbench (Solution)
+// tb_debounce_thorough.v -- Thorough Debounce Testbench (Solution)
 // Day 6, Exercise 2
 // =============================================================================
 
@@ -34,7 +34,7 @@ module tb_debounce_thorough;
         #1;  // small delay after clock edge
         if (clean !== expected) begin
             fail_count = fail_count + 1;
-            $display("FAIL [%0t]: %0s — expected clean=%b, got %b",
+            $display("FAIL [%0t]: %0s -- expected clean=%b, got %b",
                      $time, label, expected, clean);
         end else begin
             $display("PASS [%0t]: %0s (clean=%b)", $time, label, clean);

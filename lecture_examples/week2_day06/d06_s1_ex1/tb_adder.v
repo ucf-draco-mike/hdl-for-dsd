@@ -1,8 +1,8 @@
 // =============================================================================
-// tb_adder.v — d06_s1 "Build a Testbench from Scratch" Live Demo
+// tb_adder.v -- d06_s1 "Build a Testbench from Scratch" Live Demo
 // =============================================================================
 //   Bare-bones testbench, the version Mike types live during d06_s1.
-//   Just stimulus + $display. No checks, no PASS/FAIL — that comes in s2.
+//   Just stimulus + $display. No checks, no PASS/FAIL -- that comes in s2.
 // =============================================================================
 `timescale 1ns/1ps
 

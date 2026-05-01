@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_debounce.v — Self-checking testbench for debounce module
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_debounce.v -- Self-checking testbench for debounce module
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 module tb_debounce;
@@ -27,7 +27,7 @@ module tb_debounce;
         begin
             #1;
             if (o_clean !== expected) begin
-                $display("FAIL: %0s — expected %b got %b", name, expected, o_clean);
+                $display("FAIL: %0s -- expected %b got %b", name, expected, o_clean);
                 fail_count = fail_count + 1;
             end else begin
                 pass_count = pass_count + 1;

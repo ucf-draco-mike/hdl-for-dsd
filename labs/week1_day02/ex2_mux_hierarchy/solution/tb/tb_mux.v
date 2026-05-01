@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_mux.v — Baseline TB for mux2to1 and mux4to1 (Day 2, Ex 2)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_mux.v -- Baseline TB for mux2to1 and mux4to1 (Day 2, Ex 2)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 

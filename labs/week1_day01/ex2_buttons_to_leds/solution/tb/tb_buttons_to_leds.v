@@ -1,4 +1,4 @@
-// Minimal testbench for buttons_to_leds — sweeps all 16 input combinations.
+// Minimal testbench for buttons_to_leds -- sweeps all 16 input combinations.
 `timescale 1ns/1ps
 
 module tb_buttons_to_leds;
