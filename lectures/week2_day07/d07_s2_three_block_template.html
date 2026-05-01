@@ -133,7 +133,7 @@ end</code></pre>
             <li><strong>No <code>default:</code> case:</strong> if <code>r_state</code> takes an illegal value, <code>r_next_state</code> isn't assigned in that branch → another latch, plus no recovery.</li>
         </ol>
     </div>
-    <aside class="notes">Three canonical FSM bugs in one 5-line snippet. Each breaks the template in a different way. Memorable because every new student writes something like this first.</aside>
+    <aside class="notes">Three canonical FSM bugs in one 5-line snippet. Each breaks the template in a different way. Memorable because every newcomer writes something like this first.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">
@@ -163,7 +163,7 @@ PASS: reset → GREEN
         <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
         <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>r_state · o_red · o_yellow · o_green · timer_done</code>. Watch state cycle GREEN → YELLOW → RED → GREEN while outputs change in lockstep with state (pure Moore: output = f(state)).</p>
     </div>
-    <aside class="notes">[Terminal] Walk through the file, show the 3 always blocks clearly labeled. Run sim, show waveform. On the board: green LED for GREEN state, yellow LED for YELLOW, red LED for RED. Students see state = LED one-to-one.</aside>
+    <aside class="notes">[Terminal] Walk through the file, show the 3 always blocks clearly labeled. Run sim, show waveform. On the board: green LED for GREEN state, yellow LED for YELLOW, red LED for RED. You see state = LED one-to-one.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">

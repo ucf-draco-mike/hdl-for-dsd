@@ -20,7 +20,7 @@
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Data Types</span><span class="seg-label">Operators</span><span class="seg-label active">Sized Literals</span><span class="seg-label">7-Seg Display</span></div>
-    <aside class="notes">Video 3 of 4 for Topic 2. This topic looks like syntactic fussiness but it's the #1 source of silent bugs in student Verilog. By the end you'll never write a naked <code>0</code> or <code>1</code> again.</aside>
+    <aside class="notes">Video 3 of 4 for Topic 2. This topic looks like syntactic fussiness but it's the #1 source of silent bugs in early Verilog. By the end you'll never write a naked <code>0</code> or <code>1</code> again.</aside>
 </section>
 
 <!-- CONTEXTUALIZE -->
@@ -58,7 +58,7 @@
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
         <strong>The receipt:</strong> <code>wire [3:0] x = 4'b1111 + 1;</code> — the <code>1</code> is 32 bits. The addition is 32-bit. The assignment truncates. Result: <code>x = 0</code>. iverilog warns if you use <code>-Wall</code> (and almost nobody does by default).
     </div>
-    <aside class="notes">This is the &ldquo;why&rdquo; moment. Students coming from C think unsized integers are sized by inference. Verilog says: nope, they're all 32-bit. And silent width conversions on assignment are where the bugs live.</aside>
+    <aside class="notes">This is the &ldquo;why&rdquo; moment. People coming from C think unsized integers are sized by inference. Verilog says: nope, they're all 32-bit. And silent width conversions on assignment are where the bugs live.</aside>
 </section>
 
 <!-- I Do -->
@@ -94,7 +94,7 @@ wire [3:0] w_doubled = w_a &lt;&lt; 1; // expect 20 → ???</code></pre>
     <div class="fragment callout-warning" style="font-size:0.7em;">
         <strong>Fix:</strong> <code>wire [4:0] w_sum = w_a + w_b;</code> — widen the result by one bit to catch the carry. For multiplication, widen by 2N bits.
     </div>
-    <aside class="notes">Students nearly always predict 16. Wait for a hand. The truncation is silent — no warning without -Wall — and the testbench might not catch it if the values never exceed 15.</aside>
+    <aside class="notes">Most people predict 16. Wait a beat. The truncation is silent — no warning without -Wall — and the testbench might not catch it if the values never exceed 15.</aside>
 </section>
 
 <!-- You Do -->

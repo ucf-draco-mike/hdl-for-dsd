@@ -114,7 +114,7 @@ endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>Answer:</strong> <strong>Combinational read</strong> (<code>assign</code>, not a clocked always block). Block RAM reads require a clock edge. The synthesizer will be forced to map this 1024-entry array as LUT RAM or even scattered combinational logic — orders of magnitude more expensive. <strong>Fix:</strong> change to <code>always @(posedge clk) data &lt;= mem[addr];</code> with <code>data</code> as <code>reg</code>.
     </div>
-    <aside class="notes">This is the most common ROM bug. Students want instant reads and write combinational. Block RAM is synchronous. Always use clocked reads for ROMs beyond trivial size.</aside>
+    <aside class="notes">This is the most common ROM bug. Wanting instant reads tempts you to write combinational. Block RAM is synchronous. Always use clocked reads for ROMs beyond trivial size.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

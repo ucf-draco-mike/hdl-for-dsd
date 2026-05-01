@@ -155,7 +155,7 @@ end</code></pre>
     <div class="fragment callout" style="font-size:0.68em;">
         <strong>Answers:</strong> (1) Three 2:1 muxes in series (a priority chain) — no flops. (2) <code>c</code> — the later <code>if</code> overrides the earlier one. (3) <strong>Priority</strong> — later statements win when multiple are true, in reverse of <code>if/else if</code>. This is exactly why we prefer <code>case</code> or <code>if/else if</code> for clarity.
     </div>
-    <aside class="notes">Tricky one. Sequential if-ifs (not if-else-if) produce a priority chain where <em>later</em> statements win, because each statement unconditionally reassigns. Students frequently confuse this pattern. Cover it early.</aside>
+    <aside class="notes">Tricky one. Sequential if-ifs (not if-else-if) produce a priority chain where <em>later</em> statements win, because each statement unconditionally reassigns. People frequently confuse this pattern. Cover it early.</aside>
 </section>
 
 <!-- LIVE DEMO -->

@@ -82,7 +82,7 @@
     <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
         <strong>Read the picture:</strong> Same four states as TX — but with two <em>guard checks</em> the TX never needs. The red dashed arrow out of <code>S_START</code> rejects glitches that aren't a real start bit. The red dashed arrow out of <code>S_STOP</code> raises <code>o_frame_err</code> when the stop bit isn't HIGH (baud mismatch / line noise). Everything advances on <code>r_osx_tick</code>, not the system clock.
     </div>
-    <aside class="notes">Mirror image of the TX FSM, with two extra error-detection branches. Make sure students see that the TX FSM is open-loop (just emit the right level), but the RX FSM is closed-loop on the wire (validate at every gate). That's why RX is harder.</aside>
+    <aside class="notes">Mirror image of the TX FSM, with two extra error-detection branches. Notice that the TX FSM is open-loop (just emit the right level), but the RX FSM is closed-loop on the wire (validate at every gate). That's why RX is harder.</aside>
 </section>
 
 <section>

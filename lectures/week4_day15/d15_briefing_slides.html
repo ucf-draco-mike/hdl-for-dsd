@@ -17,7 +17,7 @@
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Build Day</h1>
     <p class="subtitle" style="color:#E8E8E4;">Capstone Integration Briefing · ~20 minutes</p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
-    <aside class="notes">This is the Topic 15 briefing. After this, students work on the capstone. The briefing covers failure modes, method, and debug technique.</aside>
+    <aside class="notes">This is the Topic 15 briefing. After this, you work on the capstone. The briefing covers failure modes, method, and debug technique.</aside>
 </section>
 
 <section>
@@ -122,7 +122,7 @@ endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
         <strong>Golden rule of today:</strong> when something breaks, <em>don't randomly edit</em>. Revert to the last working state. Change one thing. Re-test. The discipline feels slow; it's actually fast.
     </div>
-    <aside class="notes">Panic moves are random edits. Discipline moves are &ldquo;revert, change one thing, re-test.&rdquo; Students who stay disciplined under pressure finish. Students who panic don't.</aside>
+    <aside class="notes">Panic moves are random edits. Discipline moves are &ldquo;revert, change one thing, re-test.&rdquo; Staying disciplined under pressure means you finish. Panic means you don't.</aside>
 </section>
 
 <section>
@@ -144,7 +144,7 @@ end</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>Power:</strong> open <code>minicom</code>, press buttons on the Go Board, watch the FSM's trace stream to your terminal. &ldquo;I → R → D&rdquo; tells you the FSM progressed through states you expected. &ldquo;I → R → R → E&rdquo; tells you it went to error — and you know exactly where. This is the single highest-yield debug technique you have today.
     </div>
-    <aside class="notes">UART printf is the closest thing to gdb you have on an FPGA. Students often don't think to use it; it transforms debug from guessing to observing.</aside>
+    <aside class="notes">UART printf is the closest thing to gdb you have on an FPGA. It's easy to forget to use it; it transforms debug from guessing to observing.</aside>
 </section>
 
 <section>
@@ -164,7 +164,7 @@ end</code></pre>
     <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
         <strong>Checkpoint discipline:</strong> every 30 minutes, pause. Ask: &ldquo;what's my last known-good state?&rdquo; If you can't name one recently, that's the signal to back up. Checkpoints feel slow; they save you when something breaks.
     </div>
-    <aside class="notes">The 30-minute checkpoint is the rhythm. Students who don't pause spiral into worse states. Students who pause maintain their footing.</aside>
+    <aside class="notes">The 30-minute checkpoint is the rhythm. Failing to pause leads to spiraling into worse states. Pausing maintains your footing.</aside>
 </section>
 
 <section>
@@ -178,7 +178,7 @@ end</code></pre>
     <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
         <strong>Grading philosophy:</strong> graded on <em>working-ness</em>, not ambition. A smaller design that fully works beats a grander one that half-works. Integration discipline over feature count.
     </div>
-    <aside class="notes">Explicit grading philosophy — discipline &gt; ambition. Students often misallocate effort chasing features when basic function is uncertain. Lead with working.</aside>
+    <aside class="notes">Explicit philosophy — discipline &gt; ambition. It's easy to misallocate effort chasing features when basic function is uncertain. Lead with working.</aside>
 </section>
 
 <section>

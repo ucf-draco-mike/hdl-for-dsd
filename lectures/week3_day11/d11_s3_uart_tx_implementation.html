@@ -127,7 +127,7 @@ o_tx    &lt;= r_shift[0];              // output the current LSB</code></pre>
     <div class="fragment callout-warning" style="font-size:0.68em;">
         <strong>Timing subtlety:</strong> <code>o_tx</code> reads <em>before</em> the shift (note the nonblocking assignment semantics — both happen at the next clock edge). So on entry to each <code>S_DATA</code> cycle, the current LSB is already on the line; the shift happens just as we exit that cycle's baud count.
     </div>
-    <aside class="notes">Nonblocking assignment semantics are subtle. Both r_shift and o_tx update at the next clock edge from their previous values. The pattern is correct; worth walking students through once.</aside>
+    <aside class="notes">Nonblocking assignment semantics are subtle. Both r_shift and o_tx update at the next clock edge from their previous values. The pattern is correct; worth walking through once.</aside>
 </section>
 
 <section>
@@ -148,7 +148,7 @@ Cycles 36-39: o_tx = 1   (stop bit)
 Cycles 40+:   o_tx = 1   (idle)</code></pre>
         Total frame: 40 cycles = 10 bit-times × 4 cycles/bit. ✓
     </div>
-    <aside class="notes">Trace prediction forces students to understand LSB-first. Many get D0 vs D7 backward on the first try.</aside>
+    <aside class="notes">Trace prediction forces you to understand LSB-first. Many get D0 vs D7 backward on the first try.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

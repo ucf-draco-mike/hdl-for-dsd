@@ -58,7 +58,7 @@
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
         <strong>The receipt:</strong> Verilog <code>%</code> does not synthesize efficiently for non-power-of-2 moduli. You always write the comparator + conditional reset pattern explicitly. The synthesizer builds exactly what you wrote.
     </div>
-    <aside class="notes">Key reframe. Students who learned modular arithmetic in software expect <code>%</code> to work. In hardware, <code>%</code> by a non-power-of-2 synthesizes to a divider — expensive. Write the comparator explicitly.</aside>
+    <aside class="notes">Key reframe. Anyone who learned modular arithmetic in software expects <code>%</code> to work. In hardware, <code>%</code> by a non-power-of-2 synthesizes to a divider — expensive. Write the comparator explicitly.</aside>
 </section>
 
 <!-- I Do: modulo-N -->
@@ -114,7 +114,7 @@ endmodule</code></pre>
 end</code></pre>
         <strong>Priority:</strong> reset &gt; load &gt; count. This is the preload pattern used in timers and PWM period registers.
     </div>
-    <aside class="notes">60-second exercise. The priority chain is: reset highest, then load, then increment. Students sometimes swap reset and load — physical meaning matters, put reset first.</aside>
+    <aside class="notes">60-second exercise. The priority chain is: reset highest, then load, then increment. It's tempting to swap reset and load — physical meaning matters, put reset first.</aside>
 </section>
 
 <!-- LIVE DEMO -->
@@ -144,7 +144,7 @@ PASS: o_wrap pulses 1 cycle
             Add <code>o_count · o_wrap</code>. Count climbs 0, 1, ..., N-1. At N-1, <code>o_wrap</code> pulses high for exactly one cycle and count resets to 0. The sawtooth pattern is the signature of a modulo counter.
         </p>
     </div>
-    <aside class="notes">[Terminal] Run the modulo test. [GTKWave] Point to the sawtooth. The wrap pulse width of exactly 1 cycle is crucial — students occasionally write versions that stay high during the reset, which causes downstream cascading bugs.</aside>
+    <aside class="notes">[Terminal] Run the modulo test. [GTKWave] Point to the sawtooth. The wrap pulse width of exactly 1 cycle is crucial — it's easy to write versions that stay high during the reset, which causes downstream cascading bugs.</aside>
 </section>
 
 <!-- TOOL OUTPUT -->

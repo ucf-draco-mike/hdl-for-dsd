@@ -58,7 +58,7 @@
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
         <strong>Consequence:</strong> The clock enable pattern <code>if (en) q &lt;= d;</code> with no <code>else</code> is idiomatic, correct, and produces an <code>SB_DFFE</code> (D-flop with clock enable) on iCE40. Would be catastrophic in combinational; is the right thing in sequential.
     </div>
-    <aside class="notes">Critical distinction from Topic 3. Latch inference only happens in combinational blocks. In sequential blocks, &ldquo;hold&rdquo; is the native behavior — that's literally what a flop does. This trips up students who over-apply the Topic 3 rule.</aside>
+    <aside class="notes">Critical distinction from Topic 3. Latch inference only happens in combinational blocks. In sequential blocks, &ldquo;hold&rdquo; is the native behavior — that's literally what a flop does. This trips up anyone who over-applies the Topic 3 rule.</aside>
 </section>
 
 <!-- I Do: sync reset -->
@@ -139,7 +139,7 @@ assign q = r_q;</code></pre>
     <div class="fragment callout" style="font-size:0.68em;">
         <strong>Synthesis target:</strong> 4× <code>SB_DFFE</code> cells (one per bit). Zero LUTs. Total area: 0.3% of iCE40 HX1K. This is the workhorse pattern you'll use constantly.
     </div>
-    <aside class="notes">60 seconds. Watch for students who forget the nonblocking. Watch for students who add an else with q &lt;= q — that's legal but unnecessary (and confuses synthesizers into sometimes not inferring SB_DFFE).</aside>
+    <aside class="notes">60 seconds. Don't forget the nonblocking. Avoid adding an else with q &lt;= q — that's legal but unnecessary (and confuses synthesizers into sometimes not inferring SB_DFFE).</aside>
 </section>
 
 <!-- LIVE DEMO -->

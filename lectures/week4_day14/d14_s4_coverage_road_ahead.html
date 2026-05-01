@@ -113,7 +113,7 @@ uart_cg cov_instance = new();</code></pre>
     <div class="fragment callout" style="font-size:0.68em;">
         <strong>Answer:</strong> Not ready. The 15% uncovered FSM transitions are the red flag — even though all states were reached, some paths between them never fired. These are typically error-handling transitions (timeout, overflow, reset-mid-frame). Start there: look at which transitions are missing, write tests that force them. <em>Missing transitions is where silicon bugs hide.</em> The 3% uncovered lines (if they're error branches) are probably the same story.
     </div>
-    <aside class="notes">Transition coverage &gt; state coverage in diagnostic power. &ldquo;We reached S_ERROR&rdquo; is fine; &ldquo;we reached S_ERROR from every predecessor&rdquo; is thorough. Students learn to look at transition coverage first.</aside>
+    <aside class="notes">Transition coverage &gt; state coverage in diagnostic power. &ldquo;We reached S_ERROR&rdquo; is fine; &ldquo;we reached S_ERROR from every predecessor&rdquo; is thorough. Look at transition coverage first.</aside>
 </section>
 
 <section>
@@ -125,7 +125,7 @@ uart_cg cov_instance = new();</code></pre>
         <p class="fragment"><strong>Open-source silicon</strong> — Skywater 130nm PDK, OpenROAD, OpenLane, Google's MPW shuttle program. You can now <em>tape out your own chip for free</em> (small area). This was impossible 5 years ago. Revolutionary for education and hobbyists.</p>
         <p class="fragment"><strong>AI-assisted design</strong> — not just verification (Topic 14.2) but RTL generation, debugging, floorplanning. Still maturing; watch closely.</p>
     </div>
-    <aside class="notes">Five trends. Students should know the vocabulary even if they won't touch each one immediately. Open-source silicon is genuinely new and exciting.</aside>
+    <aside class="notes">Five trends. Worth knowing the vocabulary even if you won't touch each one immediately. Open-source silicon is genuinely new and exciting.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">

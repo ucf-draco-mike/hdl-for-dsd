@@ -107,7 +107,7 @@
     <div class="fragment callout-warning" style="font-size: 0.78em; margin-top: 0.5em;">
         <strong>Why this matters:</strong> The &ldquo;one big <code>always</code> block&rdquo;
         instinct is the <strong>#1 source</strong> of inferred latches, race conditions,
-        and sim/synthesis mismatches in student FSMs. We'll see a real example in today's demo.
+        and sim/synthesis mismatches in early FSMs. We'll see a real example in today's demo.
     </div>
     <aside class="notes">
         [Read wrong model out loud] That instinct will produce code that looks reasonable,
@@ -142,8 +142,8 @@
         The formal notation on the bottom is what you'll see in digital logic textbooks —
         you don't need to memorize the Greek letters, but recognize the shape of the tuple.
         The sentence at the bottom is worth memorizing. State equals memory.
-        When a student asks me &ldquo;how do I decide what the states should be?&rdquo;
-        my answer is always: list everything the circuit needs to remember about the past.
+        When you wonder &ldquo;how do I decide what the states should be?&rdquo;
+        the answer is always: list everything the circuit needs to remember about the past.
         Each distinct thing to remember is a state.
     </aside>
 </section>
@@ -247,10 +247,10 @@ o_green: 1  1  1  1  0  ?  ?  ?  ?  ?  ?  ?  ?</code></pre>
         &mdash; outputs follow state, not timer. That one-cycle latency is Moore's signature.
     </div>
     <aside class="notes">
-        [Leave the fragment hidden for 30-60 seconds. Students work in pairs.]
+        [Leave the fragment hidden for 30-60 seconds. Work in pairs if possible.]
         The critical insight here is the one-cycle latency. Timer fires at cycle 3,
-        state changes at cycle 4. That's the registered output. If students wrote
-        &ldquo;state changes at cycle 3,&rdquo; they're thinking combinationally — reset that instinct now.
+        state changes at cycle 4. That's the registered output. If you wrote
+        &ldquo;state changes at cycle 3,&rdquo; you're thinking combinationally — reset that instinct now.
     </aside>
 </section>
 
@@ -272,7 +272,7 @@ o_green: 1  1  1  1  0  ?  ?  ?  ?  ?  ?  ?  ?</code></pre>
         <code>S_RED</code> (4), repeating.
     </div>
     <aside class="notes">
-        Real 60-second pause. Students predict, THEN demo.
+        Real 60-second pause. Predict, THEN demo.
         The prediction-first habit is the single most important learning behavior
         in this course. A correct prediction confirms understanding.
         A wrong prediction is diagnostic — it pinpoints exactly what's broken in
@@ -323,9 +323,9 @@ make stat      # yosys synth_ice40 + stat</code></pre>
         check your reset — r_state needs to come out of reset in S_GREEN (or whatever
         your initial state is), not in X.
         [SWITCH TO GTKWAVE] First move always: right-click r_state, Data Format, ASCII.
-        Without it, students see 0/1/2 and lose the story. With it, the FSM narrates itself.
+        Without it, you see 0/1/2 and lose the story. With it, the FSM narrates itself.
         [If time permits] Run make stat. We'll look at that output on the next slide.
-        [WATCH FOR] One common failure: students forget the &ldquo;default: next = r_state&rdquo;
+        [WATCH FOR] One common failure: forgetting the &ldquo;default: next = r_state&rdquo;
         line in Block 2, and Yosys infers a latch. The tell is an extra LUT in stat output.
     </aside>
 </section>
@@ -372,13 +372,13 @@ make stat      # yosys synth_ice40 + stat</code></pre>
         This slide is the bridge between &ldquo;I wrote Verilog&rdquo; and &ldquo;there is
         physical hardware on a chip.&rdquo; Two flip-flops. Six LUTs. That's the entire
         traffic light controller.
-        [Key teaching moment] Every student should be able to predict flop count from
+        [Key teaching moment] You should be able to predict flop count from
         state count BEFORE running synthesis. That's the mental-model check.
         If you predict 2 and Yosys builds 2, your abstraction is intact.
         If you predict 2 and Yosys builds 5, either the tool used one-hot (fine, not wrong)
         or you've inferred latches (bad, needs fixing).
-        [Generation command at bottom] Students can regenerate the schematic themselves.
-        Encourage them to — seeing their own code become gates is the single biggest
+        [Generation command at bottom] You can regenerate the schematic yourself.
+        Do it — seeing your own code become gates is the single biggest
         &ldquo;oh, this is real hardware&rdquo; moment of the course.
     </aside>
 </section>
