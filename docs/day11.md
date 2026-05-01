@@ -60,6 +60,18 @@
 - Show the provided architecture diagram (distributed as a handout or on screen)
 - Terminal setup: 115200 baud, 8N1, no flow control
 
+### Live Demo Code
+
+| Slide | Live Demo title | Runnable example |
+|-------|-----------------|------------------|
+| `d11_s1` | Real UART Trace on a Scope        | `lecture_examples/week3_day11/d11_s3_ex1/` |
+| `d11_s2` | FSM Trace Walkthrough             | `lecture_examples/week3_day11/d11_s3_ex1/` |
+| `d11_s3` | Build UART TX from Scratch        | `lecture_examples/week3_day11/d11_s3_ex1/` |
+| `d11_s4` | Your Go Board Says HELLO          | `lecture_examples/week3_day11/d11_s4_ex2/` (`day11_ex02_hello_emitter.v` + `rx_display.py`) |
+
+For the canonical Live Demo registry covering every cue in the course, see
+[`live_demos.md`](live_demos.md).
+
 ---
 
 ## Lab Exercises

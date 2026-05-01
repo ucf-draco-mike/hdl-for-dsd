@@ -77,6 +77,31 @@
 - Fix the issues, run it, compare to a hand-written version
 - **Key lesson:** AI generates the 80% scaffolding; you provide the 20% domain expertise
 
+### Live Demo Code
+
+All four Day-6 testbench-anatomy demos converge on a single example dir
+(`lecture_examples/week2_day06/d06_s1_ex1/`) so the slides can talk about a
+single evolving testbench. The dir ships every variant the demos reference:
+
+| Slide  | Title                                           | Files (alongside `adder.v`)                |
+|--------|-------------------------------------------------|--------------------------------------------|
+| `d06_s1` | Build a Testbench from Scratch               | `tb_adder.v`                               |
+| `d06_s2` | Convert "Print" Testbench to Self-Checking   | `tb_adder_before.v`, `tb_adder_after.v`    |
+| `d06_s3` | Refactor a Real Testbench (tasks)            | `tb_before.v`, `tb_after.v`                |
+| `d06_s4` | 1000-Vector Adder Test (file-driven)         | `gen_vectors.py`, `vectors.hex`, `tb_adder_file.v` |
+
+Quick recipe:
+```bash
+cd lecture_examples/week2_day06/d06_s1_ex1/
+make sim                       # default = tb_adder_after.v
+make sim TB=tb_adder.v         # the s1 "from scratch" snapshot
+make sim TB=tb_after.v         # the s3 task-refactored snapshot
+make sim_file                  # generates vectors.hex, runs the file TB
+```
+
+For the canonical Live Demo registry covering every cue in the course, see
+[`live_demos.md`](live_demos.md).
+
 ---
 
 ## Lab Exercises

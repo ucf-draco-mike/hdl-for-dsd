@@ -348,10 +348,13 @@ assign y2 = ~a | ~b;     // same gate!</span></code></pre>
     <div class="demo-label">▶ LIVE DEMO</div>
     <h2>Gates in Verilog</h2>
     <p style="margin-top:0.5em;">Gate-level Verilog → <code>assign</code> equivalents</p>
-    <p style="font-size:0.65em;color:#888;margin-top:2em;">
+    <p style="font-size:0.65em;color:#888;margin-top:0.6em;">
+        <code style="color:#FFC904;">lecture_examples/week1_day01/d01_s4_ex3/</code>
+    </p>
+    <p style="font-size:0.65em;color:#888;margin-top:1.4em;">
         AND → OR → XOR → compound expression → verify identical output
     </p>
-    <aside class="notes">[SWITCH TO EDITOR] Quick demo: let's write each gate as an assign statement, then show a compound expression. AND, OR, XOR, a sum-of-products. The point is to see how the Verilog maps directly to logic you already know. [KEEP IT FAST — 60–90 seconds]</aside>
+    <aside class="notes">[SWITCH TO EDITOR — `cd lecture_examples/week1_day01/d01_s4_ex3/`] Quick demo: open day01_ex03_gates_demo.v. Walk through each assign statement — AND, OR, XOR, sum-of-products, DeMorgan equivalent. Run `make sim` to print the truth table and confirm SOP === DeMorgan. Then `make stat` to show that the synthesizer reduces both compound expressions to one LUT4. [KEEP IT FAST — 60–90 seconds]</aside>
 </section>
 
 <!-- COMBINATIONAL VS SEQUENTIAL PREVIEW -->
