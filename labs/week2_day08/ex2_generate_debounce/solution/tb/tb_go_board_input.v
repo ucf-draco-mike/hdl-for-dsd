@@ -1,4 +1,4 @@
-// Minimal testbench for go_board_input — uses a small CLK_FREQ override so
+// Minimal testbench for go_board_input -- uses a small CLK_FREQ override so
 // debounce settles in a viewable simulation window.
 `timescale 1ns/1ps
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_vector_ops.v — Self-checking testbench for vector_ops
+// tb_vector_ops.v -- Self-checking testbench for vector_ops
 //
 // Note: replicate uses i_data[0]; concat/sign_ext use nibble inputs.
 // We exercise two stimulus sets so every output is observed both ways.
@@ -28,14 +28,14 @@ module tb_vector_ops;
     integer fails = 0;
     task expect_eq8(input [7:0] exp, input [7:0] act, input [255:0] name);
         if (act !== exp) begin
-            $display("FAIL: %0s — expected 8'h%02h, got 8'h%02h", name, exp, act);
+            $display("FAIL: %0s -- expected 8'h%02h, got 8'h%02h", name, exp, act);
             fails = fails + 1;
         end else
             $display("PASS: %0s = 8'h%02h", name, act);
     endtask
     task expect_eq4(input [3:0] exp, input [3:0] act, input [255:0] name);
         if (act !== exp) begin
-            $display("FAIL: %0s — expected 4'h%01h, got 4'h%01h", name, exp, act);
+            $display("FAIL: %0s -- expected 4'h%01h, got 4'h%01h", name, exp, act);
             fails = fails + 1;
         end else
             $display("PASS: %0s = 4'h%01h", name, act);

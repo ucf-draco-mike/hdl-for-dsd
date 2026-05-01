@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_counter.v — Counter Testbench (Starter)
+// tb_counter.v -- Counter Testbench (Starter)
 // Day 6, Exercise 3
 // =============================================================================
 
@@ -45,25 +45,25 @@ module tb_counter;
 
         $display("=== Counter Testbench ===");
 
-        // ---- TODO: Test 1 — Reset ----
+        // ---- TODO: Test 1 -- Reset ----
         // Apply reset, verify count=0 and zero=1
         reset = 1; enable = 0;
         repeat (3) @(posedge clk);
         // check_count(4'h0, 1'b1, "Reset");
 
-        // ---- TODO: Test 2 — Count up sequence ----
-        // Release reset, enable counting, verify 0→1→2→...
+        // ---- TODO: Test 2 -- Count up sequence ----
+        // Release reset, enable counting, verify 0->1->2->...
         reset = 0; enable = 1;
         // check_count(4'h1, 1'b0, "Count to 1");
         // check_count(4'h2, 1'b0, "Count to 2");
 
-        // ---- TODO: Test 3 — Enable hold ----
+        // ---- TODO: Test 3 -- Enable hold ----
         // Disable enable for 5 cycles, verify count holds
         enable = 0;
         repeat (5) @(posedge clk); #1;
         // Verify count hasn't changed
 
-        // ---- TODO: Test 4 — Rollover from F to 0 ----
+        // ---- TODO: Test 4 -- Rollover from F to 0 ----
         // Enable counting, run until rollover
         // Reset and manually count to 4'hF, then one more
 

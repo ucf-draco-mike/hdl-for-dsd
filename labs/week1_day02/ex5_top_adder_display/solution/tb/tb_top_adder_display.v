@@ -1,4 +1,4 @@
-// Minimal testbench for top_adder_display — sweeps all 16 input combinations
+// Minimal testbench for top_adder_display -- sweeps all 16 input combinations
 // and dumps the 7-seg outputs to a VCD.
 `timescale 1ns/1ps
 

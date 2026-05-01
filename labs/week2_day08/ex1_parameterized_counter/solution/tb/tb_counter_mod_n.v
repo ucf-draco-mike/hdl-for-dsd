@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_counter_mod_n.v — Parameterized Counter Testbench (Solution)
+// tb_counter_mod_n.v -- Parameterized Counter Testbench (Solution)
 // Day 8, Exercise 1
 // =============================================================================
 
@@ -36,7 +36,7 @@ module tb_counter_mod_n;
         test_count = test_count + 1;
         if (actual !== expected) begin
             fail_count = fail_count + 1;
-            $display("FAIL: %0s — expected %0d, got %0d", label, expected, actual);
+            $display("FAIL: %0s -- expected %0d, got %0d", label, expected, actual);
         end else
             $display("PASS: %0s = %0d", label, actual);
     end

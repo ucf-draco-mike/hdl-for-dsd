@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_adder_widths.v — Smoke testbench for the four-width adders
+// tb_adder_widths.v -- Smoke testbench for the four-width adders
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -16,19 +16,19 @@ module tb_adder_widths;
 
     integer fails = 0;
     task check5(input [4:0]  exp, input [4:0]  act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
     task check9(input [8:0]  exp, input [8:0]  act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
     task check17(input [16:0] exp, input [16:0] act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
     task check33(input [32:0] exp, input [32:0] act, input [255:0] name);
-        if (act !== exp) begin $display("FAIL: %0s — exp %h got %h", name, exp, act); fails = fails + 1; end
+        if (act !== exp) begin $display("FAIL: %0s -- exp %h got %h", name, exp, act); fails = fails + 1; end
         else                  $display("PASS: %0s = %h", name, act);
     endtask
 

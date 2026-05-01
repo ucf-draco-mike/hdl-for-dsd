@@ -1,4 +1,4 @@
-// Minimal testbench for led_chase — drives clk, exercises reset and direction.
+// Minimal testbench for led_chase -- drives clk, exercises reset and direction.
 `timescale 1ns/1ps
 
 module tb_led_chase;

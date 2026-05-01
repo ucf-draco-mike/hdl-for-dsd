@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_d_flip_flop.v — Smoke testbench for d_flip_flop with sync reset + enable
+// tb_d_flip_flop.v -- Smoke testbench for d_flip_flop with sync reset + enable
 // =============================================================================
 `timescale 1ns/1ps
 

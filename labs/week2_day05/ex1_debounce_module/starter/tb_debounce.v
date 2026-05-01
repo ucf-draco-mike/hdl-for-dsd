@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_debounce.v — Testbench for Debounce Module (Starter)
+// tb_debounce.v -- Testbench for Debounce Module (Starter)
 // Day 5, Exercise 1
 // =============================================================================
 
@@ -45,7 +45,7 @@ module tb_debounce;
 
 
         // ---- TODO: Verify ----
-        // Count transitions on clean — should be exactly 2
+        // Count transitions on clean -- should be exactly 2
         // (one rising edge for press, one rising edge for release)
 
         $display("=== Debounce simulation complete ===");

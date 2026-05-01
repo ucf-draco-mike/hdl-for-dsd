@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_counter_mod_n.v — Parameterized Counter Testbench (Starter)
+// tb_counter_mod_n.v -- Parameterized Counter Testbench (Starter)
 // Day 8, Exercise 1
 // =============================================================================
 
@@ -56,7 +56,7 @@ module tb_counter_mod_n;
 
         // ---- TODO: Test N=60 counter ----
 
-        // ---- TODO: Enable test — disable for 5 cycles, verify hold ----
+        // ---- TODO: Enable test -- disable for 5 cycles, verify hold ----
 
         $display("");
         $display("========================================");

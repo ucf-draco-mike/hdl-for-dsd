@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_rx.v — extracted from day12_ex01_uart_rx.v
+// tb_uart_rx.v -- extracted from day12_ex01_uart_rx.v
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -58,10 +58,10 @@ module tb_uart_rx;
         // Wait for valid pulse (with timeout)
         repeat (CLKS_PER_BIT * 12) @(posedge clk);
         if (rx_data !== expected) begin
-            $display("FAIL: %0s — expected %h, got %h", name, expected, rx_data);
+            $display("FAIL: %0s -- expected %h, got %h", name, expected, rx_data);
             fail_count = fail_count + 1;
         end else
-            $display("PASS: %0s — received %h ('%c')", name, rx_data, rx_data);
+            $display("PASS: %0s -- received %h ('%c')", name, rx_data, rx_data);
     end
     endtask
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_synchronizer.v — Smoke testbench for the 2-FF synchronizer
+// tb_synchronizer.v -- Smoke testbench for the 2-FF synchronizer
 // Confirms 2-cycle latency from input change to synced output.
 // =============================================================================
 `timescale 1ns/1ps
@@ -17,7 +17,7 @@ module tb_synchronizer;
     integer fails = 0;
     task check(input act, input exp, input [255:0] name);
         if (act !== exp) begin
-            $display("FAIL: %0s — expected %b, got %b", name, exp, act);
+            $display("FAIL: %0s -- expected %b, got %b", name, exp, act);
             fails = fails + 1;
         end else
             $display("PASS: %0s = %b", name, act);

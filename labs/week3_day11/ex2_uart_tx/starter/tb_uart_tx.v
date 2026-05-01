@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_tx.v — Protocol-Aware UART TX Testbench
+// tb_uart_tx.v -- Protocol-Aware UART TX Testbench
 // Day 11, Exercise 2
 // =============================================================================
 
@@ -12,7 +12,7 @@ module tb_uart_tx;
     wire       tx, busy;
 
     localparam CLK_FREQ  = 1_000;  // 1 kHz for fast simulation
-    localparam BAUD_RATE = 100;    // 100 baud → 10 clocks per bit
+    localparam BAUD_RATE = 100;    // 100 baud -> 10 clocks per bit
     localparam CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;
     localparam CLK_PERIOD   = 500; // 500ns for 1 kHz
 

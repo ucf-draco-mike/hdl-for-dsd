@@ -1,4 +1,4 @@
-// Minimal testbench for vector_ops — sweeps all 16 input combinations.
+// Minimal testbench for vector_ops -- sweeps all 16 input combinations.
 `timescale 1ns/1ps
 
 module tb_vector_ops;

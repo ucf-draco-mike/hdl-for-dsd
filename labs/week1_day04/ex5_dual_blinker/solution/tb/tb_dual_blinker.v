@@ -1,4 +1,4 @@
-// Minimal testbench for dual_blinker — drives a clock and dumps outputs.
+// Minimal testbench for dual_blinker -- drives a clock and dumps outputs.
 `timescale 1ns/1ps
 
 module tb_dual_blinker;

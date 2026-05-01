@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_hex_file.v — File-Driven Hex-to-7seg Testbench (Solution)
+// tb_hex_file.v -- File-Driven Hex-to-7seg Testbench (Solution)
 // Day 6, Exercise 4 (Stretch)
 // =============================================================================
 

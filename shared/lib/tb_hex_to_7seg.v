@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_hex_to_7seg.v — Self-checking testbench for hex_to_7seg
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_hex_to_7seg.v -- Self-checking testbench for hex_to_7seg
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 module tb_hex_to_7seg;

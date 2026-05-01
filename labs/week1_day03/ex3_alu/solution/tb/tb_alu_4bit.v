@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_alu_4bit.v — Baseline TB for alu_4bit — sampled vectors (Day 3, Ex 3)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_alu_4bit.v -- Baseline TB for alu_4bit -- sampled vectors (Day 3, Ex 3)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 

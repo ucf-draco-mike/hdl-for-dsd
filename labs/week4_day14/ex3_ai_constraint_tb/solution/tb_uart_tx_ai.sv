@@ -1,4 +1,4 @@
-// tb_uart_tx_ai.sv — AI-Generated Constrained-Random Testbench (Reference)
+// tb_uart_tx_ai.sv -- AI-Generated Constrained-Random Testbench (Reference)
 // ============================================================================
 // This is an EXAMPLE of what a corrected AI-generated TB might look like.
 // Students should produce their own version via the prompt workflow.
@@ -33,7 +33,7 @@ module tb_uart_tx_ai;
         .o_done(tx_done)
     );
 
-    // ── Bit sampler: capture tx_out at mid-bit ──────────────────────────
+    // -- Bit sampler: capture tx_out at mid-bit --------------------------
     task automatic sample_byte(output [7:0] sampled);
         integer i;
         begin
@@ -58,7 +58,7 @@ module tb_uart_tx_ai;
         end
     endtask
 
-    // ── Stimulus ────────────────────────────────────────────────────────
+    // -- Stimulus --------------------------------------------------------
     integer seed, pass_count, fail_count, test_num;
     reg [7:0] expected, received;
 

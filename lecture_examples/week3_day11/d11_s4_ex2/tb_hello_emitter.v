@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_hello_emitter.v — sanity testbench for the d11_s4 HELLO demo
+// tb_hello_emitter.v -- sanity testbench for the d11_s4 HELLO demo
 // =============================================================================
 //   Drives `hello_emitter` long enough to capture the first complete
 //   "HELLO\r\n" frame on `o_uart_tx`. A bit-banged decoder watches the line,
@@ -44,7 +44,7 @@ module tb_hello_emitter;
         $dumpfile("tb_hello_emitter.vcd");
         $dumpvars(0, tb_hello_emitter);
 
-        // Skip the initial high (idle) — wait for the first start bit.
+        // Skip the initial high (idle) -- wait for the first start bit.
         forever begin
             @(negedge tx);
             // Move to centre of start bit, then advance to centre of bit 0.
@@ -71,7 +71,7 @@ module tb_hello_emitter;
     integer fails = 0;
     integer i;
     initial begin : watchdog
-        // 7 bytes × (1 start + 8 data + 1 stop) bits × BIT_NS, plus slack.
+        // 7 bytes x (1 start + 8 data + 1 stop) bits x BIT_NS, plus slack.
         #(7 * 10 * BIT_NS + 4 * BIT_NS);
 
         if (rx_idx < 7) begin

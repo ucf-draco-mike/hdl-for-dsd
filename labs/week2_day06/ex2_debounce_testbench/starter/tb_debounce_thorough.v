@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_debounce_thorough.v — Thorough Debounce Testbench (Starter)
+// tb_debounce_thorough.v -- Thorough Debounce Testbench (Starter)
 // Day 6, Exercise 2
 // =============================================================================
 
@@ -32,20 +32,20 @@ module tb_debounce_thorough;
         bouncy = 1;
         wait_clks(10);
 
-        // ---- TODO: Scenario 1 — Clean press ----
+        // ---- TODO: Scenario 1 -- Clean press ----
         // Set bouncy=0, wait THRESHOLD + sync latency cycles
         // Verify clean transitions to 0
 
-        // ---- TODO: Scenario 2 — Bounce rejection ----
+        // ---- TODO: Scenario 2 -- Bounce rejection ----
         // First release to 1, then toggle 6+ times within threshold
         // Then settle at 0. Verify clean transitions only once
 
-        // ---- TODO: Scenario 3 — Glitch rejection ----
+        // ---- TODO: Scenario 3 -- Glitch rejection ----
         // Release bouncy=1, wait for clean=1
         // Then glitch: bouncy=0 for fewer than THRESHOLD clocks, bouncy=1
         // Verify clean never goes to 0
 
-        // ---- TODO: Scenario 4 — Clean release ----
+        // ---- TODO: Scenario 4 -- Clean release ----
         // Ensure a stable press (clean=0), then release bouncy=1
         // Wait and verify clean returns to 1
 

@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_priority_encoder.v — Baseline TB for priority_encoder — exhaustive (Day 3, Ex 2)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_priority_encoder.v -- Baseline TB for priority_encoder -- exhaustive (Day 3, Ex 2)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 `timescale 1ns/1ps
 

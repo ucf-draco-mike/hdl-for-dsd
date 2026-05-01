@@ -1,4 +1,4 @@
-// Minimal testbench for led_on — drives no inputs (none exist),
+// Minimal testbench for led_on -- drives no inputs (none exist),
 // observes the constant output, and dumps a VCD for waveform viewing.
 `timescale 1ns/1ps
 

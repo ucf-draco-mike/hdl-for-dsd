@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_counter_mod_n.v — Self-checking testbench for counter_mod_n
+// tb_counter_mod_n.v -- Self-checking testbench for counter_mod_n
 // =============================================================================
 `timescale 1ns/1ps
 module tb_counter_mod_n;
@@ -26,7 +26,7 @@ module tb_counter_mod_n;
         input [8*40-1:0] name;
         @(posedge i_clk); #1;
         if (o_count !== expected) begin
-            $display("FAIL: %0s — expected %0d got %0d", name, expected, o_count);
+            $display("FAIL: %0s -- expected %0d got %0d", name, expected, o_count);
             fail_count = fail_count + 1;
         end else begin
             $display("PASS: %0s (count=%0d)", name, o_count);
@@ -73,7 +73,7 @@ module tb_counter_mod_n;
         @(posedge i_clk); #1;
         i_reset = 0;
         if (o_count !== 0) begin
-            $display("FAIL: Reset did not clear counter — got %0d", o_count);
+            $display("FAIL: Reset did not clear counter -- got %0d", o_count);
             fail_count = fail_count + 1;
         end else begin
             $display("PASS: Synchronous reset works");

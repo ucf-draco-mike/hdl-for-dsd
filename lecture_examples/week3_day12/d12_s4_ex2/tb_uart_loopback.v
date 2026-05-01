@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_loopback.v — Compile/elaboration smoke test for uart_loopback.
+// tb_uart_loopback.v -- Compile/elaboration smoke test for uart_loopback.
 //
 // The full DUT (uart_rx + uart_tx + 7-seg) needs hardware FTDI to exercise
 // end-to-end. This TB just confirms the integration synthesizes/elaborates,

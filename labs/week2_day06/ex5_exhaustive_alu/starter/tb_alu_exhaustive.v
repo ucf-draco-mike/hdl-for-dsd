@@ -1,8 +1,8 @@
 // =============================================================================
-// tb_alu_exhaustive.v — Exhaustive ALU Test (Starter)
+// tb_alu_exhaustive.v -- Exhaustive ALU Test (Starter)
 // Day 6, Exercise 5 (Stretch)
 // =============================================================================
-// Tests all 1024 input combinations: 16 × 16 × 4 opcodes
+// Tests all 1024 input combinations: 16 x 16 x 4 opcodes
 
 `timescale 1ns / 1ps
 

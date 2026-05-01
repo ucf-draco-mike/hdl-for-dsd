@@ -1,4 +1,4 @@
-// tb_ram_sp.v — Testbench for single-port synchronous RAM
+// tb_ram_sp.v -- Testbench for single-port synchronous RAM
 `timescale 1ns / 1ps
 
 module tb_ram_sp;
@@ -37,7 +37,7 @@ module tb_ram_sp;
         we = 0; addr = 0; wdata = 0;
         #100;
 
-        // ── Test 1: Write XOR pattern to all 256 addresses ──
+        // -- Test 1: Write XOR pattern to all 256 addresses --
         // TODO: Set we=1, loop i from 0 to 255
         //       addr = i, wdata = i ^ 8'hA5
         //       One @(posedge clk); #1; per iteration
@@ -45,7 +45,7 @@ module tb_ram_sp;
         //
         // ---- YOUR CODE HERE ----
 
-        // ── Test 2: Read back and verify all 256 addresses ──
+        // -- Test 2: Read back and verify all 256 addresses --
         // TODO: Loop i from 0 to 255
         //       Set addr = i
         //       Wait @(posedge clk); #1;  <-- THIS IS THE KEY!
@@ -54,7 +54,7 @@ module tb_ram_sp;
         //
         // ---- YOUR CODE HERE ----
 
-        // ── Test 3: Overwrite and verify ──
+        // -- Test 3: Overwrite and verify --
         // TODO: Write a different pattern (e.g., i ^ 8'h5A) to
         //       addresses 0-15 only, then verify those changed
         //       while addresses 16+ still have old pattern.

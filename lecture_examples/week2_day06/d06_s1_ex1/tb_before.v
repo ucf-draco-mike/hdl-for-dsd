@@ -1,8 +1,8 @@
 // =============================================================================
-// tb_before.v — d06_s3 demo, "BEFORE" snapshot
+// tb_before.v -- d06_s3 demo, "BEFORE" snapshot
 // =============================================================================
 //   Monolithic testbench, no tasks. 12 cases inlined, each with its own
-//   stimulus block + check. Long, repetitive, hard to extend — exactly the
+//   stimulus block + check. Long, repetitive, hard to extend -- exactly the
 //   pain point Mike refactors away in tb_after.v during d06_s3.
 // =============================================================================
 `timescale 1ns/1ps

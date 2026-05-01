@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_baud_gen.v — Self-checking testbench for baud_gen
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_baud_gen.v -- Self-checking testbench for baud_gen
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 // Verifies:
 //   1. Tick occurs at the expected period (CLK_FREQ / BAUD_RATE cycles)
@@ -14,7 +14,7 @@ module tb_baud_gen;
 
     // Use small values so simulation completes quickly
     parameter CLK_FREQ  = 1000;     // 1 kHz "clock"
-    parameter BAUD_RATE = 100;      // 100 baud → expect tick every 10 cycles
+    parameter BAUD_RATE = 100;      // 100 baud -> expect tick every 10 cycles
     parameter CLK_PERIOD = 1_000_000_000 / CLK_FREQ;  // 1 ms = 1_000_000 ns
     parameter EXPECTED_PERIOD = CLK_FREQ / BAUD_RATE;  // 10 cycles
 

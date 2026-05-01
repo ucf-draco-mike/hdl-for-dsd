@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_pattern_detector.v — Pattern Detector FSM Testbench (Solution)
+// tb_pattern_detector.v -- Pattern Detector FSM Testbench (Solution)
 // Day 7, Exercise 2
 // =============================================================================
 
@@ -46,7 +46,7 @@ module tb_pattern_detector;
         #1;
         if (progress !== exp_progress || detected !== exp_detected) begin
             fail_count = fail_count + 1;
-            $display("FAIL: %0s — prog=%b det=%b (exp prog=%b det=%b)",
+            $display("FAIL: %0s -- prog=%b det=%b (exp prog=%b det=%b)",
                      label, progress, detected, exp_progress, exp_detected);
         end else begin
             $display("PASS: %0s", label);

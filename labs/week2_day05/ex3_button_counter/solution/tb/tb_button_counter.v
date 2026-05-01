@@ -1,4 +1,4 @@
-// Minimal testbench for button_counter — drives clk and toggles count button.
+// Minimal testbench for button_counter -- drives clk and toggles count button.
 // Note: the debounce stage requires hundreds of thousands of clocks to settle,
 // so this stub mainly produces a viewable VCD rather than verifying counts.
 `timescale 1ns/1ps

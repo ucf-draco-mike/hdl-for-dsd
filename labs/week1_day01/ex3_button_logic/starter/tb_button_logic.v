@@ -1,6 +1,6 @@
 // =============================================================================
-// tb_button_logic.v — Baseline TB for button_logic (Day 1, Ex 3)
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// tb_button_logic.v -- Baseline TB for button_logic (Day 1, Ex 3)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 // Exhaustively tests all 16 switch combinations for AND, OR, XOR, NOT outputs.
 `timescale 1ns/1ps

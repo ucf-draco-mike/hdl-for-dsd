@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_tx_sv.sv — Smoke testbench for uart_tx_sv
+// tb_uart_tx_sv.sv -- Smoke testbench for uart_tx_sv
 // SystemVerilog version of the UART TX smoke test.
 // Assumes -DSIMULATION (CLKS_PER_BIT = 10).
 // =============================================================================

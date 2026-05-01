@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_rx.v — Self-checking testbench for uart_rx
+// tb_uart_rx.v -- Self-checking testbench for uart_rx
 // =============================================================================
 `timescale 1ns/1ps
 module tb_uart_rx;

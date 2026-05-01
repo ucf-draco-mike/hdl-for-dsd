@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_ram_sp.v — extracted from day09_ex02_ram_sp.v
+// tb_ram_sp.v -- extracted from day09_ex02_ram_sp.v
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -24,7 +24,7 @@ module tb_ram_sp;
     begin
         test_count = test_count + 1;
         if (rdata !== expected) begin
-            $display("FAIL: %0s — expected %h, got %h", name, expected, rdata);
+            $display("FAIL: %0s -- expected %h, got %h", name, expected, rdata);
             fail_count = fail_count + 1;
         end else
             $display("PASS: %0s = %h", name, rdata);

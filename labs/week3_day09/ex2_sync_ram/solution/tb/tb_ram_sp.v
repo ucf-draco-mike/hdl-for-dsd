@@ -1,4 +1,4 @@
-// tb_ram_sp.v — Testbench for single-port synchronous RAM (SOLUTION)
+// tb_ram_sp.v -- Testbench for single-port synchronous RAM (SOLUTION)
 `timescale 1ns / 1ps
 
 module tb_ram_sp;

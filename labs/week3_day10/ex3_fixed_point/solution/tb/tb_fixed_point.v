@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_fixed_point.v — Testbench for Q4.4 Fixed-Point Arithmetic
+// tb_fixed_point.v -- Testbench for Q4.4 Fixed-Point Arithmetic
 // Day 10, Exercise 3
 // =============================================================================
 `timescale 1ns/1ps
@@ -61,15 +61,15 @@ module tb_fixed_point;
         // 1.0  = 16  = 8'h10
         // 0.5  = 8   = 8'h08
         // 4.25 = 68  = 8'h44
-        // 7.5  → int part = 7
+        // 7.5  -> int part = 7
 
-        test_fixed(8'h28, 8'h30, 4'd7);   // 2.5 * 3.0 = 7.5  → int 7
-        test_fixed(8'h10, 8'h10, 4'd1);   // 1.0 * 1.0 = 1.0  → int 1
-        test_fixed(8'h20, 8'h20, 4'd4);   // 2.0 * 2.0 = 4.0  → int 4
-        test_fixed(8'h30, 8'h10, 4'd3);   // 3.0 * 1.0 = 3.0  → int 3
-        test_fixed(8'h08, 8'h08, 4'd0);   // 0.5 * 0.5 = 0.25 → int 0
-        test_fixed(8'h44, 8'h20, 4'd8);   // 4.25 * 2.0 = 8.5 → int 8
-        test_fixed(8'h00, 8'hFF, 4'd0);   // 0.0 * max  = 0   → int 0
+        test_fixed(8'h28, 8'h30, 4'd7);   // 2.5 * 3.0 = 7.5  -> int 7
+        test_fixed(8'h10, 8'h10, 4'd1);   // 1.0 * 1.0 = 1.0  -> int 1
+        test_fixed(8'h20, 8'h20, 4'd4);   // 2.0 * 2.0 = 4.0  -> int 4
+        test_fixed(8'h30, 8'h10, 4'd3);   // 3.0 * 1.0 = 3.0  -> int 3
+        test_fixed(8'h08, 8'h08, 4'd0);   // 0.5 * 0.5 = 0.25 -> int 0
+        test_fixed(8'h44, 8'h20, 4'd8);   // 4.25 * 2.0 = 8.5 -> int 8
+        test_fixed(8'h00, 8'hFF, 4'd0);   // 0.0 * max  = 0   -> int 0
 
         $display("");
         $display("========================================");

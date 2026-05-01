@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_counter.v — Counter Testbench (Solution)
+// tb_counter.v -- Counter Testbench (Solution)
 // Day 6, Exercise 3
 // =============================================================================
 
@@ -74,7 +74,7 @@ module tb_counter;
         end else
             $display("PASS Hold 5cyc: count=5 after 5 disabled cycles");
 
-        // Test 4: Rollover F→0
+        // Test 4: Rollover F->0
         reset = 1;
         @(posedge clk); reset = 0; enable = 1;
         // Count from 0 to F (15 clocks), then one more for rollover

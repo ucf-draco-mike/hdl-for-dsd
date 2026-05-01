@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_adder_before.v — d06_s2 demo, "BEFORE" snapshot
+// tb_adder_before.v -- d06_s2 demo, "BEFORE" snapshot
 // =============================================================================
 //   Print-only testbench. Reader has to eyeball stdout / waveforms to
 //   decide whether the adder works. This is what s2 shows first; the

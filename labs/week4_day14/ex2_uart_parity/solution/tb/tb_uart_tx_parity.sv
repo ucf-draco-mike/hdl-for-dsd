@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_uart_tx_parity.sv — Testbench for UART TX with Parity
+// tb_uart_tx_parity.sv -- Testbench for UART TX with Parity
 // Day 14, Exercise 2
 // =============================================================================
 // Tests both PARITY_EN=0 and PARITY_EN=1 configurations.

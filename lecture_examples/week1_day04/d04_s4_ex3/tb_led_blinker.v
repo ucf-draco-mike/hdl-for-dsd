@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_led_blinker.v — Smoke testbench for led_blinker
+// tb_led_blinker.v -- Smoke testbench for led_blinker
 // We override the divider with a parameter-free probe by tapping internal
 // counter bits across many clocks and confirming the lower-bit LEDs toggle.
 // =============================================================================

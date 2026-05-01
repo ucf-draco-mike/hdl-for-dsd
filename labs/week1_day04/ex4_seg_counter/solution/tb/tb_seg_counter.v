@@ -1,4 +1,4 @@
-// Minimal testbench for seg_counter — drives a clock and observes outputs.
+// Minimal testbench for seg_counter -- drives a clock and observes outputs.
 // The internal divider counts to ~12.5M, so we shorten observation to a few
 // ticks of the raw clock just to produce a viewable waveform.
 `timescale 1ns/1ps

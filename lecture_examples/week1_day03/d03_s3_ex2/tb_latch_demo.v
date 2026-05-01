@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_latch_demo.v — Smoke testbench that EXPOSES the inferred latches.
+// tb_latch_demo.v -- Smoke testbench that EXPOSES the inferred latches.
 //
 // We drive the inputs that aren't covered by the if/case, then assert that
 // the output retains its previous value (the signature of a latch).
@@ -25,7 +25,7 @@ module tb_latch_demo;
         $dumpfile("tb_latch_demo.vcd");
         $dumpvars(0, tb_latch_demo);
 
-        // Bug 1: load bug1, then take sel low → bug1 should hold (latch)
+        // Bug 1: load bug1, then take sel low -> bug1 should hold (latch)
         a = 4'hA; b = 4'h5; sel = 1'b1; opcode = 2'b00; #5;
         hold = bug1;
         sel = 1'b0; a = 4'h0; #5;
@@ -34,7 +34,7 @@ module tb_latch_demo;
         end else
             $display("PASS: bug1 latched (held=%h)", bug1);
 
-        // Bug 2: load bug2 via opcode=00, then drive opcode=10 (uncovered) → hold
+        // Bug 2: load bug2 via opcode=00, then drive opcode=10 (uncovered) -> hold
         opcode = 2'b00; a = 4'hC; #5;
         hold = bug2;
         opcode = 2'b10; a = 4'h3; b = 4'h7; #5;

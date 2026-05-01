@@ -1,4 +1,4 @@
-// Minimal testbench for top_bcd — sweeps all 16 BCD inputs.
+// Minimal testbench for top_bcd -- sweeps all 16 BCD inputs.
 `timescale 1ns/1ps
 
 module tb_top_bcd;

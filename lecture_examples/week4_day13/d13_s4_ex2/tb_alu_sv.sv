@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_alu_sv.sv — extracted from day13_ex02_alu_sv.sv
+// tb_alu_sv.sv -- extracted from day13_ex02_alu_sv.sv
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -29,11 +29,11 @@ module tb_alu_sv;
         a = ea; b = eb; op = eop;
         #1;
         if (result !== exp_res || carry !== exp_carry) begin
-            $error("FAIL: %s — got %h c=%b, expected %h c=%b",
+            $error("FAIL: %s -- got %h c=%b, expected %h c=%b",
                    name, result, carry, exp_res, exp_carry);
             fail_count++;
         end else
-            $display("PASS: %s — %h (carry=%b, zero=%b)", name, result, carry, zero);
+            $display("PASS: %s -- %h (carry=%b, zero=%b)", name, result, carry, zero);
     end
     endtask
 

@@ -1,4 +1,4 @@
-// Minimal testbench for active_low_clean — sweeps all 16 input combinations.
+// Minimal testbench for active_low_clean -- sweeps all 16 input combinations.
 `timescale 1ns/1ps
 
 module tb_active_low_clean;

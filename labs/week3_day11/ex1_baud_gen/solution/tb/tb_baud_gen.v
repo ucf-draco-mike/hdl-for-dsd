@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_baud_gen.v — Testbench for Baud Rate Generator
+// tb_baud_gen.v -- Testbench for Baud Rate Generator
 // Day 11, Exercise 1
 // =============================================================================
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_led_driver.v — Smoke testbench for led_driver
+// tb_led_driver.v -- Smoke testbench for led_driver
 // =============================================================================
 `timescale 1ns/1ps
 
@@ -16,7 +16,7 @@ module tb_led_driver;
 
     task check(input exp, input act, input [255:0] name);
         if (act !== exp) begin
-            $display("FAIL: %0s — expected %b, got %b", name, exp, act);
+            $display("FAIL: %0s -- expected %b, got %b", name, exp, act);
             fails = fails + 1;
         end else
             $display("PASS: %0s = %b", name, act);

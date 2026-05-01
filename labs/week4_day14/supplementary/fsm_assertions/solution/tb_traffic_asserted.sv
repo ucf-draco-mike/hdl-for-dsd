@@ -1,4 +1,4 @@
-// Minimal SystemVerilog testbench for traffic_asserted — runs the FSM through
+// Minimal SystemVerilog testbench for traffic_asserted -- runs the FSM through
 // a few cycles of the timer so assertions exercise transitions.
 `timescale 1ns/1ps
 

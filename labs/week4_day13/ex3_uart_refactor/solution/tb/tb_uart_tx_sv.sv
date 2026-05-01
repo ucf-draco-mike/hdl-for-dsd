@@ -1,4 +1,4 @@
-// Minimal SystemVerilog testbench for uart_tx_sv — sends one byte and dumps VCD.
+// Minimal SystemVerilog testbench for uart_tx_sv -- sends one byte and dumps VCD.
 `timescale 1ns/1ps
 
 module tb_uart_tx_sv;

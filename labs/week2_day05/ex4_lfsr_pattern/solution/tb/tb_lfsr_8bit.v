@@ -1,4 +1,4 @@
-// Minimal testbench for lfsr_8bit — runs the LFSR for a few hundred cycles.
+// Minimal testbench for lfsr_8bit -- runs the LFSR for a few hundred cycles.
 `timescale 1ns/1ps
 
 module tb_lfsr_8bit;
