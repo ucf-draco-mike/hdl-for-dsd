@@ -61,6 +61,32 @@
     <aside class="notes">Active-low is the #1 Topic 2 lab failure. Students expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
 </section>
 
+<!-- Side-by-side simplified circuits -->
+<section>
+    <h2><span style="color:#2E86AB;">⚡</span> Simplified Circuits: One Segment, Both Polarities</h2>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col">
+            <img src="diagrams/d02_active_high_circuit.svg" alt="Active-high (common-cathode) one-segment circuit" style="width:100%;max-width:380px;display:block;margin:0 auto;">
+            <pre class="synth" style="font-size:0.7em;margin-top:0.3em;"><code class="language-verilog">// Active-high: drive 1 to light segment a
+assign o_seg_a = 1'b1;   // ON
+// assign o_seg_a = 1'b0; // OFF</code></pre>
+        </div>
+        <div class="col">
+            <img src="diagrams/d02_active_low_circuit.svg" alt="Active-low (common-anode) one-segment circuit" style="width:100%;max-width:380px;display:block;margin:0 auto;">
+            <pre class="synth" style="font-size:0.7em;margin-top:0.3em;"><code class="language-verilog">// Active-low: drive 0 to light segment a (Go Board)
+assign o_seg_a = 1'b0;   // ON
+// assign o_seg_a = 1'b1; // OFF</code></pre>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Same LED, opposite wiring:</strong> the only difference is which rail the common terminal ties to. Active-high puts the common pin on GND and the FPGA sources current up through the LED; active-low puts the common pin on VCC and the FPGA sinks current down through it. Your HDL bit must match the wiring, or every segment is inverted.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>Why active-low often wins:</strong> CMOS output drivers usually sink more current than they source, so pulling a pin <em>low</em> to light an LED is electrically easier than pushing it high. Tying the common LED terminal to VCC also lets a single shared rail feed every segment — fewer high-current source paths through the FPGA, lower I<sub>OH</sub> stress, and a smaller IR drop on the chip's power network. For idle/standby power, an active-low bus held high (<code>1</code>) draws essentially zero LED current — the default state is &ldquo;off&rdquo; with no current flowing through any segment. The same logic explains why resets, chip-selects, and button inputs are typically active-low: a pull-up to VCC plus a switch to GND is the cheapest, lowest-leakage default state.
+    </div>
+    <aside class="notes">Show both circuits side by side. The current flows in opposite directions through the LED depending on which terminal is &ldquo;common.&rdquo; The Verilog literal that lights the LED flips with it. The active-low convention isn't arbitrary — CMOS pulldowns are stronger than pullups, idle-high pins draw no LED current, and a shared VCC anode rail is easier to route than 7 separate source paths. This is the entire concept on one slide.</aside>
+</section>
+
 <!-- How to tell: active-low vs active-high -->
 <section>
     <h2><span style="color:#2E86AB;">🔍</span> How to Tell: Active-Low vs Active-High</h2>
@@ -91,29 +117,6 @@
         <strong>Same board, both polarities:</strong> The Go Board's 4 discrete LEDs and 4 push-buttons are active-<em>high</em> (<code>1 = on</code>, <code>1 = pressed</code>) — see Topic 1's <code>buttons_to_leds</code>. The 7-segment segments on the very same FPGA are active-<em>low</em>. Polarity is per-peripheral, not per-board.
     </div>
     <aside class="notes">Active-low is not arbitrary — it falls out of how CMOS output drivers and pull-up resistors are easiest to build. Once students see the pattern (LEDs, resets, chip-selects, button inputs all tend active-low), it stops feeling like a gotcha and starts feeling like a convention. The schematic is always ground truth; the constraint file's comment is a hint, not a contract.</aside>
-</section>
-
-<!-- Side-by-side simplified circuits -->
-<section>
-    <h2><span style="color:#2E86AB;">⚡</span> Simplified Circuits: One Segment, Both Polarities</h2>
-    <div class="two-col" style="margin-top:0.3em;">
-        <div class="col">
-            <img src="diagrams/d02_active_high_circuit.svg" alt="Active-high (common-cathode) one-segment circuit" style="width:100%;max-width:380px;display:block;margin:0 auto;">
-            <pre class="synth" style="font-size:0.7em;margin-top:0.3em;"><code class="language-verilog">// Active-high: drive 1 to light segment a
-assign o_seg_a = 1'b1;   // ON
-// assign o_seg_a = 1'b0; // OFF</code></pre>
-        </div>
-        <div class="col">
-            <img src="diagrams/d02_active_low_circuit.svg" alt="Active-low (common-anode) one-segment circuit" style="width:100%;max-width:380px;display:block;margin:0 auto;">
-            <pre class="synth" style="font-size:0.7em;margin-top:0.3em;"><code class="language-verilog">// Active-low: drive 0 to light segment a (Go Board)
-assign o_seg_a = 1'b0;   // ON
-// assign o_seg_a = 1'b1; // OFF</code></pre>
-        </div>
-    </div>
-    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>Same LED, opposite wiring:</strong> the only difference is which rail the common terminal ties to. Active-high puts the common pin on GND and the FPGA sources current up through the LED; active-low puts the common pin on VCC and the FPGA sinks current down through it. Your HDL bit must match the wiring, or every segment is inverted.
-    </div>
-    <aside class="notes">Show both circuits side by side. The current flows in opposite directions through the LED depending on which terminal is &ldquo;common.&rdquo; The Verilog literal that lights the LED flips with it. This is the entire concept on one slide.</aside>
 </section>
 
 <!-- Segment map diagram -->
