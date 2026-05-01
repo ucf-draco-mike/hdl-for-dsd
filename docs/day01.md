@@ -71,6 +71,14 @@ See `quiz.md` — 4 questions covering all 4 segments.
    - "The `.pcf` file is the bridge between your abstract design and the real world"
 
 ### Live Demo Code
+
+| Slide | Live Demo title | Runnable example |
+|-------|-----------------|------------------|
+| `d01_s3` (1) | Build a Module from Scratch | `lecture_examples/week1_day01/d01_s3_ex1/` (`day01_ex01_led_driver.v`) |
+| `d01_s3` (2) | `day01_ex02_button_logic.v` | `lecture_examples/week1_day01/d01_s3_ex2/` |
+| `d01_s4`     | Gates in Verilog            | `lecture_examples/week1_day01/d01_s4_ex3/` (`day01_ex03_gates_demo.v`) |
+
+The simplest one-liner the instructor types live before pulling up `d01_s3_ex1`:
 ```verilog
 // led_on.v — simplest possible design
 module led_on (
@@ -79,6 +87,9 @@ module led_on (
     assign o_LED_1 = 1'b1;
 endmodule
 ```
+
+For the canonical Live Demo registry covering every cue in the course, see
+[`live_demos.md`](live_demos.md).
 
 ---
 

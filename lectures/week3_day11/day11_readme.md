@@ -11,9 +11,12 @@
 
 ## Code Examples
 
-| File | Description |
-|------|-------------|
-| `code/day11_ex01_uart_tx.v` | Complete UART TX (8N1, parameterized, FSM + PISO + baud counter) with protocol-aware self-checking testbench |
+| File | Description | Live Demo Slide | Example dir |
+|------|-------------|-----------------|-------------|
+| `day11_ex01_uart_tx.v` | Complete UART TX (8N1, parameterized, FSM + PISO + baud counter) with protocol-aware self-checking testbench | `d11_s1`, `d11_s2`, `d11_s3` | `lecture_examples/week3_day11/d11_s3_ex1/` |
+| `day11_ex02_hello_emitter.v` | "HELLO\r\n" emitter that drives the UART TX once per ~200 ms — board-to-PC end-to-end | `d11_s4` | `lecture_examples/week3_day11/d11_s4_ex2/` |
+
+For the canonical Live Demo registry, see [`docs/live_demos.md`](../../docs/live_demos.md).
 
 ## Diagrams
 

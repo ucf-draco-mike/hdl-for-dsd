@@ -13,15 +13,20 @@
 
 ## Code Examples
 
-| File | Description | Synthesizable? |
-|------|-------------|----------------|
-| `code/day01_ex01_led_driver.v` | Simplest module — switch to LED wire | ✓ |
-| `code/day01_ex02_button_logic.v` | Multiple concurrent gates (AND, OR, XOR, NOT) | ✓ |
+| File | Description | Live Demo Slide | Example dir | Synthesizable? |
+|------|-------------|-----------------|-------------|----------------|
+| `day01_ex01_led_driver.v` | Simplest module — switch to LED wire | `d01_s3` (1) | `lecture_examples/week1_day01/d01_s3_ex1/` | ✓ |
+| `day01_ex02_button_logic.v` | Multiple concurrent gates (AND, OR, XOR, NOT) | `d01_s3` (2) | `lecture_examples/week1_day01/d01_s3_ex2/` | ✓ |
+| `day01_ex03_gates_demo.v` | Gate-by-gate `assign` walkthrough + SOP/DeMorgan equivalent | `d01_s4` | `lecture_examples/week1_day01/d01_s4_ex3/` | ✓ |
 
-Both files include build instructions in their headers. They compile with:
+All three examples ship as runnable lecture examples with `Makefile` + `tb_*.v`.
+They compile with:
 ```bash
 yosys -p "synth_ice40 -top <module_name> -json out.json" <file>.v
 ```
+
+For the canonical Live Demo registry covering every "▶ LIVE DEMO" cue in the
+course, see [`docs/live_demos.md`](../../docs/live_demos.md).
 
 ## Diagrams
 

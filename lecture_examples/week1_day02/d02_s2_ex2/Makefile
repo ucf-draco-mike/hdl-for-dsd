@@ -1,20 +1,28 @@
 # Auto-generated Makefile — lecture example week1_day02/d02_s2_ex2
-# Demo: mux_2to1  (segment s2, example 2)
-TOP      = mux_2to1
-SRCS     = day02_ex02_mux_2to1.v
+# Demo: 4:1 Mux + Cost Comparison  (segment s2 + s3 width-mismatch demo)
+#
+# Three top-level designs share this directory:
+#   mux_2to1          — Day 2 baseline 2:1 multiplexer
+#   mux_4to1_nested   — d02_s2 4:1 mux via nested ?:
+#   mux_4to1_case     — d02_s2 4:1 mux via always @(*) + case
+#   width_bugs        — d02_s3 deliberate width-mismatch demo
+#
+# `make stat` reports on `mux_4to1_case` by default — change TOP below to
+# inspect any of the others (the SRCS list compiles all four together so the
+# `width_bugs` warnings still fire).
+TOP      = mux_4to1_case
+SRCS     = day02_ex02_mux_2to1.v day02_ex02_mux_4to1.v width_bugs.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
 
+# Explicit testbench so `make sim` always runs the unified mux demo.
+TB       = tb_mux_demo.v
+
 sim:
-	@tb=$$(ls tb_*.v tb_*.sv 2>/dev/null | head -n 1); \
-	if [ -z "$$tb" ]; then \
-		echo "[sim] No testbench (tb_*.v) in $$(pwd) — add one to simulate."; \
-	else \
-		srcs=$$(ls *.v *.sv 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
-		iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs && vvp sim.vvp; \
-	fi
+	@srcs=$$(ls *.v *.sv 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $$srcs && vvp sim.vvp
 
 wave: sim
 	@if ls *.vcd >/dev/null 2>&1; then gtkwave *.vcd & else echo "[wave] No VCD produced."; fi
