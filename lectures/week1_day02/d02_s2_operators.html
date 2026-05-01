@@ -103,7 +103,7 @@ wire       w_logical = a &amp;&amp; b;   // = 1'b1 (both nonzero → true)</code
     <div class="callout" style="font-size:0.72em;">
         <strong>My thinking:</strong> Single <code>&amp;</code> operates on every bit independently, result same width as operands. Double <code>&amp;&amp;</code> treats each operand as a boolean (any bit set = true), result always 1 bit. Mixing them up is a classic bug — especially with C/Java muscle memory.
     </div>
-    <aside class="notes">Single & per-bit. Double && treats whole value as true/false. Common student bug: use && when they meant &. The compiler doesn't catch it because both are valid in context.</aside>
+    <aside class="notes">Single & per-bit. Double && treats whole value as true/false. Common bug: use && when you meant &. The compiler doesn't catch it because both are valid in context.</aside>
 </section>
 
 <!-- We Do -->
@@ -198,7 +198,7 @@ PASS: 4:1 mux sel=11 → d
         <strong>Mental math:</strong> The iCE40 HX1K has 1280 LUTs. A single 8×8 multiply eats ~6% of the chip. A 32×32 multiply eats... not possible on an HX1K without tricks.
     </div>
     <aside class="notes">
-        The 10× cost ratio between adder and multiplier is worth internalizing. Students who don't know this write multiplies everywhere and then can't figure out why their design won't fit.
+        The 10× cost ratio between adder and multiplier is worth internalizing. Anyone who doesn't know this writes multiplies everywhere and then can't figure out why their design won't fit.
     </aside>
 </section>
 

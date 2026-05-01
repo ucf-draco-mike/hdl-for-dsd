@@ -115,8 +115,8 @@
     </div>
     <aside class="notes">
         This is the single most dangerous piece of terminology baggage in Verilog.
-        The names came from 1984 and have never been fixed. Every semester I see
-        students reason &ldquo;I need a register, so I use reg&rdquo; — and then they're
+        The names came from 1984 and have never been fixed. People constantly
+        reason &ldquo;I need a register, so I use reg&rdquo; — and then they're
         confused when their <code>reg</code> turns into a multiplexer with no flops.
         [PAUSE] Wire vs reg is about <em>how</em> you assign, not <em>what</em>
         you build. Write that on an index card.
@@ -193,7 +193,7 @@ always @(*) if (enable) r_broken = data;  // ⚠ latch</code></pre>
         [Walk the flowchart with the class, pausing at each decision point.]
         &ldquo;Is it driven by <code>assign</code> or a module output port?&rdquo;
         If yes → wire. If no → reg, and then the second question matters: is there
-        a clock edge? [PAUSE] This flowchart lives in the cheat sheet; students
+        a clock edge? [PAUSE] This flowchart lives in the cheat sheet; you
         should internalize it by end of Week 1.
     </aside>
 </section>
@@ -268,10 +268,10 @@ wire [7:0] sign_ext = {{4{nibble_a[3]}}, nibble_a};</code></pre>
         <code>sign_ext = 8'b1111_1101 = 8'hFD</code> (MSB=1 replicated four times).
     </div>
     <aside class="notes">
-        [Real 60-second pause. Students write answers, THEN demo confirms.]
-        If students got <code>repl = 8'h00</code>, they read bit 3 of nibble_a
+        [Real 60-second pause. Write your answers, THEN demo confirms.]
+        If you got <code>repl = 8'h00</code>, you read bit 3 of nibble_a
         instead of bit 0. Common and diagnostic — bring it up explicitly.
-        If they got <code>sign_ext = 8'h0D</code>, they extended with zeros
+        If you got <code>sign_ext = 8'h0D</code>, you extended with zeros
         instead of the MSB; that's zero-extension, not sign-extension. Also diagnostic.
     </aside>
 </section>
@@ -320,7 +320,7 @@ PASS: lower     = 4'h2
         Five PASS lines.
         [SWITCH TO GTKWAVE] Hex radix is the move. Binary is unreadable for 8-bit
         signals. The teaching point: combinational means zero-time reaction. When
-        students drag <code>i_nibble_a</code> to a new value and <code>o_concat</code>
+        you drag <code>i_nibble_a</code> to a new value and <code>o_concat</code>
         updates in the same delta cycle, that's what "no flip-flop, just wires" looks like.
     </aside>
 </section>
@@ -365,7 +365,7 @@ PASS: lower     = 4'h2
     </div>
 
     <aside class="notes">
-        This is the &ldquo;aha&rdquo; slide for Topic 2. Zero cells. Students expect some logic
+        This is the &ldquo;aha&rdquo; slide for Topic 2. Zero cells. Many people expect some logic
         because the <code>{...}</code> and <code>{N{...}}</code> syntax looks computational.
         It isn't. It's wire relabeling. That's why concat/replicate/sign-extend are so
         cheap and used everywhere. They cost nothing.

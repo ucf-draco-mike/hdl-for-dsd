@@ -123,7 +123,7 @@ a_start_bit: assert property (p_start_bit_length)
     else $error("Start bit was not %0d cycles long", CLKS_PER_BIT);</code></pre>
         <strong>What it says:</strong> when <code>o_busy</code> rises, the next CLKS_PER_BIT cycles must have <code>o_tx_line == 0</code>. If the TX breaks the start-bit timing (e.g., off-by-one in the counter), the assertion fires immediately. The bug is caught even if no testbench case happened to measure the start bit.
     </div>
-    <aside class="notes">[*N] is the repetition operator: &ldquo;this condition holds for N consecutive cycles.&rdquo; Perfect for bit-length enforcement. Students should see how one property catches a whole class of timing bugs.</aside>
+    <aside class="notes">[*N] is the repetition operator: &ldquo;this condition holds for N consecutive cycles.&rdquo; Perfect for bit-length enforcement. Notice how one property catches a whole class of timing bugs.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

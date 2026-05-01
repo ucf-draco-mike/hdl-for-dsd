@@ -125,7 +125,7 @@ end endgenerate
 assign cout = carry[N];</code></pre>
         The carry wire of width N+1 chains the full-adders — element <code>gi+1</code> reads what element <code>gi</code> wrote. This is the classic pattern for bit-serial structures.
     </div>
-    <aside class="notes">Ripple carry adder is the canonical generate-for example. Notice the carry chain wire has width N+1 to accommodate the final cout. Students often get the carry wire width wrong by one.</aside>
+    <aside class="notes">Ripple carry adder is the canonical generate-for example. Notice the carry chain wire has width N+1 to accommodate the final cout. It's easy to get the carry wire width wrong by one.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

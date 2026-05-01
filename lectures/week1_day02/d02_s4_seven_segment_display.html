@@ -39,7 +39,7 @@
     <div class="fragment callout" style="font-size:0.75em;margin-top:0.5em;">
         <strong>First real peripheral:</strong> By the end of today's lab, your Verilog code will drive pins that drive LEDs that form a digit that a human can read. That's the full stack: RTL &rarr; synthesis &rarr; place-and-route &rarr; bitstream &rarr; flash &rarr; photons.
     </div>
-    <aside class="notes">This is the moment students go from abstract to real. Make it feel big. The seven-segment display is the canonical first output peripheral for a reason — it exercises every layer of the toolchain.</aside>
+    <aside class="notes">This is the moment you go from abstract to real. Make it feel big. The seven-segment display is the canonical first output peripheral for a reason — it exercises every layer of the toolchain.</aside>
 </section>
 
 <!-- REFRAME -->
@@ -56,9 +56,9 @@
         </div>
     </div>
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
-        <strong>The failure mode:</strong> Students write the logical (active-high) version, flash the board, and see an &ldquo;inverted&rdquo; or &ldquo;solid&rdquo; display. The fix is always to flip every bit. Adding <code>~</code> once is better than rewriting every case.
+        <strong>The failure mode:</strong> You write the logical (active-high) version, flash the board, and see an &ldquo;inverted&rdquo; or &ldquo;solid&rdquo; display. The fix is always to flip every bit. Adding <code>~</code> once is better than rewriting every case.
     </div>
-    <aside class="notes">Active-low is the #1 Topic 2 lab failure. Students expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
+    <aside class="notes">Active-low is the #1 Topic 2 lab failure. People expect LEDs to mirror logic values. They don't. The reason is the hardware design of most LED displays — common anode is standard because it simplifies power distribution in the package. Your FPGA sinks current; it doesn't source it.</aside>
 </section>
 
 <!-- Side-by-side simplified circuits -->
@@ -116,7 +116,7 @@ assign o_seg_a = 1'b0;   // ON
     <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
         <strong>Same board, both polarities:</strong> The Go Board's 4 discrete LEDs and 4 push-buttons are active-<em>high</em> (<code>1 = on</code>, <code>1 = pressed</code>) — see Topic 1's <code>buttons_to_leds</code>. The 7-segment segments on the very same FPGA are active-<em>low</em>. Polarity is per-peripheral, not per-board.
     </div>
-    <aside class="notes">Active-low is not arbitrary — it falls out of how CMOS output drivers and pull-up resistors are easiest to build. Once students see the pattern (LEDs, resets, chip-selects, button inputs all tend active-low), it stops feeling like a gotcha and starts feeling like a convention. The schematic is always ground truth; the constraint file's comment is a hint, not a contract.</aside>
+    <aside class="notes">Active-low is not arbitrary — it falls out of how CMOS output drivers and pull-up resistors are easiest to build. Once you see the pattern (LEDs, resets, chip-selects, button inputs all tend active-low), it stops feeling like a gotcha and starts feeling like a convention. The schematic is always ground truth; the constraint file's comment is a hint, not a contract.</aside>
 </section>
 
 <!-- Segment map diagram -->
@@ -228,7 +228,7 @@ endmodule</code></pre>
         <strong>Answers:</strong>
         (1) <strong>No flops</strong> — pure combinational (no clock). (2) <strong>~7 LUTs</strong> — one per output bit, each implementing a 4-input boolean function. (3) Press the &ldquo;0&rdquo; switch combo, see nothing light up — display stays blank. Easy visual diagnostic for active-low confusion.
     </div>
-    <aside class="notes">The &ldquo;no flops&rdquo; prediction is the key concept check. If a student predicts flops, they haven't internalized that <code>always @(*)</code> is combinational.</aside>
+    <aside class="notes">The &ldquo;no flops&rdquo; prediction is the key concept check. If you predict flops, you haven't internalized that <code>always @(*)</code> is combinational.</aside>
 </section>
 
 <!-- LIVE DEMO -->
@@ -265,7 +265,7 @@ FPGA programmed OK.</code></pre>
             Set switches SW1-SW4 to encode a hex digit (binary, LSB=SW1). Watch the leftmost 7-segment display change. Try: <code>0000</code> shows &ldquo;0,&rdquo; <code>1111</code> shows &ldquo;F,&rdquo; <code>1010</code> shows &ldquo;A.&rdquo;
         </p>
     </div>
-    <aside class="notes">[Run make prog] The first time students see their code drive real LEDs is the crossover moment. Let it breathe. Let them try all 16 digits. [If broken] 90% of the time: active-low bug. Flip all the bit patterns.</aside>
+    <aside class="notes">[Run make prog] The first time you see your code drive real LEDs is the crossover moment. Let it breathe. Try all 16 digits. [If broken] 90% of the time: active-low bug. Flip all the bit patterns.</aside>
 </section>
 
 <!-- WHAT DID THE TOOL BUILD? -->

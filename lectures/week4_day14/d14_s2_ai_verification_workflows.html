@@ -34,7 +34,7 @@
             <p style="font-size:0.75em;">You've used AI tactically all semester. Today's video gives you a <em>strategy</em>: when to ask, what to ask, how to verify the output, and — critically — what AI cannot do. The goal isn't AI-free verification; it's AI-informed verification with the right amount of human judgment at the right points.</p>
         </div>
     </div>
-    <aside class="notes">This is current and rapidly evolving. The skill of using AI-assisted verification well is now a hireable differentiator. Students should take this seriously.</aside>
+    <aside class="notes">This is current and rapidly evolving. The skill of using AI-assisted verification well is now a hireable differentiator. Take this seriously.</aside>
 </section>
 
 <section>
@@ -68,7 +68,7 @@ Also write 5 concurrent assertions for protocol correctness. Use <code>disable i
     <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
         <strong>My thinking:</strong> Five things this prompt does right: (1) full port list, (2) parameter named, (3) protocol spec explicit, (4) acceptance criteria explicit (random bytes, decode, compare), (5) scope explicit (testbench + 5 assertions). Asking for &ldquo;a testbench for my UART&rdquo; without these would produce generic output. Specificity = quality.
     </div>
-    <aside class="notes">Specificity is the #1 lever for AI output quality. Students see &ldquo;good prompt&rdquo; and realize how much of their past frustration with AI was vague prompting.</aside>
+    <aside class="notes">Specificity is the #1 lever for AI output quality. Seeing a &ldquo;good prompt&rdquo; reveals how much past frustration with AI was vague prompting.</aside>
 </section>
 
 <section>
@@ -101,7 +101,7 @@ Also write 5 concurrent assertions for protocol correctness. Use <code>disable i
         <p class="fragment">D. <em>&ldquo;Here's a coverage report for your testbench.&rdquo;</em>&ensp;<span class="fragment" style="color:#C62828;">→ Reject unless tool-generated. AI can't run your simulator; it can only guess at coverage.</span></p>
         <p class="fragment">E. <em>&ldquo;Add these 3 edge cases: all-zeros, all-ones, alternating bits.&rdquo;</em>&ensp;<span class="fragment" style="color:#2E7D32;">→ Trust + integrate. AI is excellent at edge-case suggestion.</span></p>
     </div>
-    <aside class="notes">Calibration exercise. Students learn which outputs are mechanically sound (trust) vs. which claim correctness (reject) vs. which encode protocol decisions (review).</aside>
+    <aside class="notes">Calibration exercise. Learn which outputs are mechanically sound (trust) vs. which claim correctness (reject) vs. which encode protocol decisions (review).</aside>
 </section>
 
 <section data-background-color="#FAFAFA">
@@ -117,7 +117,7 @@ Also write 5 concurrent assertions for protocol correctness. Use <code>disable i
     <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">
         <strong>Rule of thumb:</strong> AI is excellent at the 80% of verification that's mechanical. The 20% that requires product judgment, observation, and discipline is still yours.
     </div>
-    <aside class="notes">The bounds of AI capability. Knowing them is the skill. Students who are over-reliant fail on the 20% that matters most.</aside>
+    <aside class="notes">The bounds of AI capability. Knowing them is the skill. Anyone who is over-reliant fails on the 20% that matters most.</aside>
 </section>
 
 <section data-background-color="#FFF8E1">
@@ -129,7 +129,7 @@ Also write 5 concurrent assertions for protocol correctness. Use <code>disable i
         <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p class="fragment" style="font-size:0.62em;margin:0;">AI catches 2-4 real gaps. Accept 1-2; the rest are misalignment with your spec.</p></div>
         <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p class="fragment" style="font-size:0.62em;margin:0;">AI is great at gap analysis; it finds ~70% of real gaps and suggests ~30% irrelevant ones.</p></div>
     </div>
-    <aside class="notes">Meta-review is a high-yield AI use. Students often learn they'd missed real coverage gaps.</aside>
+    <aside class="notes">Meta-review is a high-yield AI use. You'll often discover real coverage gaps you missed.</aside>
 </section>
 
 <section>
