@@ -330,42 +330,49 @@ assign y = sel[1] ? ( sel[0] ? /* ? */ : /* ? */ )
 <!-- Enhanced LIVE DEMO -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2 style="color:#FFC904;">Building a 4:1 Mux + Cost Comparison</h2>
-    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes</p>
+    <h2 style="color:#FFC904;">Operator Cost Showdown &mdash; <code>&amp;</code>, <code>+</code>, <code>*</code></h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~5 minutes &middot; verify the You-Do ranking with Yosys</p>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day02/d02_s2_ex2/
-make sim                    # iverilog + vvp
-make wave                   # GTKWave
-make stat                   # yosys synth_ice40</code></pre>
+cat op_compare.v            # 3 modules, one assign each
+make stat-ops               # synth all 3 → side-by-side
+make sim                    # (warmup) mux from We Do still passes</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
-            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: 2:1 mux sel=0 → b
-PASS: 2:1 mux sel=1 → a
-PASS: 4:1 mux sel=00 → a
-PASS: 4:1 mux sel=11 → d
-=== 16 passed, 0 failed ===</code></pre>
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT (8-bit)</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">==== bitwise_and ====
+   SB_LUT4    8
+   SB_CARRY   0
+==== adder ====
+   SB_LUT4    8
+   SB_CARRY   8
+==== multiplier ====
+   SB_LUT4   ~80
+   SB_CARRY  ~24</code></pre>
         </div>
     </div>
 
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
-        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE &mdash; WHAT TO LOOK FOR</p>
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHAT TO LOOK FOR</p>
         <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
-            Signals: <code>sel · a · b · c · d · y</code>. Set all to hex. Watch <code>y</code> react <em>instantly</em> (delta cycle) to any change on <code>sel</code> or the data inputs — that's the signature of pure combinational logic.
+            Same operand width, same one-line body &mdash; only the operator changes. <code>&amp;</code> uses zero carry cells (parallel lanes). <code>+</code> needs a carry per bit. <code>*</code> blows up roughly N&times;: <strong>~10&times; the LUTs of the adder</strong>. That ratio is the lesson; the numbers will match the recap table on the next slide.
         </p>
     </div>
     <aside class="notes">
-        [Terminal] cd to ex2. make sim → 16 PASS lines. [GTKWave] Change sel, watch y track. Instant. No clock. [make stat] Point out: 4:1 mux on 4-bit buses is about 4 LUTs (one per bit of output).
+        [Terminal] cd to ex2. <code>cat op_compare.v</code> first &mdash; show that each module is one assign with one operator, so every LUT/carry is on the hook for that operator alone.
+        Then <code>make stat-ops</code> &mdash; this is the showdown. Read the three blocks aloud: 8/0, 8/8, ~80/~24. Pause on the 10&times; ratio &mdash; that's the receipt.
+        Optional: <code>make sim</code> as a warmup callback to We Do &mdash; the 4:1 mux still passes 16/16. Skip if running short.
+        Tie back to the You-Do ranking: students predicted <code>*</code> would dominate &mdash; here's the proof in LUTs.
     </aside>
 </section>
 
 <!-- WHAT DID THE TOOL BUILD? -->
 <section data-background-color="#FAFAFA">
-    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <p style="font-size:0.78em;">Three 8-bit modules, side by side:</p>
+    <h2><span style="color:#27AE60;">🔧</span> Recap &mdash; What the Tool Just Built</h2>
+    <p style="font-size:0.78em;">Same three 8-bit modules from <code>make stat-ops</code>, lined up:</p>
     <table style="font-size:0.68em;margin-top:0.3em;">
         <thead><tr><th>Module</th><th>Body</th><th>SB_LUT4</th><th>SB_CARRY</th><th>Verdict</th></tr></thead>
         <tbody>
@@ -375,13 +382,13 @@ PASS: 4:1 mux sel=11 → d
         </tbody>
     </table>
     <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>Generate yourself:</strong> <code>yosys -p "read_verilog op_compare.v; synth_ice40; stat" -q</code>. Edit the module, rerun stat. Watch the numbers change with code.
+        <strong>Try it yourself:</strong> edit <code>op_compare.v</code>, bump <code>WIDTH</code> to 16 or 32, rerun <code>make stat-ops</code>. The AND scales linearly; the multiplier scales <em>quadratically</em>.
     </div>
     <div class="fragment callout-warning" style="font-size:0.7em;">
-        <strong>Mental math:</strong> The iCE40 HX1K has 1280 LUTs. A single 8×8 multiply eats ~6% of the chip. A 32×32 multiply eats... not possible on an HX1K without tricks.
+        <strong>Mental math:</strong> The iCE40 HX1K has 1280 LUTs. A single 8&times;8 multiply eats ~6% of the chip. A 32&times;32 multiply eats&hellip; not possible on an HX1K without tricks.
     </div>
     <aside class="notes">
-        The 10× cost ratio between adder and multiplier is worth internalizing. Anyone who doesn't know this writes multiplies everywhere and then can't figure out why their design won't fit.
+        Reinforce the 10&times; ratio you just saw on the terminal. Anyone who doesn't internalize this writes multiplies everywhere and then can't figure out why their design won't fit.
     </aside>
 </section>
 

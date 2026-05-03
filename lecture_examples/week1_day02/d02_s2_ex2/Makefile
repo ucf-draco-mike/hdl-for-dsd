@@ -1,17 +1,22 @@
 # Auto-generated Makefile — lecture example week1_day02/d02_s2_ex2
-# Demo: 4:1 Mux + Cost Comparison  (segment s2 + s3 width-mismatch demo)
+# Demo: Operator Cost Showdown  (segment s2 + s3 width-mismatch demo)
 #
-# Three top-level designs share this directory:
-#   mux_2to1          — Day 2 baseline 2:1 multiplexer
-#   mux_4to1_nested   — d02_s2 4:1 mux via nested ?:
-#   mux_4to1_case     — d02_s2 4:1 mux via always @(*) + case
+# Top-level designs in this directory:
+#   bitwise_and       — d02_s2 cost demo: per-bit AND (cheap)
+#   adder             — d02_s2 cost demo: ripple add (moderate)
+#   multiplier        — d02_s2 cost demo: N×N multiply (expensive)
+#   mux_2to1          — Day 2 baseline 2:1 multiplexer (We Do warmup)
+#   mux_4to1_nested   — d02_s2 4:1 mux via nested ?:    (We Do warmup)
+#   mux_4to1_case     — d02_s2 4:1 mux via always @(*) + case (We Do warmup)
 #   width_bugs        — d02_s3 deliberate width-mismatch demo
 #
-# `make stat` reports on `mux_4to1_case` by default — change TOP below to
-# inspect any of the others (the SRCS list compiles all four together so the
-# `width_bugs` warnings still fire).
-TOP      = mux_4to1_case
-SRCS     = day02_ex02_mux_2to1.v day02_ex02_mux_4to1.v width_bugs.v
+# `make stat-ops` is the s2 live demo: synthesizes all three operator
+# modules and prints the LUT/carry counts side by side. `make stat`
+# reports on a single TOP (defaults to `multiplier`).
+TOP      = multiplier
+OP_SRCS  = op_compare.v
+MUX_SRCS = day02_ex02_mux_2to1.v day02_ex02_mux_4to1.v
+SRCS     = $(OP_SRCS) $(MUX_SRCS) width_bugs.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
@@ -38,7 +43,18 @@ prog: synth
 stat: $(SRCS)
 	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); stat"
 
+# Operator Cost Showdown — synth each of bitwise_and / adder / multiplier
+# in turn so the LUT/carry numbers print side by side. Headers make the
+# three blocks easy to scan during the live demo.
+stat-ops: $(OP_SRCS)
+	@for top in bitwise_and adder multiplier; do \
+	  echo ""; \
+	  echo "==================== $$top (8-bit) ===================="; \
+	  yosys -q -p "read_verilog $(OP_SRCS); synth_ice40 -top $$top; stat" \
+	    | grep -E 'SB_LUT4|SB_CARRY|Number of cells' || true; \
+	done
+
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: sim wave synth prog stat clean
+.PHONY: sim wave synth prog stat stat-ops clean
