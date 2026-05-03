@@ -63,6 +63,84 @@
     </aside>
 </section>
 
+<!-- FPGA FABRIC REFRESHER: LUTs vs CARRYs -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#2E86AB;">🧱</span> Refresher &mdash; LUTs vs CARRYs</h2>
+    <p style="font-size:0.7em;margin:0.1em 0 0.4em 0;">Day 1 covered the LUT. Before the cost table, meet its neighbor in every iCE40 logic tile: the <strong>dedicated CARRY cell</strong>.</p>
+
+    <div class="two-col" style="margin-top:0.2em;">
+        <div class="col panel" style="background:#fff;border:2px solid #5A9BD5;padding:0.55em;">
+            <h3 style="color:#2E86AB;font-size:0.95em;margin:0 0 0.25em 0;">SB_LUT4 &mdash; the universal gate</h3>
+            <svg viewBox="0 0 220 110" style="width:100%;height:auto;display:block;">
+                <g font-family="Inter, sans-serif">
+                    <text x="6" y="18" font-size="9" fill="#666">a</text>
+                    <text x="6" y="38" font-size="9" fill="#666">b</text>
+                    <text x="6" y="58" font-size="9" fill="#666">c</text>
+                    <text x="6" y="78" font-size="9" fill="#666">d</text>
+                    <line x1="14" y1="15" x2="60" y2="15" stroke="#333" stroke-width="1"/>
+                    <line x1="14" y1="35" x2="60" y2="35" stroke="#333" stroke-width="1"/>
+                    <line x1="14" y1="55" x2="60" y2="55" stroke="#333" stroke-width="1"/>
+                    <line x1="14" y1="75" x2="60" y2="75" stroke="#333" stroke-width="1"/>
+                    <rect x="60" y="6" width="100" height="80" fill="#5A9BD5" stroke="#333" stroke-width="1.2" rx="4"/>
+                    <text x="110" y="38" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">16-bit</text>
+                    <text x="110" y="54" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">truth-table</text>
+                    <text x="110" y="70" font-size="9" text-anchor="middle" fill="#fff">(any 4-input fn)</text>
+                    <line x1="160" y1="46" x2="200" y2="46" stroke="#333" stroke-width="1"/>
+                    <text x="204" y="50" font-size="10" fill="#000" font-weight="700">y</text>
+                </g>
+            </svg>
+            <ul style="font-size:0.62em;margin:0.2em 0 0 1em;padding:0;">
+                <li>4 inputs &rarr; <strong>any</strong> 1-bit Boolean function</li>
+                <li>Configurable: 16 bits of memory pick the function</li>
+                <li>Used for: bitwise, logical, mux, reduction, comparators</li>
+            </ul>
+        </div>
+        <div class="col panel" style="background:#fff;border:2px solid #D4A843;padding:0.55em;">
+            <h3 style="color:#A87C1F;font-size:0.95em;margin:0 0 0.25em 0;">SB_CARRY &mdash; the dedicated adder</h3>
+            <svg viewBox="0 0 220 110" style="width:100%;height:auto;display:block;">
+                <g font-family="Inter, sans-serif">
+                    <text x="2" y="20" font-size="8" fill="#666">cin</text>
+                    <line x1="18" y1="18" x2="32" y2="18" stroke="#C62828" stroke-width="1.2"/>
+                    <g>
+                        <rect x="32" y="8"  width="36" height="22" fill="#D4A843" stroke="#333" stroke-width="1" rx="3"/>
+                        <text x="50" y="23" font-size="9" font-weight="700" text-anchor="middle" fill="#000">cell0</text>
+                        <line x1="68" y1="18" x2="86" y2="18" stroke="#C62828" stroke-width="1.4"/>
+                        <rect x="86" y="8"  width="36" height="22" fill="#D4A843" stroke="#333" stroke-width="1" rx="3"/>
+                        <text x="104" y="23" font-size="9" font-weight="700" text-anchor="middle" fill="#000">cell1</text>
+                        <line x1="122" y1="18" x2="140" y2="18" stroke="#C62828" stroke-width="1.4"/>
+                        <rect x="140" y="8" width="36" height="22" fill="#D4A843" stroke="#333" stroke-width="1" rx="3"/>
+                        <text x="158" y="23" font-size="9" font-weight="700" text-anchor="middle" fill="#000">cell2</text>
+                        <line x1="176" y1="18" x2="200" y2="18" stroke="#C62828" stroke-width="1.4"/>
+                        <text x="202" y="22" font-size="8" fill="#666">cout</text>
+                    </g>
+                    <text x="50" y="48" font-size="8" text-anchor="middle" fill="#333">s0</text>
+                    <text x="104" y="48" font-size="8" text-anchor="middle" fill="#333">s1</text>
+                    <text x="158" y="48" font-size="8" text-anchor="middle" fill="#333">s2</text>
+                    <line x1="50" y1="38" x2="50" y2="42" stroke="#333" stroke-width="1"/>
+                    <line x1="104" y1="38" x2="104" y2="42" stroke="#333" stroke-width="1"/>
+                    <line x1="158" y1="38" x2="158" y2="42" stroke="#333" stroke-width="1"/>
+                    <text x="110" y="78" font-size="8.5" text-anchor="middle" fill="#A87C1F" font-style="italic">hard-wired carry chain →</text>
+                    <text x="110" y="92" font-size="8.5" text-anchor="middle" fill="#A87C1F" font-style="italic">fast, free, fixed-purpose</text>
+                </g>
+            </svg>
+            <ul style="font-size:0.62em;margin:0.2em 0 0 1em;padding:0;">
+                <li>1 cell per bit, chained <strong>directly</strong> to its neighbor</li>
+                <li>Not configurable &mdash; only does carry-propagate</li>
+                <li>Used for: <code>+</code>, <code>-</code>, <code>&lt;</code>, <code>&gt;</code>, magnitude compares</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.4em;">
+        <strong>Why the split matters:</strong> One iCE40 logic tile = <strong>1 LUT4 + 1 CARRY + 1 FF</strong>. The LUT4 generates the <em>sum</em> bit; the CARRY propagates the <em>carry</em> bit on a dedicated wire that bypasses the routing fabric. That's why <code>a + b</code> shows up as <em>both</em> SB_LUT4 <em>and</em> SB_CARRY in <code>yosys stat</code> &mdash; and why a bitwise <code>a &amp; b</code> shows zero CARRYs: no carry to propagate.
+    </div>
+    <aside class="notes">
+        Fast refresher before the cost table. Day 1 introduced the LUT &mdash; the configurable 4-input gate. Today we add its silent partner, the CARRY cell. Every iCE40 logic tile pairs them: one LUT, one CARRY, one flip-flop.
+        The key insight: bitwise ops (AND/OR/XOR) are pure parallel functions &mdash; bit i out depends only on bit i in &mdash; so they only burn LUTs. Arithmetic and magnitude comparisons need information to flow <em>between</em> bit positions (the carry), and the chip has dedicated silicon for that. The CARRY cell isn't a LUT &mdash; it's a tiny fixed adder helper wired directly to its neighbor with no routing delay. That's why adders are nearly free in <em>delay</em> on small widths even though they cost N LUTs and N CARRYs in <em>area</em>.
+        Watch for this in the next slide's table: any row that mentions "carry chain" means SB_CARRY shows up alongside SB_LUT4. The live demo will confirm the split numerically &mdash; bitwise AND = 8/0, adder = 8/8, multiply = ~80/~24 (a multiplier is just lots of adders).
+    </aside>
+</section>
+
 <!-- Operator table (simplified) -->
 <section>
     <h2>The Operator Cost Table</h2>
