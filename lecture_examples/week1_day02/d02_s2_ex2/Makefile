@@ -50,8 +50,8 @@ stat-ops: $(OP_SRCS)
 	@for top in bitwise_and adder multiplier; do \
 	  echo ""; \
 	  echo "==================== $$top (8-bit) ===================="; \
-	  yosys -q -p "read_verilog $(OP_SRCS); synth_ice40 -top $$top; stat" 2>&1 \
-	    | grep -E 'SB_LUT4|SB_CARRY|Number of cells' || true; \
+	  yosys -p "read_verilog $(OP_SRCS); synth_ice40 -top $$top; stat" 2>&1 \
+	    | grep -E '(SB_LUT4|SB_CARRY)[[:space:]]+[0-9]+|Number of cells' || true; \
 	done
 
 clean:
