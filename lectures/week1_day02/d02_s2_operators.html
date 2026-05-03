@@ -141,6 +141,25 @@
     </aside>
 </section>
 
+<!-- FPGA TILE (UPDATED): LUT + CARRY + FF -->
+<section data-background-color="#FAFAFA">
+    <h2>The Logic Cell, Revisited</h2>
+    <p style="font-size:0.7em;margin:0.1em 0 0.3em;">Day 1's tile picture had a LUT and a flip-flop. Here it is again with the CARRY cell drawn in &mdash; so 1280 LCs really means 1280 LUTs <em>and</em> 1280 CARRYs.</p>
+    <div style="margin-top:0.1em;">
+        <img src="diagrams/d02_fpga_tile_lut_carry.svg" alt="iCE40 fabric with logic cells split into LUT and CARRY halves; zoom-in shows one logic cell containing a 4-input LUT, a CARRY cell with dedicated cin/cout, a D flip-flop, and a 2:1 output mux" style="width:100%;max-width:920px;display:block;margin:0 auto;">
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.3em;">
+        <strong>1:1 pairing, separate budgets.</strong> Each LC has one LUT4 and one CARRY hardwired together; the CARRYs in a column form a fixed top-to-bottom chain. They're <em>counted separately</em> because they're separate primitives &mdash; <code>a &amp; b</code> burns LUTs only, <code>a + b</code> burns both, and a long adder can run out of contiguous CARRY chain before it runs out of LUTs.
+    </div>
+    <aside class="notes">
+        Same picture as Day 1, with the missing half drawn in. Three quick facts to anchor before the cost table:
+        (1) Counts. iCE40 HX1K = 1280 logic cells. Each LC = 1 LUT4 + 1 CARRY + 1 FF. So 1280 LUTs and 1280 CARRYs &mdash; an exact 1:1.
+        (2) Pairing. LUT[i] and CARRY[i] are physically bonded inside LC[i] at fab time. CARRY[i]'s cout is hard-wired to CARRY[i+1]'s cin in the same column &mdash; that's the carry chain, and it bypasses the routing fabric, which is why adders are fast.
+        (3) Independence. The CARRY can sit idle while the LUT does its own thing &mdash; that's the <code>a &amp; b</code> case (LUTs lit, CARRYs dark). When CARRY <em>is</em> active, the paired LUT becomes the sum-bit generator (a XOR b XOR cin) &mdash; you don't get to use that LUT for some other function. So &ldquo;burning a CARRY&rdquo; effectively burns its LUT too. That's why <code>a + b</code> shows up as 8/8 in yosys, not 8/0.
+        Why count them separately? Two reasons. First, they're separate primitives in the bitstream &mdash; SB_LUT4 and SB_CARRY are distinct cells with distinct config. Second, they're separate <em>budgets</em>: a long ripple chain needs vertically contiguous CARRYs (placement-constrained), and a design can run out of those before it runs out of LUTs even though the totals are equal. The split tells you which limit you'll hit first.
+    </aside>
+</section>
+
 <!-- Operator table (simplified) -->
 <section>
     <h2>The Operator Cost Table</h2>
