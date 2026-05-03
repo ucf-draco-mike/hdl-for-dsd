@@ -274,7 +274,7 @@
   <text x="705" y="46" text-anchor="middle" font-size="10" fill="#5F6062" font-style="italic">LUT4 + CARRY + FF, with a dedicated carry-in/out wire</text>
 
   <!-- Logic cell box -->
-  <rect x="470" y="60" width="470" height="320" rx="10" fill="#FFFFFF" stroke="#2C2A29" stroke-width="2.5" filter="url(#lc-sh)"/>
+  <rect x="470" y="60" width="470" height="370" rx="10" fill="#FFFFFF" stroke="#2C2A29" stroke-width="2.5" filter="url(#lc-sh)"/>
 
   <!-- Carry-in arrow into the CARRY from below the cell -->
   <line x1="600" y1="335" x2="600" y2="305" stroke="#A87C1F" stroke-width="2" marker-end="url(#lc-carry)"/>
@@ -363,14 +363,14 @@
 
   <!-- Caption beneath -->
   <g font-size="10.5" fill="#2C2A29">
-    <text x="490" y="332" font-weight="700" fill="#1565C0">LUT</text>
-    <text x="520" y="332">tiny SRAM. 16 config bits = any 4-input function.</text>
-    <text x="490" y="347" font-weight="700" fill="#A87C1F">CARRY</text>
-    <text x="535" y="347">fixed adder helper. cin/cout bypass routing — fast chain.</text>
-    <text x="490" y="362" font-weight="700" fill="#E65100">FF</text>
-    <text x="510" y="362">1 bit of state.</text>
-    <text x="585" y="362" font-weight="700" fill="#6A1B9A">2:1 mux</text>
-    <text x="635" y="362">picks combinational vs. registered.</text>
+    <text x="490" y="380" font-weight="700" fill="#1565C0">LUT</text>
+    <text x="520" y="380">tiny SRAM. 16 config bits = any 4-input function.</text>
+    <text x="490" y="397" font-weight="700" fill="#A87C1F">CARRY</text>
+    <text x="535" y="397">fixed adder helper. cin/cout bypass routing — fast chain.</text>
+    <text x="490" y="414" font-weight="700" fill="#E65100">FF</text>
+    <text x="510" y="414">1 bit of state.</text>
+    <text x="585" y="414" font-weight="700" fill="#6A1B9A">2:1 mux</text>
+    <text x="635" y="414">picks combinational vs. registered.</text>
   </g>
 
   <!-- Bitstream caption (bottom strip) -->
