@@ -66,7 +66,7 @@
 <!-- FPGA FABRIC REFRESHER: LUTs vs CARRYs -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#2E86AB;">🧱</span> Refresher &mdash; LUTs vs CARRYs</h2>
-    <p style="font-size:0.7em;margin:0.1em 0 0.4em 0;">Day 1 covered the LUT. Before the cost table, meet its neighbor in every iCE40 logic tile: the <strong>dedicated CARRY cell</strong>.</p>
+    <p style="font-size:0.7em;margin:0.1em 0 0.4em 0;">Topic 1 covered the LUT. Before the cost table, meet its neighbor in every iCE40 logic tile: the <strong>dedicated CARRY cell</strong>.</p>
 
     <div class="two-col" style="margin-top:0.2em;">
         <div class="col panel" style="background:#fff;border:2px solid #5A9BD5;padding:0.55em;">
@@ -135,7 +135,7 @@
         <strong>Why the split matters:</strong> One iCE40 logic tile = <strong>1 LUT4 + 1 CARRY + 1 FF</strong>. The LUT4 generates the <em>sum</em> bit; the CARRY propagates the <em>carry</em> bit on a dedicated wire that bypasses the routing fabric. That's why <code>a + b</code> shows up as <em>both</em> SB_LUT4 <em>and</em> SB_CARRY in <code>yosys stat</code> &mdash; and why a bitwise <code>a &amp; b</code> shows zero CARRYs: no carry to propagate.
     </div>
     <aside class="notes">
-        Fast refresher before the cost table. Day 1 introduced the LUT &mdash; the configurable 4-input gate. Today we add its silent partner, the CARRY cell. Every iCE40 logic tile pairs them: one LUT, one CARRY, one flip-flop.
+        Fast refresher before the cost table. Topic 1 introduced the LUT &mdash; the configurable 4-input gate. Today we add its silent partner, the CARRY cell. Every iCE40 logic tile pairs them: one LUT, one CARRY, one flip-flop.
         The key insight: bitwise ops (AND/OR/XOR) are pure parallel functions &mdash; bit i out depends only on bit i in &mdash; so they only burn LUTs. Arithmetic and magnitude comparisons need information to flow <em>between</em> bit positions (the carry), and the chip has dedicated silicon for that. The CARRY cell isn't a LUT &mdash; it's a tiny fixed adder helper wired directly to its neighbor with no routing delay. That's why adders are nearly free in <em>delay</em> on small widths even though they cost N LUTs and N CARRYs in <em>area</em>.
         Watch for this in the next slide's table: any row that mentions "carry chain" means SB_CARRY shows up alongside SB_LUT4. The live demo will confirm the split numerically &mdash; bitwise AND = 8/0, adder = 8/8, multiply = ~80/~24 (a multiplier is just lots of adders).
     </aside>
@@ -144,7 +144,7 @@
 <!-- FPGA TILE (UPDATED): LUT + CARRY + FF -->
 <section data-background-color="#FAFAFA">
     <h2>The Logic Cell, Revisited</h2>
-    <p style="font-size:0.7em;margin:0.1em 0 0.3em;">Day 1's tile picture had a LUT and a flip-flop. Here it is again with the CARRY cell drawn in &mdash; so 1280 LCs really means 1280 LUTs <em>and</em> 1280 CARRYs.</p>
+    <p style="font-size:0.7em;margin:0.1em 0 0.3em;">Topic 1's tile picture had a LUT and a flip-flop. Here it is again with the CARRY cell drawn in &mdash; so 1280 LCs really means 1280 LUTs <em>and</em> 1280 CARRYs.</p>
     <div style="margin-top:0.1em;">
         <img src="diagrams/d02_fpga_tile_lut_carry.svg" alt="iCE40 fabric with logic cells split into LUT and CARRY halves; zoom-in shows one logic cell containing a 4-input LUT, a CARRY cell with dedicated cin/cout, a D flip-flop, and a 2:1 output mux" style="width:100%;max-width:920px;display:block;margin:0 auto;">
     </div>
@@ -152,7 +152,7 @@
         <strong>1:1 pairing, separate budgets.</strong> Each LC has one LUT4 and one CARRY hardwired together; the CARRYs in a column form a fixed top-to-bottom chain. They're <em>counted separately</em> because they're separate primitives &mdash; <code>a &amp; b</code> burns LUTs only, <code>a + b</code> burns both, and a long adder can run out of contiguous CARRY chain before it runs out of LUTs.
     </div>
     <aside class="notes">
-        Same picture as Day 1, with the missing half drawn in. Three quick facts to anchor before the cost table:
+        Same picture as Topic 1, with the missing half drawn in. Three quick facts to anchor before the cost table:
         (1) Counts. iCE40 HX1K = 1280 logic cells. Each LC = 1 LUT4 + 1 CARRY + 1 FF. So 1280 LUTs and 1280 CARRYs &mdash; an exact 1:1.
         (2) Pairing. LUT[i] and CARRY[i] are physically bonded inside LC[i] at fab time. CARRY[i]'s cout is hard-wired to CARRY[i+1]'s cin in the same column &mdash; that's the carry chain, and it bypasses the routing fabric, which is why adders are fast.
         (3) Independence. The CARRY can sit idle while the LUT does its own thing &mdash; that's the <code>a &amp; b</code> case (LUTs lit, CARRYs dark). When CARRY <em>is</em> active, the paired LUT becomes the sum-bit generator (a XOR b XOR cin) &mdash; you don't get to use that LUT for some other function. So &ldquo;burning a CARRY&rdquo; effectively burns its LUT too. That's why <code>a + b</code> shows up as 8/8 in yosys, not 8/0.
