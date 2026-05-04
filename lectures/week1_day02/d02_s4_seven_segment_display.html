@@ -141,16 +141,20 @@ assign o_seg_a = 1'b0;   // ON
 <!-- I Do -->
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Derive &ldquo;3&rdquo; From Scratch</h2>
-    <div class="two-col">
-        <div class="col">
+    <div style="display:grid;grid-template-columns:0.85fr 1fr 1.15fr;gap:0.6em;align-items:start;margin-top:0.3em;">
+        <div>
+            <img src="diagrams/d02_seven_segment.svg" alt="7-segment segment map a-g" style="width:100%;display:block;">
+            <p style="font-size:0.62em;text-align:center;margin:0.2em 0 0;color:#555;"><code>{a,b,c,d,e,f,g}</code> &mdash; MSB → LSB</p>
+        </div>
+        <div>
             <p style="font-size:0.72em;">Digit &ldquo;3&rdquo; lights segments: <strong>a, b, c, d, g</strong>.</p>
             <p style="font-size:0.72em;">Segments OFF: <strong>e, f</strong>.</p>
             <pre style="font-size:0.7em;"><code>Order:  a b c d e f g
 Active: 1 1 1 1 0 0 1   ← logical
 Pins:   0 0 0 0 1 1 0   ← active-low (flipped)</code></pre>
         </div>
-        <div class="col">
-            <pre class="synth" style="font-size:0.75em;"><code class="language-verilog">case (i_hex)
+        <div>
+            <pre class="synth" style="font-size:0.72em;"><code class="language-verilog">case (i_hex)
     // ...
     4'h3: o_seg = 7'b0000110;
     //             abcdefg
@@ -168,17 +172,25 @@ endcase</code></pre>
 <!-- We Do -->
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Fill in &ldquo;5&rdquo; and &ldquo;A&rdquo;</h2>
-    <pre class="synth"><code class="language-verilog">case (i_hex)
+    <div style="display:grid;grid-template-columns:1.6fr 0.85fr;gap:0.7em;align-items:start;margin-top:0.3em;">
+        <div>
+            <pre class="synth"><code class="language-verilog">case (i_hex)
     4'h5: o_seg = 7'b???????;  // segments: a, c, d, f, g (ON)
     4'hA: o_seg = 7'b???????;  // segments: a, b, c, e, f, g (ON)
 endcase</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Answers:</strong>
-        <code>4'h5 = 7'b0100100</code> (ON:a,c,d,f,g → logical 1011011 → active-low 0100100).
-        <code>4'hA = 7'b0001000</code> (ON:a,b,c,e,f,g → logical 1110111 → active-low 0001000).
-    </div>
-    <div class="fragment callout-warning" style="font-size:0.68em;">
-        <strong>Common bug:</strong> forgetting <code>default:</code>. If <code>i_hex</code> somehow carries X, you infer a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
+            <div class="fragment callout" style="font-size:0.7em;">
+                <strong>Answers:</strong>
+                <code>4'h5 = 7'b0100100</code> (ON:a,c,d,f,g → logical 1011011 → active-low 0100100).
+                <code>4'hA = 7'b0001000</code> (ON:a,b,c,e,f,g → logical 1110111 → active-low 0001000).
+            </div>
+            <div class="fragment callout-warning" style="font-size:0.66em;">
+                <strong>Common bug:</strong> forgetting <code>default:</code>. If <code>i_hex</code> somehow carries X, you infer a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
+            </div>
+        </div>
+        <div>
+            <img src="diagrams/d02_seven_segment.svg" alt="7-segment segment map a-g" style="width:100%;display:block;">
+            <p style="font-size:0.62em;text-align:center;margin:0.2em 0 0;color:#555;"><code>{a,b,c,d,e,f,g}</code> &mdash; MSB → LSB</p>
+        </div>
     </div>
     <aside class="notes">[Pause 60 seconds] The hex &ldquo;A&rdquo; is tricky because it's capital-A, not lowercase. Seven-segment &ldquo;B&rdquo; is usually lowercase-b (because capital-B is indistinguishable from 8). Calligraphy varies.</aside>
 </section>
@@ -218,15 +230,23 @@ endmodule</code></pre>
 <!-- You Do -->
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Before the Demo</h2>
-    <p style="font-size:0.78em;">Predict (don't peek at the table):</p>
-    <ol style="font-size:0.72em;">
-        <li>Does this module use any flip-flops?</li>
-        <li>Approximately how many LUTs does Yosys build?</li>
-        <li>If you accidentally write <code>o_seg = 7'b1111111</code> for <code>4'h0</code>, what will you see?</li>
-    </ol>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answers:</strong>
-        (1) <strong>No flops</strong> — pure combinational (no clock). (2) <strong>~7 LUTs</strong> — one per output bit, each implementing a 4-input boolean function. (3) Press the &ldquo;0&rdquo; switch combo, see nothing light up — display stays blank. Easy visual diagnostic for active-low confusion.
+    <div style="display:grid;grid-template-columns:1.6fr 0.85fr;gap:0.7em;align-items:start;margin-top:0.3em;">
+        <div>
+            <p style="font-size:0.78em;margin:0;">Predict (don't peek at the table):</p>
+            <ol style="font-size:0.72em;">
+                <li>Does this module use any flip-flops?</li>
+                <li>Approximately how many LUTs does Yosys build?</li>
+                <li>If you accidentally write <code>o_seg = 7'b1111111</code> for <code>4'h0</code>, what will you see?</li>
+            </ol>
+            <div class="fragment callout" style="font-size:0.7em;">
+                <strong>Answers:</strong>
+                (1) <strong>No flops</strong> — pure combinational (no clock). (2) <strong>~7 LUTs</strong> — one per output bit, each implementing a 4-input boolean function. (3) Press the &ldquo;0&rdquo; switch combo, see nothing light up — display stays blank. Easy visual diagnostic for active-low confusion.
+            </div>
+        </div>
+        <div>
+            <img src="diagrams/d02_seven_segment.svg" alt="7-segment segment map a-g" style="width:100%;display:block;">
+            <p style="font-size:0.62em;text-align:center;margin:0.2em 0 0;color:#555;"><code>{a,b,c,d,e,f,g}</code> &mdash; MSB → LSB</p>
+        </div>
     </div>
     <aside class="notes">The &ldquo;no flops&rdquo; prediction is the key concept check. If you predict flops, you haven't internalized that <code>always @(*)</code> is combinational.</aside>
 </section>
