@@ -141,6 +141,7 @@ assign o_seg_a = 1'b0;   // ON
 <!-- I Do -->
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Derive &ldquo;3&rdquo; From Scratch</h2>
+    <p style="font-size:0.7em;margin:0.2em 0 0.3em;"><strong>Signals:</strong> <code>i_hex</code> is the 4-bit input nibble (the value <code>0</code>&ndash;<code>F</code> we want to display); <code>o_seg</code> is the 7-bit output bus <code>{a,b,c,d,e,f,g}</code> driving the segments active-low. Full module declaration appears two slides ahead.</p>
     <div style="display:grid;grid-template-columns:0.85fr 1fr 1.15fr;gap:0.6em;align-items:start;margin-top:0.3em;">
         <div>
             <img src="diagrams/d02_seven_segment_3.svg" alt="7-segment showing digit 3 with segments e,f greyed out" style="width:100%;display:block;">
@@ -188,7 +189,7 @@ endcase</code></pre>
                 </div>
             </div>
             <div class="fragment callout-warning" style="font-size:0.66em;">
-                <strong>Common bug:</strong> forgetting <code>default:</code>. If <code>i_hex</code> somehow carries X, you infer a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
+                <strong>Common bug:</strong> forgetting <code>default:</code>. If any bit of <code>i_hex</code> is X (unknown), no <code>4'h0</code>&ndash;<code>4'hF</code> literal matches, <code>o_seg</code> is left unassigned in <code>always @(*)</code>, and the synthesizer infers a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
             </div>
         </div>
         <div>
