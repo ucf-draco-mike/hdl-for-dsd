@@ -1,7 +1,9 @@
 # Auto-generated Makefile — lecture example week1_day02/d02_s4_ex3
 # Demo: hex_to_7seg  (segment s4, example 3)
-TOP      = hex_to_7seg
-SRCS     = day02_ex03_hex_to_7seg.v
+# Synthesis target is top_7seg, which wraps hex_to_7seg and binds the
+# decoder's segment vector to the Go Board's individual segment pins.
+TOP      = top_7seg
+SRCS     = day02_ex03_hex_to_7seg.v day02_ex03_top_7seg.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
