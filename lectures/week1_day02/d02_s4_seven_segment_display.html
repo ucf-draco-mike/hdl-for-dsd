@@ -143,7 +143,7 @@ assign o_seg_a = 1'b0;   // ON
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Derive &ldquo;3&rdquo; From Scratch</h2>
     <div style="display:grid;grid-template-columns:0.85fr 1fr 1.15fr;gap:0.6em;align-items:start;margin-top:0.3em;">
         <div>
-            <img src="diagrams/d02_seven_segment.svg" alt="7-segment segment map a-g" style="width:100%;display:block;">
+            <img src="diagrams/d02_seven_segment_3.svg" alt="7-segment showing digit 3 with segments e,f greyed out" style="width:100%;display:block;">
             <p style="font-size:0.62em;text-align:center;margin:0.2em 0 0;color:#555;"><code>{a,b,c,d,e,f,g}</code> &mdash; MSB → LSB</p>
         </div>
         <div>
@@ -182,6 +182,10 @@ endcase</code></pre>
                 <strong>Answers:</strong>
                 <code>4'h5 = 7'b0100100</code> (ON:a,c,d,f,g → logical 1011011 → active-low 0100100).
                 <code>4'hA = 7'b0001000</code> (ON:a,b,c,e,f,g → logical 1110111 → active-low 0001000).
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.4em;">
+                    <img src="diagrams/d02_seven_segment_5.svg" alt="7-segment showing digit 5 with segments b,e greyed out" style="width:100%;display:block;">
+                    <img src="diagrams/d02_seven_segment_A.svg" alt="7-segment showing digit A with segment d greyed out" style="width:100%;display:block;">
+                </div>
             </div>
             <div class="fragment callout-warning" style="font-size:0.66em;">
                 <strong>Common bug:</strong> forgetting <code>default:</code>. If <code>i_hex</code> somehow carries X, you infer a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
