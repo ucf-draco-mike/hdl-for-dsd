@@ -90,5 +90,8 @@ subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 
 - :material-folder-open: **d12_s2_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s2_ex1){ target=_blank }
     - :material-chip: [`day12_ex01_uart_rx.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s2_ex1/day12_ex01_uart_rx.v){ target=_blank }
-- :material-folder-open: **d12_s4_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s4_ex2){ target=_blank }
-    - :material-chip: [`day12_ex02_uart_loopback.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s4_ex2/day12_ex02_uart_loopback.v){ target=_blank }
+    - :material-language-python: [`plot_sampling.py`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s2_ex1/plot_sampling.py){ target=_blank }
+- :material-folder-open: **d12_s3_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s3_ex2){ target=_blank }
+    - :material-chip: [`day12_ex02_spi_master.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s3_ex2/day12_ex02_spi_master.v){ target=_blank }
+- :material-folder-open: **d12_s4_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s4_ex3){ target=_blank }
+    - :material-chip: [`day12_ex03_uart_loopback.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week3_day12/d12_s4_ex3/day12_ex03_uart_loopback.v){ target=_blank }

@@ -9,6 +9,7 @@
 // Build:  iverilog -DSIMULATION -o sim day12_ex01_uart_rx.v && vvp sim
 // Synth:  yosys -p "read_verilog day12_ex01_uart_rx.v; synth_ice40 -top uart_rx"
 // =============================================================================
+`timescale 1ns/1ps
 
 module uart_rx #(
     `ifdef SIMULATION

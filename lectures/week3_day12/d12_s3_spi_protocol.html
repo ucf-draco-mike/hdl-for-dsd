@@ -166,8 +166,8 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week3_day12/d12_s4_ex2/
-cat spi_master.v    # CPOL=0, CPHA=0
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week3_day12/d12_s3_ex2/
+cat day12_ex02_spi_master.v   # mode 0
 make sim            # ADC model responds
 make wave
 # see SCK, MOSI, MISO, CS
@@ -178,11 +178,12 @@ make wave
 <pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">TX byte: 0x42 (start conv)
 RX byte: 0xA5 (ADC result)
 
-PASS: CS falls, SCK toggles
-PASS: 8 edges, 8 bits
-PASS: MSB-first order
-PASS: CS rises after transfer
-=== 16 passed, 0 failed ===</code></pre>
+PASS: CS_N asserted before SCK toggled
+PASS: 8 SCK pulses per byte
+PASS: MISO returned 0xA5 (ADC result)
+PASS: MOSI delivered 0x42 MSB-first
+PASS: CS_N de-asserted after transfer
+=== 5 passed, 0 failed ===</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">

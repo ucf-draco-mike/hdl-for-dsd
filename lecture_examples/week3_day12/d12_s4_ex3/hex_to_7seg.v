@@ -11,6 +11,7 @@
 // Build:
 //   yosys -p "synth_ice40 -top hex_to_7seg -json day02_ex03_hex_to_7seg.json" day02_ex03_hex_to_7seg.v
 //-----------------------------------------------------------------------------
+`timescale 1ns/1ps
 module hex_to_7seg (
     input  wire [3:0] i_hex,
     output reg  [6:0] o_seg   // {a,b,c,d,e,f,g} active low
