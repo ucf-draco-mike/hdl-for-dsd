@@ -88,7 +88,7 @@ itself, evolving across the four segments.
 | `d06_s1` | Build a Testbench from Scratch | `lecture_examples/week2_day06/d06_s1_ex1/` | `adder.v`, `tb_adder.v` | `sim` |
 | `d06_s2` | Convert a "Print" Testbench to Self-Checking | `lecture_examples/week2_day06/d06_s1_ex1/` | `tb_adder_before.v`, `tb_adder_after.v` | `sim` (each), `diff` |
 | `d06_s3` | Refactor a Real Testbench | `lecture_examples/week2_day06/d06_s1_ex1/` | `tb_before.v`, `tb_after.v` | `sim` (each), `diff` |
-| `d06_s4` | 1000-Vector Adder Test | `lecture_examples/week2_day06/d06_s1_ex1/` | `gen_vectors.py`, `vectors.hex`, `tb_adder_file.v` | `python3 gen_vectors.py`, `sim` |
+| `d06_s4` | 1000-Vector Adder Test | `lecture_examples/week2_day06/d06_s1_ex1/` | `gen_vectors.py`, `vectors.hex`, `tb_adder_file.v` | `python3 gen_vectors.py`, `sim_file` |
 
 > The day's lab also exercises the `day06_ex01_tb_alu_template.v` self-checking ALU
 > testbench template that ships in the same directory; it is the seed for the lab

@@ -139,10 +139,11 @@ gtkwave tb_adder.vcd &amp;</code></pre>
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
 <pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">VCD info: dumpfile
   tb_adder.vcd opened
-5+3 = 8
-7+9 = 16
-15+1 = 16
-tb_adder.v:25: $finish called</code></pre>
+a=0 b=0 -&gt; sum=0
+a=1 b=2 -&gt; sum=3
+a=200 b=100 -&gt; sum=300
+a=255 b=1 -&gt; sum=256 (carry expected)
+tb_adder.v:31: $finish called</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
