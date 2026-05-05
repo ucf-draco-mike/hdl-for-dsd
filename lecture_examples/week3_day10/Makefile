@@ -2,8 +2,10 @@
 # Routes targets into per-example subdirectories.
 #
 # Examples in this day:
-#   ex1 -> d10_s2_ex1  (adder_4bit, segment s2)
-#   ex2 -> d10_s2_ex2  (mult_4bit,  segment s2)
+#   ex1 -> d10_s2_ex1  (adder_slow/fast timing demo + parallel/sequential mult,
+#                       segments s1 & s2)
+#   ex2 -> d10_s2_ex2  (traffic-light FSM PPA report — binary/onehot/gray,
+#                       segment s3)
 #
 # Targets (replace N with the example number: 1 or 2):
 #   make exN          # default: stat (synth report)
