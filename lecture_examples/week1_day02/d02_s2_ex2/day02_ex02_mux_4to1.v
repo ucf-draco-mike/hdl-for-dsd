@@ -17,6 +17,9 @@
 //-----------------------------------------------------------------------------
 
 // ----- Variant (1): nested conditional -------------------------------------
+// Matches the d02_s2 "We Do" slide: each `?:` is one 2:1 mux, and Yosys
+// builds them as a 3-mux tree -- two at the leaves (selected by sel[0])
+// feeding a root mux selected by sel[1]. Selects: 00->a, 01->b, 10->c, 11->d.
 module mux_4to1_nested #(
     parameter WIDTH = 4
 )(
@@ -27,10 +30,8 @@ module mux_4to1_nested #(
     input  wire [1:0]       i_sel,
     output wire [WIDTH-1:0] o_y
 );
-    assign o_y = (i_sel == 2'b00) ? i_a :
-                 (i_sel == 2'b01) ? i_b :
-                 (i_sel == 2'b10) ? i_c :
-                                    i_d;
+    assign o_y = i_sel[1] ? (i_sel[0] ? i_d : i_c)
+                          : (i_sel[0] ? i_b : i_a);
 endmodule
 
 
