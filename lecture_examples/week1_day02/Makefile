@@ -19,7 +19,7 @@
 #   make clean        # clean every example in this day
 #
 # ex5 also exposes the s3-specific lint/synth-warn targets:
-#   make ex5_lint        # iverilog -Wall — surfaces width warnings
+#   make ex5_lint        # verilator --lint-only -Wall — surfaces width warnings
 #   make ex5_synth-warn  # yosys synth_ice40 — surfaces width warnings
 
 EXAMPLES := d02_s1_ex1 d02_s2_ex2 d02_s4_ex3 d02_s1_ex4 d02_s3_ex5

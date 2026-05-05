@@ -5,9 +5,13 @@
 # show the matching silent wrong answers at runtime. Three targets, three
 # moments of the demo:
 #
-#   make lint        # iverilog -Wall — compiler width warnings
+#   make lint        # verilator --lint-only -Wall — compiler width warnings
 #   make synth-warn  # yosys synth_ice40 — synthesis width warnings
 #   make sim         # runs tb_width_bugs.v — prints expected vs got
+#
+# Note: iverilog has no width-mismatch warning category, so `iverilog -Wall`
+# compiles this file silently. Verilator does flag WIDTHEXPAND/WIDTHTRUNC,
+# which is exactly what the slide is illustrating.
 #
 # `make stat` and `make synth` exist for completeness (LUT counts, JSON).
 TOP      = width_bugs
@@ -17,13 +21,14 @@ PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
+VLTFLAGS = --lint-only -Wall
 
-# `lint` is the slide's headline demo: -Wall surfaces every width warning.
-# We compile-only (-o /dev/null) and let iverilog return nonzero on errors —
-# warnings still print but don't fail the target, which is what we want here.
+# `lint` is the slide's headline demo: verilator surfaces every width warning.
+# We use --lint-only (no compile output) and let the dash prefix swallow the
+# nonzero exit so warnings still print without failing the target.
 lint: $(SRCS)
-	@echo "==== iverilog -Wall — width warnings ===="
-	-iverilog $(IVFLAGS) -o /dev/null $(SRCS)
+	@echo "==== verilator --lint-only -Wall — width warnings ===="
+	-verilator $(VLTFLAGS) --top-module $(TOP) $(SRCS)
 
 sim: $(SRCS) $(TB)
 	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
