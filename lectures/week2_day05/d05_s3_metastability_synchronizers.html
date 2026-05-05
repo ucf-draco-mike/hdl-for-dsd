@@ -77,17 +77,17 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The 2-FF Synchronizer</h2>
-    <pre class="synth"><code class="language-verilog">module sync_2ff (
+    <pre class="synth"><code class="language-verilog">module synchronizer (
     input  wire i_clk,
-    input  wire i_async,     // from external world, any timing
-    output wire o_synced     // clean, synchronous to i_clk
+    input  wire i_async_in,    // from external world, any timing
+    output wire o_sync_out     // clean, synchronous to i_clk
 );
-    reg r_meta, r_stable;
+    reg r_meta, r_sync;
     always @(posedge i_clk) begin
-        r_meta   &lt;= i_async;   // first flop: may go metastable
-        r_stable &lt;= r_meta;     // second flop: has a full clock period to resolve
+        r_meta &lt;= i_async_in;  // first flop: may go metastable
+        r_sync &lt;= r_meta;      // second flop: has a full clock period to resolve
     end
-    assign o_synced = r_stable;
+    assign o_sync_out = r_sync;
 endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>My thinking:</strong> The first flop may go metastable — but metastability <em>resolves</em> exponentially (probabilistic decay). Given a full clock period (~40 ns on iCE40) to settle, the probability it's still metastable at the <em>second</em> flop's capture edge is astronomically small. At 25 MHz with iCE40's τ, MTBF is measured in <strong>centuries</strong>.
@@ -160,16 +160,16 @@ PASS: glitches on async do
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
         <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
-        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>i_async · r_meta · r_stable</code>. Note: <code>r_meta</code> <em>may</em> glitch in simulation (if the TB drives pulses shorter than the clock period); <code>r_stable</code> is always clean. Latency is 2 clock cycles. That's the cost of safety.</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>i_async_in · r_meta · r_sync</code>. Note: <code>r_meta</code> <em>may</em> glitch in simulation (if the TB drives pulses shorter than the clock period); <code>r_sync</code> is always clean. Latency is 2 clock cycles. That's the cost of safety.</p>
     </div>
     <aside class="notes">The testbench intentionally drives narrow pulses to show the first flop capturing mid-transition. The second flop always presents a clean value. 2 cycles of latency is the universal cost.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog sync_2ff.v; synth_ice40 -top sync_2ff; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog day05_ex03_synchronizer.v; synth_ice40 -top synchronizer; stat" -q
 
-=== sync_2ff ===
+=== synchronizer ===
    Number of wires:                  4
    Number of cells:                  2
      SB_DFF                          2    ← exactly 2 flops, no frills

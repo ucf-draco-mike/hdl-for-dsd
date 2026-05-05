@@ -64,17 +64,17 @@
 <!-- I Do: modulo-N -->
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Modulo-N Counter</h2>
-    <pre class="synth"><code class="language-verilog">module mod_n_counter #(parameter N = 10) (
-    input  wire i_clk, i_reset,
+    <pre class="synth"><code class="language-verilog">module counter_mod_n #(parameter N = 10) (
+    input  wire i_clk, i_reset, i_enable,
     output reg  [$clog2(N)-1:0] o_count,
     output wire o_wrap
 );
     always @(posedge i_clk) begin
-        if (i_reset)             o_count &lt;= 0;
-        else if (o_count == N-1) o_count &lt;= 0;        // wrap
-        else                     o_count &lt;= o_count + 1'b1;
+        if (i_reset)                          o_count &lt;= 0;
+        else if (i_enable &amp;&amp; o_count == N-1) o_count &lt;= 0;          // wrap
+        else if (i_enable)                    o_count &lt;= o_count + 1'b1;
     end
-    assign o_wrap = (o_count == N-1);                  // pulse at rollover
+    assign o_wrap = i_enable &amp;&amp; (o_count == N-1);                    // pulse at rollover
 endmodule</code></pre>
     <div class="callout" style="font-size:0.7em;">
         <strong>My thinking:</strong> <code>$clog2(N)</code> auto-sizes the width — no off-by-one errors. The <code>o_wrap</code> pulse goes high for exactly one cycle per cycle-of-N; perfect for cascading counters or triggering periodic events.
@@ -150,9 +150,9 @@ PASS: o_wrap pulses 1 cycle
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog mod_n_counter.v; synth_ice40 -top mod_n_counter; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog day05_ex01_counter_mod_n.v; synth_ice40 -top counter_mod_n; stat" -q
 
-=== mod_n_counter ===  (N=10, so width = $clog2(10) = 4 bits)
+=== counter_mod_n ===  (N=10, so width = $clog2(10) = 4 bits)
    Number of wires:                 13
    Number of cells:                 15
      SB_CARRY                        3     ← carry chain for +1
