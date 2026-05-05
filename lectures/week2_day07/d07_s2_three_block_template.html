@@ -144,7 +144,7 @@ end</code></pre>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day07/d07_s2_ex1/
-cat traffic_fsm.v    # see 3-block template
+cat day07_ex01_fsm_template.v   # see 3-block template
 make sim             # self-check
 make wave            # see sequence
 make stat            # check LUT count
@@ -152,11 +152,12 @@ make prog            # flash Go Board</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: GREEN → YELLOW
-PASS: YELLOW → RED
-PASS: RED → GREEN
-PASS: reset → GREEN
-=== 12 passed, 0 failed ===</code></pre>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: After reset: GREEN
+PASS: GREEN-&gt;YELLOW
+PASS: YELLOW-&gt;RED
+PASS: RED-&gt;GREEN (cycle 2)
+PASS: Mid-cycle reset -&gt; GREEN
+=== 5 passed, 0 failed ===</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
@@ -168,9 +169,9 @@ PASS: reset → GREEN
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog traffic_fsm.v; synth_ice40 -top traffic_fsm; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog day07_ex01_fsm_template.v; synth_ice40 -top traffic_light; stat" -q
 
-=== traffic_fsm ===  (3 states, binary encoded → 2 bits)
+=== traffic_light ===  (3 states, binary encoded → 2 bits)
    Number of wires:                 10
    Number of cells:                  7
      SB_DFF                          2    ← 2 bits of state

@@ -139,21 +139,22 @@ o_det:  0    0    0    0    1    0    0    1</code></pre>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day07/d07_s4_ex2/
-cat pattern_1011.v    # 3-block from diagram
-make sim              # covers overlap cases
+cat day07_ex02_pattern_detector.v   # 3-block "1011" Moore
+make sim     # covers overlap + near-miss
 make wave
 make stat</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: detects 1011
-PASS: ignores 1010
-PASS: detects overlapping 10110111
-PASS: reset → S0
-=== 16 passed, 0 failed ===
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: reset -> S0 (no detect)
+PASS: detects '1011'
+PASS: ignores '1010' (no match)
+PASS: overlap: detects first '1011'
+PASS: overlap: detects second '1011'
+=== 18 passed, 0 failed ===
 
-  SB_DFF:  2
-  SB_LUT4: 4</code></pre>
+  SB_DFF:  3   (5 states -> ceil(log2 5)=3)
+  SB_LUT4: ~6</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">

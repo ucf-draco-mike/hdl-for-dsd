@@ -293,17 +293,18 @@ o_green: 1  1  1  1  0  ?  ?  ?  ?  ?  ?  ?  ?</code></pre>
         <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
             <p style="color:#FFC904; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ COMMANDS</p>
 <pre style="background: transparent; margin: 0;"><code class="language-bash" style="font-size: 0.52em; color: #E8E8E4;">cd lecture_examples/week2_day07/d07_s2_ex1/
-make sim       # iverilog + vvp
-make wave      # GTKWave on dump.vcd
+make sim       # iverilog + vvp (module: traffic_light)
+make wave      # GTKWave on tb_traffic_light.vcd
 make stat      # yosys synth_ice40 + stat</code></pre>
         </div>
         <div style="background:#111; padding: 0.7em; border-radius: 6px; border: 1px solid #333;">
             <p style="color:#27AE60; font-size: 0.55em; margin: 0 0 0.3em 0; letter-spacing: 0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background: transparent; margin: 0;"><code style="font-size: 0.52em; color: #E8E8E4;">[@ 120ns] PASS: S_GREEN active
-[@ 280ns] PASS: S_GREEN→S_YELLOW
-[@ 440ns] PASS: S_YELLOW→S_RED
-[@ 600ns] PASS: S_RED→S_GREEN
-=== 4 passed, 0 failed ===</code></pre>
+<pre style="background: transparent; margin: 0;"><code style="font-size: 0.52em; color: #E8E8E4;">PASS: After reset: GREEN     -- R=0 Y=0 G=1
+PASS: GREEN-&gt;YELLOW          -- R=0 Y=1 G=0
+PASS: YELLOW-&gt;RED            -- R=1 Y=0 G=0
+PASS: RED-&gt;GREEN (cycle 2)   -- R=0 Y=0 G=1
+PASS: Mid-cycle reset -&gt; GRN -- R=0 Y=0 G=1
+*** ALL TESTS PASSED ***</code></pre>
         </div>
     </div>
 
@@ -337,8 +338,8 @@ make stat      # yosys synth_ice40 + stat</code></pre>
 
     <div class="two-col" style="margin-top: 0.3em;">
         <div class="col">
-            <pre style="font-size: 0.6em;"><code class="language-bash">$ yosys -p "read_verilog traffic_light.v; \
-             synth_ice40; stat" -q
+            <pre style="font-size: 0.6em;"><code class="language-bash">$ yosys -p "read_verilog day07_ex01_fsm_template.v; \
+             synth_ice40 -top traffic_light; stat" -q
 
 === traffic_light ===
 
@@ -364,7 +365,7 @@ make stat      # yosys synth_ice40 + stat</code></pre>
 
     <div class="fragment callout" style="font-size: 0.72em; margin-top: 0.3em;">
         <strong>Generate this yourself:</strong>
-        <code>yosys -p "read_verilog traffic_light.v; synth_ice40; show -format svg -prefix fsm_synth" </code>
+        <code>yosys -p "read_verilog day07_ex01_fsm_template.v; synth_ice40 -top traffic_light; show -format svg -prefix fsm_synth" </code>
         &mdash; produces <code>fsm_synth.svg</code> showing the actual gates and flops Yosys built.
     </div>
 
