@@ -155,27 +155,27 @@ endmodule</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week4_day13/d13_s3_ex1/
-cp ../../week2_day05/ex4_debounce/*.v .
-sed -i 's/\\bwire\\b/logic/g; s/\\breg\\b/logic/g' debounce.v
-mv debounce.v debounce.sv
-iverilog -g2012 -o sim tb_debounce.v debounce.sv
-./sim</code></pre>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week4_day13/d13_s2_ex1/
+# day13_ex01_debounce_sv.sv is the SV-modernised
+# version of shared/lib/debounce.v -- wire/reg
+# replaced by logic, always -> always_ff.
+make sim     # iverilog -g2012 + vvp
+make stat    # yosys synth_ice40 -- same cells</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: stable 1 passes through
-PASS: stable 0 passes through
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">PASS: stable 0 passes through
+PASS: stable 1 passes through
 PASS: 1-cycle glitch filtered
 PASS: bouncing settles after window
-=== 8 passed, 0 failed ===
+=== 4 passed, 0 failed ===
 
 # same hardware, same cell count</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
         <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
-        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">A 3-character <code>sed</code> modernizes the whole file. Your Week 1-3 library can be SV-ified in minutes. The testbench still passes because behavior is identical.</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">A find/replace (<code>wire</code>/<code>reg</code> -&gt; <code>logic</code>, <code>always</code> -&gt; <code>always_ff</code>) modernizes the whole file. Your Week 1-3 library can be SV-ified in minutes. The testbench still passes because behavior is identical.</p>
     </div>
     <aside class="notes">[Terminal] Show the sed, compile, run, still passes. Emphasize: migration is cheap, behavior is preserved, but code is now modern.</aside>
 </section>

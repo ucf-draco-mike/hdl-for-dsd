@@ -1,7 +1,7 @@
-# Auto-generated Makefile — lecture example week4_day13/d13_s4_ex2
-# Demo: alu_sv  (segment s4, example 2)
-TOP      = alu_sv
-SRCS     = day13_ex02_alu_sv.sv
+# Auto-generated Makefile -- lecture example week4_day13/d13_s4_ex3
+# Demo: traffic_light_sv  (segment s4, example 3 -- typedef enum / always_ff / always_comb)
+TOP      = traffic_light_sv
+SRCS     = day13_ex03_traffic_light_sv.sv
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100

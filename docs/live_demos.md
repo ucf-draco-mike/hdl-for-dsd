@@ -51,9 +51,9 @@ directory.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d03_s1` | `always @(*)` vs `assign` — Same Hardware | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v`, `tb_alu_4bit.v` | `sim`, `stat` |
-| `d03_s2` | 4-bit ALU with `case` | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v` | `sim`, `stat` |
-| `d03_s3` | Inducing & Fixing a Latch | `lecture_examples/week1_day03/d03_s3_ex2/` (buggy) and `lecture_examples/week1_day03/d03_s3_ex3/` (fixed) | `day03_ex01_latch_demo.v`, `day03_ex02_latch_fixed.v` | `sim`, `stat` |
+| `d03_s1` | `always @(*)` vs `assign` — Same Hardware | `lecture_examples/week1_day03/d03_s1_ex1/` | `day03_ex04_mux_assign.v`, `day03_ex05_mux_always.v`, `tb_mux.v` | `sim`, `stat` |
+| `d03_s2` | 4-bit ALU with `case` | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v`, `tb_alu_4bit.v` | `sim`, `stat` |
+| `d03_s3` | Inducing & Fixing a Latch | `lecture_examples/week1_day03/d03_s3_ex2/` (buggy) and `lecture_examples/week1_day03/d03_s3_ex3/` (fixed) | `day03_ex01_latch_demo.v`, `day03_ex02_latch_fixed.v`, `tb_latch_demo.v`, `tb_latch_fixed.v` | `sim`, `stat` |
 | `d03_s4` | Shift Register: `=` vs `<=` Side-by-Side | `lecture_examples/week1_day04/d04_s2_ex1/` (cross-day) | `day04_ex03_shift_register_demo.v`, `tb_shift_register_demo.v` | `sim`, `wave` |
 
 ### Day 4 — Sequential Logic: Flip-Flops, Clocks & Counters
@@ -119,9 +119,9 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d09_s1` | Case vs Array ROM: Same Output, Different Silicon | `lecture_examples/week3_day09/d09_s1_ex1/` | `day09_ex01_rom_sync.v`, `tb_rom_sync.v` | `sim`, `stat` |
-| `d09_s2` | Write, Read, Confirm Block RAM Inference | `lecture_examples/week3_day09/d09_s2_ex2/` | `day09_ex02_ram_sp.v`, `tb_ram_sp.v` | `sim`, `wave`, `stat` |
-| `d09_s4` | Pattern Sequencer on the Go Board | `lecture_examples/week3_day09/d09_s4_ex3/` | `day09_ex03_pattern_sequencer.v`, `tb_pattern_sequencer.v` | `sim`, `prog` |
+| `d09_s1` | Case vs Array ROM: Same Output, Different Silicon | `lecture_examples/week3_day09/d09_s1_ex1/` | `rom_case.v`, `rom_array.v`, `hello.hex`, `tb_rom.v` | `sim`, `wave`, `stat_case`, `stat_array` |
+| `d09_s2` | Write, Read, Confirm Block RAM Inference | `lecture_examples/week3_day09/d09_s2_ex2/` | `ram_1p.v`, `tb_ram_1p.v` | `sim`, `wave`, `stat` |
+| `d09_s4` | Pattern Sequencer on the Go Board | `lecture_examples/week3_day09/d09_s4_ex3/` | `pattern_sequencer.v`, `rom_array.v`, `top.v`, `pattern.hex`, `tb_pattern_sequencer.v` | `sim`, `wave`, `stat`, `prog` |
 
 ### Day 10 — Numerical Architectures & Design Trade-offs
 
@@ -156,8 +156,8 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d13_s2` | Modernize Your Debouncer | `lecture_examples/week4_day13/d13_s3_ex1/` | `day13_ex01_uart_tx_sv.sv`, `tb_uart_tx_sv.sv` | `sim`, `stat` |
-| `d13_s4` | State Names in GTKWave | `lecture_examples/week4_day13/d13_s4_ex2/` | `day13_ex02_alu_sv.sv`, `tb_alu_sv.sv` | `sim`, `wave` |
+| `d13_s2` | Modernize Your Debouncer | `lecture_examples/week4_day13/d13_s2_ex1/` | `day13_ex01_debounce_sv.sv`, `tb_debounce_sv.sv` | `sim`, `stat` |
+| `d13_s4` | State Names in GTKWave | `lecture_examples/week4_day13/d13_s4_ex3/` | `day13_ex03_traffic_light_sv.sv`, `tb_traffic_light_sv.sv` | `sim`, `wave` |
 
 ### Day 14 — Verification, AI-Driven Testing & PPA Analysis
 

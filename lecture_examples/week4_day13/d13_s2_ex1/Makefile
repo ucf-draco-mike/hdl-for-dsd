@@ -1,16 +1,16 @@
-# Auto-generated Makefile — lecture example week4_day13/d13_s3_ex1
-# Demo: uart_tx_sv  (segment s3, example 1)
-TOP      = uart_tx_sv
-SRCS     = day13_ex01_uart_tx_sv.sv
+# Auto-generated Makefile -- lecture example week4_day13/d13_s2_ex1
+# Demo: debounce_sv  (segment s2, example 1 -- Modernize Your Debouncer)
+TOP      = debounce_sv
+SRCS     = day13_ex01_debounce_sv.sv
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
-IVFLAGS  = -g2012 -Wall -DSIMULATION
+IVFLAGS  = -g2012 -Wall
 
 sim:
 	@tb=$$(ls tb_*.v tb_*.sv 2>/dev/null | head -n 1); \
 	if [ -z "$$tb" ]; then \
-		echo "[sim] No testbench (tb_*.v) in $$(pwd) — add one to simulate."; \
+		echo "[sim] No testbench (tb_*.v) in $$(pwd) -- add one to simulate."; \
 	else \
 		srcs=$$(ls *.v *.sv 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
 		iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs && vvp sim.vvp; \

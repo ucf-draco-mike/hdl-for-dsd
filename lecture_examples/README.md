@@ -31,7 +31,7 @@ lecture_examples/<weekN_dayMM>/d<MM>_s<X>_exN/
 |-----|----------|--------------------|
 | Week 1 · Day 1  | `d01_s3_ex1`, `d01_s3_ex2`, `d01_s4_ex3`                                | `d01_s3` (1, 2), `d01_s4` |
 | Week 1 · Day 2  | `d02_s1_ex1`, `d02_s1_ex4`, `d02_s2_ex2`, `d02_s4_ex3`                  | `d02_s1`, `d02_s2`, `d02_s3`, `d02_s4` |
-| Week 1 · Day 3  | `d03_s2_ex1`, `d03_s3_ex2`, `d03_s3_ex3`                                | `d03_s1`, `d03_s2`, `d03_s3` |
+| Week 1 · Day 3  | `d03_s1_ex1`, `d03_s2_ex1`, `d03_s3_ex2`, `d03_s3_ex3`                  | `d03_s1`, `d03_s2`, `d03_s3` |
 | Week 1 · Day 4  | `d04_s2_ex1`, `d04_s3_ex2`, `d04_s4_ex3`                                | `d03_s4`, `d04_s1..s4` |
 | Week 2 · Day 5  | `d05_s1_ex1`, `d05_s2_ex2`, `d05_s3_ex3`, `d05_s4_ex4`                  | `d05_s1..s4` |
 | Week 2 · Day 6  | `d06_s1_ex1`                                                            | `d06_s1..s4` (testbench evolution in one dir) |

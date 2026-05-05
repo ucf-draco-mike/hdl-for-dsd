@@ -86,7 +86,9 @@ Code shown during the pre-class video. Each example is a runnable
 
 subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 
-- :material-folder-open: **d13_s3_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s3_ex1){ target=_blank }
-    - :material-chip: [`day13_ex01_uart_tx_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s3_ex1/day13_ex01_uart_tx_sv.sv){ target=_blank }
-- :material-folder-open: **d13_s4_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s4_ex2){ target=_blank }
-    - :material-chip: [`day13_ex02_alu_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s4_ex2/day13_ex02_alu_sv.sv){ target=_blank }
+- :material-folder-open: **d13_s2_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s2_ex1){ target=_blank }
+    - :material-chip: [`day13_ex01_debounce_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s2_ex1/day13_ex01_debounce_sv.sv){ target=_blank }
+- :material-folder-open: **d13_s3_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s3_ex2){ target=_blank }
+    - :material-chip: [`day13_ex02_uart_tx_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s3_ex2/day13_ex02_uart_tx_sv.sv){ target=_blank }
+- :material-folder-open: **d13_s4_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s4_ex3){ target=_blank }
+    - :material-chip: [`day13_ex03_traffic_light_sv.sv`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week4_day13/d13_s4_ex3/day13_ex03_traffic_light_sv.sv){ target=_blank }
