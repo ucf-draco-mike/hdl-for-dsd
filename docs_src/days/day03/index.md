@@ -88,6 +88,9 @@ Code shown during the pre-class video. Each example is a runnable
 
 subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 
+- :material-folder-open: **d03_s1_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s1_ex1){ target=_blank }
+    - :material-chip: [`day03_ex04_mux_assign.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s1_ex1/day03_ex04_mux_assign.v){ target=_blank }
+    - :material-chip: [`day03_ex05_mux_always.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s1_ex1/day03_ex05_mux_always.v){ target=_blank }
 - :material-folder-open: **d03_s2_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s2_ex1){ target=_blank }
     - :material-chip: [`day03_ex03_alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s2_ex1/day03_ex03_alu_4bit.v){ target=_blank }
 - :material-folder-open: **d03_s3_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s3_ex2){ target=_blank }

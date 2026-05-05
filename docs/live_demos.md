@@ -51,9 +51,9 @@ directory.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d03_s1` | `always @(*)` vs `assign` — Same Hardware | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v`, `tb_alu_4bit.v` | `sim`, `stat` |
-| `d03_s2` | 4-bit ALU with `case` | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v` | `sim`, `stat` |
-| `d03_s3` | Inducing & Fixing a Latch | `lecture_examples/week1_day03/d03_s3_ex2/` (buggy) and `lecture_examples/week1_day03/d03_s3_ex3/` (fixed) | `day03_ex01_latch_demo.v`, `day03_ex02_latch_fixed.v` | `sim`, `stat` |
+| `d03_s1` | `always @(*)` vs `assign` — Same Hardware | `lecture_examples/week1_day03/d03_s1_ex1/` | `day03_ex04_mux_assign.v`, `day03_ex05_mux_always.v`, `tb_mux.v` | `sim`, `stat` |
+| `d03_s2` | 4-bit ALU with `case` | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v`, `tb_alu_4bit.v` | `sim`, `stat` |
+| `d03_s3` | Inducing & Fixing a Latch | `lecture_examples/week1_day03/d03_s3_ex2/` (buggy) and `lecture_examples/week1_day03/d03_s3_ex3/` (fixed) | `day03_ex01_latch_demo.v`, `day03_ex02_latch_fixed.v`, `tb_latch_demo.v`, `tb_latch_fixed.v` | `sim`, `stat` |
 | `d03_s4` | Shift Register: `=` vs `<=` Side-by-Side | `lecture_examples/week1_day04/d04_s2_ex1/` (cross-day) | `day04_ex03_shift_register_demo.v`, `tb_shift_register_demo.v` | `sim`, `wave` |
 
 ### Day 4 — Sequential Logic: Flip-Flops, Clocks & Counters

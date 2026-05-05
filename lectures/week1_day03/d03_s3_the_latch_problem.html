@@ -171,25 +171,31 @@ end</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day03/d03_s3_ex2/
-# 1. Buggy version:
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;"># 1. Buggy version (latch warnings):
+cd lecture_examples/week1_day03/d03_s3_ex2/
 make stat 2&gt;&amp;1 | grep -i 'latch\|infer'
-# 2. Fix: add 'default:' line
-sed -i 's|endcase|  default: y = 0;\n  endcase|' buggy.v
-# 3. Re-synth:
-make stat 2&gt;&amp;1 | grep -i 'latch\|infer'</code></pre>
+
+# 2. Fixed version (default + complete case):
+cd ../d03_s3_ex3/
+make stat 2&gt;&amp;1 | grep -i 'latch\|infer'
+
+# Diff the two source files to see the one-line fixes:
+diff ../d03_s3_ex2/day03_ex01_latch_demo.v \
+     ../d03_s3_ex3/day03_ex02_latch_fixed.v</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"># BEFORE fix:
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"># d03_s3_ex2 (buggy):
 Warning: Latch inferred for
-  signal `\y' in process
-  $proc$.../buggy.v:6$1
+  signal `\o_bug1' in process
+  $proc$...latch_demo.v
+Warning: Latch inferred for
+  signal `\o_bug2' ...
 
-# AFTER fix:
-(no warnings)
+# d03_s3_ex3 (fixed):
+(no latch warnings)
 SB_DFF           0
-SB_LUT4          2</code></pre>
+SB_LUT4          ~2</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
