@@ -41,7 +41,7 @@ directory.
 |-------|-------|-------------|-------------|--------------|
 | `d02_s1` | Vector Operations in iverilog | `lecture_examples/week1_day02/d02_s1_ex1/` | `day02_ex01_vector_ops.v`, `tb_vector_ops.v` | `sim`, `wave`, `stat` |
 | `d02_s2` | Building a 4:1 Mux + Cost Comparison | `lecture_examples/week1_day02/d02_s2_ex2/` | `day02_ex02_mux_2to1.v`, `day02_ex02_mux_4to1.v`, `tb_mux_2to1.v`, `tb_mux_4to1.v` | `sim`, `wave`, `stat` |
-| `d02_s3` | Width Mismatch — Compiler & Synthesis Warnings | `lecture_examples/week1_day02/d02_s2_ex2/` | `width_bugs.v` | (manual `iverilog -Wall` + `yosys`) |
+| `d02_s3` | Width Mismatch — Compiler & Synthesis Warnings | `lecture_examples/week1_day02/d02_s3_ex5/` | `width_bugs.v` | `lint` (verilator), `synth-warn` (yosys), `sim` |
 | `d02_s4` | Flash the Decoder to the Go Board | `lecture_examples/week1_day02/d02_s4_ex3/` | `day02_ex03_hex_to_7seg.v`, `tb_hex_to_7seg.v` | `sim`, `wave`, `prog` |
 
 > Bonus runnable: `lecture_examples/week1_day02/d02_s1_ex4/` (`day02_ex04_wire_vs_reg.v`) is

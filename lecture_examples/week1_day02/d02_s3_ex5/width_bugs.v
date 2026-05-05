@@ -6,12 +6,15 @@
 //
 // Description:
 //   DELIBERATELY BUGGY MODULE — every assignment below produces a width
-//   warning under iverilog -Wall and yosys synth_ice40, and a silently
-//   wrong runtime value when driven by tb_width_bugs.v. The s3 demo shows
-//   all three: compiler warning, synth warning, wrong waveform.
+//   warning under verilator --lint-only -Wall and yosys synth_ice40, and a
+//   silently wrong runtime value when driven by tb_width_bugs.v. The s3 demo
+//   shows all three: compiler warning, synth warning, wrong waveform.
+//
+//   Note: iverilog has no width-mismatch warning category, so it compiles
+//   this file silently even with -Wall. Use verilator for the lint demo.
 //
 //   Run from this directory:
-//     make lint        # iverilog -Wall — surfaces width warnings
+//     make lint        # verilator --lint-only -Wall — surfaces width warnings
 //     make synth-warn  # yosys synth_ice40 — surfaces width warnings
 //     make sim         # runs tb_width_bugs.v, prints expected vs got
 //

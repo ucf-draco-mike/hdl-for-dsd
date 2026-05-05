@@ -50,6 +50,7 @@
 
           # Simulation
           verilog            # Icarus Verilog
+          verilator          # Lint (width-mismatch warnings) + simulation
           gtkwave
 
           # Build / version control
@@ -105,6 +106,7 @@
           __ver nextpnr  nextpnr-ice40 --version
           __ver icestorm icepack
           __ver iverilog iverilog -V
+          __ver verilator verilator --version
           __ver gtkwave  gtkwave --version
           __ver emacs    emacs --version
           echo ""
