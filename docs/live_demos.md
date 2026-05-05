@@ -135,8 +135,8 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d11_s1` | Real UART Trace on a Scope | `lecture_examples/week3_day11/d11_s3_ex1/` | `day11_ex01_uart_tx.v`, `tb_uart_tx.v` | `sim`, `wave` |
-| `d11_s2` | FSM Trace Walkthrough | `lecture_examples/week3_day11/d11_s3_ex1/` | `day11_ex01_uart_tx.v` | `sim`, `wave` |
+| `d11_s1` | Real UART Trace on a Scope | `lecture_examples/week3_day11/d11_s3_ex1/` | `decode_uart.py`, `capture.csv` | `python3 decode_uart.py capture.csv` |
+| `d11_s2` | FSM Trace Walkthrough | `lecture_examples/week3_day11/d11_s3_ex1/` | `day11_ex01_uart_tx.v`, `tb_uart_tx.v` | `sim`, `wave` |
 | `d11_s3` | Build UART TX from Scratch | `lecture_examples/week3_day11/d11_s3_ex1/` | `day11_ex01_uart_tx.v`, `tb_uart_tx.v` | `sim`, `wave`, `stat` |
 | `d11_s4` | Your Go Board Says HELLO | `lecture_examples/week3_day11/d11_s4_ex2/` | `day11_ex02_hello_emitter.v`, `tb_hello_emitter.v`, `rx_display.py` | `sim`, `prog` |
 

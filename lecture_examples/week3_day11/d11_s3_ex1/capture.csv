@@ -1,0 +1,13 @@
+# capture.csv -- saved scope trace of a UART byte for d11_s1 Live Demo.
+# Format: time_us, line_value (0 or 1)
+# Conditions: 115200 baud, 8N1, byte = 'A' (0x41 = 0b01000001).
+# Edges only -- zero-order hold between samples.
+time_us, line
+-10.00, 1
+  0.00, 0
+  8.68, 1
+ 17.36, 0
+ 60.76, 1
+ 69.44, 0
+ 78.13, 1
+100.00, 1

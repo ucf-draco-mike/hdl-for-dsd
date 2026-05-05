@@ -1,13 +1,14 @@
 // =============================================================================
-// day11_ex01_uart_tx.v — UART Transmitter (8N1, Parameterized)
-// Day 11: UART Transmitter
+// uart_tx.v — UART Transmitter (8N1, Parameterized)
+// Day 11: UART Transmitter — d11_s4 "Your Go Board Says HELLO" demo
 // Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
+// Verbatim copy of day11_ex01_uart_tx.v from ../d11_s3_ex1/, included here so
+// this example dir is self-contained for synthesis and programming. Keep the
+// two files in sync if either is edited.
+//
 // FSM + PISO shift register + baud counter.
 // Valid/busy handshake. LSB-first. Parameterized for any clock/baud.
-// =============================================================================
-// Build:  iverilog -DSIMULATION -o sim day11_ex01_uart_tx.v && vvp sim
-// Synth:  yosys -p "read_verilog day11_ex01_uart_tx.v; synth_ice40 -top uart_tx"
 // =============================================================================
 
 module uart_tx #(

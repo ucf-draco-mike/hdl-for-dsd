@@ -1,6 +1,7 @@
 // =============================================================================
 // tb_uart_tx.v -- Smoke testbench for uart_tx
-// Drives a single byte and samples the serial frame at bit centers.
+// Drives a single byte ('A' = 0x41) and samples the serial frame at bit
+// centers. Mirrors the d11_s3 Live Demo: "self-checks byte = 'A'".
 // Assumes -DSIMULATION (CLKS_PER_BIT = 10).
 // =============================================================================
 `timescale 1ns/1ps
@@ -36,7 +37,7 @@ module tb_uart_tx;
         @(posedge clk);
 
         // Pulse valid for one cycle with the byte to send
-        data  = 8'h48;            // 'H'
+        data  = 8'h41;            // 'A' (0x41 = 01000001, LSB-first: 1,0,0,0,0,0,1,0)
         valid = 1'b1;
         @(posedge clk);
         valid = 1'b0;
@@ -60,10 +61,10 @@ module tb_uart_tx;
         if (tx !== 1'b1) begin $display("FAIL: stop bit not 1"); fails = fails + 1; end
         else                $display("PASS: stop bit = 1");
 
-        if (captured !== 8'h48) begin
-            $display("FAIL: captured %h, expected 48", captured); fails = fails + 1;
+        if (captured !== 8'h41) begin
+            $display("FAIL: captured %h, expected 41", captured); fails = fails + 1;
         end else
-            $display("PASS: captured byte = %h", captured);
+            $display("PASS: captured byte = %h ('A')", captured);
 
         if (fails == 0) $display("=== 3 passed, 0 failed ===");
         else            $display("=== %0d FAILED ===", fails);
