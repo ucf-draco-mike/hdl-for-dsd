@@ -1,5 +1,5 @@
 # Auto-generated Makefile — lecture example week1_day02/d02_s2_ex2
-# Demo: Operator Cost Showdown  (segment s2 + s3 width-mismatch demo)
+# Demo: Operator Cost Showdown  (segment s2)
 #
 # Top-level designs in this directory:
 #   bitwise_and       — d02_s2 cost demo: per-bit AND (cheap)
@@ -8,7 +8,8 @@
 #   mux_2to1          — Day 2 baseline 2:1 multiplexer (We Do warmup)
 #   mux_4to1_nested   — d02_s2 4:1 mux via nested ?:    (We Do warmup)
 #   mux_4to1_case     — d02_s2 4:1 mux via always @(*) + case (We Do warmup)
-#   width_bugs        — d02_s3 deliberate width-mismatch demo
+#
+# (The s3 width-mismatch demo lives in ../d02_s3_ex5/.)
 #
 # `make stat-ops` is the s2 live demo: synthesizes all three operator
 # modules and prints the LUT/carry counts side by side. `make stat`
@@ -16,7 +17,7 @@
 TOP      = multiplier
 OP_SRCS  = op_compare.v
 MUX_SRCS = day02_ex02_mux_2to1.v day02_ex02_mux_4to1.v
-SRCS     = $(OP_SRCS) $(MUX_SRCS) width_bugs.v
+SRCS     = $(OP_SRCS) $(MUX_SRCS)
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100

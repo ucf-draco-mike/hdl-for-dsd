@@ -6,21 +6,20 @@
 //
 // Description:
 //   DELIBERATELY BUGGY MODULE — every assignment below produces a width
-//   warning under iverilog -Wall and yosys synth_ice40. The demo on d02_s3
-//   compiles this file to make the warnings visible, then talks through
-//   each one as a teaching moment.
+//   warning under iverilog -Wall and yosys synth_ice40, and a silently
+//   wrong runtime value when driven by tb_width_bugs.v. The s3 demo shows
+//   all three: compiler warning, synth warning, wrong waveform.
 //
-//   Run it with:
-//     iverilog -g2012 -Wall -o sim.vvp width_bugs.v
-//     yosys -p "read_verilog width_bugs.v; synth_ice40" 2>&1 | grep -i 'warn'
+//   Run from this directory:
+//     make lint        # iverilog -Wall — surfaces width warnings
+//     make synth-warn  # yosys synth_ice40 — surfaces width warnings
+//     make sim         # runs tb_width_bugs.v, prints expected vs got
 //
-//   The expected warnings (paraphrased):
-//     line 28: "Operand of 32-bit width added to 4-bit result; truncation"
-//     line 30: "Operand of 5-bit width assigned to 4-bit signal; truncation"
-//     line 32: "Operand of 4-bit width assigned to 8-bit signal; widened"
-//     line 34: "Operand of 8-bit width assigned to 4-bit signal; truncation"
-//
-//   No port list — this module is consumed only as a synthesis/lint target.
+//   Each output port maps to one slide bullet:
+//     sum_truncated  Bug 1: unsized literal `1` is 32-bit; sum truncated to 4 bits
+//     sum_overflow   Bug 2: 5-bit add result assigned back to 4-bit reg
+//     widened        Bug 3: 4-bit input zero-extended into 8-bit reg
+//     narrowed       Bug 4: 8-bit input dropped into 4-bit reg
 //-----------------------------------------------------------------------------
 
 module width_bugs (

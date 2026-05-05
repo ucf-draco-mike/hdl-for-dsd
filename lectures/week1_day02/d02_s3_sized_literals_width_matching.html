@@ -128,11 +128,10 @@ wire [7:0] x4 = 8'hFF + 8'd1;</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day02/d02_s2_ex2/
-iverilog -g2012 -Wall -o sim.vvp width_bugs.v
-vvp sim.vvp
-yosys -p "read_verilog width_bugs.v; \
-    synth_ice40" 2&gt;&amp;1 | grep -i 'warn'</code></pre>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day02/d02_s3_ex5/
+make lint        # iverilog -Wall warnings
+make synth-warn  # yosys synth_ice40 warnings
+make sim         # expected vs got at runtime</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
