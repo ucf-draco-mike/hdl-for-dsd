@@ -1,7 +1,7 @@
-# Auto-generated Makefile — lecture example week2_day08/d08_s4_ex2
-# Demo: parallel_debounce  (segment s4, example 2)
-TOP      = parallel_debounce
-SRCS     = day08_ex01_parallel_debounce.v
+# Auto-generated Makefile — lecture example week2_day08/d08_s1_ex1
+# Demo: button_handler hierarchy  (segment s1, example 1)
+TOP      = button_handler
+SRCS     = day08_ex01_button_handler.v sync_2ff.v debounce.v edge_detect.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100

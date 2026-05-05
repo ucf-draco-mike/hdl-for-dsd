@@ -11,10 +11,15 @@
 
 ## Code Examples
 
-| File | Description |
-|------|-------------|
-| `code/day08_ex01_parallel_debounce.v` | Generate-based N-button input pipeline (debounce + edge detect) |
-| `code/day08_ex02_param_alu.v` | Parameterized N-bit ALU with self-checking testbench at WIDTH=4 and 8 |
+Runnable lecture-deck demos live under
+[`lecture_examples/week2_day08/`](../../lecture_examples/week2_day08/). Each
+example is its own `make sim` / `make stat` / `make prog` directory.
+
+| Slide cue | Example dir | Top file(s) | Demo |
+|-----------|-------------|-------------|------|
+| `d08_s1` | `d08_s1_ex1/` | `day08_ex01_button_handler.v`, `sync_2ff.v`, `debounce.v`, `edge_detect.v`, `tb_button_handler.v` | Build a hierarchical design (sync → debounce → edge) |
+| `d08_s2` | `d08_s2_ex2/` | `day08_ex02_counter.v`, `top_with_three_counters.v`, `tb_top_with_three_counters.v` | One module, three instances at WIDTH=4 / 8 / 16 |
+| `d08_s3` | `d08_s3_ex3/` | `day08_ex03_parallel_debounce.v`, `debounce.v`, `tb_parallel_debounce.v` | Generate-based scaling: `make stat N=4 / 8 / 16` |
 
 ## Diagrams
 
@@ -35,24 +40,43 @@
 
 Your module library after Week 2 (~10 tested, reusable modules):
 `hex_to_7seg`, `debounce`, `counter_mod_n`, `edge_detector`, `synchronizer`,
-`shift_reg_piso`, `fsm_template`, `pattern_detector`, `parallel_debounce`, `param_alu`
+`shift_reg_piso`, `fsm_template`, `pattern_detector`, `button_handler`,
+`parallel_debounce`
 
 These are the building blocks for Week 3 (UART, SPI, memory).
 
 ## Directory Structure
 
 ```
-day08_hierarchy_parameters_generate/
+lectures/week2_day08/
 ├── d08_s1_module_hierarchy.html
 ├── d08_s2_parameters_parameterization.html
 ├── d08_s3_generate_blocks.html
 ├── d08_s4_design_for_reuse.html
-├── code/
-│   ├── day08_ex01_parallel_debounce.v
-│   └── day08_ex02_param_alu.v
 ├── diagrams/
 │   ├── d08_hierarchy_tree.svg
 │   └── d08_generate_concept.svg
 ├── day08_quiz.md
 └── day08_readme.md
+
+lecture_examples/week2_day08/
+├── Makefile                    # day-level dispatcher (ex1/ex2/ex3)
+├── go_board.pcf
+├── d08_s1_ex1/                 # button_handler hierarchy demo (s1)
+│   ├── day08_ex01_button_handler.v
+│   ├── sync_2ff.v
+│   ├── debounce.v
+│   ├── edge_detect.v
+│   ├── tb_button_handler.v
+│   └── Makefile
+├── d08_s2_ex2/                 # parameterized counter triple (s2)
+│   ├── day08_ex02_counter.v
+│   ├── top_with_three_counters.v
+│   ├── tb_top_with_three_counters.v
+│   └── Makefile
+└── d08_s3_ex3/                 # generate-N parallel debouncer (s3)
+    ├── day08_ex03_parallel_debounce.v
+    ├── debounce.v
+    ├── tb_parallel_debounce.v
+    └── Makefile
 ```

@@ -88,7 +88,9 @@ Code shown during the pre-class video. Each example is a runnable
 
 subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 
-- :material-folder-open: **d08_s2_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s2_ex1){ target=_blank }
-    - :material-chip: [`day08_ex02_param_alu.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s2_ex1/day08_ex02_param_alu.v){ target=_blank }
-- :material-folder-open: **d08_s4_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s4_ex2){ target=_blank }
-    - :material-chip: [`day08_ex01_parallel_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s4_ex2/day08_ex01_parallel_debounce.v){ target=_blank }
+- :material-folder-open: **d08_s1_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s1_ex1){ target=_blank }
+    - :material-chip: [`day08_ex01_button_handler.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s1_ex1/day08_ex01_button_handler.v){ target=_blank }
+- :material-folder-open: **d08_s2_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s2_ex2){ target=_blank }
+    - :material-chip: [`day08_ex02_counter.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s2_ex2/day08_ex02_counter.v){ target=_blank }
+- :material-folder-open: **d08_s3_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s3_ex3){ target=_blank }
+    - :material-chip: [`day08_ex03_parallel_debounce.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day08/d08_s3_ex3/day08_ex03_parallel_debounce.v){ target=_blank }

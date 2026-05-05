@@ -107,9 +107,9 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d08_s1` | Build a Hierarchical Design | `lecture_examples/week2_day08/d08_s2_ex1/` | `day08_ex02_param_alu.v`, `tb_param_alu.v` | `sim`, `stat` |
-| `d08_s2` | One Module, Three Instances, Three Sizes | `lecture_examples/week2_day08/d08_s2_ex1/` | `day08_ex02_param_alu.v` | `stat` (sweep) |
-| `d08_s3` | Scaling with Generate: 4 → 16 Debouncers | `lecture_examples/week2_day08/d08_s4_ex2/` | `day08_ex01_parallel_debounce.v`, `debounce.v`, `tb_parallel_debounce.v` | `sim`, `stat` |
+| `d08_s1` | Build a Hierarchical Design | `lecture_examples/week2_day08/d08_s1_ex1/` | `day08_ex01_button_handler.v`, `sync_2ff.v`, `debounce.v`, `edge_detect.v`, `tb_button_handler.v` | `sim`, `stat`, `prog` |
+| `d08_s2` | One Module, Three Instances, Three Sizes | `lecture_examples/week2_day08/d08_s2_ex2/` | `day08_ex02_counter.v`, `top_with_three_counters.v`, `tb_top_with_three_counters.v` | `sim`, `stat` |
+| `d08_s3` | Scaling with Generate: 4 → 16 Debouncers | `lecture_examples/week2_day08/d08_s3_ex3/` | `day08_ex03_parallel_debounce.v`, `debounce.v`, `tb_parallel_debounce.v` | `sim N=…`, `stat N=…` |
 
 ---
 

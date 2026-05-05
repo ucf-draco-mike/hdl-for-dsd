@@ -126,9 +126,9 @@ endmodule</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day08/d08_s2_ex1/
-ls src/              # 4 module files
-cat button_handler.v # top-level composition
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day08/d08_s1_ex1/
+ls *.v               # 4 module files + tb
+cat day08_ex01_button_handler.v   # top-level composition
 make sim
 make stat            # total for full hierarchy
 make prog</code></pre>
@@ -138,18 +138,19 @@ make prog</code></pre>
 <pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">sync_2ff.v
 debounce.v
 edge_detect.v
-button_handler.v
+day08_ex01_button_handler.v
+tb_button_handler.v
 
 PASS: sync works
 PASS: bounces filtered
-PASS: 1-cycle pulses
-=== 24 passed, 0 failed ===
+PASS: 1-cycle release pulse
+PASS: 1-cycle press pulse
+=== 8 passed, 0 failed ===
 
-Flattened: 42 cells
 Per-instance breakdown:
-  u_sync:    2 SB_DFF
-  u_debounce: 37 cells
-  u_edge:    1 SB_DFF + 1 LUT</code></pre>
+  u_sync:     2 SB_DFF
+  u_debounce: ~30 cells
+  u_edge:     1 SB_DFF + 1 LUT</code></pre>
         </div>
     </div>
     <aside class="notes">[Terminal] Show the 4-file hierarchy. In waveforms, signals are prefixed by instance path: tb.dut.u_debounce.r_count. That navigation is what makes hierarchy pay off at debug time.</aside>
