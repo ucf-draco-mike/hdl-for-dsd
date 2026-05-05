@@ -156,8 +156,8 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d13_s2` | Modernize Your Debouncer | `lecture_examples/week4_day13/d13_s3_ex1/` | `day13_ex01_uart_tx_sv.sv`, `tb_uart_tx_sv.sv` | `sim`, `stat` |
-| `d13_s4` | State Names in GTKWave | `lecture_examples/week4_day13/d13_s4_ex2/` | `day13_ex02_alu_sv.sv`, `tb_alu_sv.sv` | `sim`, `wave` |
+| `d13_s2` | Modernize Your Debouncer | `lecture_examples/week4_day13/d13_s2_ex1/` | `day13_ex01_debounce_sv.sv`, `tb_debounce_sv.sv` | `sim`, `stat` |
+| `d13_s4` | State Names in GTKWave | `lecture_examples/week4_day13/d13_s4_ex3/` | `day13_ex03_traffic_light_sv.sv`, `tb_traffic_light_sv.sv` | `sim`, `wave` |
 
 ### Day 14 — Verification, AI-Driven Testing & PPA Analysis
 
