@@ -88,7 +88,9 @@ Code shown during the pre-class video. Each example is a runnable
 
 subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 
-- :material-folder-open: **d07_s2_ex1** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s2_ex1){ target=_blank }
-    - :material-chip: [`day07_ex01_fsm_template.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s2_ex1/day07_ex01_fsm_template.v){ target=_blank }
-- :material-folder-open: **d07_s4_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s4_ex2){ target=_blank }
+- :material-folder-open: **d07_s2_ex1** — traffic-light FSM (videos 1, 2, 3) — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s2_ex1){ target=_blank }
+    - :material-chip: [`day07_ex01_fsm_template.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s2_ex1/day07_ex01_fsm_template.v){ target=_blank } — binary encoding
+    - :material-chip: [`day07_ex01_traffic_onehot.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s2_ex1/day07_ex01_traffic_onehot.v){ target=_blank } — one-hot variant
+    - :material-chip: [`day07_ex01_traffic_gray.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s2_ex1/day07_ex01_traffic_gray.v){ target=_blank } — Gray-code variant
+- :material-folder-open: **d07_s4_ex2** — "1011" pattern detector (video 4) — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s4_ex2){ target=_blank }
     - :material-chip: [`day07_ex02_pattern_detector.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week2_day07/d07_s4_ex2/day07_ex02_pattern_detector.v){ target=_blank }

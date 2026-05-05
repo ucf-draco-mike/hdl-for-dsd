@@ -166,14 +166,14 @@ end</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day03/d03_s2_ex1/
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day03/d03_s1_ex1/
 make sim      # test both versions
 make wave     # GTKWave
-# Both modules: identical
-diff &lt;(yosys -qp "read_verilog mux_assign.v; \
-        synth_ice40; stat" 2&gt;&amp;1) \
-     &lt;(yosys -qp "read_verilog mux_always.v; \
-        synth_ice40; stat" 2&gt;&amp;1)</code></pre>
+# Both modules: identical SB_LUT4 / SB_DFF counts
+diff &lt;(yosys -qp "read_verilog day03_ex04_mux_assign.v; \
+        synth_ice40 -top mux_assign; stat" 2&gt;&amp;1) \
+     &lt;(yosys -qp "read_verilog day03_ex05_mux_always.v; \
+        synth_ice40 -top mux_always; stat" 2&gt;&amp;1)</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
@@ -199,9 +199,9 @@ Both: 4 SB_LUT4, 0 SB_DFF</code></pre>
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
     <p style="font-size:0.78em;">A 4-bit 4:1 mux written with <code>always @(*)</code> and <code>case</code>:</p>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog mux4_always.v; synth_ice40 -top mux4; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog day03_ex05_mux_always.v; synth_ice40 -top mux_always; stat" -q
 
-=== mux4 ===
+=== mux_always ===
    Number of wires:                  5
    Number of cells:                  4
      SB_DFF                          0     ← still no flops (reg doesn't mean flop!)

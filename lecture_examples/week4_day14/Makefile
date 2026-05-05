@@ -3,25 +3,34 @@
 #
 # Examples in this day:
 #   ex1 -> d14_s1_ex1  (uart_tx_asserted, SystemVerilog assertions, segment s1)
+#   ex2 -> d14_s3_ex2  (pipelined_adder PPA sweep, segment s3)
 #
 # Targets:
-#   make ex1          # default: stat (synth report)
-#   make ex1_sim      # iverilog + vvp simulation
-#   make ex1_wave     # run sim, then open VCD in gtkwave
-#   make ex1_stat     # yosys synth_ice40 stat report
-#   make ex1_synth    # synth to JSON (yosys)
-#   make ex1_prog     # JSON -> nextpnr -> icepack -> iceprog (full flow)
-#   make ex1_clean    # remove build artifacts in that example
+#   make exN          # default: stat (synth report)
+#   make exN_sim      # iverilog + vvp simulation
+#   make exN_wave     # run sim, then open VCD in gtkwave
+#   make exN_stat     # yosys synth_ice40 stat report
+#   make exN_synth    # synth to JSON (yosys)
+#   make exN_prog     # JSON -> nextpnr -> icepack -> iceprog (full flow)
+#   make exN_clean    # remove build artifacts in that example
+#   make ex2_sweep    # PPA sweep for d14_s3_ex2 (PIPE=0,1,2,4)
 #   make clean        # clean every example in this day
 
-EXAMPLES := d14_s1_ex1
-EX_NUMS  := 1
+EXAMPLES := d14_s1_ex1 d14_s3_ex2
+EX_NUMS  := 1 2
 
 ex1:
 	$(MAKE) -C d14_s1_ex1 stat
 
+ex2:
+	$(MAKE) -C d14_s3_ex2 stat
+
+ex2_sweep:
+	$(MAKE) -C d14_s3_ex2 sweep
+
 clean:
 	$(MAKE) -C d14_s1_ex1 clean
+	$(MAKE) -C d14_s3_ex2 clean
 
 SIM_TARGETS   := $(foreach n,$(EX_NUMS),ex$(n)_sim)
 WAVE_TARGETS  := $(foreach n,$(EX_NUMS),ex$(n)_wave)
@@ -37,4 +46,4 @@ $(SYNTH_TARGETS): ex%_synth: ; $(MAKE) -C $(wildcard d14_s*_ex$*) synth
 $(PROG_TARGETS):  ex%_prog:  ; $(MAKE) -C $(wildcard d14_s*_ex$*) prog
 $(CLEAN_TARGETS): ex%_clean: ; $(MAKE) -C $(wildcard d14_s*_ex$*) clean
 
-.PHONY: clean ex1 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)
+.PHONY: clean ex1 ex2 ex2_sweep $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)

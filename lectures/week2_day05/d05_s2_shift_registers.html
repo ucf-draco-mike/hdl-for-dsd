@@ -72,15 +72,15 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; SIPO (Serial-In, Parallel-Out)</h2>
-    <pre class="synth"><code class="language-verilog">module sipo_8bit (
-    input  wire       i_clk, i_reset, i_serial_in, i_shift_en,
-    output reg  [7:0] o_parallel
+    <pre class="synth"><code class="language-verilog">module shift_reg_sipo #(parameter WIDTH = 8) (
+    input  wire              i_clk, i_reset, i_shift_en, i_serial_in,
+    output reg  [WIDTH-1:0]  o_parallel_out
 );
     always @(posedge i_clk) begin
-        if (i_reset)        o_parallel &lt;= 8'b0;
-        else if (i_shift_en) o_parallel &lt;= {o_parallel[6:0], i_serial_in};
-        //                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        //                                  shift left, new bit at LSB
+        if (i_reset)         o_parallel_out &lt;= {WIDTH{1'b0}};
+        else if (i_shift_en) o_parallel_out &lt;= {o_parallel_out[WIDTH-2:0], i_serial_in};
+        //                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        //                                      shift left, new bit at LSB
     end
 endmodule</code></pre>
     <div class="callout" style="font-size:0.7em;">
@@ -91,21 +91,21 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; PISO (Parallel-In, Serial-Out)</h2>
-    <pre class="synth"><code class="language-verilog">module piso_8bit (
-    input  wire       i_clk, i_reset, i_load, i_shift_en,
-    input  wire [7:0] i_parallel,
-    output wire       o_serial
+    <pre class="synth"><code class="language-verilog">module shift_reg_piso #(parameter WIDTH = 8) (
+    input  wire              i_clk, i_reset, i_load, i_shift_en,
+    input  wire [WIDTH-1:0]  i_parallel_in,
+    output wire              o_serial_out
 );
-    reg [7:0] r_shift;
+    reg [WIDTH-1:0] r_shift;
     always @(posedge i_clk) begin
-        if (i_reset)         r_shift &lt;= 8'hFF;       // idle=1 for UART
-        else if (i_load)     r_shift &lt;= i_parallel;   // load parallel byte
-        else if (i_shift_en) r_shift &lt;= {1'b1, r_shift[7:1]};  // shift right
+        if (i_reset)         r_shift &lt;= {WIDTH{1'b0}};
+        else if (i_load)     r_shift &lt;= i_parallel_in;            // load wins over shift
+        else if (i_shift_en) r_shift &lt;= {1'b0, r_shift[WIDTH-1:1]}; // shift right
     end
-    assign o_serial = r_shift[0];                     // LSB first
+    assign o_serial_out = r_shift[0];                              // LSB first
 endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> Load has priority over shift (you can't load and shift same cycle). <code>r_shift[0]</code> is exposed as the serial output — LSB first, matching UART convention. Shift-in bit is <code>1'b1</code> (idle state) so after N shifts, the register returns to idle.
+        <strong>Together:</strong> Load has priority over shift (you can't load and shift same cycle). <code>r_shift[0]</code> is exposed as the serial output — LSB first, matching UART convention. After WIDTH shifts the register holds zeros; for UART you'd swap the reset / fill bit to <code>1'b1</code> (idle state).
     </div>
     <aside class="notes">PISO: load the byte, then shift it out LSB-first. UART is LSB-first transmission. The fill bit is 1 (UART idle state), so when you stop shifting you're automatically in the idle state. Elegant.</aside>
 </section>
@@ -152,9 +152,9 @@ PASS: assembled 0xB2</code></pre>
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog sipo_8bit.v; synth_ice40 -top sipo_8bit; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog shift_reg_sipo.v; synth_ice40 -top shift_reg_sipo; stat" -q
 
-=== sipo_8bit ===
+=== shift_reg_sipo ===
    Number of wires:                 14
    Number of cells:                  8
      SB_CARRY                        0

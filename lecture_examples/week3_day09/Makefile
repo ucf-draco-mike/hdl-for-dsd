@@ -2,9 +2,9 @@
 # Routes targets into per-example subdirectories.
 #
 # Examples in this day:
-#   ex1 -> d09_s1_ex1  (rom_sync,          segment s1)
-#   ex2 -> d09_s2_ex2  (ram_sp,            segment s2)
-#   ex3 -> d09_s4_ex3  (pattern_sequencer, segment s4)
+#   ex1 -> d09_s1_ex1  (rom_case + rom_array, segment s1)
+#   ex2 -> d09_s2_ex2  (ram_1p,                segment s2)
+#   ex3 -> d09_s4_ex3  (pattern_sequencer,     segment s4)
 #
 # Targets (replace N with the example number: 1, 2, or 3):
 #   make exN          # default: stat (synth report)

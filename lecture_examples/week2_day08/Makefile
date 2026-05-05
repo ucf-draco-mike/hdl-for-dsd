@@ -2,10 +2,11 @@
 # Routes targets into per-example subdirectories.
 #
 # Examples in this day:
-#   ex1 -> d08_s2_ex1  (param_alu,         segment s2)
-#   ex2 -> d08_s4_ex2  (parallel_debounce, segment s4)
+#   ex1 -> d08_s1_ex1  (button_handler hierarchy,  segment s1)
+#   ex2 -> d08_s2_ex2  (top_with_three_counters,   segment s2)
+#   ex3 -> d08_s3_ex3  (parallel_debounce, gen-N,  segment s3)
 #
-# Targets (replace N with the example number: 1 or 2):
+# Targets (replace N with the example number: 1, 2, or 3):
 #   make exN          # default: stat (synth report)
 #   make exN_sim      # iverilog + vvp simulation
 #   make exN_wave     # run sim, then open VCD in gtkwave
@@ -15,18 +16,22 @@
 #   make exN_clean    # remove build artifacts in that example
 #   make clean        # clean every example in this day
 
-EXAMPLES := d08_s2_ex1 d08_s4_ex2
-EX_NUMS  := 1 2
+EXAMPLES := d08_s1_ex1 d08_s2_ex2 d08_s3_ex3
+EX_NUMS  := 1 2 3
 
 ex1:
-	$(MAKE) -C d08_s2_ex1 stat
+	$(MAKE) -C d08_s1_ex1 stat
 
 ex2:
-	$(MAKE) -C d08_s4_ex2 stat
+	$(MAKE) -C d08_s2_ex2 stat
+
+ex3:
+	$(MAKE) -C d08_s3_ex3 stat
 
 clean:
-	$(MAKE) -C d08_s2_ex1 clean
-	$(MAKE) -C d08_s4_ex2 clean
+	$(MAKE) -C d08_s1_ex1 clean
+	$(MAKE) -C d08_s2_ex2 clean
+	$(MAKE) -C d08_s3_ex3 clean
 
 SIM_TARGETS   := $(foreach n,$(EX_NUMS),ex$(n)_sim)
 WAVE_TARGETS  := $(foreach n,$(EX_NUMS),ex$(n)_wave)
@@ -42,4 +47,4 @@ $(SYNTH_TARGETS): ex%_synth: ; $(MAKE) -C $(wildcard d08_s*_ex$*) synth
 $(PROG_TARGETS):  ex%_prog:  ; $(MAKE) -C $(wildcard d08_s*_ex$*) prog
 $(CLEAN_TARGETS): ex%_clean: ; $(MAKE) -C $(wildcard d08_s*_ex$*) clean
 
-.PHONY: clean ex1 ex2 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)
+.PHONY: clean ex1 ex2 ex3 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)

@@ -11,12 +11,16 @@
 
 ## Code Examples
 
-| File | Description |
-|------|-------------|
-| `code/day09_ex01_rom_sync.v` | Parameterized synchronous ROM with `$readmemb`, self-checking TB |
-| `code/day09_ex02_ram_sp.v` | Single-port synchronous RAM (read-before-write), self-checking TB |
-| `code/day09_ex03_pattern_sequencer.v` | ROM-driven LED pattern player, self-checking TB |
-| `code/pattern.mem` | 16-entry walking-1 LED pattern (binary format) |
+Live demos for this day live in `lecture_examples/week3_day09/`. Each
+example has its own self-contained directory with a Makefile (`make sim`,
+`make wave`, `make stat`, `make synth`, `make prog`, `make clean`) and a
+self-checking testbench.
+
+| Example | Slide | Module(s) | Init file | Description |
+|---------|-------|-----------|-----------|-------------|
+| `d09_s1_ex1/` | 9.1 ROM | `rom_case`, `rom_array` | `hello.hex` | Case-vs-array ROM comparison; `make stat_case` and `make stat_array` show the LUT-vs-EBR difference |
+| `d09_s2_ex2/` | 9.2 RAM | `ram_1p` | — | 1024×8 single-port synchronous RAM that infers `SB_RAM40_4K`; 64-test self-check |
+| `d09_s4_ex3/` | 9.4 Apps | `pattern_sequencer` (uses `rom_array`) + `top` | `pattern.hex` | LED pattern player: step timer + address counter + ROM. Edit `pattern.hex` to change the animation |
 
 ## Diagrams
 
@@ -35,19 +39,22 @@
 ## Directory Structure
 
 ```
-day09_memory_ram_rom_block_ram/
+lectures/week3_day09/                       # slides + notes
 ├── d09_s1_rom_in_verilog.html
 ├── d09_s2_ram_in_verilog.html
 ├── d09_s3_ice40_memory_resources.html
 ├── d09_s4_memory_applications.html
-├── code/
-│   ├── day09_ex01_rom_sync.v
-│   ├── day09_ex02_ram_sp.v
-│   ├── day09_ex03_pattern_sequencer.v
-│   └── pattern.mem
 ├── diagrams/
 │   ├── d09_mem_landscape.svg
 │   └── d09_sync_vs_async.svg
 ├── day09_quiz.md
 └── day09_readme.md
+
+lecture_examples/week3_day09/               # demo code (this file's targets)
+├── Makefile                                # dispatches ex1 / ex2 / ex3
+├── go_board.pcf                            # iCE40 HX1K (Go Board) pin map
+├── d09_s1_ex1/    rom_case.v + rom_array.v + hello.hex + tb_rom.v
+├── d09_s2_ex2/    ram_1p.v                 + tb_ram_1p.v
+└── d09_s4_ex3/    pattern_sequencer.v + rom_array.v + top.v
+                   + pattern.hex + tb_pattern_sequencer.v
 ```

@@ -120,16 +120,18 @@ reg [2:0] r_state, r_next_state;
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
         <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;">
             <p style="color:#5A7FA0;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">BINARY (2 bits, 3 states)</p>
-<pre style="font-size:0.55em;margin:0;"><code class="language-bash">$ yosys ... -p "synth_ice40 -nofsm-recode; stat"
-=== traffic_binary ===
+<pre style="font-size:0.55em;margin:0;"><code class="language-bash">$ yosys -p "synth_ice40 -top traffic_light \
+            -nofsm; stat" day07_ex01_fsm_template.v
+=== traffic_light ===
   SB_DFF:    2
   SB_LUT4:   5
   Total cells: 7</code></pre>
         </div>
         <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;">
             <p style="color:#27AE60;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">ONE-HOT (3 bits, 3 states)</p>
-<pre style="font-size:0.55em;margin:0;"><code class="language-bash">$ yosys ... -p "synth_ice40 -nofsm-recode; stat"
-=== traffic_onehot ===
+<pre style="font-size:0.55em;margin:0;"><code class="language-bash">$ yosys -p "synth_ice40 -top traffic_light_onehot \
+            -nofsm; stat" day07_ex01_traffic_onehot.v
+=== traffic_light_onehot ===
   SB_DFF:    3
   SB_LUT4:   3
   Total cells: 6</code></pre>
@@ -145,7 +147,7 @@ reg [2:0] r_state, r_next_state;
         </ol>
     </div>
     <div class="fragment callout" style="font-size:0.66em;">
-        <strong>Pro note:</strong> Yosys's <code>fsm_recode</code> pass auto-re-encodes FSMs by default. Use <code>-nofsm-recode</code> to see your literal encoding, or <code>-fsm-expand</code> to force one-hot.
+        <strong>Pro note:</strong> Yosys's <code>fsm_recode</code> pass auto-re-encodes FSMs by default. Pass <code>-nofsm</code> to <code>synth_ice40</code> to see your literal localparam encoding instead of the tool's choice.
     </div>
     <aside class="notes">THIS is the pedagogy of the video. Same FSM, two encodings, different cell counts. Run both, show both, the lesson is empirical. The crossover point is what matters — it's tool-specific, design-specific, and the only way to know is to run both.</aside>
 </section>
@@ -158,20 +160,21 @@ reg [2:0] r_state, r_next_state;
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day07/d07_s2_ex1/
-make stat_binary
-make stat_onehot
-make stat_gray
-diff stats/*.txt</code></pre>
+make stat_binary    # day07_ex01_fsm_template.v
+make stat_onehot    # day07_ex01_traffic_onehot.v
+make stat_gray      # day07_ex01_traffic_gray.v
+make stat_all       # side-by-side summary</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">  BINARY:  7 cells (2F/5L)
-  ONE-HOT: 6 cells (3F/3L)
-  GRAY:    7 cells (2F/5L)
-  FMAX (approx, iCE40):
-    BINARY:  152 MHz
-    ONE-HOT: 167 MHz  ← winner
-    GRAY:    153 MHz</code></pre>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">=== Encoding comparison summary ===
+--- stats/binary.txt ---
+  SB_DFF   2 · SB_LUT4   5  (~7 cells)
+--- stats/onehot.txt ---
+  SB_DFF   3 · SB_LUT4   3  (~6 cells)
+--- stats/gray.txt ---
+  SB_DFF   2 · SB_LUT4   5  (~7 cells)
+ONE-HOT wins area on this 3-state FSM.</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">

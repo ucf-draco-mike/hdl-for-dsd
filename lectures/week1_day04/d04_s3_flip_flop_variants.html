@@ -177,7 +177,7 @@ PASS: reset → q=0 again
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog reg_4bit_rst_en.v; synth_ice40; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ make stat   # yosys synth_ice40 on day04_ex01b_reg_4bit_rst_en.v
 
 === reg_4bit_rst_en ===
    Number of wires:                  8

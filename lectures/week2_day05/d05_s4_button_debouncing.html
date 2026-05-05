@@ -108,8 +108,8 @@ endmodule</code></pre>
 wire w_synced, w_clean;
 reg  r_clean_d1;
 
-sync_2ff  u_sync    (.i_clk(clk), .i_async(i_btn),   .o_synced(w_synced));
-debounce  u_deb     (.i_clk(clk), .i_reset(rst), .i_noisy(w_synced), .o_clean(w_clean));
+synchronizer u_sync (.i_clk(clk), .i_async_in(i_btn), .o_sync_out(w_synced));
+debounce     u_deb  (.i_clk(clk), .i_reset(rst), .i_noisy(w_synced), .o_clean(w_clean));
 
 always @(posedge clk) r_clean_d1 &lt;= w_clean;
 wire pressed_pulse = w_clean &amp; ~r_clean_d1;  // rising-edge detect</code></pre>
@@ -164,7 +164,7 @@ With debounce:
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog debounce.v; synth_ice40 -top debounce; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog day05_ex04_debounce.v; synth_ice40 -top debounce; stat" -q
 
 === debounce ===  (CLKS_STABLE = 500000, width = $clog2(500000) = 19)
    Number of wires:                 30

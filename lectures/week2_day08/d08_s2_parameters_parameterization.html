@@ -130,10 +130,10 @@ endmodule</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
-<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day08/d08_s2_ex1/
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day08/d08_s2_ex2/
 cat top_with_three_counters.v
 # 4-bit, 8-bit, 16-bit counters
-# from one counter.v file
+# from one day08_ex02_counter.v
 make sim
 make stat</code></pre>
         </div>
@@ -144,7 +144,7 @@ make stat</code></pre>
   u_cnt_8bit:  8 DFF, 7 CARRY
   u_cnt_16b:  16 DFF, 15 CARRY
   Total cells: ~40
-=== 18 passed, 0 failed ===</code></pre>
+=== 15 passed, 0 failed ===</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
@@ -156,7 +156,7 @@ make stat</code></pre>
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> Each Instance Is Its Own Hardware</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog top_with_three_counters.v counter.v; \
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog top_with_three_counters.v day08_ex02_counter.v; \
            hierarchy -top top; synth_ice40; stat"
 
 === counter ===

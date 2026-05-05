@@ -1,0 +1,20 @@
+# =============================================================================
+# traffic_light.pcf — Per-example pin map for the traffic-light FSM demo
+# =============================================================================
+# Maps the FSM color outputs to the Nandland Go Board's onboard LEDs:
+#   o_red    -> LED1 (pin 56)
+#   o_yellow -> LED2 (pin 57)
+#   o_green  -> LED3 (pin 59)
+# Used by `make prog` for slide 2 "from diagram to working chip" demo.
+# =============================================================================
+
+# ---- Clock (25 MHz oscillator) ----
+set_io i_clk 15
+
+# ---- Reset (Push button SW1) ----
+set_io i_reset 53
+
+# ---- Color outputs mapped to LEDs ----
+set_io o_red    56
+set_io o_yellow 57
+set_io o_green  59

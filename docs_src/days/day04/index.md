@@ -90,5 +90,6 @@ subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
     - :material-chip: [`day04_ex03_shift_register_demo.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s2_ex1/day04_ex03_shift_register_demo.v){ target=_blank }
 - :material-folder-open: **d04_s3_ex2** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s3_ex2){ target=_blank }
     - :material-chip: [`day04_ex01_d_flip_flop.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s3_ex2/day04_ex01_d_flip_flop.v){ target=_blank }
+    - :material-chip: [`day04_ex01b_reg_4bit_rst_en.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s3_ex2/day04_ex01b_reg_4bit_rst_en.v){ target=_blank }
 - :material-folder-open: **d04_s4_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s4_ex3){ target=_blank }
     - :material-chip: [`day04_ex02_led_blinker.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day04/d04_s4_ex3/day04_ex02_led_blinker.v){ target=_blank }

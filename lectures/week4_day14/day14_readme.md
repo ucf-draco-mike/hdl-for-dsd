@@ -11,9 +11,13 @@
 
 ## Code Examples
 
-| File | Description |
-|------|-------------|
-| `code/day14_ex01_uart_tx_assertions.sv` | UART TX with immediate assertions (retained from v1) |
+Runnable code lives under `lecture_examples/week4_day14/`. Each example has its
+own `Makefile` plus a day-level dispatcher (`make ex1`, `make ex2`, ...).
+
+| Slide cue | Example dir | Top file(s) | Make targets |
+|-----------|-------------|-------------|--------------|
+| `d14_s1` LIVE DEMO -- Assert-Driven Bug Hunt | `lecture_examples/week4_day14/d14_s1_ex1/` | `day14_ex01_uart_tx_assertions.sv`, `tb_uart_tx_assertions.sv` | `sim`, `stat` |
+| `d14_s3` LIVE DEMO -- PPA Sweep: Pipelining an Adder | `lecture_examples/week4_day14/d14_s3_ex2/` | `day14_ex02_pipelined_adder.v`, `tb_pipelined_adder.v`, `scripts/plot_ppa.py` | `all PIPE=N`, `sweep`, `sim`, `stat` |
 
 ## Diagrams
 
@@ -47,10 +51,22 @@ lectures/week4_day14/
 ├── d14_s2_ai_verification_workflows.html   (NEW)
 ├── d14_s3_ppa_methodology.html             (NEW)
 ├── d14_s4_coverage_road_ahead.html         (NEW)
-├── code/
-│   └── day14_ex01_uart_tx_assertions.sv    (retained)
 ├── diagrams/
 │   └── d14_verification_pyramid.svg        (retained)
 ├── day14_quiz.md                           (updated)
 └── day14_readme.md                         (this file)
+
+lecture_examples/week4_day14/
+├── Makefile                                (day-level dispatcher)
+├── go_board.pcf
+├── d14_s1_ex1/                             (s1 LIVE DEMO -- Assert-Driven Bug Hunt)
+│   ├── Makefile
+│   ├── day14_ex01_uart_tx_assertions.sv
+│   └── tb_uart_tx_assertions.sv
+└── d14_s3_ex2/                             (s3 LIVE DEMO -- PPA Pipelining Sweep)
+    ├── Makefile
+    ├── day14_ex02_pipelined_adder.v
+    ├── tb_pipelined_adder.v
+    └── scripts/
+        └── plot_ppa.py
 ```

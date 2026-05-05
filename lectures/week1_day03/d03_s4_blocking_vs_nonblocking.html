@@ -130,16 +130,15 @@ end</code></pre>
 # Two modules: shift_blocking, shift_nonblocking
 make sim
 make wave
-# Load GTKWave .gtkw file: both traces side-by-side</code></pre>
+# Both traces side-by-side in GTKWave</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Cycle 1: blocking q=00 | nb q=80
-Cycle 2: blocking q=00 | nb q=40
-Cycle 3: blocking q=00 | nb q=20
-Cycle 4: blocking q=00 | nb q=10
-# blocking never shifts — 
-#   all stages collapse to same value</code></pre>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Cycle 1: blocking a=1 b=1 c=1 | nb a=1 b=0 c=0
+Cycle 2: blocking a=0 b=0 c=0 | nb a=0 b=1 c=0
+Cycle 3: blocking a=0 b=0 c=0 | nb a=0 b=0 c=1
+# blocking pulse collapses on the
+#   first edge — never shifts</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
@@ -154,7 +153,7 @@ Cycle 4: blocking q=00 | nb q=10
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <p style="font-size:0.78em;">4-stage shift register, both coding styles:</p>
+    <p style="font-size:0.78em;">3-stage shift register (i_d → r_a → r_b → o_q), both coding styles:</p>
     <div class="two-col">
         <div class="col panel panel-bad" style="padding:0.5em;">
             <h3 style="font-size:0.85em;color:#C62828;">With <code>=</code> (bug)</h3>
@@ -163,8 +162,8 @@ Cycle 4: blocking q=00 | nb q=10
         </div>
         <div class="col panel panel-good" style="padding:0.5em;">
             <h3 style="font-size:0.85em;color:#2E7D32;">With <code>&lt;=</code> (correct)</h3>
-            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFF:     4   ← 4 flops
-             (proper 4-stage pipeline)</code></pre>
+            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFF:     3   ← 3 flops
+             (proper 3-stage pipeline)</code></pre>
         </div>
     </div>
     <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
