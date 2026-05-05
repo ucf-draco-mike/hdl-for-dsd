@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 230" font-family="Inter, Arial, sans-serif">
   <rect width="240" height="230" rx="10" fill="#FAFAFA" stroke="#DDD"/>
   <text x="120" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Digit "A"</text>
-  <text x="120" y="38" text-anchor="middle" font-size="10" fill="#666">ON: a, b, c, e, f, g &mdash; OFF: d</text>
+  <text x="120" y="38" text-anchor="middle" font-size="10" fill="#666">ON: a, b, c, e, f, g — OFF: d</text>
   <g transform="translate(70,55) scale(1.1)">
     <!-- Display panel background -->
     <rect x="7" y="1" width="86" height="142" rx="6" fill="#1A1A1A"/>
