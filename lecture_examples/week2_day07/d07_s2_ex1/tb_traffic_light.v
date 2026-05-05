@@ -72,14 +72,12 @@ module tb_traffic_light;
         check_state(0, 0, 1, "Mid-cycle reset -> GREEN");
 
         // Summary
-        $display("\n=== TEST SUMMARY ===");
-        $display("Tests run:    %0d", test_count);
-        $display("Tests passed: %0d", test_count - fail_count);
-        $display("Tests failed: %0d", fail_count);
+        $display("\n=== %0d passed, %0d failed ===",
+                 test_count - fail_count, fail_count);
         if (fail_count == 0)
-            $display("\n*** ALL TESTS PASSED ***\n");
+            $display("*** ALL TESTS PASSED ***");
         else
-            $display("\n*** %0d FAILURES ***\n", fail_count);
+            $display("*** %0d FAILURES ***", fail_count);
         $finish;
     end
 endmodule

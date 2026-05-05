@@ -1,36 +1,56 @@
 // =============================================================================
-// tb_pattern_detector.v -- Smoke testbench for pattern_detector ('101' Moore)
+// tb_pattern_detector.v -- self-checking testbench for "1011" Moore detector
+// =============================================================================
+// Covers:
+//   1. Reset -> S0
+//   2. Exact match: "1011"
+//   3. Near-miss:   "1010" (no match)
+//   4. Overlap:     "10110111" (two back-to-back matches)
+//   5. Long gap:    runs of zeros and ones do not trigger
 // =============================================================================
 `timescale 1ns/1ps
 
 module tb_pattern_detector;
-    reg  clk = 1'b0, reset = 1'b1, serial_in = 1'b0;
+
+    reg  clk = 1'b0;
+    reg  reset = 1'b1;
+    reg  bit_in = 1'b0;
     wire detected;
 
     pattern_detector uut (
-        .i_clk(clk), .i_reset(reset),
-        .i_serial_in(serial_in), .o_detected(detected)
+        .i_clk      (clk),
+        .i_reset    (reset),
+        .i_bit      (bit_in),
+        .o_detected (detected)
     );
 
-    always #5 clk = ~clk;
+    always #5 clk = ~clk;   // 100 MHz sim clock
 
     integer fails = 0;
+    integer passes = 0;
 
-    task send(input bit_val);
+    // Drive a bit on the next clock edge, then settle.
+    task send;
+        input val;
         begin
-            serial_in = bit_val;
+            bit_in = val;
             @(posedge clk);
+            #1;
         end
     endtask
 
-    task check_after_settle(input exp, input [255:0] name);
+    // Check o_detected after the bit just sent has been registered.
+    task expect_detected;
+        input         exp;
+        input [511:0] label;     // 64 chars — long enough for any label
         begin
-            #1;
             if (detected !== exp) begin
-                $display("FAIL: %0s -- got %b, expected %b", name, detected, exp);
+                $display("FAIL: %0s -- got %b, expected %b", label, detected, exp);
                 fails = fails + 1;
-            end else
-                $display("PASS: %0s -- detected=%b", name, detected);
+            end else begin
+                $display("PASS: %0s", label);
+                passes = passes + 1;
+            end
         end
     endtask
 
@@ -38,27 +58,53 @@ module tb_pattern_detector;
         $dumpfile("tb_pattern_detector.vcd");
         $dumpvars(0, tb_pattern_detector);
 
-        // Hold reset through two posedges so state register lands in S_IDLE
+        $display("\n=== Pattern Detector ('1011', Moore) Testbench ===\n");
+
+        // ---- Reset ----
         @(posedge clk); @(posedge clk);
         reset = 1'b0;
+        @(posedge clk); #1;
+        expect_detected(1'b0, "reset -> S0 (no detect)");
 
-        // Send "101" -- detected should be high in cycle following the final '1'
-        send(1'b1);  check_after_settle(1'b0, "after '1'");
-        send(1'b0);  check_after_settle(1'b0, "after '10'");
-        send(1'b1);  check_after_settle(1'b1, "after '101'  -> detected");
+        // ---- Exact match: "1011" ----
+        send(1'b1); expect_detected(1'b0, "after '1'   (S1)");
+        send(1'b0); expect_detected(1'b0, "after '10'  (S10)");
+        send(1'b1); expect_detected(1'b0, "after '101' (S101)");
+        send(1'b1); expect_detected(1'b1, "detects '1011'");
 
-        // Continue with '0' -- Moore output drops back
-        send(1'b0);  check_after_settle(1'b0, "after '1010'");
+        // ---- Near-miss: "1010" should NOT detect after the prior match ----
+        // Currently in SMATCH; sending '0' -> S10
+        send(1'b0); expect_detected(1'b0, "after match + '0' (S10)");
+        send(1'b1); expect_detected(1'b0, "after '...101' (S101)");
+        send(1'b0); expect_detected(1'b0, "ignores '1010' (no match)");
 
-        // Overlap test: send another '1' immediately after '0'
-        send(1'b1);  check_after_settle(1'b1, "overlap '10101' second match");
+        // ---- Reset back to S0 to re-arm cleanly ----
+        reset = 1'b1; bit_in = 1'b0;
+        @(posedge clk); @(posedge clk);
+        reset = 1'b0;
+        @(posedge clk); #1;
 
-        // Negative case: '110' should NOT detect
-        send(1'b1);  check_after_settle(1'b0, "after extra '1' (no match)");
-        send(1'b0);  check_after_settle(1'b0, "after '0' (no match)");
+        // ---- Overlap: "10110111" should detect TWICE ----
+        send(1'b1); expect_detected(1'b0, "overlap: after '1'");
+        send(1'b0); expect_detected(1'b0, "overlap: after '10'");
+        send(1'b1); expect_detected(1'b0, "overlap: after '101'");
+        send(1'b1); expect_detected(1'b1, "overlap: detects first '1011'");
+        send(1'b0); expect_detected(1'b0, "overlap: after match + '0' (S10)");
+        send(1'b1); expect_detected(1'b0, "overlap: after '...101' (S101)");
+        send(1'b1); expect_detected(1'b1, "overlap: detects second '1011'");
 
-        if (fails == 0) $display("=== 7 passed, 0 failed ===");
-        else            $display("=== %0d FAILED ===", fails);
+        // ---- Long runs do not trigger ----
+        send(1'b0); expect_detected(1'b0, "after long-run '0'");
+        send(1'b0); expect_detected(1'b0, "after '00'");
+        send(1'b0); expect_detected(1'b0, "after '000' (no match)");
+
+        // ---- Summary ----
+        $display("\n=== %0d passed, %0d failed ===", passes, fails);
+        if (fails == 0)
+            $display("*** ALL TESTS PASSED ***");
+        else
+            $display("*** %0d FAILURES ***", fails);
         $finish;
     end
+
 endmodule
