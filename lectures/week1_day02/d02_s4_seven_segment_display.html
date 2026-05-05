@@ -179,14 +179,14 @@ endcase</code></pre>
     4'h5: o_seg = 7'b???????;  // segments: a, c, d, f, g (ON)
     4'hA: o_seg = 7'b???????;  // segments: a, b, c, e, f, g (ON)
 endcase</code></pre>
-            <div class="fragment callout" style="font-size:0.7em;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.4em;">
+                <img src="diagrams/d02_seven_segment_5.svg" alt="7-segment showing digit 5 with segments b,e greyed out" style="width:100%;display:block;">
+                <img src="diagrams/d02_seven_segment_A.svg" alt="7-segment showing digit A with segment d greyed out" style="width:100%;display:block;">
+            </div>
+            <div class="fragment callout" style="font-size:0.7em;margin-top:0.4em;">
                 <strong>Answers:</strong>
                 <code>4'h5 = 7'b0100100</code> (ON:a,c,d,f,g → logical 1011011 → active-low 0100100).
                 <code>4'hA = 7'b0001000</code> (ON:a,b,c,e,f,g → logical 1110111 → active-low 0001000).
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.4em;">
-                    <img src="diagrams/d02_seven_segment_5.svg" alt="7-segment showing digit 5 with segments b,e greyed out" style="width:100%;display:block;">
-                    <img src="diagrams/d02_seven_segment_A.svg" alt="7-segment showing digit A with segment d greyed out" style="width:100%;display:block;">
-                </div>
             </div>
             <div class="fragment callout-warning" style="font-size:0.66em;">
                 <strong>Common bug:</strong> forgetting <code>default:</code>. If any bit of <code>i_hex</code> is X (unknown), no <code>4'h0</code>&ndash;<code>4'hF</code> literal matches, <code>o_seg</code> is left unassigned in <code>always @(*)</code>, and the synthesizer infers a latch. Always include <code>default: o_seg = 7'b1111111;</code> (all off).
