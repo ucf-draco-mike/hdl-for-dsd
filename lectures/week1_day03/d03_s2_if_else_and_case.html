@@ -189,21 +189,28 @@ PASS: OR   5|A  = F
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog alu_4bit.v; synth_ice40 -top alu; stat" -q
+    <pre style="font-size:0.58em;"><code class="language-bash">$ yosys -p "read_verilog alu_4bit.v; synth_ice40 -top alu_4bit; stat" -q
 
-=== alu ===
-   Number of wires:                 14
-   Number of cells:                 20
-     SB_CARRY                        4    ← adder carry chain (for ADD/SUB)
-     SB_DFF                          0
-     SB_LUT4                        16    ← 4 per operation × 4 operations</code></pre>
+=== alu_4bit ===
+   Number of wires:                 25
+   Number of wire bits:             62
+   Number of public wires:          25
+   Number of public wire bits:      62
+   Number of ports:                  6
+   Number of port bits:             16
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 33
+     SB_CARRY                        8    ← two 4-bit carry chains (ADD + SUB)
+     SB_LUT4                        25    ← op logic + 4-to-1 result mux</code></pre>
     <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
-        <strong>The math:</strong> Each of the 4 operations produces 4 output bits = 16 LUTs. The adder/subtractor share 4 carry cells. Total: 20 cells for a 4-bit, 4-op ALU. Scales linearly with operand width and operation count.
+        <strong>The math:</strong> ADD and SUB each get their own 4-bit carry chain → 8 SB_CARRY. The 25 LUT4s cover the per-op bitwise logic plus the 4-to-1 mux that picks ADD/SUB/AND/OR by <code>opcode</code>. Total: 33 cells for a 4-bit, 4-op ALU. Scales linearly with operand width and operation count.
     </div>
     <div class="fragment callout-warning" style="font-size:0.68em;">
-        <strong>Scaling check:</strong> 32-bit 8-op ALU ≈ 32×8 = 256 LUTs + 32 carry. Still fits the iCE40 HX1K easily — until you try to add a multiplier.
+        <strong>Scaling check:</strong> Double the width and the carry count doubles with it; add another op and the mux grows another LUT-per-bit. Still fits the iCE40 HX1K easily — until you try to add a multiplier.
     </div>
-    <aside class="notes">Show the breakdown. Each op contributes 4 LUTs (4 output bits). Add+sub share carry. This is the kind of mental math that makes RTL writers good estimators.</aside>
+    <aside class="notes">Show the breakdown. ADD and SUB don't share a carry chain here — yosys built two. The LUT4s split between per-op logic and the output mux. This is the kind of mental math that makes RTL writers good estimators.</aside>
 </section>
 
 <!-- CHECK THE MACHINE -->
