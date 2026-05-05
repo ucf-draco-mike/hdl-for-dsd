@@ -1,14 +1,15 @@
 // =============================================================================
-// day12_ex02_uart_loopback.v — UART RX → TX Echo (Loopback)
+// day12_ex03_uart_loopback.v — UART RX → TX Echo (Loopback)
 // Day 12: UART RX, SPI & IP Integration
 // Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
 // =============================================================================
 // Gold-standard integration test: type on PC terminal → see echo.
 // Also displays the received byte on 7-seg and LEDs.
 // =============================================================================
-// Synth:  yosys -p "read_verilog day12_ex02_uart_loopback.v uart_tx.v uart_rx.v \
+// Synth:  yosys -p "read_verilog day12_ex03_uart_loopback.v uart_tx.v uart_rx.v \
 //          hex_to_7seg.v; synth_ice40 -top uart_loopback"
 // =============================================================================
+`timescale 1ns/1ps
 
 module uart_loopback #(
     parameter CLK_FREQ  = 25_000_000,
@@ -60,6 +61,11 @@ module uart_loopback #(
     reg [7:0] r_tx_data;
     reg       r_tx_pending;
 
+    initial begin
+        r_tx_data    = 8'h00;
+        r_tx_pending = 1'b0;
+    end
+
     always @(posedge i_clk) begin
         if (w_rx_valid) begin
             r_tx_data    <= w_rx_data;
@@ -85,6 +91,7 @@ module uart_loopback #(
 
     // ---- Display last received byte ----
     reg [7:0] r_display;
+    initial r_display = 8'h00;
     always @(posedge i_clk)
         if (w_rx_valid) r_display <= w_rx_data;
 
@@ -93,19 +100,13 @@ module uart_loopback #(
     assign o_led3 = r_display[2];
     assign o_led4 = r_display[3];
 
-    // 7-segment decoders (if available in your library)
-    // wire [6:0] w_seg1, w_seg2;
-    // hex_to_7seg seg_hi (.i_hex(r_display[7:4]), .o_seg(w_seg1));
-    // hex_to_7seg seg_lo (.i_hex(r_display[3:0]), .o_seg(w_seg2));
-    // assign {o_segment1_a, o_segment1_b, o_segment1_c,
-    //         o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = w_seg1;
-    // assign {o_segment2_a, o_segment2_b, o_segment2_c,
-    //         o_segment2_d, o_segment2_e, o_segment2_f, o_segment2_g} = w_seg2;
-
-    // Placeholder if hex_to_7seg is not yet wired (active-low: 1 = segment off):
+    // 7-segment decoders — show received byte as two hex digits
+    wire [6:0] w_seg1, w_seg2;
+    hex_to_7seg seg_hi (.i_hex(r_display[7:4]), .o_seg(w_seg1));
+    hex_to_7seg seg_lo (.i_hex(r_display[3:0]), .o_seg(w_seg2));
     assign {o_segment1_a, o_segment1_b, o_segment1_c,
-            o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = 7'h7F;
+            o_segment1_d, o_segment1_e, o_segment1_f, o_segment1_g} = w_seg1;
     assign {o_segment2_a, o_segment2_b, o_segment2_c,
-            o_segment2_d, o_segment2_e, o_segment2_f, o_segment2_g} = 7'h7F;
+            o_segment2_d, o_segment2_e, o_segment2_f, o_segment2_g} = w_seg2;
 
 endmodule

@@ -144,9 +144,10 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d12_s1` | Oversampling Decision Visualization | `lecture_examples/week3_day12/d12_s2_ex1/` | `day12_ex01_uart_rx.v`, `tb_uart_rx.v` | `sim`, `wave` |
-| `d12_s2` | UART RX + Loopback Test | `lecture_examples/week3_day12/d12_s2_ex1/` | `day12_ex01_uart_rx.v`, `tb_uart_rx.v` | `sim`, `wave` |
-| `d12_s3` | SPI Master Talking to an ADC | `lecture_examples/week3_day12/d12_s4_ex2/` | `day12_ex02_uart_loopback.v`, `uart_rx.v`, `uart_tx.v` | `prog` |
+| `d12_s1` | Oversampling Decision Visualization | `lecture_examples/week3_day12/d12_s2_ex1/` | `plot_sampling.py` | `python3 plot_sampling.py` |
+| `d12_s2` (sim) | UART RX self-checking testbench | `lecture_examples/week3_day12/d12_s2_ex1/` | `day12_ex01_uart_rx.v`, `tb_uart_rx.v` | `sim`, `wave` |
+| `d12_s2` (prog) | UART loopback flashed on the Go Board | `lecture_examples/week3_day12/d12_s4_ex3/` | `day12_ex03_uart_loopback.v`, `uart_rx.v`, `uart_tx.v`, `hex_to_7seg.v`, `tb_uart_loopback.v` | `sim`, `prog` |
+| `d12_s3` | SPI Master Talking to an ADC | `lecture_examples/week3_day12/d12_s3_ex2/` | `day12_ex02_spi_master.v`, `tb_spi_master.v` | `sim`, `wave`, `stat` |
 
 ---
 

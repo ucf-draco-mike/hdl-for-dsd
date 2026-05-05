@@ -1,7 +1,7 @@
-# Auto-generated Makefile — lecture example week3_day12/d12_s4_ex2
-# Demo: uart_loopback  (segment s4, example 2)
-TOP      = uart_loopback
-SRCS     = day12_ex02_uart_loopback.v
+# Auto-generated Makefile — lecture example week3_day12/d12_s3_ex2
+# Demo: spi_master  (segment s3, example 2 — SPI Master Talking to an ADC)
+TOP      = spi_master
+SRCS     = day12_ex02_spi_master.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100

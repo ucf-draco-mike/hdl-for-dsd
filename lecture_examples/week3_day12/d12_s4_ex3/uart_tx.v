@@ -9,6 +9,7 @@
 // Build:  iverilog -DSIMULATION -o sim day11_ex01_uart_tx.v && vvp sim
 // Synth:  yosys -p "read_verilog day11_ex01_uart_tx.v; synth_ice40 -top uart_tx"
 // =============================================================================
+`timescale 1ns/1ps
 
 module uart_tx #(
     `ifdef SIMULATION
@@ -41,6 +42,14 @@ module uart_tx #(
     reg [CNT_W-1:0]  r_baud_cnt;
     reg [2:0]        r_bit_idx;     // 0..7 for 8 data bits
     reg [9:0]        r_shift;       // {stop, D7..D0, start}
+
+    // Power-on init (matches iCE40 POR; lets sim run reset-free)
+    initial begin
+        r_state    = S_IDLE;
+        r_baud_cnt = 0;
+        r_bit_idx  = 0;
+        r_shift    = 10'h3FF;       // idle pattern (line high)
+    end
 
     wire w_baud_tick = (r_baud_cnt == CLKS_PER_BIT - 1);
 

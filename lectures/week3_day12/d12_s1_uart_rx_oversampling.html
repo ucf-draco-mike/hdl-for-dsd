@@ -117,19 +117,19 @@ wire falling_edge = r_rx_sync3 &amp; ~r_rx_sync2;   // 1 → 0 transition</code>
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week3_day12/d12_s2_ex1/
 python3 plot_sampling.py
-# Simulates ±2% drift
-# Compares 4× vs 16× decision</code></pre>
+# walks +0%..+10% drift,
+# 4× / 8× / 16× / 64× side-by-side</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">At +2% clock drift:
-  4× sample: fails bit 6
-  16× sample: correct
-     through bit 9
-  (7-slot margin still)
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Drift   4×   8×  16×  64×
++2.0%    9    9    9    9
++3.0%    8    9    9    9
++5.0%    5    7    8    9
++7.0%    3    5    6    6
 
-At ±2% tolerance:
-  16× PASS (by design)</code></pre>
+(value = last bit sampled
+ correctly in a 10-bit frame)</code></pre>
         </div>
     </div>
     <aside class="notes">Matplotlib visualization of sampling decisions under drift. Concrete numerical argument for why 16× is the right amount.</aside>

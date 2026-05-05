@@ -9,6 +9,7 @@
 // Build:  iverilog -DSIMULATION -o sim day12_ex01_uart_rx.v && vvp sim
 // Synth:  yosys -p "read_verilog day12_ex01_uart_rx.v; synth_ice40 -top uart_rx"
 // =============================================================================
+`timescale 1ns/1ps
 
 module uart_rx #(
     `ifdef SIMULATION
@@ -41,7 +42,13 @@ module uart_rx #(
     reg [1:0]       r_state, r_next_state;
 
     // ---- Built-in 2-FF Synchronizer ----
+    // Idle high so unsynced X at t=0 doesn't look like a start bit in sim.
     reg r_rx_sync0, r_rx_sync1;
+    initial begin
+        r_state    = S_IDLE;
+        r_rx_sync0 = 1'b1;
+        r_rx_sync1 = 1'b1;
+    end
     always @(posedge i_clk) begin
         r_rx_sync0 <= i_rx;
         r_rx_sync1 <= r_rx_sync0;
@@ -49,6 +56,7 @@ module uart_rx #(
 
     // ---- Oversample Tick Generator ----
     reg [TICK_W-1:0] r_tick_cnt;
+    initial r_tick_cnt = 0;
     wire w_os_tick = (r_tick_cnt == CLKS_PER_TICK - 1);
 
     always @(posedge i_clk) begin
@@ -68,6 +76,15 @@ module uart_rx #(
 
     // ---- Data Shift Register ----
     reg [7:0] r_data;
+
+    // ---- Power-on init (matches iCE40 POR; lets sim run reset-free) ----
+    initial begin
+        r_os_cnt  = 0;
+        r_bit_idx = 0;
+        r_data    = 0;
+        o_data    = 0;
+        o_valid   = 0;
+    end
 
     // ============================================================
     // Block 1 — State Register
