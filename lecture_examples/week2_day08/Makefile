@@ -4,7 +4,7 @@
 # Examples in this day:
 #   ex1 -> d08_s1_ex1  (button_handler hierarchy,  segment s1)
 #   ex2 -> d08_s2_ex2  (top_with_three_counters,   segment s2)
-#   ex3 -> d08_s3_ex3  (parallel_debounce, gen-N,  segment s3)
+#   ex3 -> d08_s3_ex3  (button_array, gen-N,       segment s3)
 #
 # Targets (replace N with the example number: 1, 2, or 3):
 #   make exN          # default: stat (synth report)

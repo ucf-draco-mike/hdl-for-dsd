@@ -1,5 +1,5 @@
 // =============================================================================
-// tb_parallel_debounce.v — generate-based pipeline smoke test
+// tb_button_array.v — generate-based pipeline smoke test
 // Day 8: Hierarchy, Parameters & Generate
 // =============================================================================
 // Confirms each lane debounces independently. Exercises lane 0 as the
@@ -12,14 +12,14 @@
 `define TB_N 4
 `endif
 
-`ifndef TB_CLKS_TO_STABLE
-`define TB_CLKS_TO_STABLE 10
+`ifndef TB_CLKS_STABLE
+`define TB_CLKS_STABLE 10
 `endif
 
-module tb_parallel_debounce;
+module tb_button_array;
 
-    localparam N              = `TB_N;
-    localparam CLKS_TO_STABLE = `TB_CLKS_TO_STABLE;
+    localparam N           = `TB_N;
+    localparam CLKS_STABLE = `TB_CLKS_STABLE;
 
     reg          clk     = 1'b0;
     reg  [N-1:0] buttons = {N{1'b1}};   // start with all released (HIGH = idle)
@@ -27,7 +27,7 @@ module tb_parallel_debounce;
     wire [N-1:0] press_edge;
     wire [N-1:0] release_edge;
 
-    parallel_debounce #(.N(N), .CLKS_TO_STABLE(CLKS_TO_STABLE)) dut (
+    button_array #(.N(N), .CLKS_STABLE(CLKS_STABLE)) dut (
         .i_clk          (clk),
         .i_buttons      (buttons),
         .o_clean        (clean),
@@ -57,18 +57,18 @@ module tb_parallel_debounce;
     endtask
 
     initial begin
-        $dumpfile("tb_parallel_debounce.vcd");
-        $dumpvars(0, tb_parallel_debounce);
-        $display("\n=== parallel_debounce testbench (N=%0d) ===\n", N);
+        $dumpfile("tb_button_array.vcd");
+        $dumpvars(0, tb_button_array);
+        $display("\n=== button_array testbench (N=%0d) ===\n", N);
 
         // Settle: keep all buttons idle (HIGH) for long enough that the
         // debouncer accepts HIGH on every lane.
-        repeat (CLKS_TO_STABLE * 2 + 8) @(posedge clk);
+        repeat (CLKS_STABLE * 2 + 8) @(posedge clk);
         check(&clean, "all lanes settle high");
 
         // Press lane 0 only; hold it stable long enough to debounce.
         buttons[0] = 1'b0;
-        repeat (CLKS_TO_STABLE * 2 + 8) @(posedge clk);
+        repeat (CLKS_STABLE * 2 + 8) @(posedge clk);
         #1;
         check(clean[0] === 1'b0, "lane 0 debounced low");
 
@@ -81,7 +81,7 @@ module tb_parallel_debounce;
 
         // Release lane 0 again.
         buttons[0] = 1'b1;
-        repeat (CLKS_TO_STABLE * 2 + 8) @(posedge clk);
+        repeat (CLKS_STABLE * 2 + 8) @(posedge clk);
         #1;
         check(clean[0] === 1'b1, "lane 0 debounced high");
 
