@@ -1,7 +1,10 @@
-# Auto-generated Makefile — lecture example week2_day08/d08_s2_ex1
-# Demo: param_alu  (segment s2, example 1)
-TOP      = param_alu
-SRCS     = day08_ex02_param_alu.v
+# Auto-generated Makefile — lecture example week2_day08/d08_s2_ex2
+# Demo: top_with_three_counters  (segment s2, example 2)
+#
+# Demonstrates one parameterized module (counter, in day08_ex02_counter.v)
+# instantiated at WIDTH = 4, 8, and 16 in top_with_three_counters.v.
+TOP      = top
+SRCS     = top_with_three_counters.v day08_ex02_counter.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
