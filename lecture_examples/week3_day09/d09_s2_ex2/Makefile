@@ -1,23 +1,32 @@
-# Auto-generated Makefile — lecture example week3_day09/d09_s2_ex2
-# Demo: ram_sp  (segment s2, example 2)
-TOP      = ram_sp
-SRCS     = day09_ex02_ram_sp.v
+# Lecture example — week3_day09/d09_s2_ex2
+# Demo: single-port synchronous RAM (segment s2)
+# Module: ram_1p (1024 x 8 — should infer 2 SB_RAM40_4K EBRs on iCE40)
+#
+# Targets:
+#   make sim     # iverilog + vvp self-check (64 random writes/reads)
+#   make wave    # run sim, then open tb_ram_1p.vcd in gtkwave
+#   make stat    # yosys synth_ice40 stat — look for SB_RAM40_4K
+#   make synth   # synth ram_1p to JSON
+#   make prog    # full nextpnr → icepack → iceprog flow (for board demo)
+#   make clean   # remove build artifacts
+
+TOP      = ram_1p
+SRCS     = ram_1p.v
+TB       = tb_ram_1p.v
 PCF      = ../go_board.pcf
 DEVICE   = hx1k
 PACKAGE  = vq100
 IVFLAGS  = -g2012 -Wall
 
-sim:
-	@tb=$$(ls tb_*.v tb_*.sv 2>/dev/null | head -n 1); \
-	if [ -z "$$tb" ]; then \
-		echo "[sim] No testbench (tb_*.v) in $$(pwd) — add one to simulate."; \
-	else \
-		srcs=$$(ls *.v *.sv 2>/dev/null | grep -v '^tb_' | tr '\n' ' '); \
-		iverilog $(IVFLAGS) -o sim.vvp $$tb $$srcs && vvp sim.vvp; \
-	fi
+sim: $(TB) $(SRCS)
+	iverilog $(IVFLAGS) -o sim.vvp $(TB) $(SRCS)
+	vvp sim.vvp
 
 wave: sim
-	@if ls *.vcd >/dev/null 2>&1; then gtkwave *.vcd & else echo "[wave] No VCD produced."; fi
+	@if ls *.vcd >/dev/null 2>&1; then gtkwave tb_ram_1p.vcd & else echo "[wave] No VCD produced."; fi
+
+stat: $(SRCS)
+	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); stat"
 
 synth: $(SRCS)
 	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP) -json $(TOP).json"
@@ -27,10 +36,7 @@ prog: synth
 	icepack $(TOP).asc $(TOP).bin
 	iceprog $(TOP).bin
 
-stat: $(SRCS)
-	yosys -p "read_verilog $(SRCS); synth_ice40 -top $(TOP); stat"
-
 clean:
 	rm -f *.json *.asc *.bin *.vvp *.vcd *.log
 
-.PHONY: sim wave synth prog stat clean
+.PHONY: sim wave stat synth prog clean

@@ -33,7 +33,7 @@
 ## Week 3 Summary
 
 Your module library after Week 3:
-`rom_sync`, `ram_sp`, `pattern_sequencer`, `top_pll_demo`, `uart_tx`, `uart_rx`, `uart_loopback`
+`rom_case`, `rom_array`, `ram_1p`, `pattern_sequencer`, `top_pll_demo`, `uart_tx`, `uart_rx`, `uart_loopback`
 + all Week 1-2 modules.
 
 Complete communication stack: FPGA ↔ PC via UART. Ready for Week 4.

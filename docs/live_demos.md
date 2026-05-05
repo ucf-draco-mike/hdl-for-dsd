@@ -119,9 +119,9 @@ itself, evolving across the four segments.
 
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
-| `d09_s1` | Case vs Array ROM: Same Output, Different Silicon | `lecture_examples/week3_day09/d09_s1_ex1/` | `day09_ex01_rom_sync.v`, `tb_rom_sync.v` | `sim`, `stat` |
-| `d09_s2` | Write, Read, Confirm Block RAM Inference | `lecture_examples/week3_day09/d09_s2_ex2/` | `day09_ex02_ram_sp.v`, `tb_ram_sp.v` | `sim`, `wave`, `stat` |
-| `d09_s4` | Pattern Sequencer on the Go Board | `lecture_examples/week3_day09/d09_s4_ex3/` | `day09_ex03_pattern_sequencer.v`, `tb_pattern_sequencer.v` | `sim`, `prog` |
+| `d09_s1` | Case vs Array ROM: Same Output, Different Silicon | `lecture_examples/week3_day09/d09_s1_ex1/` | `rom_case.v`, `rom_array.v`, `hello.hex`, `tb_rom.v` | `sim`, `wave`, `stat_case`, `stat_array` |
+| `d09_s2` | Write, Read, Confirm Block RAM Inference | `lecture_examples/week3_day09/d09_s2_ex2/` | `ram_1p.v`, `tb_ram_1p.v` | `sim`, `wave`, `stat` |
+| `d09_s4` | Pattern Sequencer on the Go Board | `lecture_examples/week3_day09/d09_s4_ex3/` | `pattern_sequencer.v`, `rom_array.v`, `top.v`, `pattern.hex`, `tb_pattern_sequencer.v` | `sim`, `wave`, `stat`, `prog` |
 
 ### Day 10 — Numerical Architectures & Design Trade-offs
 
