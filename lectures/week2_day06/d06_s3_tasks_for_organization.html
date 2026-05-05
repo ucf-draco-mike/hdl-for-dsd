@@ -165,24 +165,26 @@ apply_and_check(0, 8'hFF, 8'h55);  // en=0: hold
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week2_day06/d06_s1_ex1/
 wc -l tb_before.v tb_after.v
 diff tb_before.v tb_after.v | head -40
-make sim    # both produce identical results</code></pre>
+make sim TB=tb_before.v   # 86-line monolith
+make sim TB=tb_after.v    # 54-line task-based — same result</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"> 120 tb_before.v
-  45 tb_after.v
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"> 86 tb_before.v
+ 54 tb_after.v
 
-PASS: 5+3 = 8
-PASS: 7+9 = 16
+PASS: 0+0
+PASS: 1+2
+PASS: 5+7
 ...
-=== 20 passed, 0 failed ===</code></pre>
+=== 12 passed, 0 failed ===</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
         <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
-        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Same output. 63% fewer lines of code. More importantly: if a new check is needed, it's <strong>one edit in the task</strong>, not 20 edits across cases.</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Same output. ~37% fewer lines of code (and the savings grow linearly with each new test case). More importantly: if a new check is needed, it's <strong>one edit in the task</strong>, not 12 edits across cases.</p>
     </div>
-    <aside class="notes">[Terminal] Show the line-count diff. Same behavior, much smaller file. The real win comes the next time you need to add an assertion — one line changes instead of 20.</aside>
+    <aside class="notes">[Terminal] Show the line-count diff (86 → 54). Same behavior, smaller file. The real win comes the next time you need to add an assertion — one line changes instead of 12, and the gap widens with every new case.</aside>
 </section>
 
 <section data-background-color="#FFF8E1">
