@@ -121,21 +121,19 @@ end</code></pre>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day04/d04_s2_ex1/
-# Two modules: pipe_blocking, pipe_nonblocking
+# Two modules: shift_blocking, shift_nonblocking
 make sim
-make wave   # loads saved .gtkw</code></pre>
+make wave   # GTKWave on the .vcd</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">BLOCKING:
-  t=10 a=1 b=1 c=1
-  t=20 a=0 b=0 c=0
-  (b and c always match a)
-
-NONBLOCKING:
-  t=10 a=1 b=1 c=0
-  t=20 a=0 b=0 c=1
-  (c lags by 1 cycle)</code></pre>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">Cycle 1: blocking a=1 b=1 c=1 | nb a=1 b=0 c=0
+Cycle 2: blocking a=0 b=0 c=0 | nb a=0 b=1 c=0
+Cycle 3: blocking a=0 b=0 c=0 | nb a=0 b=0 c=1
+Cycle 4: blocking a=0 b=0 c=0 | nb a=0 b=0 c=0
+PASS: blocking collapses (c=1 on cycle 1)
+PASS: nonblocking pulse reached c on cycle 3
+=== 5 passed, 0 failed ===</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
@@ -152,26 +150,27 @@ NONBLOCKING:
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
     <div class="two-col">
         <div class="col panel panel-bad" style="padding:0.5em;">
-            <h3 style="font-size:0.85em;color:#C62828;">Blocking</h3>
-            <pre style="font-size:0.6em;"><code class="language-bash">$ yosys ... blocking.v
+            <h3 style="font-size:0.85em;color:#C62828;">Blocking (shift_blocking)</h3>
+            <pre style="font-size:0.6em;"><code class="language-bash">$ make stat   # synth_ice40 -top shift_blocking
 SB_DFF:      1    ← ONE flop
 SB_LUT4:     0
 
-(synthesizer proves b==c
- and optimizes away.
+(synthesizer proves r_a==r_b==o_q
+ and optimizes 3 → 1 flop.
  Result: input → 1 flop → output)</code></pre>
         </div>
         <div class="col panel panel-good" style="padding:0.5em;">
-            <h3 style="font-size:0.85em;color:#2E7D32;">Nonblocking</h3>
-            <pre style="font-size:0.6em;"><code class="language-bash">$ yosys ... nonblocking.v
-SB_DFF:      2    ← TWO flops
+            <h3 style="font-size:0.85em;color:#2E7D32;">Nonblocking (shift_nonblocking)</h3>
+            <pre style="font-size:0.6em;"><code class="language-bash">$ make stat   # synth_ice40 -top shift_nonblocking
+SB_DFF:      3    ← THREE flops
 SB_LUT4:     0
 
-(proper 2-stage pipeline)</code></pre>
+(proper 3-stage pipeline:
+ i_d → r_a → r_b → o_q)</code></pre>
         </div>
     </div>
     <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>Hardware doesn't lie.</strong> The blocking version synthesizes to fewer flops because the synthesizer correctly sees that stages are redundant. Your 4-deep pipeline became a 1-stage wire with latency. Timing-closure nightmare downstream.
+        <strong>Hardware doesn't lie.</strong> The blocking version synthesizes to a single flop because the synthesizer correctly sees that the three stages are redundant. Your 3-deep pipeline became a 1-stage wire with latency. Timing-closure nightmare downstream.
     </div>
     <aside class="notes">The tool output tells the whole story. Blocking → flops disappear. Nonblocking → correct pipeline depth. The synthesizer is doing exactly what you asked — the problem is that you asked for the wrong thing.</aside>
 </section>

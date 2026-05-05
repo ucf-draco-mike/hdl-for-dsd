@@ -183,9 +183,9 @@ PASS: q stays through many
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog dff.v; synth_ice40 -top dff; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ make stat   # yosys synth_ice40 on day04_ex01_d_flip_flop.v
 
-=== dff ===
+=== d_flip_flop ===
    Number of wires:                  4
    Number of cells:                  1
      SB_DFF                          1    ← one flip-flop, finally!

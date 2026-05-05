@@ -163,17 +163,15 @@ FPGA programmed OK.</code></pre>
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog led_blinker.v; synth_ice40 -top led_blinker; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ make stat   # yosys synth_ice40 on day04_ex02_led_blinker.v
 
 === led_blinker ===
-   Number of wires:                 41
-   Number of cells:                 49
-     SB_CARRY                       23    ← adder carry chain for +1
-     SB_DFF                          0
-     SB_DFFESR                      25    ← 24 counter flops + 1 LED flop
-     SB_LUT4                         1    ← the terminal-count comparator</code></pre>
+   Number of cells:    ~95
+     SB_CARRY          ~46    ← two carry chains (divider + free-runner)
+     SB_DFFESR         ~49    ← 24 divider + 24 free + 1 LED flop
+     SB_LUT4           ~1     ← the terminal-count comparator</code></pre>
     <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
-        <strong>What you're looking at:</strong> 25 flops (24 counter bits + 1 LED), 23 carry cells for the +1 adder chain, 1 LUT for the <code>== 12_499_999</code> comparator. Total: 2% of the iCE40 HX1K. Your first real design fits comfortably.
+        <strong>What you're looking at:</strong> ~49 flops (24 explicit-divider counter + 24 free-running counter for bit taps + 1 LED), two ~23-deep carry chains for the two <code>+1</code> adders, plus a single LUT for the <code>== 12_499_999</code> comparator. Total: under 4% of the iCE40 HX1K. Your first real design fits comfortably.
     </div>
     <div class="fragment callout" style="font-size:0.68em;">
         <strong>Scaling insight:</strong> A 32-bit counter would be 32 flops + 31 carry = trivially small. The iCE40 HX1K can host dozens of independent counters simultaneously — which is exactly what a multi-peripheral SoC does.
