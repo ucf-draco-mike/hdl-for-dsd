@@ -1,7 +1,7 @@
 // =============================================================================
-// day13_ex01_uart_tx_sv.sv — UART TX Refactored in SystemVerilog
-// Day 13: SystemVerilog for Design
-// Accelerated HDL for Digital System Design · Dr. Mike Borowczak · ECE · CECS · UCF
+// day13_ex02_uart_tx_sv.sv -- UART TX Refactored in SystemVerilog
+// Day 13: SystemVerilog for Design -- Segment 3 (intent-based always_*)
+// Accelerated HDL for Digital System Design - Dr. Mike Borowczak - ECE - CECS - UCF
 // =============================================================================
 // Same functionality as day11_ex01_uart_tx.v, refactored with:
 //   - logic (replaces wire/reg)
@@ -9,8 +9,8 @@
 //   - typedef enum (type-safe FSM states)
 //   - Dropped r_ prefix (always_ff declares register intent)
 // =============================================================================
-// Build:  iverilog -g2012 -DSIMULATION -o sim day13_ex01_uart_tx_sv.sv && vvp sim
-// Synth:  yosys -p "read_verilog -sv day13_ex01_uart_tx_sv.sv; synth_ice40 -top uart_tx_sv"
+// Build:  iverilog -g2012 -DSIMULATION -o sim day13_ex02_uart_tx_sv.sv && vvp sim
+// Synth:  yosys -p "read_verilog -sv day13_ex02_uart_tx_sv.sv; synth_ice40 -top uart_tx_sv"
 // =============================================================================
 
 module uart_tx_sv #(

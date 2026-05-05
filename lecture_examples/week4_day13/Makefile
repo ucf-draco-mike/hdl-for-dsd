@@ -1,11 +1,12 @@
-# Dispatcher Makefile — week4_day13
+# Dispatcher Makefile -- week4_day13
 # Routes targets into per-example subdirectories.
 #
 # Examples in this day:
-#   ex1 -> d13_s3_ex1  (uart_tx_sv, SystemVerilog, segment s3)
-#   ex2 -> d13_s4_ex2  (alu_sv,     SystemVerilog, segment s4)
+#   ex1 -> d13_s2_ex1  (debounce_sv,      SystemVerilog, segment s2)
+#   ex2 -> d13_s3_ex2  (uart_tx_sv,       SystemVerilog, segment s3)
+#   ex3 -> d13_s4_ex3  (traffic_light_sv, SystemVerilog, segment s4)
 #
-# Targets (replace N with the example number: 1 or 2):
+# Targets (replace N with the example number: 1, 2, or 3):
 #   make exN          # default: stat (synth report)
 #   make exN_sim      # iverilog + vvp simulation
 #   make exN_wave     # run sim, then open VCD in gtkwave
@@ -15,18 +16,22 @@
 #   make exN_clean    # remove build artifacts in that example
 #   make clean        # clean every example in this day
 
-EXAMPLES := d13_s3_ex1 d13_s4_ex2
-EX_NUMS  := 1 2
+EXAMPLES := d13_s2_ex1 d13_s3_ex2 d13_s4_ex3
+EX_NUMS  := 1 2 3
 
 ex1:
-	$(MAKE) -C d13_s3_ex1 stat
+	$(MAKE) -C d13_s2_ex1 stat
 
 ex2:
-	$(MAKE) -C d13_s4_ex2 stat
+	$(MAKE) -C d13_s3_ex2 stat
+
+ex3:
+	$(MAKE) -C d13_s4_ex3 stat
 
 clean:
-	$(MAKE) -C d13_s3_ex1 clean
-	$(MAKE) -C d13_s4_ex2 clean
+	$(MAKE) -C d13_s2_ex1 clean
+	$(MAKE) -C d13_s3_ex2 clean
+	$(MAKE) -C d13_s4_ex3 clean
 
 SIM_TARGETS   := $(foreach n,$(EX_NUMS),ex$(n)_sim)
 WAVE_TARGETS  := $(foreach n,$(EX_NUMS),ex$(n)_wave)
@@ -42,4 +47,4 @@ $(SYNTH_TARGETS): ex%_synth: ; $(MAKE) -C $(wildcard d13_s*_ex$*) synth
 $(PROG_TARGETS):  ex%_prog:  ; $(MAKE) -C $(wildcard d13_s*_ex$*) prog
 $(CLEAN_TARGETS): ex%_clean: ; $(MAKE) -C $(wildcard d13_s*_ex$*) clean
 
-.PHONY: clean ex1 ex2 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)
+.PHONY: clean ex1 ex2 ex3 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)
