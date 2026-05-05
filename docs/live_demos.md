@@ -164,7 +164,7 @@ itself, evolving across the four segments.
 | Slide | Title | Example dir | Top file(s) | Make targets |
 |-------|-------|-------------|-------------|--------------|
 | `d14_s1` | Assert-Driven Bug Hunt | `lecture_examples/week4_day14/d14_s1_ex1/` | `day14_ex01_uart_tx_assertions.sv`, `tb_uart_tx_assertions.sv` | `sim` (with assertion failures) |
-| `d14_s3` | PPA Sweep: Pipelining an Adder | `lecture_examples/week3_day10/d10_s2_ex2/` (cross-day reuse) | `day10_mult_widths.v`, `tb_mult_widths.v` | `stat` (sweep) |
+| `d14_s3` | PPA Sweep: Pipelining an Adder | `lecture_examples/week4_day14/d14_s3_ex2/` | `day14_ex02_pipelined_adder.v`, `tb_pipelined_adder.v`, `scripts/plot_ppa.py` | `all PIPE=N` (per-PIPE log + Fmax/cells), `sweep`, `sim` |
 
 ---
 
@@ -175,8 +175,6 @@ should not be "fixed" by duplicating the file:
 
 - `d03_s4` reuses `d04_s2_ex1` (the shift register from Day 4 visualises blocking vs.
   nonblocking; introduced one segment early to motivate Day 4).
-- `d14_s3` reuses `d10_s2_ex2` (the multiplier-widths sweep is the canonical PPA artefact —
-  Day 14 just re-runs it as a sweep with pipelining variations).
 
 ---
 

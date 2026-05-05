@@ -38,11 +38,11 @@ lecture_examples/<weekN_dayMM>/d<MM>_s<X>_exN/
 | Week 2 · Day 7  | `d07_s2_ex1`, `d07_s4_ex2`                                              | `d07_s1..s4` |
 | Week 2 · Day 8  | `d08_s2_ex1`, `d08_s4_ex2`                                              | `d08_s1..s3` |
 | Week 3 · Day 9  | `d09_s1_ex1`, `d09_s2_ex2`, `d09_s4_ex3`                                | `d09_s1`, `d09_s2`, `d09_s4` |
-| Week 3 · Day 10 | `d10_s2_ex1`, `d10_s2_ex2`                                              | `d10_s1..s3`, `d14_s3` (cross-day) |
+| Week 3 · Day 10 | `d10_s2_ex1`, `d10_s2_ex2`                                              | `d10_s1..s3` |
 | Week 3 · Day 11 | `d11_s3_ex1`, `d11_s4_ex2`                                              | `d11_s1..s4` |
 | Week 3 · Day 12 | `d12_s2_ex1`, `d12_s4_ex2`                                              | `d12_s1..s3` |
-| Week 4 · Day 13 | `d13_s2_ex1`, `d13_s3_ex2`, `d13_s4_ex3`                                | `d13_s2`, `d13_s4` |
-| Week 4 · Day 14 | `d14_s1_ex1`                                                            | `d14_s1` |
+| Week 4 · Day 13 | `d13_s3_ex1`, `d13_s4_ex2`                                              | `d13_s2`, `d13_s4` |
+| Week 4 · Day 14 | `d14_s1_ex1`, `d14_s3_ex2`                                              | `d14_s1`, `d14_s3` |
 
 ## Common targets (per example)
 
