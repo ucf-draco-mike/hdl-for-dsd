@@ -159,12 +159,11 @@ Cycles 40+:   o_tx = 1   (idle)</code></pre>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week3_day11/d11_s3_ex1/
-# Start from empty uart_tx.v skeleton
+# day11_ex01_uart_tx.v: FSM + PISO + baud cnt
 # Add FSM → test → add datapath → test
 make sim        # self-checks byte = 'A'
-make wave
-make stat       # ~30 cells
-gtkwave tb.vcd &amp;</code></pre>
+make wave       # opens tb_uart_tx.vcd
+make stat       # ~30 cells</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
@@ -189,7 +188,7 @@ PASS: IDLE after 10 ticks
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog uart_tx.v; synth_ice40 -top uart_tx; stat" -q
+    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog day11_ex01_uart_tx.v; synth_ice40 -top uart_tx; stat" -q
 
 === uart_tx ===  (CLKS_PER_BIT=217 at 115200 baud / 25 MHz clk)
    Number of wires:                 49

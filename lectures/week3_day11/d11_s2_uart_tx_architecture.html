@@ -153,11 +153,11 @@
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week3_day11/d11_s3_ex1/
-cat uart_tx.v     # scaffold only, no logic
+cat day11_ex01_uart_tx.v   # FSM block first
 make sim
-# Testbench verifies the FSM
-# sequencing but TX line is WIP
-gtkwave tb.vcd &amp;</code></pre>
+# Watch the FSM step through
+# IDLE -&gt; START -&gt; DATA -&gt; STOP
+make wave        # opens tb_uart_tx.vcd</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>

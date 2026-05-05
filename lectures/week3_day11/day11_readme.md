@@ -24,6 +24,7 @@ For the canonical Live Demo registry, see [`docs/live_demos.md`](../../docs/live
 |------|-------------|
 | `diagrams/d11_uart_frame.svg` | UART frame for byte 0x48 ('H'): idle, start, 8 data LSB first, stop |
 | `diagrams/d11_uart_tx_block.svg` | TX architecture: FSM + PISO shift register + baud counter |
+| `diagrams/d11_uart_tx_fsm.svg`   | UART TX state machine: IDLE → START → DATA(×8) → STOP |
 
 ## Key Concepts
 - UART frame: idle → start → 8 data (LSB first) → stop
@@ -35,16 +36,31 @@ For the canonical Live Demo registry, see [`docs/live_demos.md`](../../docs/live
 ## Directory Structure
 
 ```
-day11_uart_transmitter/
+lectures/week3_day11/
 ├── d11_s1_uart_protocol.html
 ├── d11_s2_uart_tx_architecture.html
 ├── d11_s3_uart_tx_implementation.html
 ├── d11_s4_connecting_to_pc.html
-├── code/
-│   └── day11_ex01_uart_tx.v
 ├── diagrams/
 │   ├── d11_uart_frame.svg
-│   └── d11_uart_tx_block.svg
+│   ├── d11_uart_tx_block.svg
+│   └── d11_uart_tx_fsm.svg
 ├── day11_quiz.md
 └── day11_readme.md
+
+lecture_examples/week3_day11/
+├── Makefile                          # dispatcher: ex1, ex2, sim/wave/stat/prog
+├── go_board.pcf                      # shared pin constraints
+├── d11_s3_ex1/                       # d11_s1, d11_s2, d11_s3 Live Demos
+│   ├── Makefile
+│   ├── day11_ex01_uart_tx.v          # UART TX (8N1, parameterized)
+│   ├── tb_uart_tx.v                  # self-checking TB, byte = 'A'
+│   ├── decode_uart.py                # d11_s1 demo: decode a scope CSV
+│   └── capture.csv                   # d11_s1 sample capture (byte 'A')
+└── d11_s4_ex2/                       # d11_s4 Live Demo
+    ├── Makefile
+    ├── day11_ex02_hello_emitter.v    # "HELLO\r\n" emitter top
+    ├── uart_tx.v                     # copy of day11_ex01 (self-contained)
+    ├── tb_hello_emitter.v            # self-checking TB
+    └── rx_display.py                 # PC-side serial reader
 ```
