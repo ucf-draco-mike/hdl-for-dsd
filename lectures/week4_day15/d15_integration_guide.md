@@ -113,7 +113,7 @@ Watch the terminal for state codes. This is real industry debugging.
 
 ---
 
-## Demo Prep Checklist (for tomorrow)
+## Demo Prep Checklist (for the next topic)
 
 - [ ] Core functionality works on hardware
 - [ ] Block diagram prepared (hand-drawn OK)
