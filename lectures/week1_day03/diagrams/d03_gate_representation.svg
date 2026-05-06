@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Inter, Arial, sans-serif">
+  <rect width="1200" height="560" rx="12" fill="#FAFAFA" stroke="#DDD"/>
+  <text x="600" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#111">
+    What the Synthesizer Builds — Combinational vs. Sequential Hardware
+  </text>
+  <text x="600" y="52" text-anchor="middle" font-size="13" fill="#555">
+    Same RTL skeleton (a, b, c) — radically different physical structures
+  </text>
+
+  <!-- ════════════════ LEFT: COMBINATIONAL ════════════════ -->
+  <g transform="translate(20,80)">
+    <rect width="570" height="460" rx="10" fill="#EAF2F8" stroke="#5A7FA0" stroke-width="1.8"/>
+    <text x="285" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#2C5777">
+      <tspan font-family="JetBrains Mono, monospace" font-size="18">=</tspan>  in <tspan font-family="JetBrains Mono, monospace">always @(*)</tspan>  →  COMBINATIONAL
+    </text>
+
+    <!-- Code panel -->
+    <g transform="translate(20,48)">
+      <rect width="290" height="100" rx="6" fill="#FFFFFF" stroke="#5A7FA0" stroke-width="1.2"/>
+      <text x="14" y="22" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">always @(*) begin</text>
+      <text x="14" y="48" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  b = a;</text>
+      <text x="14" y="74" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  c = b;</text>
+      <text x="14" y="92" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">end</text>
+    </g>
+
+    <!-- Signature panel -->
+    <g transform="translate(335,55)">
+      <text x="0" y="0" font-size="10" font-weight="700" fill="#5A7FA0" letter-spacing="0.1em">SIGNATURE</text>
+      <rect x="0" y="10" width="200" height="86" rx="4" fill="#FFF" stroke="#5A7FA0"/>
+      <text x="100" y="32" text-anchor="middle" font-size="11" fill="#2C5777">no clock signal</text>
+      <text x="100" y="50" text-anchor="middle" font-size="11" fill="#2C5777">no flip-flops</text>
+      <text x="100" y="68" text-anchor="middle" font-size="11" fill="#2C5777">just wires &amp; gates</text>
+      <text x="100" y="88" text-anchor="middle" font-size="10" fill="#888" font-style="italic">memoryless function</text>
+    </g>
+
+    <!-- Hardware label -->
+    <text x="20" y="190" font-size="13" font-weight="700" fill="#2C5777">Synthesized hardware:</text>
+
+    <!-- Hardware: input port → wires → output port -->
+    <g transform="translate(20,210)">
+      <!-- input port (a) -->
+      <rect x="0" y="42" width="46" height="26" rx="3" fill="#FFF" stroke="#2C5777" stroke-width="1.5"/>
+      <text x="23" y="60" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#2C5777">a</text>
+
+      <!-- wire a → b -->
+      <line x1="46" y1="55" x2="160" y2="55" stroke="#2C5777" stroke-width="2"/>
+      <text x="103" y="46" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#5A7FA0">net b</text>
+
+      <!-- branch dot -->
+      <circle cx="160" cy="55" r="3" fill="#2C5777"/>
+
+      <!-- wire b → c -->
+      <line x1="160" y1="55" x2="334" y2="55" stroke="#2C5777" stroke-width="2"/>
+      <text x="247" y="46" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#5A7FA0">net c</text>
+
+      <!-- output port (c out) -->
+      <rect x="334" y="42" width="46" height="26" rx="3" fill="#FFF" stroke="#2C5777" stroke-width="1.5"/>
+      <text x="357" y="60" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#2C5777">c</text>
+
+      <!-- annotation -->
+      <text x="190" y="105" text-anchor="middle" font-size="11" fill="#C62828" font-weight="700">Two LHS — but ZERO registers built</text>
+      <text x="190" y="122" text-anchor="middle" font-size="10" fill="#555">the synthesizer collapses b and c into nets on the same wire</text>
+    </g>
+
+    <!-- bottom takeaway -->
+    <g transform="translate(20,400)">
+      <rect width="530" height="48" rx="6" fill="#FFFFFF" stroke="#5A7FA0" stroke-dasharray="4 3"/>
+      <text x="265" y="20" text-anchor="middle" font-size="12" fill="#2C5777" font-weight="700">
+        Combinational: outputs follow inputs through gate delay only.
+      </text>
+      <text x="265" y="38" text-anchor="middle" font-size="11" fill="#333">
+        No clock. No state. Change <tspan font-family="JetBrains Mono, monospace">a</tspan>, and <tspan font-family="JetBrains Mono, monospace">c</tspan> changes.
+      </text>
+    </g>
+  </g>
+
+  <!-- ════════════════ RIGHT: SEQUENTIAL ════════════════ -->
+  <g transform="translate(610,80)">
+    <rect width="570" height="460" rx="10" fill="#FFF8E1" stroke="#C9A000" stroke-width="1.8"/>
+    <text x="285" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#8B6F00">
+      <tspan font-family="JetBrains Mono, monospace" font-size="18">&lt;=</tspan>  in <tspan font-family="JetBrains Mono, monospace">always @(posedge clk)</tspan>  →  SEQUENTIAL
+    </text>
+
+    <!-- Code panel -->
+    <g transform="translate(20,48)">
+      <rect width="290" height="100" rx="6" fill="#FFFFFF" stroke="#C9A000" stroke-width="1.2"/>
+      <text x="14" y="22" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">always @(posedge clk) begin</text>
+      <text x="14" y="48" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  b &lt;= a;</text>
+      <text x="14" y="74" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  c &lt;= b;</text>
+      <text x="14" y="92" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">end</text>
+    </g>
+
+    <!-- Signature panel -->
+    <g transform="translate(335,55)">
+      <text x="0" y="0" font-size="10" font-weight="700" fill="#8B6F00" letter-spacing="0.1em">SIGNATURE</text>
+      <rect x="0" y="10" width="200" height="86" rx="4" fill="#FFF" stroke="#C9A000"/>
+      <text x="100" y="32" text-anchor="middle" font-size="11" fill="#8B6F00">clock edge required</text>
+      <text x="100" y="50" text-anchor="middle" font-size="11" fill="#8B6F00">one D-FF per LHS</text>
+      <text x="100" y="68" text-anchor="middle" font-size="11" fill="#8B6F00">stores state across cycles</text>
+      <text x="100" y="88" text-anchor="middle" font-size="10" fill="#888" font-style="italic">2-stage shift / pipeline</text>
+    </g>
+
+    <!-- Hardware label -->
+    <text x="20" y="190" font-size="13" font-weight="700" fill="#8B6F00">Synthesized hardware:</text>
+
+    <!-- Hardware: a → DFF(b) → DFF(c) → c -->
+    <g transform="translate(20,210)">
+      <!-- input port a -->
+      <rect x="0" y="42" width="36" height="26" rx="3" fill="#FFF" stroke="#8B6F00" stroke-width="1.5"/>
+      <text x="18" y="60" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#8B6F00">a</text>
+
+      <!-- wire to FF1 -->
+      <line x1="36" y1="55" x2="76" y2="55" stroke="#8B6F00" stroke-width="2"/>
+
+      <!-- D-FF #1 (b) -->
+      <g transform="translate(76,25)">
+        <rect width="84" height="60" fill="#FFF" stroke="#8B6F00" stroke-width="2" rx="2"/>
+        <text x="6" y="22" font-size="11" font-family="JetBrains Mono, monospace" fill="#111" font-weight="700">D</text>
+        <text x="78" y="22" text-anchor="end" font-size="11" font-family="JetBrains Mono, monospace" fill="#111" font-weight="700">Q</text>
+        <text x="42" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#8B6F00">D-FF</text>
+        <!-- clock notch -->
+        <polygon points="0,42 9,49 0,56" fill="none" stroke="#8B6F00" stroke-width="1.5"/>
+        <text x="42" y="80" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#8B6F00">b (stage 1)</text>
+      </g>
+
+      <!-- wire FF1 → FF2 -->
+      <line x1="160" y1="55" x2="208" y2="55" stroke="#8B6F00" stroke-width="2"/>
+
+      <!-- D-FF #2 (c) -->
+      <g transform="translate(208,25)">
+        <rect width="84" height="60" fill="#FFF" stroke="#8B6F00" stroke-width="2" rx="2"/>
+        <text x="6" y="22" font-size="11" font-family="JetBrains Mono, monospace" fill="#111" font-weight="700">D</text>
+        <text x="78" y="22" text-anchor="end" font-size="11" font-family="JetBrains Mono, monospace" fill="#111" font-weight="700">Q</text>
+        <text x="42" y="40" text-anchor="middle" font-size="11" font-weight="700" fill="#8B6F00">D-FF</text>
+        <polygon points="0,42 9,49 0,56" fill="none" stroke="#8B6F00" stroke-width="1.5"/>
+        <text x="42" y="80" text-anchor="middle" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#8B6F00">c (stage 2)</text>
+      </g>
+
+      <!-- wire FF2 → output -->
+      <line x1="292" y1="55" x2="334" y2="55" stroke="#8B6F00" stroke-width="2"/>
+
+      <!-- output port c -->
+      <rect x="334" y="42" width="36" height="26" rx="3" fill="#FFF" stroke="#8B6F00" stroke-width="1.5"/>
+      <text x="352" y="60" text-anchor="middle" font-size="12" font-family="JetBrains Mono, monospace" font-weight="700" fill="#8B6F00">c</text>
+
+      <!-- clock distribution -->
+      <text x="0" y="135" font-size="11" font-family="JetBrains Mono, monospace" font-weight="700" fill="#8B6F00">clk</text>
+      <line x1="22" y1="131" x2="334" y2="131" stroke="#8B6F00" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <line x1="85" y1="86" x2="85" y2="131" stroke="#8B6F00" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <line x1="217" y1="86" x2="217" y2="131" stroke="#8B6F00" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="170" y="150" text-anchor="middle" font-size="10" fill="#888" font-style="italic">both flops capture on the same edge</text>
+    </g>
+
+    <!-- bottom takeaway -->
+    <g transform="translate(20,400)">
+      <rect width="530" height="48" rx="6" fill="#FFFFFF" stroke="#C9A000" stroke-dasharray="4 3"/>
+      <text x="265" y="20" text-anchor="middle" font-size="12" fill="#8B6F00" font-weight="700">
+        Sequential: one D-FF per LHS, all sharing <tspan font-family="JetBrains Mono, monospace">clk</tspan>.
+      </text>
+      <text x="265" y="38" text-anchor="middle" font-size="11" fill="#333">
+        Real registers. Real pipeline. Output lags input by N clock cycles.
+      </text>
+    </g>
+  </g>
+</svg>

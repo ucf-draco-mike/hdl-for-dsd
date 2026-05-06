@@ -63,55 +63,71 @@
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Two Operators, Two Rules</h2>
     <div class="two-col" style="margin-top:0.3em;">
         <div class="col panel panel-good">
-            <h3 style="font-size:0.9em;"><code>=</code> Blocking</h3>
+            <h3 style="font-size:0.9em;"><code>=</code> Blocking &mdash; <span style="color:#2C5777;">Combinational realm</span></h3>
             <p style="font-size:0.72em;">Evaluate RHS, assign to LHS, <strong>immediately</strong>. Next statement in the block sees the updated value.</p>
-            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(*)</code></p>
+            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(*)</code> &mdash; combinational</p>
+            <p style="font-size:0.72em;"><strong>Builds:</strong> wires, gates, muxes, LUTs. <em>No flip-flops.</em></p>
             <p style="font-size:0.72em;"><strong>Mental model:</strong> ordinary programming assignment.</p>
         </div>
         <div class="col panel panel-hw">
-            <h3 style="font-size:0.9em;"><code>&lt;=</code> Nonblocking</h3>
+            <h3 style="font-size:0.9em;"><code>&lt;=</code> Nonblocking &mdash; <span style="color:#8B6F00;">Sequential realm</span></h3>
             <p style="font-size:0.72em;">Evaluate all RHS using current values, <strong>schedule</strong> the updates, apply them <em>simultaneously</em> at end of timestep.</p>
-            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(posedge clk)</code></p>
+            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(posedge clk)</code> &mdash; sequential</p>
+            <p style="font-size:0.72em;"><strong>Builds:</strong> one D flip-flop per LHS, all sharing <code>clk</code>.</p>
             <p style="font-size:0.72em;"><strong>Mental model:</strong> all flip-flops capture at once, like real silicon.</p>
         </div>
     </div>
     <div class="fragment golden-rule" style="margin-top:0.5em;font-size:0.95em;">
-        <code>=</code> in <code>always @(*)</code>. &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code>. &ensp; Never mix.
+        <code>=</code> in <code>always @(*)</code> (combinational). &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code> (sequential). &ensp; Never mix.
     </div>
-    <aside class="notes">Two operators. Two homes. One rule. Write it on your palm. Topic 4 will show you a waveform that <em>proves</em> mixing them produces visibly wrong behavior.</aside>
+    <aside class="notes">Two operators. Two homes. Two hardware regimes. One rule. Combinational logic = no memory, just gates; the synthesizer wants <code>=</code>. Sequential logic = D flip-flops on a clock edge; the synthesizer wants <code>&lt;=</code>. Topic 4 will show you a waveform that <em>proves</em> mixing them produces visibly wrong behavior.</aside>
 </section>
 
 <!-- VISUAL: side-by-side execution model -->
 <section>
-    <h2><span style="color:#D4A843;">🎞️</span> Picture the Two Operators</h2>
+    <h2><span style="color:#D4A843;">🎞️</span> Execution Model &mdash; Pointer vs. Snapshot</h2>
     <p style="font-size:0.7em;margin:0 0 0.2em 0;">
-        Blocking is a <strong>pointer</strong> walking down statements. Nonblocking is a <strong>snapshot</strong> followed by a simultaneous commit.
+        Blocking is a <strong>pointer</strong> walking down statements. Nonblocking is a <strong>snapshot</strong> followed by a simultaneous commit. <em>This is what the simulator does.</em>
     </p>
     <div style="text-align:center;margin-top:0.2em;">
         <img src="diagrams/d03_blocking_vs_nonblocking.svg"
              alt="Side-by-side: blocking executes top-to-bottom updating registers immediately; nonblocking samples all RHS first then commits all LHS together"
-             style="width:92%;max-height:520px;"/>
+             style="width:92%;max-height:480px;"/>
     </div>
-    <aside class="notes">This is the visual mental model students should hold. On the left, the pointer walks down: statement 1 fires, b is updated <em>now</em>, then statement 2 fires and reads the new b. On the right, both RHS values are sampled with the pre-edge values (snapshot), then both LHS commit together at end of timestep — exactly how real flip-flops behave on a clock edge. The next slide ("We Do") uses this same b=a / c=b example to show why it matters for pipelines.</aside>
+    <aside class="notes">This is the <em>simulator's</em> mental model. On the left, the pointer walks down: statement 1 fires, b is updated <em>now</em>, then statement 2 fires and reads the new b. On the right, both RHS values are sampled with the pre-edge values (snapshot), then both LHS commit together at end of timestep — exactly how real flip-flops behave on a clock edge. The next slide flips perspective: instead of how it executes in a simulator, what hardware does the synthesizer actually build?</aside>
+</section>
+
+<!-- VISUAL: hardware model — combinational vs sequential -->
+<section>
+    <h2><span style="color:#D4A843;">🔩</span> Hardware Model &mdash; Combinational vs. Sequential</h2>
+    <p style="font-size:0.7em;margin:0 0 0.2em 0;">
+        Two operators, two physical regimes. <strong><span style="color:#2C5777;">Combinational</span></strong> = wires, gates, no clock. <strong><span style="color:#8B6F00;">Sequential</span></strong> = D flip-flops on a clock edge.
+    </p>
+    <div style="text-align:center;margin-top:0.2em;">
+        <img src="diagrams/d03_gate_representation.svg"
+             alt="Side-by-side: combinational always-star with blocking synthesizes to wires only (no flip-flops); sequential always-posedge-clk with nonblocking synthesizes to a chain of D flip-flops sharing the clock"
+             style="width:92%;max-height:480px;"/>
+    </div>
+    <aside class="notes">Same RTL skeleton, two different hardware regimes. The combinational side has zero registers — even with two LHS, the synthesizer collapses b and c into nets on the same wire. The sequential side builds one D-FF per LHS, all sharing the clock; that's a real 2-stage pipeline. Tie this back to the operator rule: <code>=</code> belongs in the combinational regime; <code>&lt;=</code> belongs in the sequential regime. The operator <em>is</em> the regime.</aside>
 </section>
 
 <!-- We Do: the pipeline -->
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Pipeline That Isn't</h2>
-    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in sequential (not a pipeline!)
+    <pre class="mistake"><code class="language-verilog">// WRONG: blocking in a SEQUENTIAL block (pipeline collapses!)
 always @(posedge clk) begin
     b = a;    // b gets a's value NOW
     c = b;    // c gets b's NEW value (= a!) — both same!
 end</code></pre>
-    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in sequential (proper pipeline)
+    <pre class="synth fragment"><code class="language-verilog">// CORRECT: nonblocking in a SEQUENTIAL block (proper pipeline)
 always @(posedge clk) begin
     b &lt;= a;   // scheduled: b will become a(old)
     c &lt;= b;   // scheduled: c will become b(old)
 end           // at end: b=a(old), c=b(old)</code></pre>
     <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
-        <strong>Together:</strong> The blocking version sees sequential execution — <code>b = a</code>, then <code>c = new_b = a</code>. Both registers end up holding the same value. The nonblocking version schedules both updates using the <em>pre-edge</em> values, modeling how real flip-flops behave: they all capture their D inputs simultaneously on the clock edge.
+        <strong>Together:</strong> Both blocks are sequential (<code>posedge clk</code>), but only one builds correct sequential hardware. The blocking version executes top-to-bottom — <code>b = a</code>, then <code>c = new_b = a</code> — and the synthesizer optimizes the redundant assignment away into <strong>one</strong> flip-flop. The nonblocking version schedules both updates using the <em>pre-edge</em> values, modeling how real D-FFs capture their inputs simultaneously on the clock edge — yielding <strong>two</strong> flip-flops, a real pipeline.
     </div>
-    <aside class="notes">This is the canonical example. The blocking version collapses the 2-stage pipeline into 1 stage — a massive functional bug. The nonblocking version preserves the pipeline. Same code structure, totally different behavior.</aside>
+    <aside class="notes">This is the canonical example. The blocking version collapses the 2-stage pipeline into 1 stage — a massive functional bug, and the synthesizer's gate-level result confirms it (one flop instead of two). The nonblocking version preserves the pipeline. Same code structure, totally different sequential hardware.</aside>
 </section>
 
 <!-- You Do -->
@@ -204,12 +220,12 @@ Cycle 3: blocking a=0 b=0 c=0 | nb a=0 b=0 c=1
 <section>
     <h2>Key Takeaways</h2>
     <div style="margin-top:0.5em;">
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>=</code> (blocking) for combinational <code>always @(*)</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>&lt;=</code> (nonblocking) for sequential <code>always @(posedge clk)</code>.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing causes functional bugs — pipelines collapse.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;<code>=</code> (blocking) for <span style="color:#2C5777;font-weight:700;">combinational</span> <code>always @(*)</code> &rarr; wires &amp; gates, no flops.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;<code>&lt;=</code> (nonblocking) for <span style="color:#8B6F00;font-weight:700;">sequential</span> <code>always @(posedge clk)</code> &rarr; one D-FF per LHS.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Mixing causes functional bugs &mdash; sequential pipelines collapse to a single flop.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;The synthesizer builds what you wrote, not what you meant.</p>
     </div>
-    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">= for combinational, &lt;= for sequential. Never mix. Topic 4 proves it.</div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">= for combinational, &lt;= for sequential. The operator picks the regime. Topic 4 proves it.</div>
 </section>
 
 <!-- Pre-class self-check (kept from original) -->
