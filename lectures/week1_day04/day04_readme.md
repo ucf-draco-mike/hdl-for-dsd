@@ -17,7 +17,7 @@ example is a self-contained subdirectory with its own `Makefile`
 
 | Example dir | File(s) | Demo cue | Synthesizable? |
 |-------------|---------|----------|----------------|
-| `lecture_examples/week1_day04/d04_s2_ex1/` | `day04_ex03_shift_register_demo.v`, `tb_shift_register_demo.v` | `d04_s2` (and cross-day `d03_s4`) | Sim only |
+| `lecture_examples/week1_day04/d04_s2_ex1/` | `day04_ex03_shift_register_demo.v`, `tb_shift_register_demo.v` | `d04_s2` (mirrored as `lecture_examples/week1_day03/d03_s4_ex5/` for `d03_s4`) | Sim only |
 | `lecture_examples/week1_day04/d04_s3_ex2/` | `day04_ex01_d_flip_flop.v`, `day04_ex01b_reg_4bit_rst_en.v`, `tb_d_flip_flop.v`, `tb_reg_4bit_rst_en.v` | `d04_s1`, `d04_s3` | Yes |
 | `lecture_examples/week1_day04/d04_s4_ex3/` | `day04_ex02_led_blinker.v`, `tb_led_blinker.v` | `d04_s4` | Yes |
 
