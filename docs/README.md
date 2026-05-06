@@ -87,7 +87,7 @@ Each day's pre-class material is split into **3–4 short video segments** (8–
 |-----|-------|--------|
 | 1 | 40 min | HDL ≠ Software, Synthesis vs. Sim, Module Anatomy, Logic Refresher |
 | 2 | 45 min | Data Types & Vectors, Operators, Sized Literals, 7-Segment Display |
-| 3 | 45 min | `always @(*)`, `if/else` & `case`, Latch Problem, Blocking vs. Nonblocking |
+| 3 | 45 min | `always @(*)`, `if/else` & `case`, Latch Problem, Combinational Capstone |
 | 4 | 50 min | Clocks & Edges, Nonblocking Deep Dive, FF Variants, Counters & Dividers |
 | 5 | 45 min | Counter Variations, Shift Registers, Metastability, Debouncing |
 | 6 | **55 min** ★ | Testbench Anatomy, Self-Checking TBs, Tasks, **AI for Verification** |

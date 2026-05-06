@@ -13,7 +13,7 @@
 | | |
 |---|---|
 | **Duration** | ~2 hours |
-| **Prerequisites** | Pre-class video (45 min): `always @(*)`, if/else, case, latch inference, blocking assignment |
+| **Prerequisites** | Pre-class video (45 min): `always @(*)`, if/else, case, latch inference, combinational capstone (extending the ALU) |
 | **Deliverable** | Mini-ALU with result on 7-segment, opcode selected by buttons |
 | **Tools** | Yosys (critical for latch warnings!), nextpnr, iverilog |
 

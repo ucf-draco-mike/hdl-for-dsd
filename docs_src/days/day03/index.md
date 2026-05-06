@@ -75,12 +75,12 @@ All exercises bundled
 
 [:material-presentation: View Slides](../../lectures/week1_day03/d03_s3_the_latch_problem.html){ .md-button .md-button--primary target="_blank" }
 
-### Segment 4: Blocking vs. Nonblocking [ENHANCED]
+### Segment 4: Combinational Capstone — Extending the ALU [ENHANCED]
 
 !!! info "Video coming soon"
     This segment has not been recorded yet.
 
-[:material-presentation: View Slides](../../lectures/week1_day03/d03_s4_blocking_vs_nonblocking.html){ .md-button .md-button--primary target="_blank" }
+[:material-presentation: View Slides](../../lectures/week1_day03/d03_s4_combinational_capstone.html){ .md-button .md-button--primary target="_blank" }
 
 ## :material-code-braces: Lecture Code Examples
 
@@ -98,5 +98,5 @@ subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 - :material-folder-open: **d03_s3_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s3_ex3){ target=_blank }
     - :material-chip: [`day03_ex02_latch_fixed.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s3_ex3/day03_ex02_latch_fixed.v){ target=_blank }
 - :material-folder-open: **d03_s4_ex5** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5){ target=_blank }
-    - :material-chip: [`shift_blocking.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/shift_blocking.v){ target=_blank }
-    - :material-chip: [`shift_nonblocking.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/shift_nonblocking.v){ target=_blank }
+    - :material-chip: [`alu_4bit.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/alu_4bit.v){ target=_blank }
+    - :material-chip: [`alu_4bit_ext.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/alu_4bit_ext.v){ target=_blank }

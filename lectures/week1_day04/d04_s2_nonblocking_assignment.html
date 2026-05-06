@@ -20,7 +20,7 @@
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot active"></div><div class="seg-dot"></div><div class="seg-dot"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Clocks &amp; Edges</span><span class="seg-label active">Nonblocking</span><span class="seg-label">FF Variants</span><span class="seg-label">Counters</span></div>
-    <aside class="notes">Video 2 of 4. We proved the rule on Topic 3; today we show the waveform that makes it unforgettable.</aside>
+    <aside class="notes">Video 2 of 4. The first dedicated treatment of the two assignment operators in the course. Yesterday's combinational capstone (Topic 3.4) closed combinational logic with the ALU; today we open sequential logic with the operator that exists specifically for it.</aside>
 </section>
 
 <!-- CONTEXTUALIZE -->
@@ -29,11 +29,11 @@
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
             <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Nonblocking assignment is the basis of every synchronous pipeline in existence — every CPU, every networking switch, every GPU. When Intel simulates a Xeon CPU, every flop in the design uses <code>&lt;=</code>. When TSMC verifies their standard-cell library, every registered output uses <code>&lt;=</code>.</p>
+            <p style="font-size:0.75em;">Nonblocking assignment is the basis of every synchronous pipeline in existence — every CPU, every networking switch, every GPU. Cliff Cummings's 2000 paper &ldquo;Nonblocking Assignments in Verilog Synthesis&rdquo; is <em>the</em> reference, cited in nearly every corporate coding guideline. Lint rules everywhere enforce: <code>=</code> only in combinational blocks, <code>&lt;=</code> only in sequential blocks.</p>
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Topic 5 shift registers live or die by <code>&lt;=</code>. Topic 7 FSM state transitions demand <code>&lt;=</code>. Your Topic 11 UART framing pipeline is 6 <code>&lt;=</code> deep. The rule is absolute — today's job is to build deep intuition via waveforms.</p>
+            <p style="font-size:0.75em;">Topic 5 shift registers live or die by <code>&lt;=</code>. Topic 7 FSM state transitions demand <code>&lt;=</code>. Your Topic 11 UART framing pipeline is 6 <code>&lt;=</code> deep. Yesterday you used <code>=</code> in the ALU's <code>always @(*)</code>; today you meet its sequential counterpart and learn why mixing them is the most expensive bug in RTL.</p>
         </div>
     </div>
     <aside class="notes">The simulator scheduling semantics that make <code>&lt;=</code> work are standardized in IEEE 1364 / 1800 — it's not a quirk, it's the core of synchronous RTL semantics.</aside>
@@ -58,6 +58,31 @@
     <aside class="notes">The key insight: <code>&lt;=</code> is scheduling semantics, not assignment. The simulator has a two-phase update model for each timestep — evaluate everything, then commit. This is the digital equivalent of database transaction isolation.</aside>
 </section>
 
+<!-- TWO OPERATORS, TWO RULES (absorbed from old D3.4) -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> Two Operators, Two Rules</h2>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-good">
+            <h3 style="font-size:0.9em;"><code>=</code> Blocking &mdash; <span style="color:#2C5777;">Combinational realm</span></h3>
+            <p style="font-size:0.72em;">Evaluate RHS, assign to LHS, <strong>immediately</strong>. Next statement in the block sees the updated value.</p>
+            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(*)</code> &mdash; combinational</p>
+            <p style="font-size:0.72em;"><strong>Builds:</strong> wires, gates, muxes, LUTs. <em>No flip-flops.</em></p>
+            <p style="font-size:0.72em;"><strong>Mental model:</strong> ordinary programming assignment.</p>
+        </div>
+        <div class="col panel panel-hw">
+            <h3 style="font-size:0.9em;"><code>&lt;=</code> Nonblocking &mdash; <span style="color:#8B6F00;">Sequential realm</span></h3>
+            <p style="font-size:0.72em;">Evaluate all RHS using current values, <strong>schedule</strong> the updates, apply them <em>simultaneously</em> at end of timestep.</p>
+            <p style="font-size:0.72em;"><strong>Use in:</strong> <code>always @(posedge clk)</code> &mdash; sequential</p>
+            <p style="font-size:0.72em;"><strong>Builds:</strong> one D flip-flop per LHS, all sharing <code>clk</code>.</p>
+            <p style="font-size:0.72em;"><strong>Mental model:</strong> all flip-flops capture at once, like real silicon.</p>
+        </div>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.5em;font-size:0.95em;">
+        <code>=</code> in <code>always @(*)</code> (combinational). &ensp; <code>&lt;=</code> in <code>always @(posedge clk)</code> (sequential). &ensp; Never mix.
+    </div>
+    <aside class="notes">Two operators. Two homes. Two hardware regimes. One rule. Combinational logic = no memory, just gates; the synthesizer wants <code>=</code>. Sequential logic = D flip-flops on a clock edge; the synthesizer wants <code>&lt;=</code>. The rest of this video proves the rule.</aside>
+</section>
+
 <!-- I Do: the three-step semantics -->
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Nonblocking: How It Works</h2>
@@ -70,6 +95,20 @@
         This is exactly what real hardware does: all flip-flops capture their D inputs at the same physical instant. No flop &ldquo;sees&rdquo; another flop's new value until after the edge.
     </div>
     <aside class="notes">Three steps: evaluate all RHS, schedule all updates, apply simultaneously. This models real hardware where all FFs capture simultaneously. The scheduling-vs-assignment distinction is what makes pipelines work correctly.</aside>
+</section>
+
+<!-- VISUAL: side-by-side execution model (absorbed from old D3.4) -->
+<section>
+    <h2><span style="color:#D4A843;">🎞️</span> Execution Model &mdash; Pointer vs. Snapshot</h2>
+    <p style="font-size:0.7em;margin:0 0 0.2em 0;">
+        Blocking is a <strong>pointer</strong> walking down statements. Nonblocking is a <strong>snapshot</strong> followed by a simultaneous commit. <em>This is what the simulator does.</em>
+    </p>
+    <div style="text-align:center;margin-top:0.2em;">
+        <img src="diagrams/d04_blocking_vs_nonblocking.svg"
+             alt="Side-by-side: blocking executes top-to-bottom updating registers immediately; nonblocking samples all RHS first then commits all LHS together"
+             style="width:92%;max-height:480px;"/>
+    </div>
+    <aside class="notes">This is the <em>simulator's</em> mental model. On the left, the pointer walks down: statement 1 fires, b is updated <em>now</em>, then statement 2 fires and reads the new b. On the right, both RHS values are sampled with the pre-edge values (snapshot), then both LHS commit together at end of timestep &mdash; exactly how real flip-flops behave on a clock edge. The next slide flips perspective: instead of how it executes in a simulator, what hardware does the synthesizer actually build?</aside>
 </section>
 
 <!-- We Do -->
@@ -88,6 +127,20 @@ always @(posedge clk) begin
 end
 // Result: b=a(old), c=b(old) — proper 2-stage pipeline</code></pre>
     <aside class="notes">Canonical example. Blocking collapses the pipeline — both registers end up with the same value. Nonblocking preserves the pipeline. Same code structure, totally different behavior.</aside>
+</section>
+
+<!-- VISUAL: hardware model — combinational vs sequential (absorbed from old D3.4) -->
+<section>
+    <h2><span style="color:#D4A843;">🔩</span> Hardware Model &mdash; Combinational vs. Sequential</h2>
+    <p style="font-size:0.7em;margin:0 0 0.2em 0;">
+        Two operators, two physical regimes. <strong><span style="color:#2C5777;">Combinational</span></strong> = wires, gates, no clock. <strong><span style="color:#8B6F00;">Sequential</span></strong> = D flip-flops on a clock edge.
+    </p>
+    <div style="text-align:center;margin-top:0.2em;">
+        <img src="diagrams/d04_gate_representation.svg"
+             alt="Side-by-side: combinational always-star with blocking synthesizes to wires only (no flip-flops); sequential always-posedge-clk with nonblocking synthesizes to a chain of D flip-flops sharing the clock"
+             style="width:92%;max-height:480px;"/>
+    </div>
+    <aside class="notes">Same RTL skeleton, two different hardware regimes. The combinational side has zero registers &mdash; even with two LHS, the synthesizer collapses b and c into nets on the same wire. The sequential side builds one D-FF per LHS, all sharing the clock; that's a real 2-stage pipeline. Tie this back to the operator rule: <code>=</code> belongs in the combinational regime; <code>&lt;=</code> belongs in the sequential regime. The operator <em>is</em> the regime.</aside>
 </section>
 
 <!-- You Do -->
@@ -110,6 +163,24 @@ end</code></pre>
         <strong>With blocking:</strong> <code>b=a</code>, then <code>c=b=a</code> every cycle — <code>c</code> matches <code>a</code> with zero delay. Pipeline collapsed.
     </div>
     <aside class="notes">Two-cycle delay is the hallmark of a correctly-operating 2-stage pipeline. If your waveform shows <code>c</code> tracking <code>a</code> with zero delay, you've hit the blocking bug.</aside>
+</section>
+
+<!-- You Do (variant): the rotator -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; The 3-Element Rotator</h2>
+    <p style="font-size:0.78em;">Initial values: <code>a=1, b=2, c=3</code>. After one clock edge, predict <code>a, b, c</code>:</p>
+    <pre class="synth"><code class="language-verilog">always @(posedge clk) begin
+    a &lt;= b;
+    b &lt;= c;
+    c &lt;= a;
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>a=2, b=3, c=1</code>. All RHS evaluated first: a's new value = b(old) = 2, b's new = c(old) = 3, c's new = a(old) = 1. All applied simultaneously. This is a 3-element <strong>rotator</strong>.
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;">
+        <strong>Same code with <code>=</code>:</strong> <code>a=b=2</code>. <code>b=c=3</code>. <code>c=a=2</code> (a was just updated!). Final: <code>a=2, b=3, c=2</code>. Rotator becomes <em>garbage</em>.
+    </div>
+    <aside class="notes">60 seconds for the trace. The rotator is the canonical &ldquo;you cannot build this with blocking&rdquo; example. With <code>=</code>, the third line sees the new <code>a</code> and produces incorrect behavior. With <code>&lt;=</code>, all three registers swap simultaneously &mdash; an operation that has no faithful blocking translation.</aside>
 </section>
 
 <!-- LIVE DEMO -->

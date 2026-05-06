@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Topic 3.4: Combinational Capstone — Extending the ALU</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/white.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../theme/ucf-hdl.css">
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<section class="title-slide" data-background-color="#000000">
+    <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 3 · Procedural Combinational Logic</span></div>
+    <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Combinational Capstone &mdash; Extending the ALU</h1>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~10 minutes</p>
+    <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
+    <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
+    <div class="seg-breadcrumb-labels"><span class="seg-label">always @(*)</span><span class="seg-label">if/else &amp; case</span><span class="seg-label">Latch Problem</span><span class="seg-label active">ALU Capstone</span></div>
+    <aside class="notes">Video 4 of 4 for Topic 3. Capstone for combinational logic. Topic 3.2 introduced the 4-bit ALU as a <code>case</code> exemplar; today we treat it as the synthesis of <em>everything</em> from Topics 1&ndash;3 and extend it. Tomorrow Topic 4 adds time.</aside>
+</section>
+
+<!-- CONTEXTUALIZE -->
+<section>
+    <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col">
+            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
+            <p style="font-size:0.75em;">Every CPU has an ALU. RISC-V's RV32I ISA defines 10 ALU ops; ARM Cortex-M defines ~20; x86 defines hundreds. The pattern is identical at every scale: an <code>always @(*)</code> with a <code>case</code> on opcode, default assignments, and a careful operator selection. The ALU is the canonical combinational module &mdash; if you can read one, you can read every datapath in every processor.</p>
+        </div>
+        <div class="col">
+            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
+            <p style="font-size:0.75em;">Topic 3.2 introduced the 4-bit ALU as a <code>case</code> demo. Today we treat it as a <em>composition</em> of everything from this week: vectors and concatenation (2.1), operator costs (2.2), sized literals (2.3), <code>always @(*)</code> (3.1), <code>case</code> (3.2), default assignments to prevent latches (3.3). Topic 7 will wrap this same datapath in an FSM control path; Topic 11 will pipeline a similar block.</p>
+        </div>
+    </div>
+    <aside class="notes">The ALU is the <em>cumulative-application</em> exercise for combinational logic. Senior engineers can read the 4-bit ALU and immediately spot which D2/D3 techniques are deployed where. By the end of today, students should too. Industry tag: every junior datapath designer is asked &ldquo;extend this ALU&rdquo; in interviews &mdash; today's We Do is exactly that prompt.</aside>
+</section>
+
+<!-- REFRAME -->
+<section>
+    <h2><span style="color:#C0392B;">⚠️</span> An ALU Isn't Just <code>case</code></h2>
+    <div class="two-col" style="margin-top:0.5em;">
+        <div class="col panel panel-bad">
+            <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
+            <p style="font-size:0.72em;">&ldquo;An ALU is a <code>case</code> on opcode. Pick the operator for each branch and you're done. The cost of each branch is just &lsquo;one operation.&rsquo;&rdquo;</p>
+        </div>
+        <div class="col panel panel-good">
+            <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
+            <p style="font-size:0.72em;">An ALU is a <strong>composition</strong> of every combinational technique you've learned. Each <code>case</code> branch carries a hardware price tag (D2.2 cost table). The <code>always @(*)</code> wrapper enforces zero memory (D3.1). The <em>defaults</em> at the top of the block are the difference between &ldquo;clean synthesis&rdquo; and &ldquo;inferred latch&rdquo; (D3.3). Choose poorly anywhere and the whole block balloons or breaks.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
+        <strong>The receipt:</strong> Add a <code>SHIFT</code> op with a variable shift amount and your 33-cell ALU jumps past 100 cells. Same one-line case branch, ~3&times; the hardware. The operator picks the regime &mdash; just like the operator-cost table told you.
+    </div>
+    <aside class="notes">The ALU is the place where every D2&ndash;D3 lesson either pays off or punishes you. Every branch of the <code>case</code> is an operator from the cost table; every missing default is a latch waiting to happen. The whole-week story compresses into this one module.</aside>
+</section>
+
+<!-- I Do: anatomy of the ALU -->
+<section>
+    <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Anatomy of <code>alu_4bit</code></h2>
+    <pre class="synth"><code class="language-verilog">module alu_4bit (
+    input  wire [3:0] i_a, i_b,         // ← D2.1 vectors
+    input  wire [1:0] i_op,
+    output reg  [3:0] o_result,
+    output wire       o_zero,
+    output reg        o_carry
+);
+    always @(*) begin                     // ← D3.1 combinational block
+        o_carry  = 1'b0;                  // ← D3.3 default (no latch)
+        o_result = 4'b0000;               // ← D2.3 sized literal default
+        case (i_op)                       // ← D3.2 parallel mux topology
+            2'b00: {o_carry, o_result} = i_a + i_b;  // D2.1 concat, D2.2 + cost
+            2'b01: {o_carry, o_result} = i_a - i_b;  // D2.2 carry-chain again
+            2'b10: o_result = i_a &amp; i_b;             // D2.2 cheap (LUTs only)
+            2'b11: o_result = i_a | i_b;             // D2.2 cheap (LUTs only)
+            default: o_result = 4'b0000;             // D3.2 case-default safety
+        endcase
+    end
+    assign o_zero = (o_result == 4'b0000); // D2.2 relational, 1-bit result
+endmodule</code></pre>
+    <div class="callout" style="font-size:0.7em;">
+        <strong>My thinking:</strong> Six prior-day techniques in 14 lines. The defaults at the top are <em>both</em> latch insurance (D3.3) <em>and</em> a known-good output for unmatched opcodes. The <code>{carry, result}</code> concat (D2.1) is how you steal the carry-out of an N-bit add without writing an (N+1)-bit operand. ADD &amp; SUB each burn a 4-bit carry chain; AND &amp; OR don't &mdash; that's why the next slide's gate count is asymmetric.
+    </div>
+    <aside class="notes">Walk top to bottom, naming each technique. The point: nothing here is &ldquo;new today&rdquo; &mdash; the novelty is the composition. Industry interview cliché: &ldquo;Read this ALU and tell me what you see.&rdquo; A strong answer names the techniques; a weak answer says &ldquo;it does math.&rdquo;</aside>
+</section>
+
+<!-- We Do: extend it -->
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Add <code>XOR</code> and <code>SHIFT</code></h2>
+    <p style="font-size:0.72em;margin:0 0 0.3em 0;">Promote <code>i_op</code> to 3 bits. Add two ops. Predict the cost <em>before</em> running yosys.</p>
+    <pre class="synth"><code class="language-verilog">input  wire [2:0] i_op;            // 2 → 3 bits, 8 codes available
+input  wire [2:0] i_shamt;          // shift amount (variable!)
+// ...
+case (i_op)
+    3'b000: {o_carry, o_result} = i_a + i_b;
+    3'b001: {o_carry, o_result} = i_a - i_b;
+    3'b010: o_result = i_a &amp; i_b;
+    3'b011: o_result = i_a | i_b;
+    3'b100: o_result = i_a ^ i_b;        // ← XOR: cheap, like AND/OR
+    3'b101: o_result = i_a &lt;&lt; i_shamt;   // ← variable shift: barrel shifter!
+    default: o_result = 4'b0000;
+endcase</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Together &mdash; predict before measuring:</strong>
+        XOR adds ~4 LUTs (per-bit, no carry). Variable shift adds a 4-bit barrel shifter &mdash; ~3 layers of 2:1 muxes per bit &rarr; ~12&ndash;16 LUTs. Plus the <code>case</code> mux now selects 1-of-6 instead of 1-of-4. <strong>Predicted total:</strong> ~50 LUTs, 8 carries (same two adders), up from 25/8 baseline.
+    </div>
+    <aside class="notes">Stop and predict. The point of this We Do is to make students <em>use</em> the D2.2 cost table predictively, not just read it descriptively. The variable shift is the headline cost &mdash; one-line case branch, double-digit LUT delta. If their prediction is off by 2&times;, they haven't internalized barrel-shifter cost yet; the live demo will recalibrate.</aside>
+</section>
+
+<!-- You Do -->
+<section>
+    <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Find Two Latches</h2>
+    <p style="font-size:0.78em;">This compiles, but yosys reports <em>two inferred latches</em>. Find both bugs:</p>
+    <pre class="mistake"><code class="language-verilog">always @(*) begin
+    case (i_op)
+        3'b000: o_result = i_a + i_b;
+        3'b001: o_result = i_a - i_b;
+        3'b010: o_result = i_a &amp; i_b;
+        3'b011: o_result = i_a | i_b;
+        3'b100: begin
+            o_result = i_a ^ i_b;
+            o_carry  = 1'b1;             // only set here
+        end
+    endcase
+end</code></pre>
+    <div class="fragment callout" style="font-size:0.7em;">
+        <strong>Bug 1:</strong> No <code>default</code> branch &mdash; opcodes <code>101</code>&ndash;<code>111</code> leave <code>o_result</code> unassigned &rarr; latch on <code>o_result</code>.
+        <strong>Bug 2:</strong> <code>o_carry</code> is only assigned in the <code>3'b100</code> branch &rarr; latch on <code>o_carry</code> for every other opcode.
+        <strong>Fix:</strong> Default-assign both signals at the top of the block (D3.3 technique #1) <em>and</em> add a <code>default</code> branch (technique #3). Either alone fixes one latch; together fixes both.
+    </div>
+    <aside class="notes">90-second exercise. The two-latch bug is the canonical &ldquo;I added an op and broke synthesis&rdquo; mistake every junior makes when extending an ALU. The defenses from D3.3 are not optional &mdash; they're how you safely <em>edit</em> a case statement.</aside>
+</section>
+
+<!-- LIVE DEMO -->
+<section data-background-color="#000000" class="live-demo">
+    <div class="demo-label">▶ LIVE DEMO</div>
+    <h2 style="color:#FFC904;">Baseline ALU vs. Extended ALU &mdash; Yosys Receipt</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
+<pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day03/d03_s4_ex5/
+cat alu_4bit_ext.v       # ALU + XOR + variable shift
+make sim                 # self-checking testbench
+make stat-baseline       # original alu_4bit
+make stat-ext            # extended alu_4bit_ext
+diff &lt;(make stat-baseline) &lt;(make stat-ext)</code></pre>
+        </div>
+        <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">==== alu_4bit (baseline) ====
+   SB_LUT4    25
+   SB_CARRY    8
+
+==== alu_4bit_ext (+XOR +SHIFT) ====
+   SB_LUT4    52    (~2.1× LUTs)
+   SB_CARRY    8    (same 2 adders)
+
+PASS: ADD/SUB/AND/OR/XOR opcodes
+PASS: SHIFT 4'b1010 << 2 = 4'b1000
+PASS: zero flag, carry flag
+=== 14 passed, 0 failed ===</code></pre>
+        </div>
+    </div>
+    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHAT TO LOOK FOR</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+            CARRY count is unchanged &mdash; the new ops don't carry-propagate. The LUT delta (25 &rarr; 52) is almost entirely the variable shifter plus the wider 1-of-6 output mux. Toggle <code>i_shamt</code> to constant-shift in the source to see the LUT count <em>collapse</em> &mdash; pure rewiring, free.
+        </p>
+    </div>
+    <aside class="notes">[Terminal] Both stats lined up. Pause on the LUT delta. The receipt: the prediction from the We Do (~50 LUTs) was within 4% of measured (52). That's the operator-cost table earning its keep. Optional flex: edit the source to make the shift constant (<code>i_a &lt;&lt; 2</code>) and rerun stat &mdash; LUT count drops back near baseline. That's D2.2's &ldquo;constant shift = free&rdquo; row, live.</aside>
+</section>
+
+<!-- TOOL OUTPUT -->
+<section data-background-color="#FAFAFA">
+    <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
+    <table style="font-size:0.66em;margin-top:0.3em;">
+        <thead><tr><th>Module</th><th>Ops</th><th>SB_LUT4</th><th>SB_CARRY</th><th>Driver</th></tr></thead>
+        <tbody>
+            <tr><td><code>alu_4bit</code></td><td>4 (ADD/SUB/AND/OR)</td><td>25</td><td>8</td><td>Two adders + 4:1 mux</td></tr>
+            <tr><td><code>alu_4bit_ext</code></td><td>+ XOR</td><td>~29</td><td>8</td><td>+ 4 LUTs (per-bit)</td></tr>
+            <tr><td><code>alu_4bit_ext</code></td><td>+ XOR + <code>&lt;&lt; i_shamt</code></td><td><strong>52</strong></td><td>8</td><td><strong>+ barrel shifter</strong></td></tr>
+            <tr><td><code>alu_4bit_ext</code></td><td>+ XOR + <code>&lt;&lt; 2</code> (const)</td><td>~30</td><td>8</td><td>Const shift = pure rewiring</td></tr>
+        </tbody>
+    </table>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Reading the receipt:</strong> Adders dominate carries (unchanged at 8). The variable shifter dominates LUTs (+22). Swap variable shift for constant shift and the LUT growth nearly disappears. <em>The case branches you choose determine the chip area, line by line.</em>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.68em;">
+        <strong>Scaling check:</strong> Bump operand width from 4 to 16 bits. Adders: linear (+12 carries each). Variable shift: <em>quadratic-ish</em> &mdash; barrel shifter grows as <code>N · log₂(N)</code> muxes. By 32-bit you've spent more chip on the shifter than on the adders.
+    </div>
+    <aside class="notes">This is the &ldquo;senior engineer mental model&rdquo; in one table. Each row of the case is a row of the cost table; each row of the cost table is a chunk of the chip. Capstone payoff: students should now <em>see gates when they read code</em>, not just operations.</aside>
+</section>
+
+<!-- CHECK THE MACHINE -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
+    <p style="font-size:0.78em;">Ask AI: <em>&ldquo;Extend this 4-bit ALU with a multiply opcode. Estimate the LUT cost on iCE40 HX1K and warn me about any latch risks.&rdquo;</em></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.5em;margin-top:0.5em;">
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #8E6BBF;"><p style="color:#8E6BBF;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TASK</p><p class="fragment" style="font-size:0.62em;margin:0;">Ask AI for a multiply-extended ALU + cost estimate + latch audit.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;"><p style="color:#5A7FA0;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">BEFORE</p><p class="fragment" style="font-size:0.62em;margin:0;">Predict: 4×4 multiply &approx; 30&ndash;40 LUTs (D2.2). Latch risk if it forgets <code>o_carry</code> default.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;"><p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">AFTER</p><p class="fragment" style="font-size:0.62em;margin:0;">Strong AI defaults all outputs &amp; estimates within 2&times;. Weak AI omits defaults &rarr; latch.</p></div>
+        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #27AE60;"><p style="color:#27AE60;font-size:0.55em;margin:0 0 0.2em 0;font-weight:700;letter-spacing:0.1em;">TAKEAWAY</p><p class="fragment" style="font-size:0.62em;margin:0;">Verify with <code>make stat</code>. AI ordering trustworthy, absolute counts often off.</p></div>
+    </div>
+    <aside class="notes">Strong CtM &mdash; multiply is the &ldquo;dangerous&rdquo; op (D2.2 said ~N² LUTs). And the extension prompt is exactly the latch trap from the You Do. Models that handle both correctly are well-tuned for RTL; models that omit the default-assign are the ones to watch out for in code review.</aside>
+</section>
+
+<!-- Key takeaways -->
+<section>
+    <h2>Key Takeaways</h2>
+    <div style="margin-top:0.5em;">
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;An ALU is a <em>composition</em>: vectors, sized literals, <code>always @(*)</code>, <code>case</code>, defaults, operator costs.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Every <code>case</code> branch carries a hardware price tag &mdash; the D2.2 cost table is the budget.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;Default-assign every output at the top + always include <code>default</code>. Two latches prevented per case.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Predict gate cost from source, then verify with <code>make stat</code>. Read code, see gates.</p>
+    </div>
+    <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Combinational design = the vocabulary you've already learned, deliberately composed. Now you read RTL like a senior engineer.</div>
+</section>
+
+<!-- Pre-class self-check -->
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q1:</strong> Why must you use <code>@(*)</code> instead of a manual sensitivity list?</p>
+        <div class="fragment quiz-answer">Manual lists risk sim/synth mismatch. <code>@(*)</code> automatically includes all signals read inside the block.</div>
+        <p style="margin-top:0.6em;"><strong>Q2:</strong> What causes an unintentional latch?</p>
+        <div class="fragment quiz-answer">Not assigning a signal in every possible path through <code>always @(*)</code>.</div>
+    </div>
+</section>
+
+<section data-background-color="#FAFAFA">
+    <h2>Pre-Class Self-Check (cont.)</h2>
+    <div style="font-size:0.82em;">
+        <p><strong>Q3:</strong> Name three techniques to prevent latch inference.</p>
+        <div class="fragment quiz-answer">1. Default assignment at top. 2. Complete if/else chains. 3. <code>default</code> in case statements.</div>
+        <p style="margin-top:0.6em;"><strong>Q4:</strong> Adding a variable-shift op (<code>a &lt;&lt; n</code>) to a 4-bit ALU. Why does the LUT count jump but the carry count stay the same?</p>
+        <div class="fragment quiz-answer">Variable shift synthesizes to a <strong>barrel shifter</strong> &mdash; a stack of 2:1 muxes (LUTs only, no carry propagation). Adders are the only ops that consume the SB_CARRY chain.</div>
+    </div>
+</section>
+
+<!-- Transfer -->
+<section data-background-color="#000000">
+    <div style="text-align:center;">
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 3</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Sequential Logic</h2>
+        <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 4 · Clocks, flip-flops, and your first blinking LED</p>
+        <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
+            <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">Topics 1&ndash;3 covered combinational logic &mdash; logic with no memory. Today's ALU evaluates instantly: change the inputs, the output follows on the next propagation delay. Topic 4 adds <strong>time</strong>: flip-flops, clocks, sequential design. You'll meet a <em>second</em> assignment operator (<code>&lt;=</code>) that exists specifically to model what real silicon does on a clock edge &mdash; and you'll see why mixing it with today's <code>=</code> is the most expensive bug you can write.</p>
+        </div>
+    </div>
+</section>
+
+</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script src="../theme/fit-to-slide.js"></script>
+<script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
+</body>
+</html>

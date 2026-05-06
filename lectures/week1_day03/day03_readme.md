@@ -7,7 +7,7 @@
 | 1 | The `always @(*)` Block | ~12 min | `d03_s1_always_star_block.html` | 6 |
 | 2 | `if/else` and `case` | ~15 min | `d03_s2_if_else_and_case.html` | 7 |
 | 3 | The Latch Problem | ~12 min | `d03_s3_the_latch_problem.html` | 6 |
-| 4 | Blocking vs. Nonblocking | ~6 min | `d03_s4_blocking_vs_nonblocking.html` | 7 |
+| 4 | Combinational Capstone — Extending the ALU | ~10 min | `d03_s4_combinational_capstone.html` | 8 |
 
 ## Code Examples
 
@@ -19,17 +19,25 @@ the per-segment slide layout). Each subdirectory ships its own `Makefile`
 |------|----------|-------------|----------------|
 | `day03_ex01_latch_demo.v` | `d03_s3_ex2/` | Intentional latch — see Yosys warnings | Yes (with warnings) |
 | `day03_ex02_latch_fixed.v` | `d03_s3_ex3/` | Fixed version using default + complete `case` | Yes (clean) |
-| `day03_ex03_alu_4bit.v` | `d03_s2_ex1/` | 4-bit ALU with `case` statement | Yes |
+| `day03_ex03_alu_4bit.v` | `d03_s2_ex1/` | 4-bit ALU with `case` statement (introduced in s2) | Yes |
 | `day03_ex04_mux_assign.v` | `d03_s1_ex1/` | 4:1 mux written with `assign` (nested ternary) | Yes |
 | `day03_ex05_mux_always.v` | `d03_s1_ex1/` | 4:1 mux written with `always @(*)` + `case` (same hardware as ex04) | Yes |
-| `shift_blocking.v` | `d03_s4_ex5/` | Blocking version of 3-stage shift register — collapses to 1 flop (`make stat-blocking`) | Sim only |
-| `shift_nonblocking.v` | `d03_s4_ex5/` | Nonblocking version — proper 3-flop pipeline (`make stat-nonblocking`). Both modules also mirrored in `week1_day04/d04_s2_ex1/` for the d4 s2 demo. | Sim only |
+| `alu_4bit.v` | `d03_s4_ex5/` | Baseline ALU mirrored from `d03_s2_ex1/` for the s4 capstone stat-compare (`make stat-baseline`) | Yes |
+| `alu_4bit_ext.v` | `d03_s4_ex5/` | Extended ALU (+ XOR + variable shift) — exercises operator costs and case-default safety (`make stat-ext`) | Yes |
+
+The blocking-vs-nonblocking shift register, formerly mirrored in
+`lecture_examples/week1_day03/d03_s4_ex5/`, now lives canonically in
+`lecture_examples/week1_day04/d04_s2_ex1/` — see day 4.
 
 ## Diagrams
 
 | File | Used In | Description |
 |------|---------|-------------|
 | `diagrams/d03_latch_vs_comb.svg` | Seg 3 | Latch vs combinational side-by-side comparison |
+
+The blocking-vs-nonblocking execution-model and gate-representation diagrams
+have moved to `lectures/week1_day04/diagrams/` since D4 Seg 2 is now the
+canonical home for that material.
 
 ## Pre-Class Quiz
 
@@ -44,7 +52,7 @@ lectures/week1_day03/
 ├── d03_s1_always_star_block.html
 ├── d03_s2_if_else_and_case.html
 ├── d03_s3_the_latch_problem.html
-├── d03_s4_blocking_vs_nonblocking.html
+├── d03_s4_combinational_capstone.html
 └── diagrams/
     └── d03_latch_vs_comb.svg
 
@@ -68,9 +76,9 @@ lecture_examples/week1_day03/
 │   ├── day03_ex02_latch_fixed.v
 │   ├── tb_latch_fixed.v
 │   └── Makefile
-└── d03_s4_ex5/                 # blocking vs nonblocking shift register
-    ├── shift_blocking.v        # buggy version — synthesizes to 1 flop
-    ├── shift_nonblocking.v     # correct version — synthesizes to 3 flops
-    ├── tb_shift_register_demo.v
+└── d03_s4_ex5/                 # combinational capstone: baseline vs extended ALU
+    ├── alu_4bit.v              # baseline (ADD/SUB/AND/OR) — `make stat-baseline`
+    ├── alu_4bit_ext.v          # extended (+ XOR + variable SHL) — `make stat-ext`
+    ├── tb_alu_4bit_ext.v
     └── Makefile
 ```
