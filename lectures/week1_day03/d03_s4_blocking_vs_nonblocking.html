@@ -127,10 +127,11 @@ end</code></pre>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day03/d03_s4_ex5/
-# Two modules: shift_blocking, shift_nonblocking
-make sim
-make wave
-# Both traces side-by-side in GTKWave</code></pre>
+# shift_blocking.v + shift_nonblocking.v
+make sim                # both DUTs in one testbench
+make stat-blocking      # SB_DFF: 1
+make stat-nonblocking   # SB_DFF: 3
+make wave               # both traces in GTKWave</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED STDOUT</p>

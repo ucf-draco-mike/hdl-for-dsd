@@ -98,4 +98,5 @@ subdirectory with its own `Makefile` (`make sim`, `make stat`, `make prog`).
 - :material-folder-open: **d03_s3_ex3** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s3_ex3){ target=_blank }
     - :material-chip: [`day03_ex02_latch_fixed.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s3_ex3/day03_ex02_latch_fixed.v){ target=_blank }
 - :material-folder-open: **d03_s4_ex5** — [browse](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5){ target=_blank }
-    - :material-chip: [`day04_ex03_shift_register_demo.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/day04_ex03_shift_register_demo.v){ target=_blank }
+    - :material-chip: [`shift_blocking.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/shift_blocking.v){ target=_blank }
+    - :material-chip: [`shift_nonblocking.v`](https://github.com/ucf-draco-mike/hdl-for-dsd/blob/main/lecture_examples/week1_day03/d03_s4_ex5/shift_nonblocking.v){ target=_blank }

@@ -22,7 +22,8 @@ the per-segment slide layout). Each subdirectory ships its own `Makefile`
 | `day03_ex03_alu_4bit.v` | `d03_s2_ex1/` | 4-bit ALU with `case` statement | Yes |
 | `day03_ex04_mux_assign.v` | `d03_s1_ex1/` | 4:1 mux written with `assign` (nested ternary) | Yes |
 | `day03_ex05_mux_always.v` | `d03_s1_ex1/` | 4:1 mux written with `always @(*)` + `case` (same hardware as ex04) | Yes |
-| `day04_ex03_shift_register_demo.v` | `d03_s4_ex5/` | Blocking vs. nonblocking 3-stage shift register (also lives in `week1_day04/d04_s2_ex1/` for d4 s2 demo) | Sim only |
+| `shift_blocking.v` | `d03_s4_ex5/` | Blocking version of 3-stage shift register — collapses to 1 flop (`make stat-blocking`) | Sim only |
+| `shift_nonblocking.v` | `d03_s4_ex5/` | Nonblocking version — proper 3-flop pipeline (`make stat-nonblocking`). Both modules also mirrored in `week1_day04/d04_s2_ex1/` for the d4 s2 demo. | Sim only |
 
 ## Diagrams
 
@@ -68,7 +69,8 @@ lecture_examples/week1_day03/
 │   ├── tb_latch_fixed.v
 │   └── Makefile
 └── d03_s4_ex5/                 # blocking vs nonblocking shift register
-    ├── day04_ex03_shift_register_demo.v
+    ├── shift_blocking.v        # buggy version — synthesizes to 1 flop
+    ├── shift_nonblocking.v     # correct version — synthesizes to 3 flops
     ├── tb_shift_register_demo.v
     └── Makefile
 ```
