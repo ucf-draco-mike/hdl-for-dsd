@@ -6,7 +6,7 @@
 #   ex2 -> d03_s2_ex1  (alu_4bit,                          segment s2)
 #   ex3 -> d03_s3_ex2  (latch_demo,                        segment s3)
 #   ex4 -> d03_s3_ex3  (latch_fixed,                       segment s3)
-#   ex5 -> d03_s4_ex5  (blocking vs nonblocking shift reg, segment s4)
+#   ex5 -> d03_s4_ex5  (combinational capstone: ALU baseline + extended, segment s4)
 #
 # Targets (replace N with the example number: 1, 2, 3, 4, or 5):
 #   make exN          # default: stat (synth report)
