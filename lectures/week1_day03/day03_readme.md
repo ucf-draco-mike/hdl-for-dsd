@@ -22,6 +22,7 @@ the per-segment slide layout). Each subdirectory ships its own `Makefile`
 | `day03_ex03_alu_4bit.v` | `d03_s2_ex1/` | 4-bit ALU with `case` statement | Yes |
 | `day03_ex04_mux_assign.v` | `d03_s1_ex1/` | 4:1 mux written with `assign` (nested ternary) | Yes |
 | `day03_ex05_mux_always.v` | `d03_s1_ex1/` | 4:1 mux written with `always @(*)` + `case` (same hardware as ex04) | Yes |
+| `day04_ex03_shift_register_demo.v` | `d03_s4_ex5/` | Blocking vs. nonblocking 3-stage shift register (also lives in `week1_day04/d04_s2_ex1/` for d4 s2 demo) | Sim only |
 
 ## Diagrams
 
@@ -47,7 +48,7 @@ lectures/week1_day03/
     └── d03_latch_vs_comb.svg
 
 lecture_examples/week1_day03/
-├── Makefile                    # day-level dispatcher (ex1..ex4)
+├── Makefile                    # day-level dispatcher (ex1..ex5)
 ├── go_board.pcf
 ├── d03_s1_ex1/                 # `assign` vs `always @(*)` — same hardware
 │   ├── day03_ex04_mux_assign.v
@@ -62,8 +63,12 @@ lecture_examples/week1_day03/
 │   ├── day03_ex01_latch_demo.v
 │   ├── tb_latch_demo.v
 │   └── Makefile
-└── d03_s3_ex3/                 # latch fixed (default + complete case)
-    ├── day03_ex02_latch_fixed.v
-    ├── tb_latch_fixed.v
+├── d03_s3_ex3/                 # latch fixed (default + complete case)
+│   ├── day03_ex02_latch_fixed.v
+│   ├── tb_latch_fixed.v
+│   └── Makefile
+└── d03_s4_ex5/                 # blocking vs nonblocking shift register
+    ├── day04_ex03_shift_register_demo.v
+    ├── tb_shift_register_demo.v
     └── Makefile
 ```
