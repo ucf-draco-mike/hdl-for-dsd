@@ -239,6 +239,60 @@ SB_LUT4      8</code></pre>
     <aside class="notes">The nefarious part: looking at cell counts alone, you can't tell. Both versions report only SB_LUT4 — the buggy one just has 4 extra LUTs and 8 combinational feedback loops. iCE40 silicon has no latch cell, so Yosys can't emit a "latch primitive" — it has to synthesize the level-hold behavior out of LUTs with feedback. The synthesis warning and the SCC pass are the real signal; <code>make stat</code> by itself will lie to you.</aside>
 </section>
 
+<!-- FPGA vs ASIC: where the latch lives -->
+<section data-background-color="#FAFAFA">
+    <h2>Where the Latch Actually Lives</h2>
+    <p style="font-size:0.74em;color:#444;margin-top:-0.2em;">Same Verilog, two silicon targets &mdash; radically different gates.</p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel panel-hw" style="padding:0.6em;">
+            <h3 style="font-size:0.82em;color:#1565C0;">ASIC &mdash; dedicated cell</h3>
+            <p style="font-size:0.62em;margin:0.2em 0;">Standard-cell libraries ship a real <code>DLATCH</code> primitive (transmission-gate or NAND-SR internally). Synthesis maps the inferred latch to <em>one</em> characterized cell. STA still flags it &mdash; latches break sign-off &mdash; but the gate is real and visible in the netlist.</p>
+            <svg viewBox="0 0 220 130" style="width:100%;max-width:300px;display:block;margin:0.3em auto;">
+                <line x1="10" y1="40" x2="70" y2="40" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="14" y="34" font-size="11" font-family="JetBrains Mono" fill="#1A1A1A">D</text>
+                <line x1="10" y1="90" x2="70" y2="90" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="14" y="84" font-size="11" font-family="JetBrains Mono" fill="#1A1A1A">EN</text>
+                <rect x="70" y="20" width="100" height="90" rx="3" fill="#fff" stroke="#1565C0" stroke-width="2.5"/>
+                <text x="120" y="58" font-size="14" font-family="JetBrains Mono" font-weight="700" text-anchor="middle" fill="#1565C0">DLATCH</text>
+                <text x="120" y="78" font-size="9" font-family="Inter" text-anchor="middle" fill="#666">stdcell</text>
+                <text x="76" y="44" font-size="9" font-family="JetBrains Mono" fill="#1565C0">D</text>
+                <text x="76" y="94" font-size="9" font-family="JetBrains Mono" fill="#1565C0">G</text>
+                <text x="164" y="69" font-size="9" font-family="JetBrains Mono" text-anchor="end" fill="#1565C0">Q</text>
+                <line x1="170" y1="65" x2="215" y2="65" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="200" y="59" font-size="11" font-family="JetBrains Mono" fill="#1A1A1A">Q</text>
+            </svg>
+            <p style="font-size:0.6em;color:#666;margin:0.2em 0 0;text-align:center;">netlist: <code>DLATCH_X1</code> &mdash; one cell, level-sensitive</p>
+        </div>
+        <div class="col panel panel-good" style="padding:0.6em;">
+            <h3 style="font-size:0.82em;color:#2E7D32;">FPGA (iCE40) &mdash; LUT + feedback</h3>
+            <p style="font-size:0.62em;margin:0.2em 0;">No latch primitive in the fabric. Yosys lowers <code>$_DLATCH_P_</code> via <code>latches_map.v</code> into <code>Q = EN ? D : Q</code> &mdash; a mux whose own output feeds an input. ABC packs that into an <code>SB_LUT4</code>. The latch <em>is</em> the combinational loop.</p>
+            <svg viewBox="0 0 260 150" style="width:100%;max-width:340px;display:block;margin:0.3em auto;">
+                <line x1="10" y1="35" x2="80" y2="35" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="14" y="29" font-size="11" font-family="JetBrains Mono" fill="#1A1A1A">D</text>
+                <line x1="10" y1="65" x2="80" y2="65" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="14" y="59" font-size="11" font-family="JetBrains Mono" fill="#1A1A1A">EN</text>
+                <line x1="40" y1="95" x2="80" y2="95" stroke="#C62828" stroke-width="2"/>
+                <rect x="80" y="20" width="90" height="90" rx="3" fill="#fff" stroke="#27AE60" stroke-width="2.5"/>
+                <text x="125" y="58" font-size="13" font-family="JetBrains Mono" font-weight="700" text-anchor="middle" fill="#27AE60">SB_LUT4</text>
+                <text x="125" y="78" font-size="9" font-family="Inter" text-anchor="middle" fill="#666">EN ? D : Q</text>
+                <line x1="170" y1="65" x2="240" y2="65" stroke="#1A1A1A" stroke-width="2"/>
+                <text x="225" y="59" font-size="11" font-family="JetBrains Mono" fill="#1A1A1A">Q</text>
+                <circle cx="200" cy="65" r="3" fill="#C62828"/>
+                <line x1="200" y1="65" x2="200" y2="130" stroke="#C62828" stroke-width="2"/>
+                <line x1="200" y1="130" x2="40" y2="130" stroke="#C62828" stroke-width="2"/>
+                <line x1="40" y1="130" x2="40" y2="95" stroke="#C62828" stroke-width="2"/>
+                <polygon points="80,95 73,91 73,99" fill="#C62828"/>
+                <text x="120" y="146" font-size="9" font-family="Inter" fill="#C62828" text-anchor="middle">combinational feedback &rarr; SCC</text>
+            </svg>
+            <p style="font-size:0.6em;color:#666;margin:0.2em 0 0;text-align:center;">netlist: <code>SB_LUT4</code> + 1 SCC per latched bit</p>
+        </div>
+    </div>
+    <div class="callout-warning" style="font-size:0.66em;margin-top:0.3em;">
+        <strong>Why this matters:</strong> on ASIC the bug is at least <em>visible</em> in the cell list (a <code>DLATCH</code> shouldn't be there). On iCE40 it disappears into LUT statistics that look identical to a clean combinational design &mdash; the only fingerprints left are the &ldquo;Latch inferred&rdquo; warning and the non-zero SCC count.
+    </div>
+    <aside class="notes">The ASIC cell is the textbook latch &mdash; a transmission-gate or cross-coupled NAND structure characterized in the Liberty file. The FPGA &ldquo;latch&rdquo; is emergent: a pure combinational LUT whose output happens to feed itself, behaving as a level-sensitive hold. The combinational loop <em>is</em> the storage. This is also why <code>make stat</code> can't see it on iCE40 &mdash; there's no latch cell type to count.</aside>
+</section>
+
 <!-- CHECK THE MACHINE -->
 <section data-background-color="#FFF8E1">
     <h2><span style="color:#8E6BBF;">🤖</span> Check the Machine</h2>
