@@ -81,6 +81,20 @@
     <aside class="notes">Two operators. Two homes. One rule. Write it on your palm. Topic 4 will show you a waveform that <em>proves</em> mixing them produces visibly wrong behavior.</aside>
 </section>
 
+<!-- VISUAL: side-by-side execution model -->
+<section>
+    <h2><span style="color:#D4A843;">🎞️</span> Picture the Two Operators</h2>
+    <p style="font-size:0.7em;margin:0 0 0.2em 0;">
+        Blocking is a <strong>pointer</strong> walking down statements. Nonblocking is a <strong>snapshot</strong> followed by a simultaneous commit.
+    </p>
+    <div style="text-align:center;margin-top:0.2em;">
+        <img src="diagrams/d03_blocking_vs_nonblocking.svg"
+             alt="Side-by-side: blocking executes top-to-bottom updating registers immediately; nonblocking samples all RHS first then commits all LHS together"
+             style="width:92%;max-height:520px;"/>
+    </div>
+    <aside class="notes">This is the visual mental model students should hold. On the left, the pointer walks down: statement 1 fires, b is updated <em>now</em>, then statement 2 fires and reads the new b. On the right, both RHS values are sampled with the pre-edge values (snapshot), then both LHS commit together at end of timestep — exactly how real flip-flops behave on a clock edge. The next slide ("We Do") uses this same b=a / c=b example to show why it matters for pipelines.</aside>
+</section>
+
 <!-- We Do: the pipeline -->
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Pipeline That Isn't</h2>

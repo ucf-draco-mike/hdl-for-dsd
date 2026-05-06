@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Inter, Arial, sans-serif">
+  <rect width="1200" height="560" rx="12" fill="#FAFAFA" stroke="#DDD"/>
+  <text x="600" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#111">
+    How They Execute — Blocking <tspan font-family="JetBrains Mono, monospace" fill="#2C5777">=</tspan> vs. Nonblocking <tspan font-family="JetBrains Mono, monospace" fill="#8B6F00">&lt;=</tspan>
+  </text>
+  <text x="600" y="52" text-anchor="middle" font-size="13" fill="#555">
+    Same two statements, same start state (a=1, b=2, c=3) — watch what each operator does
+  </text>
+
+  <!-- ════════════════ LEFT: BLOCKING ════════════════ -->
+  <g transform="translate(20,80)">
+    <rect width="570" height="460" rx="10" fill="#EAF2F8" stroke="#5A7FA0" stroke-width="1.8"/>
+    <text x="285" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#2C5777">
+      <tspan font-family="JetBrains Mono, monospace" font-size="18">=</tspan>  BLOCKING — pointer marches line-by-line
+    </text>
+
+    <!-- Code panel with execution pointer -->
+    <g transform="translate(20,48)">
+      <rect width="290" height="120" rx="6" fill="#FFFFFF" stroke="#5A7FA0" stroke-width="1.2"/>
+      <text x="14" y="22" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">always @(*) begin</text>
+      <text x="14" y="48" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  b = a;</text>
+      <text x="14" y="74" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  c = b;</text>
+      <text x="14" y="100" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">end</text>
+
+      <!-- Animated pointer / arrows -->
+      <g font-size="13" font-family="JetBrains Mono, monospace" fill="#2C5777" font-weight="700">
+        <text x="180" y="48">→ runs first</text>
+        <text x="180" y="74">→ runs next</text>
+      </g>
+    </g>
+
+    <!-- Vertical time arrow -->
+    <g transform="translate(335,55)">
+      <text x="0" y="0" font-size="10" font-weight="700" fill="#5A7FA0" letter-spacing="0.1em">TIME</text>
+      <line x1="14" y1="10" x2="14" y2="100" stroke="#5A7FA0" stroke-width="2.5"/>
+      <polygon points="14,108 8,98 20,98" fill="#5A7FA0"/>
+    </g>
+
+    <!-- Register state snapshots, step by step -->
+    <g transform="translate(20,200)">
+      <text x="0" y="0" font-size="13" font-weight="700" fill="#2C5777">Register state, step by step:</text>
+
+      <!-- START -->
+      <g transform="translate(0,18)">
+        <text x="0" y="16" font-size="11" font-weight="700" fill="#666">start</text>
+        <g font-family="JetBrains Mono, monospace" font-size="14">
+          <rect x="65" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="86" y="17" text-anchor="middle">a=1</text>
+          <rect x="115" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="136" y="17" text-anchor="middle">b=2</text>
+          <rect x="165" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="186" y="17" text-anchor="middle">c=3</text>
+        </g>
+      </g>
+
+      <!-- arrow down -->
+      <g transform="translate(132,50)">
+        <line x1="0" y1="0" x2="0" y2="14" stroke="#5A7FA0" stroke-width="1.5"/>
+        <polygon points="0,18 -4,12 4,12" fill="#5A7FA0"/>
+      </g>
+
+      <!-- After b = a -->
+      <g transform="translate(0,72)">
+        <text x="0" y="16" font-size="11" font-weight="700" fill="#2C5777"
+              font-family="JetBrains Mono, monospace">b = a;</text>
+        <g font-family="JetBrains Mono, monospace" font-size="14">
+          <rect x="65" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="86" y="17" text-anchor="middle">a=1</text>
+          <rect x="115" y="0" width="42" height="24" rx="3" fill="#FFF6CC" stroke="#C9A000" stroke-width="2"/>
+          <text x="136" y="17" text-anchor="middle" font-weight="700">b=1</text>
+          <rect x="165" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="186" y="17" text-anchor="middle">c=3</text>
+        </g>
+        <text x="220" y="17" font-size="11" fill="#5A7FA0">b updated <tspan font-weight="700">immediately</tspan></text>
+      </g>
+
+      <!-- arrow down -->
+      <g transform="translate(132,104)">
+        <line x1="0" y1="0" x2="0" y2="14" stroke="#5A7FA0" stroke-width="1.5"/>
+        <polygon points="0,18 -4,12 4,12" fill="#5A7FA0"/>
+      </g>
+
+      <!-- After c = b -->
+      <g transform="translate(0,126)">
+        <text x="0" y="16" font-size="11" font-weight="700" fill="#2C5777"
+              font-family="JetBrains Mono, monospace">c = b;</text>
+        <g font-family="JetBrains Mono, monospace" font-size="14">
+          <rect x="65" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="86" y="17" text-anchor="middle">a=1</text>
+          <rect x="115" y="0" width="42" height="24" rx="3" fill="#FFF6CC" stroke="#C9A000" stroke-width="2"/>
+          <text x="136" y="17" text-anchor="middle" font-weight="700">b=1</text>
+          <rect x="165" y="0" width="42" height="24" rx="3" fill="#FFF6CC" stroke="#C9A000" stroke-width="2"/>
+          <text x="186" y="17" text-anchor="middle" font-weight="700">c=1</text>
+        </g>
+        <text x="220" y="17" font-size="11" fill="#C62828" font-weight="700">c reads the NEW b → 1, not 2</text>
+      </g>
+    </g>
+
+    <!-- bottom takeaway -->
+    <g transform="translate(20,400)">
+      <rect width="530" height="48" rx="6" fill="#FFFFFF" stroke="#5A7FA0" stroke-dasharray="4 3"/>
+      <text x="265" y="20" text-anchor="middle" font-size="12" fill="#2C5777" font-weight="700">
+        One thread, one statement at a time.
+      </text>
+      <text x="265" y="38" text-anchor="middle" font-size="11" fill="#333">
+        Assign → memory updates → next line sees the new value.
+      </text>
+    </g>
+  </g>
+
+  <!-- ════════════════ RIGHT: NONBLOCKING ════════════════ -->
+  <g transform="translate(610,80)">
+    <rect width="570" height="460" rx="10" fill="#FFF8E1" stroke="#C9A000" stroke-width="1.8"/>
+    <text x="285" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#8B6F00">
+      <tspan font-family="JetBrains Mono, monospace" font-size="18">&lt;=</tspan>  NONBLOCKING — snapshot, then apply together
+    </text>
+
+    <!-- Code panel -->
+    <g transform="translate(20,48)">
+      <rect width="290" height="120" rx="6" fill="#FFFFFF" stroke="#C9A000" stroke-width="1.2"/>
+      <text x="14" y="22" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">always @(posedge clk) begin</text>
+      <text x="14" y="48" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  b &lt;= a;</text>
+      <text x="14" y="74" font-size="14" font-family="JetBrains Mono, monospace" fill="#111">  c &lt;= b;</text>
+      <text x="14" y="100" font-size="11" font-family="JetBrains Mono, monospace" fill="#888">end</text>
+
+      <!-- both lines bracketed together -->
+      <path d="M 178 38 Q 200 38 200 60 Q 200 82 178 82" stroke="#8B6F00" stroke-width="2" fill="none"/>
+      <text x="208" y="64" font-size="12" font-weight="700" fill="#8B6F00">all at once</text>
+    </g>
+
+    <!-- Two-phase indicator -->
+    <g transform="translate(335,55)">
+      <text x="0" y="0" font-size="10" font-weight="700" fill="#8B6F00" letter-spacing="0.1em">2 PHASES</text>
+      <rect x="0" y="10" width="180" height="36" rx="4" fill="#FFF" stroke="#C9A000"/>
+      <text x="90" y="26" text-anchor="middle" font-size="11" font-weight="700" fill="#8B6F00">①  EVALUATE</text>
+      <text x="90" y="40" text-anchor="middle" font-size="10" fill="#333">read all RHS (old values)</text>
+      <rect x="0" y="56" width="180" height="36" rx="4" fill="#FFF" stroke="#C9A000"/>
+      <text x="90" y="72" text-anchor="middle" font-size="11" font-weight="700" fill="#8B6F00">②  COMMIT</text>
+      <text x="90" y="86" text-anchor="middle" font-size="10" fill="#333">apply ALL LHS together</text>
+    </g>
+
+    <!-- Snapshots -->
+    <g transform="translate(20,200)">
+      <text x="0" y="0" font-size="13" font-weight="700" fill="#8B6F00">Register state, two phases:</text>
+
+      <!-- START -->
+      <g transform="translate(0,18)">
+        <text x="0" y="16" font-size="11" font-weight="700" fill="#666">start</text>
+        <g font-family="JetBrains Mono, monospace" font-size="14">
+          <rect x="65" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="86" y="17" text-anchor="middle">a=1</text>
+          <rect x="115" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="136" y="17" text-anchor="middle">b=2</text>
+          <rect x="165" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="186" y="17" text-anchor="middle">c=3</text>
+        </g>
+      </g>
+
+      <!-- arrow down -->
+      <g transform="translate(132,50)">
+        <line x1="0" y1="0" x2="0" y2="14" stroke="#C9A000" stroke-width="1.5"/>
+        <polygon points="0,18 -4,12 4,12" fill="#C9A000"/>
+      </g>
+
+      <!-- Phase 1: snapshot RHS -->
+      <g transform="translate(0,72)">
+        <text x="0" y="16" font-size="11" font-weight="700" fill="#8B6F00">phase ①</text>
+        <g font-family="JetBrains Mono, monospace" font-size="13">
+          <rect x="65" y="0" width="92" height="24" rx="4" fill="#FFFDF0" stroke="#C9A000"/>
+          <text x="111" y="17" text-anchor="middle">b ⇐ a (=1)</text>
+          <rect x="165" y="0" width="92" height="24" rx="4" fill="#FFFDF0" stroke="#C9A000"/>
+          <text x="211" y="17" text-anchor="middle">c ⇐ b (=2)</text>
+        </g>
+        <text x="270" y="17" font-size="11" fill="#8B6F00">scheduled — registers UNCHANGED</text>
+      </g>
+
+      <!-- arrow down -->
+      <g transform="translate(132,104)">
+        <line x1="0" y1="0" x2="0" y2="14" stroke="#C9A000" stroke-width="1.5"/>
+        <polygon points="0,18 -4,12 4,12" fill="#C9A000"/>
+      </g>
+
+      <!-- Phase 2: commit -->
+      <g transform="translate(0,126)">
+        <text x="0" y="16" font-size="11" font-weight="700" fill="#8B6F00">phase ②</text>
+        <g font-family="JetBrains Mono, monospace" font-size="14">
+          <rect x="65" y="0" width="42" height="24" rx="3" fill="#FFF" stroke="#888"/>
+          <text x="86" y="17" text-anchor="middle">a=1</text>
+          <rect x="115" y="0" width="42" height="24" rx="3" fill="#FFF6CC" stroke="#C9A000" stroke-width="2"/>
+          <text x="136" y="17" text-anchor="middle" font-weight="700">b=1</text>
+          <rect x="165" y="0" width="42" height="24" rx="3" fill="#FFF6CC" stroke="#C9A000" stroke-width="2"/>
+          <text x="186" y="17" text-anchor="middle" font-weight="700">c=2</text>
+        </g>
+        <text x="220" y="17" font-size="11" fill="#2E7D32" font-weight="700">b and c update together → c=2 ✓</text>
+      </g>
+    </g>
+
+    <!-- bottom takeaway -->
+    <g transform="translate(20,400)">
+      <rect width="530" height="48" rx="6" fill="#FFFFFF" stroke="#C9A000" stroke-dasharray="4 3"/>
+      <text x="265" y="20" text-anchor="middle" font-size="12" fill="#8B6F00" font-weight="700">
+        Like real flip-flops on a clock edge.
+      </text>
+      <text x="265" y="38" text-anchor="middle" font-size="11" fill="#333">
+        Every register samples its D input at the same instant.
+      </text>
+    </g>
+  </g>
+</svg>
