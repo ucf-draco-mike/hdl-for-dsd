@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Inter, Arial, sans-serif">
+  <style>text, tspan { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }</style>
   <rect width="1200" height="560" rx="12" fill="#FAFAFA" stroke="#DDD"/>
   <text x="600" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#111">
     How They Execute — Blocking <tspan font-family="JetBrains Mono, monospace" fill="#2C5777">=</tspan> vs. Nonblocking <tspan font-family="JetBrains Mono, monospace" fill="#8B6F00">&lt;=</tspan>
@@ -167,9 +168,9 @@
         <text x="0" y="16" font-size="11" font-weight="700" fill="#8B6F00">phase ①</text>
         <g font-family="JetBrains Mono, monospace" font-size="13">
           <rect x="65" y="0" width="92" height="24" rx="4" fill="#FFFDF0" stroke="#C9A000"/>
-          <text x="111" y="17" text-anchor="middle">b ⇐ a (=1)</text>
+          <text x="111" y="17" text-anchor="middle">b &lt;= a (=1)</text>
           <rect x="165" y="0" width="92" height="24" rx="4" fill="#FFFDF0" stroke="#C9A000"/>
-          <text x="211" y="17" text-anchor="middle">c ⇐ b (=2)</text>
+          <text x="211" y="17" text-anchor="middle">c &lt;= b (=2)</text>
         </g>
         <text x="270" y="17" font-size="11" fill="#8B6F00">scheduled — registers UNCHANGED</text>
       </g>

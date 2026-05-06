@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 320" font-family="Inter, Arial, sans-serif">
+  <style>text, tspan { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }</style>
   <rect width="750" height="320" rx="12" fill="#FAFAFA" stroke="#DDD"/>
   <text x="375" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#333">Blocking vs. Nonblocking in a Pipeline</text>
   <!-- LEFT: Blocking (wrong) -->
