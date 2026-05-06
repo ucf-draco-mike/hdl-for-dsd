@@ -156,7 +156,7 @@ diff &lt;(make stat-baseline) &lt;(make stat-ext)</code></pre>
    SB_CARRY    8
 
 ==== alu_4bit_ext (+XOR +SHIFT) ====
-   SB_LUT4    52    (~2.1× LUTs)
+   SB_LUT4    43    (~1.7× LUTs)
    SB_CARRY    8    (same 2 adders)
 
 PASS: ADD/SUB/AND/OR/XOR opcodes
@@ -168,10 +168,10 @@ PASS: zero flag, carry flag
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
         <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHAT TO LOOK FOR</p>
         <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
-            CARRY count is unchanged &mdash; the new ops don't carry-propagate. The LUT delta (25 &rarr; 52) is almost entirely the variable shifter plus the wider 1-of-6 output mux. Toggle <code>i_shamt</code> to constant-shift in the source to see the LUT count <em>collapse</em> &mdash; pure rewiring, free.
+            CARRY count is unchanged &mdash; the new ops don't carry-propagate. The LUT delta (25 &rarr; 43) is almost entirely the variable shifter plus the wider 1-of-6 output mux. Toggle <code>i_shamt</code> to constant-shift in the source to see the LUT count <em>collapse</em> &mdash; pure rewiring, free.
         </p>
     </div>
-    <aside class="notes">[Terminal] Both stats lined up. Pause on the LUT delta. The receipt: the prediction from the We Do (~50 LUTs) was within 4% of measured (52). That's the operator-cost table earning its keep. Optional flex: edit the source to make the shift constant (<code>i_a &lt;&lt; 2</code>) and rerun stat &mdash; LUT count drops back near baseline. That's D2.2's &ldquo;constant shift = free&rdquo; row, live.</aside>
+    <aside class="notes">[Terminal] Both stats lined up. Pause on the LUT delta. The receipt: the prediction from the We Do (~50 LUTs) landed within ~16% of measured (43) &mdash; right ballpark, slightly conservative. That's the operator-cost table earning its keep. Optional flex: edit the source to make the shift constant (<code>i_a &lt;&lt; 2</code>) and rerun stat &mdash; LUT count drops back near baseline. That's D2.2's &ldquo;constant shift = free&rdquo; row, live.</aside>
 </section>
 
 <!-- TOOL OUTPUT -->
@@ -182,12 +182,12 @@ PASS: zero flag, carry flag
         <tbody>
             <tr><td><code>alu_4bit</code></td><td>4 (ADD/SUB/AND/OR)</td><td>25</td><td>8</td><td>Two adders + 4:1 mux</td></tr>
             <tr><td><code>alu_4bit_ext</code></td><td>+ XOR</td><td>~29</td><td>8</td><td>+ 4 LUTs (per-bit)</td></tr>
-            <tr><td><code>alu_4bit_ext</code></td><td>+ XOR + <code>&lt;&lt; i_shamt</code></td><td><strong>52</strong></td><td>8</td><td><strong>+ barrel shifter</strong></td></tr>
+            <tr><td><code>alu_4bit_ext</code></td><td>+ XOR + <code>&lt;&lt; i_shamt</code></td><td><strong>43</strong></td><td>8</td><td><strong>+ barrel shifter</strong></td></tr>
             <tr><td><code>alu_4bit_ext</code></td><td>+ XOR + <code>&lt;&lt; 2</code> (const)</td><td>~30</td><td>8</td><td>Const shift = pure rewiring</td></tr>
         </tbody>
     </table>
     <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>Reading the receipt:</strong> Adders dominate carries (unchanged at 8). The variable shifter dominates LUTs (+22). Swap variable shift for constant shift and the LUT growth nearly disappears. <em>The case branches you choose determine the chip area, line by line.</em>
+        <strong>Reading the receipt:</strong> Adders dominate carries (unchanged at 8). The variable shifter dominates LUTs (+13 vs. constant shift). Swap variable shift for constant shift and the LUT growth nearly disappears. <em>The case branches you choose determine the chip area, line by line.</em>
     </div>
     <div class="fragment callout-warning" style="font-size:0.68em;">
         <strong>Scaling check:</strong> Bump operand width from 4 to 16 bits. Adders: linear (+12 carries each). Variable shift: <em>quadratic-ish</em> &mdash; barrel shifter grows as <code>N · log₂(N)</code> muxes. By 32-bit you've spent more chip on the shifter than on the adders.
