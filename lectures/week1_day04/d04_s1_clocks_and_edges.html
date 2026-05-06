@@ -64,12 +64,25 @@
 <!-- The clock signal -->
 <section>
     <h2>The Clock: Heartbeat of Sequential Logic</h2>
-    <pre style="font-family:monospace;font-size:0.6em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-         ┌───┐   ┌───┐   ┌───┐   ┌───┐
-clk  ────┘   └───┘   └───┘   └───┘   └───
-         ↑       ↑       ↑       ↑
-     posedge  posedge  posedge  posedge
-    </pre>
+    <div style="display:flex;justify-content:center;margin:0.4em 0;">
+        <svg viewBox="0 0 640 140" width="80%" style="max-width:780px;" font-family="JetBrains Mono, monospace">
+            <text x="20" y="58" font-size="16" fill="#333">clk</text>
+            <!-- Clock waveform: low, then 4 high pulses -->
+            <path d="M 70 78 L 110 78 L 110 38 L 170 38 L 170 78 L 230 78 L 230 38 L 290 38 L 290 78 L 350 78 L 350 38 L 410 38 L 410 78 L 470 78 L 470 38 L 530 38 L 530 78 L 590 78"
+                  fill="none" stroke="#222" stroke-width="2.2" stroke-linejoin="miter"/>
+            <!-- Rising-edge markers, aligned with each upward transition -->
+            <g fill="#C0392B" font-size="13" text-anchor="middle">
+                <text x="110" y="100">↑</text>
+                <text x="230" y="100">↑</text>
+                <text x="350" y="100">↑</text>
+                <text x="470" y="100">↑</text>
+                <text x="110" y="120" fill="#333">posedge</text>
+                <text x="230" y="120" fill="#333">posedge</text>
+                <text x="350" y="120" fill="#333">posedge</text>
+                <text x="470" y="120" fill="#333">posedge</text>
+            </g>
+        </svg>
+    </div>
     <p style="font-size:0.78em;">On each <strong>positive edge</strong>, every flip-flop captures its input. Between edges, combinational logic computes next values.</p>
     <p class="fragment" style="font-size:0.78em;">This is <strong>Register Transfer Level (RTL)</strong> — the fundamental abstraction of synchronous design.</p>
     <aside class="notes">Sequential logic adds the time axis. On each positive edge, every flip-flop simultaneously captures its input. Between edges, combinational logic computes next values.</aside>
@@ -137,9 +150,37 @@ always @(*) q &lt;= d;</code></pre>
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Waveform</h2>
     <p style="font-size:0.78em;">Given <code>d</code> toggles at 10 MHz and clk is 25 MHz, sketch <code>q</code>:</p>
-    <pre style="font-family:monospace;font-size:0.7em;background:none;box-shadow:none;border:none;color:#333;text-align:left;">clk ─┐_┌─┐_┌─┐_┌─┐_┌─┐_┌─┐_┌─┐_┌─
-d   ──────┐___________┌─────────
-q   ?</pre>
+    <div style="display:flex;justify-content:center;margin:0.3em 0;">
+        <svg viewBox="0 0 700 200" width="80%" style="max-width:780px;" font-family="JetBrains Mono, monospace">
+            <!-- clk @ 25 MHz: 7 pulses, period ~80px -->
+            <text x="10" y="34" font-size="14" fill="#333">clk</text>
+            <path d="M 60 50 L 60 14 L 100 14 L 100 50 L 140 50 L 140 14 L 180 14 L 180 50 L 220 50 L 220 14 L 260 14 L 260 50 L 300 50 L 300 14 L 340 14 L 340 50 L 380 50 L 380 14 L 420 14 L 420 50 L 460 50 L 460 14 L 500 14 L 500 50 L 540 50 L 540 14 L 580 14 L 580 50 L 620 50 L 620 14 L 660 14"
+                  fill="none" stroke="#222" stroke-width="2"/>
+            <!-- Rising-edge tick marks at 60,140,220,300,380,460,540,620 -->
+            <g stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.6">
+                <line x1="60" y1="10" x2="60" y2="180"/>
+                <line x1="140" y1="10" x2="140" y2="180"/>
+                <line x1="220" y1="10" x2="220" y2="180"/>
+                <line x1="300" y1="10" x2="300" y2="180"/>
+                <line x1="380" y1="10" x2="380" y2="180"/>
+                <line x1="460" y1="10" x2="460" y2="180"/>
+                <line x1="540" y1="10" x2="540" y2="180"/>
+                <line x1="620" y1="10" x2="620" y2="180"/>
+            </g>
+
+            <!-- d @ 10 MHz: not aligned with clk edges. High pulse spans ~middle -->
+            <text x="10" y="94" font-size="14" fill="#333">d</text>
+            <path d="M 60 110 L 175 110 L 175 74 L 425 74 L 425 110 L 660 110"
+                  fill="none" stroke="#2E86AB" stroke-width="2"/>
+
+            <!-- q: shown as a big question mark -->
+            <text x="10" y="154" font-size="14" fill="#333">q</text>
+            <text x="350" y="160" font-size="32" font-weight="700" fill="#C0392B" text-anchor="middle">?</text>
+
+            <!-- legend row -->
+            <text x="60" y="195" font-size="10" fill="#888">↑ posedge clk samples here</text>
+        </svg>
+    </div>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>Answer:</strong> <code>q</code> updates on each <em>posedge clk</em>, capturing whatever <code>d</code> was a <em>few picoseconds before</em> the edge. Since <code>d</code> isn't synchronized to clk, <code>q</code> may sample either high or low depending on exact alignment. This is a <strong>metastability hazard</strong> — covered in detail on Topic 5.
     </div>
