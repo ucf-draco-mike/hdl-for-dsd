@@ -22,7 +22,7 @@
 | 1 | The `always @(*)` block: wildcard sensitivity, `reg` in combinational contexts | 12 min | `video/day03_seg1_always_star.mp4` |
 | 2 | `if/else` and `case`/`casez` statements | 15 min | `video/day03_seg2_if_else_case.mp4` |
 | 3 | The latch problem: why it happens, how to prevent it | 12 min | `video/day03_seg3_latch_problem.mp4` |
-| 4 | Blocking (`=`) vs. nonblocking (`<=`) — rule for combinational: use `=` | 6 min | `video/day03_seg4_blocking_vs_nonblocking.mp4` |
+| 4 | Combinational capstone — extending the 4-bit ALU (XOR + variable shift); operator costs and latch defenses in composition | 10 min | `video/day03_seg4_combinational_capstone.mp4` |
 
 **Key concepts:**
 - `always @(*)` + `=` = combinational logic — synthesis produces gates, not flip-flops

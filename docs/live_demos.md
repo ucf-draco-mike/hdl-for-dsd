@@ -54,7 +54,7 @@ directory.
 | `d03_s1` | `always @(*)` vs `assign` — Same Hardware | `lecture_examples/week1_day03/d03_s1_ex1/` | `day03_ex04_mux_assign.v`, `day03_ex05_mux_always.v`, `tb_mux.v` | `sim`, `stat` |
 | `d03_s2` | 4-bit ALU with `case` | `lecture_examples/week1_day03/d03_s2_ex1/` | `day03_ex03_alu_4bit.v`, `tb_alu_4bit.v` | `sim`, `stat` |
 | `d03_s3` | Inducing & Fixing a Latch | `lecture_examples/week1_day03/d03_s3_ex2/` (buggy) and `lecture_examples/week1_day03/d03_s3_ex3/` (fixed) | `day03_ex01_latch_demo.v`, `day03_ex02_latch_fixed.v`, `tb_latch_demo.v`, `tb_latch_fixed.v` | `sim`, `stat` |
-| `d03_s4` | Shift Register: `=` vs `<=` Side-by-Side | `lecture_examples/week1_day03/d03_s4_ex5/` | `shift_blocking.v`, `shift_nonblocking.v`, `tb_shift_register_demo.v` | `sim`, `wave`, `stat-blocking`, `stat-nonblocking` |
+| `d03_s4` | Combinational Capstone — Baseline ALU vs Extended ALU | `lecture_examples/week1_day03/d03_s4_ex5/` | `alu_4bit.v`, `alu_4bit_ext.v`, `tb_alu_4bit_ext.v` | `sim`, `stat-baseline`, `stat-ext` |
 
 ### Day 4 — Sequential Logic: Flip-Flops, Clocks & Counters
 
@@ -171,15 +171,9 @@ itself, evolving across the four segments.
 
 ## Cross-day duplication
 
-The shift-register demo (blocking vs. nonblocking) appears in two segments and is
-maintained as a copy in each location so that each slide's `cd` path stays inside
-its own day's example tree:
-
-- `d03_s4` uses `lecture_examples/week1_day03/d03_s4_ex5/` (introduced one segment
-  early to motivate Day 4).
-- `d04_s2` uses `lecture_examples/week1_day04/d04_s2_ex1/`.
-
-If you edit one copy, mirror the change in the other.
+No cross-day mirroring at this time. The blocking-vs-nonblocking shift register
+lives canonically at `lecture_examples/week1_day04/d04_s2_ex1/`; Day 3 Segment 4
+(formerly a mirror) is now the combinational capstone with its own ALU sources.
 
 ---
 
