@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" font-family="Inter, sans-serif">
+  <style>text, tspan { font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }</style>
   <text x="360" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Async Read vs. Sync Read — Implementation Impact</text>
 
   <!-- Async side -->
