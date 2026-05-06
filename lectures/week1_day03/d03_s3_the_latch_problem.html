@@ -184,24 +184,26 @@ diff ../d03_s3_ex2/day03_ex01_latch_demo.v \
      ../d03_s3_ex3/day03_ex02_latch_fixed.v</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
-            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;"># d03_s3_ex2 (buggy):
-Warning: Latch inferred for
-  signal `\o_bug1' in process
-  $proc$...latch_demo.v
-Warning: Latch inferred for
-  signal `\o_bug2' ...
+            <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED OUTPUT (Yosys 0.47)</p>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4"># d03_s3_ex2 (buggy):
+Latch inferred for signal
+  `\o_bug1' from process ...
+Latch inferred for signal
+  `\o_bug2' from process ...
+SCC pass: Found 8 SCCs   ← combo loops!
+=== latch_demo ===
+   SB_LUT4   12
 
 # d03_s3_ex3 (fixed):
-(no latch warnings)
-SB_DFF           0
-SB_LUT4          ~2</code></pre>
+(no latch warnings, 0 SCCs)
+=== latch_fixed ===
+   SB_LUT4    8</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
-        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION</p>
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ KEY OBSERVATION — THE BUG IS HIDING</p>
         <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
-            The warning disappears. Cell count drops. The fix is <em>one line of code</em> and saves you hours of timing-closure debugging later.
+            <code>stat</code> shows <em>only</em> <code>SB_LUT4</code> in both versions — no latch cell appears. The buggy build just has 4 more LUTs (12 vs 8) wired into <strong>8 combinational feedback loops</strong> (one per bit of <code>o_bug1</code>/<code>o_bug2</code>). Read the synthesis log for <code>Latch inferred</code> warnings <em>and</em> the SCC count — <code>make stat</code> alone won't save you.
         </p>
     </div>
     <aside class="notes">[Terminal] Run the buggy version, see the warning. Apply the fix. Re-run, warning gone. This is the kind of quick edit/recheck cycle that builds latch-hunting muscle memory.</aside>
@@ -210,27 +212,31 @@ SB_LUT4          ~2</code></pre>
 <!-- TOOL OUTPUT -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <p style="font-size:0.78em;">Same module, buggy vs fixed:</p>
+    <p style="font-size:0.78em;">Same module, buggy vs fixed (Yosys 0.47, <code>synth_ice40</code>):</p>
     <div class="two-col">
         <div class="col panel panel-bad" style="padding:0.5em;">
-            <h3 style="font-size:0.85em;color:#C62828;">Buggy (latch)</h3>
-            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFFE      4   ← level-sensitive
-SB_LUT4      8
-Warning: latch inferred</code></pre>
-            <p style="font-size:0.68em;">Yosys uses <code>SB_DFFE</code> with level trigger — a faux-latch. Timing-unsafe.</p>
+            <h3 style="font-size:0.85em;color:#C62828;">Buggy (latch inferred)</h3>
+            <pre style="font-size:0.62em;"><code class="language-bash">Latch inferred for `\o_bug1'
+Latch inferred for `\o_bug2'
+SCC pass: Found 8 SCCs
+SB_LUT4     12</code></pre>
+            <p style="font-size:0.68em;"><strong>No DFF, no SB_DFFE, no SB_DLATCH.</strong> The latch becomes 12 LUTs wired into 8 combinational feedback loops — one per output bit.</p>
         </div>
         <div class="col panel panel-good" style="padding:0.5em;">
-            <h3 style="font-size:0.85em;color:#2E7D32;">Fixed (no latch)</h3>
-            <pre style="font-size:0.62em;"><code class="language-bash">SB_DFF       0   ← no storage
-SB_LUT4      4
-(no warnings)</code></pre>
-            <p style="font-size:0.68em;">Pure combinational. Smaller area, faster timing, clean STA.</p>
+            <h3 style="font-size:0.85em;color:#2E7D32;">Fixed (pure combinational)</h3>
+            <pre style="font-size:0.62em;"><code class="language-bash">(no latch warnings)
+SCC pass: Found 0 SCCs
+SB_LUT4      8</code></pre>
+            <p style="font-size:0.68em;">Pure combinational. 8 LUTs, no feedback loops, clean STA.</p>
         </div>
     </div>
-    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>iCE40 note:</strong> iCE40 actually has no true latch primitive — Yosys builds latches out of LUTs and enables, which are even worse than real latches. Always fix them.
+    <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>The trap on FPGAs:</strong> iCE40 has <em>no</em> latch primitive. Yosys lowers <code>$_DLATCH_P_</code> through <code>latches_map.v</code> into a mux + inverter, which ABC packs into LUTs with feedback. <code>stat</code> just shows <code>SB_LUT4</code> — exactly what a combinational design looks like. The bug is hiding inside the LUT fabric.
     </div>
-    <aside class="notes">Twist: iCE40 silicon has no latch cell, so Yosys synthesizes the latch behavior from flops and LUTs — larger and slower than a &ldquo;proper&rdquo; latch would be. Another reason to never infer them.</aside>
+    <div class="fragment callout-danger" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>How to actually catch it:</strong> grep the Yosys log for <code>Latch inferred</code> and check the <code>SCC</code> count. A latch-free combinational module has 0 SCCs; every inferred latch bit adds one feedback loop.
+    </div>
+    <aside class="notes">The nefarious part: looking at cell counts alone, you can't tell. Both versions report only SB_LUT4 — the buggy one just has 4 extra LUTs and 8 combinational feedback loops. iCE40 silicon has no latch cell, so Yosys can't emit a "latch primitive" — it has to synthesize the level-hold behavior out of LUTs with feedback. The synthesis warning and the SCC pass are the real signal; <code>make stat</code> by itself will lie to you.</aside>
 </section>
 
 <!-- CHECK THE MACHINE -->
