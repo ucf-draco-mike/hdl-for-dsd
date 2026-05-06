@@ -4,7 +4,7 @@
 # Two modules live side-by-side so each can be synthesized on its own and the
 # resulting LUT/CARRY counts compared:
 #   alu_4bit.v      -> make stat-baseline   (expect ~25 LUT4, 8 CARRY)
-#   alu_4bit_ext.v  -> make stat-ext        (expect ~52 LUT4, 8 CARRY)
+#   alu_4bit_ext.v  -> make stat-ext        (expect ~43 LUT4, 8 CARRY)
 TOP          = alu_4bit_ext
 BASE_SRC     = alu_4bit.v
 EXT_SRC      = alu_4bit_ext.v
