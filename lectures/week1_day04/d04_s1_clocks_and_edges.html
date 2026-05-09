@@ -173,18 +173,26 @@ always @(*) q &lt;= d;</code></pre>
             <path d="M 60 110 L 175 110 L 175 74 L 425 74 L 425 110 L 660 110"
                   fill="none" stroke="#2E86AB" stroke-width="2"/>
 
-            <!-- q: shown as a big question mark -->
+            <!-- q: question mark first, replaced by waveform on reveal -->
             <text x="10" y="154" font-size="14" fill="#333">q</text>
-            <text x="350" y="160" font-size="32" font-weight="700" fill="#C0392B" text-anchor="middle">?</text>
+            <g class="fragment fade-out" data-fragment-index="0">
+                <text x="350" y="160" font-size="32" font-weight="700" fill="#C0392B" text-anchor="middle">?</text>
+            </g>
+            <g class="fragment fade-in" data-fragment-index="0">
+                <path d="M 60 170 L 220 170 L 220 134 L 460 134 L 460 170 L 660 170"
+                      fill="none" stroke="#27AE60" stroke-width="2"/>
+                <text x="220" y="128" font-size="10" fill="#27AE60" text-anchor="middle">q ← 1</text>
+                <text x="460" y="128" font-size="10" fill="#27AE60" text-anchor="middle">q ← 0</text>
+            </g>
 
             <!-- legend row -->
             <text x="60" y="195" font-size="10" fill="#888">↑ posedge clk samples here</text>
         </svg>
     </div>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answer:</strong> <code>q</code> updates on each <em>posedge clk</em>, capturing whatever <code>d</code> was a <em>few picoseconds before</em> the edge. Since <code>d</code> isn't synchronized to clk, <code>q</code> may sample either high or low depending on exact alignment. This is a <strong>metastability hazard</strong> — covered in detail on Topic 5.
+    <div class="fragment callout" data-fragment-index="0" style="font-size:0.7em;">
+        <strong>Answer:</strong> <code>q</code> updates on each <em>posedge clk</em>, capturing whatever <code>d</code> was a <em>few picoseconds before</em> the edge. Here <code>d</code> rises and falls cleanly between edges, so <code>q</code> tracks one cycle later. When <code>d</code> changes <em>near</em> an edge, the sample becomes unpredictable — a <strong>metastability hazard</strong> covered on Topic 5.
     </div>
-    <div class="fragment callout-warning" style="font-size:0.68em;">
+    <div class="fragment callout-warning" data-fragment-index="1" style="font-size:0.68em;">
         <strong>Lesson:</strong> A clocked register only updates on the clock's edge, but the <em>value</em> it captures depends on whether the input was stable at that moment. Sampling an asynchronous input is dangerous — Topic 5 shows the synchronizer pattern that fixes it.
     </div>
     <aside class="notes">Good teaser for Topic 5 metastability. The q waveform depends on unseen timing relationships — this is the first hint that asynchronous inputs are problematic.</aside>
