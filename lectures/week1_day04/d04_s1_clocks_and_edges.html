@@ -70,6 +70,13 @@
             <!-- Clock waveform: low, then 4 high pulses -->
             <path d="M 70 78 L 110 78 L 110 38 L 170 38 L 170 78 L 230 78 L 230 38 L 290 38 L 290 78 L 350 78 L 350 38 L 410 38 L 410 78 L 470 78 L 470 38 L 530 38 L 530 78 L 590 78"
                   fill="none" stroke="#222" stroke-width="2.2" stroke-linejoin="miter"/>
+            <!-- Rising edges highlighted in red (posedge) -->
+            <g stroke="#C0392B" stroke-width="2.6" stroke-linecap="square">
+                <line x1="110" y1="78" x2="110" y2="38"/>
+                <line x1="230" y1="78" x2="230" y2="38"/>
+                <line x1="350" y1="78" x2="350" y2="38"/>
+                <line x1="470" y1="78" x2="470" y2="38"/>
+            </g>
             <!-- Rising-edge markers, aligned with each upward transition -->
             <g fill="#C0392B" font-size="13" text-anchor="middle">
                 <text x="110" y="100">↑</text>
@@ -86,7 +93,7 @@
 
     <!-- RTL block diagram: registers around a combinational cloud, driven by clk -->
     <div style="display:flex;justify-content:center;margin:0.2em 0 0.3em;">
-        <svg viewBox="0 0 820 230" width="82%" style="max-width:880px;" font-family="JetBrains Mono, monospace" aria-label="RTL block diagram: register, combinational cloud, register, all driven by clk">
+        <svg viewBox="0 0 820 250" width="82%" style="max-width:880px;" font-family="JetBrains Mono, monospace" aria-label="RTL block diagram: register, combinational cloud, register, all driven by clk">
             <defs>
                 <!-- Cloud silhouette for the combinational logic -->
                 <path id="combo-cloud" d="M -100,0
@@ -148,9 +155,17 @@
                 </rect>
             </g>
 
+            <!-- External input wire into the first register's D -->
+            <text x="80" y="112" font-size="11" fill="#5F6062" text-anchor="middle">input d</text>
+            <path d="M 40 120 L 118 120" fill="none" stroke="#222" stroke-width="2" marker-end="url(#rtl-arr)"/>
+
             <!-- Wires: Reg-out → cloud-in, cloud-out → Reg-in -->
             <path d="M 220 120 L 318 120" fill="none" stroke="#222" stroke-width="2" marker-end="url(#rtl-arr)"/>
             <path d="M 502 120 L 598 120" fill="none" stroke="#222" stroke-width="2" marker-end="url(#rtl-arr)"/>
+
+            <!-- External output wire from the second register's Q -->
+            <text x="740" y="112" font-size="11" fill="#5F6062" text-anchor="middle">output q</text>
+            <path d="M 700 120 L 778 120" fill="none" stroke="#222" stroke-width="2" marker-end="url(#rtl-arr)"/>
 
             <!-- Hidden path for the data packet animation: leaves left register, traces a gentle curve through the cloud, lands at right register's D input -->
             <path id="rtl-datapath" d="M 220 120 C 280 100, 340 90, 410 120 C 480 150, 540 110, 600 120" fill="none" stroke="none"/>
@@ -162,20 +177,20 @@
             </circle>
 
             <!-- Clock distribution: red rail under both flops, branching up to each clock-input triangle -->
-            <path d="M 170 175 L 170 162" fill="none" stroke="#C0392B" stroke-width="2"/>
-            <path d="M 650 175 L 650 162" fill="none" stroke="#C0392B" stroke-width="2"/>
-            <path d="M 170 175 L 650 175" fill="none" stroke="#C0392B" stroke-width="2"/>
-            <text x="220" y="172" font-size="11" fill="#C0392B" font-weight="700">clk</text>
+            <path d="M 170 200 L 170 162" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <path d="M 650 200 L 650 162" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <path d="M 170 200 L 650 200" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <text x="220" y="197" font-size="11" fill="#C0392B" font-weight="700">clk</text>
 
             <!-- Clock-edge indicator pulse on the rail (centered) -->
-            <circle cx="410" cy="175" r="4" fill="#C0392B">
+            <circle cx="410" cy="200" r="4" fill="#C0392B">
                 <animate attributeName="r" values="3;10;3;3" keyTimes="0;0.05;0.22;1" dur="3.2s" repeatCount="indefinite"/>
                 <animate attributeName="fill" values="#C0392B;#FFC904;#C0392B;#C0392B" keyTimes="0;0.05;0.22;1" dur="3.2s" repeatCount="indefinite"/>
             </circle>
 
             <!-- Caption row -->
-            <text x="410" y="205" font-size="11" fill="#5F6062" text-anchor="middle">↑ posedge clk &mdash; every register captures simultaneously</text>
-            <text x="410" y="222" font-size="11" fill="#5F6062" text-anchor="middle">between edges &mdash; the cloud settles to the next-state value</text>
+            <text x="410" y="225" font-size="11" fill="#5F6062" text-anchor="middle">↑ posedge clk &mdash; every register captures simultaneously</text>
+            <text x="410" y="242" font-size="11" fill="#5F6062" text-anchor="middle">between edges &mdash; the cloud settles to the next-state value</text>
         </svg>
     </div>
 
