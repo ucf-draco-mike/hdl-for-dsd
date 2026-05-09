@@ -211,7 +211,106 @@
     <div class="fragment callout" style="font-size:0.75em;margin-top:0.3em;">
         To blink an LED at 1 Hz, count <strong>25,000,000</strong> clock cycles between toggles. That requires a flip-flop — which requires <code>always @(posedge clk)</code>.
     </div>
-    <aside class="notes">25 MHz is fast, 40 ns period. Way too fast for eyes. Clock division is the canonical first-sequential design problem. Video 4 today builds it end-to-end.</aside>
+
+    <!-- Code reveal: minimal clock-divider sketch (use a small terminal count for a visible waveform) -->
+    <div class="fragment" style="margin-top:0.4em;">
+        <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// Divide-by-N: toggle o_clk_div every N cycles of i_clk
+// (small N = 4 here so the waveform below is readable;
+//  on the Go Board, N = 12_500_000 gives 1 Hz toggle = 1 s period)
+reg [2:0] r_count   = 3'd0;
+reg       r_clk_div = 1'b0;
+
+always @(posedge i_clk) begin
+    if (r_count == 3'd3) begin
+        r_count   &lt;= 3'd0;
+        r_clk_div &lt;= ~r_clk_div;   // toggle on terminal count
+    end else begin
+        r_count   &lt;= r_count + 1'b1;
+    end
+end
+
+assign o_clk_div = r_clk_div;</code></pre>
+    </div>
+
+    <!-- Waveform: i_clk, r_count, o_clk_div for divide-by-4 (toggle every 4 cycles) -->
+    <div class="fragment" style="display:flex;justify-content:center;margin-top:0.3em;">
+        <svg viewBox="0 0 760 180" width="86%" style="max-width:820px;" font-family="JetBrains Mono, monospace" aria-label="Divide-by-4 clock divider waveform: i_clk, r_count, o_clk_div">
+            <!-- Vertical guides at every posedge of i_clk: x = 80, 120, 160, ... 720 -->
+            <g stroke="#C0392B" stroke-width="1" stroke-dasharray="3,3" opacity="0.35">
+                <line x1="80"  y1="14" x2="80"  y2="160"/>
+                <line x1="120" y1="14" x2="120" y2="160"/>
+                <line x1="160" y1="14" x2="160" y2="160"/>
+                <line x1="200" y1="14" x2="200" y2="160"/>
+                <line x1="240" y1="14" x2="240" y2="160"/>
+                <line x1="280" y1="14" x2="280" y2="160"/>
+                <line x1="320" y1="14" x2="320" y2="160"/>
+                <line x1="360" y1="14" x2="360" y2="160"/>
+                <line x1="400" y1="14" x2="400" y2="160"/>
+                <line x1="440" y1="14" x2="440" y2="160"/>
+                <line x1="480" y1="14" x2="480" y2="160"/>
+                <line x1="520" y1="14" x2="520" y2="160"/>
+                <line x1="560" y1="14" x2="560" y2="160"/>
+                <line x1="600" y1="14" x2="600" y2="160"/>
+                <line x1="640" y1="14" x2="640" y2="160"/>
+                <line x1="680" y1="14" x2="680" y2="160"/>
+                <line x1="720" y1="14" x2="720" y2="160"/>
+            </g>
+
+            <!-- i_clk: high pulse 20px wide centered on each posedge guide; period 40px -->
+            <text x="6" y="34" font-size="12" fill="#333">i_clk</text>
+            <path d="M 60 50 L 80 50 L 80 18 L 100 18 L 100 50 L 120 50 L 120 18 L 140 18 L 140 50 L 160 50 L 160 18 L 180 18 L 180 50 L 200 50 L 200 18 L 220 18 L 220 50 L 240 50 L 240 18 L 260 18 L 260 50 L 280 50 L 280 18 L 300 18 L 300 50 L 320 50 L 320 18 L 340 18 L 340 50 L 360 50 L 360 18 L 380 18 L 380 50 L 400 50 L 400 18 L 420 18 L 420 50 L 440 50 L 440 18 L 460 18 L 460 50 L 480 50 L 480 18 L 500 18 L 500 50 L 520 50 L 520 18 L 540 18 L 540 50 L 560 50 L 560 18 L 580 18 L 580 50 L 600 50 L 600 18 L 620 18 L 620 50 L 640 50 L 640 18 L 660 18 L 660 50 L 680 50 L 680 18 L 700 18 L 700 50 L 720 50 L 720 18 L 740 18"
+                  fill="none" stroke="#222" stroke-width="2"/>
+
+            <!-- r_count: bus shape, value labels at center of each 40px cycle -->
+            <text x="6" y="92" font-size="12" fill="#333">r_count</text>
+            <!-- Bus rails (top + bottom) with X-transitions at each posedge -->
+            <path d="M 60 76 L 76 76 L 80 84 L 116 84 L 120 76 L 156 76 L 160 84 L 196 84 L 200 76 L 236 76 L 240 84 L 276 84 L 280 76 L 316 76 L 320 84 L 356 84 L 360 76 L 396 76 L 400 84 L 436 84 L 440 76 L 476 76 L 480 84 L 516 84 L 520 76 L 556 76 L 560 84 L 596 84 L 600 76 L 636 76 L 640 84 L 676 84 L 680 76 L 716 76 L 720 84 L 740 84"
+                  fill="none" stroke="#2E86AB" stroke-width="1.6"/>
+            <path d="M 60 96 L 76 96 L 80 88 L 116 88 L 120 96 L 156 96 L 160 88 L 196 88 L 200 96 L 236 96 L 240 88 L 276 88 L 280 96 L 316 96 L 320 88 L 356 88 L 360 96 L 396 96 L 400 88 L 436 88 L 440 96 L 476 96 L 480 88 L 516 88 L 520 96 L 556 96 L 560 88 L 596 88 L 600 96 L 636 96 L 640 88 L 676 88 L 680 96 L 716 96 L 720 88 L 740 88"
+                  fill="none" stroke="#2E86AB" stroke-width="1.6"/>
+            <!-- Count values: 0,1,2,3, 0,1,2,3, ... rolling each 4 cycles -->
+            <g font-size="11" fill="#2E86AB" text-anchor="middle" font-weight="700">
+                <text x="100" y="90">0</text>
+                <text x="140" y="90">1</text>
+                <text x="180" y="90">2</text>
+                <text x="220" y="90">3</text>
+                <text x="260" y="90">0</text>
+                <text x="300" y="90">1</text>
+                <text x="340" y="90">2</text>
+                <text x="380" y="90">3</text>
+                <text x="420" y="90">0</text>
+                <text x="460" y="90">1</text>
+                <text x="500" y="90">2</text>
+                <text x="540" y="90">3</text>
+                <text x="580" y="90">0</text>
+                <text x="620" y="90">1</text>
+                <text x="660" y="90">2</text>
+                <text x="700" y="90">3</text>
+            </g>
+
+            <!-- o_clk_div: toggles after the posedge that observes count==3.
+                 Counts 0,1,2,3 at edges 1..4; on edge 5 (x=240) count was 3 → toggle.
+                 Toggles at x = 240, 400, 560, 720. -->
+            <text x="6" y="138" font-size="12" fill="#333">o_clk_div</text>
+            <path d="M 60 154 L 240 154 L 240 122 L 400 122 L 400 154 L 560 154 L 560 122 L 720 122 L 720 154 L 740 154"
+                  fill="none" stroke="#27AE60" stroke-width="2.2"/>
+
+            <!-- Toggle annotations -->
+            <g font-size="10" fill="#27AE60" text-anchor="middle">
+                <text x="240" y="116">toggle</text>
+                <text x="400" y="116">toggle</text>
+                <text x="560" y="116">toggle</text>
+                <text x="720" y="116">toggle</text>
+            </g>
+
+            <!-- Caption -->
+            <text x="400" y="174" font-size="11" fill="#5F6062" text-anchor="middle">
+                4 input cycles per half-period of o_clk_div → output frequency = i_clk / 8
+            </text>
+        </svg>
+    </div>
+
+    <aside class="notes">25 MHz is fast, 40 ns period. Way too fast for eyes. Clock division is the canonical first-sequential design problem. The code shows a divide-by-4 sketch (small N for a readable waveform); on the Go Board, N = 12.5M gives a 1 Hz toggle. Walk through the waveform: r_count rolls 0→1→2→3 once per posedge; on the cycle where count was 3, the next edge toggles o_clk_div. Output period = 2·N input cycles. Video 4 builds it end-to-end.</aside>
 </section>
 
 <!-- I Do: fundamental pattern -->
