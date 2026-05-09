@@ -313,110 +313,96 @@ assign o_clk_div = r_clk_div;</code></pre>
     <aside class="notes">25 MHz is fast, 40 ns period. Way too fast for eyes. Clock division is the canonical first-sequential design problem. The code shows a divide-by-4 sketch (small N for a readable waveform); on the Go Board, N = 12.5M gives a 1 Hz toggle. Walk through the waveform: r_count rolls 0→1→2→3 once per posedge; on the cycle where count was 3, the next edge toggles o_clk_div. Output period = 2·N input cycles. Video 4 builds it end-to-end.</aside>
 </section>
 
-<!-- LIVE DEMO: four LEDs at 1/2/3/4-second toggle rates -->
+<!-- LIVE DEMO: one LED blinking 1 s ON, 1 s OFF; LEDs 2/3/4 tied off -->
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2 style="color:#FFC904;">Four LEDs, Four Rates</h2>
-    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~3 minutes · one clock, four terminal counts</p>
+    <h2 style="color:#FFC904;">One LED · 1 s ON, 1 s OFF</h2>
+    <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~3 minutes · one clock, one counter, one toggle</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.5em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ COMMANDS</p>
 <pre style="background:transparent;margin:0;"><code class="language-bash" style="font-size:0.52em;color:#E8E8E4;">cd lecture_examples/week1_day04/d04_s1_ex4/
-make sim       # iverilog testbench (17 checks)
-make stat      # yosys synth_ice40 (4 counters + 4 flops)
+make sim       # iverilog testbench (10 checks)
+make stat      # yosys synth_ice40 (1 counter + 1 flop)
 make prog      # full flow → flash the Go Board</code></pre>
         </div>
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
             <p style="color:#27AE60;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ EXPECTED ON HARDWARE</p>
-<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">LED1: toggle every 1 s  (period 2 s)
-LED2: toggle every 2 s  (period 4 s)
-LED3: toggle every 3 s  (period 6 s)
-LED4: toggle every 4 s  (period 8 s)
-all four driven by ONE 25 MHz clock</code></pre>
+<pre style="background:transparent;margin:0;"><code style="font-size:0.52em;color:#E8E8E4;">LED1: 1 s ON, 1 s OFF  (period 2 s)
+LED2: OFF
+LED3: OFF
+LED4: OFF
+driven by ONE 25 MHz clock</code></pre>
         </div>
     </div>
     <div style="margin-top:0.5em;background:#111;padding:0.45em 0.6em;border-radius:6px;border:1px solid #333;">
         <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.25em 0;letter-spacing:0.12em;">▸ THE IDEA</p>
-        <svg viewBox="0 0 760 200" width="100%" style="max-height:180px;" font-family="JetBrains Mono, monospace" aria-label="Four counters with different terminal values, each toggling its own LED">
-            <!-- Shared 25 MHz clock rail on the left -->
+        <svg viewBox="0 0 760 200" width="100%" style="max-height:180px;" font-family="JetBrains Mono, monospace" aria-label="One counter toggles LED1; LEDs 2, 3, 4 tied to ground">
+            <!-- 25 MHz clock rail on the left -->
             <rect x="10" y="80" width="80" height="36" rx="4" fill="#1a1a1a" stroke="#C0392B" stroke-width="2"/>
             <text x="50" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#C0392B">i_clk</text>
             <text x="50" y="110" text-anchor="middle" font-size="9" fill="#888">25 MHz</text>
 
-            <!-- Fanout: clock rail to each of four counters -->
+            <!-- Clock fans out: one branch to the active counter; ground rail for the off LEDs -->
             <g stroke="#C0392B" stroke-width="1.6" fill="none">
-                <path d="M 90 98 L 130 98 L 130 32  L 170 32"/>
-                <path d="M 90 98 L 130 98 L 130 76  L 170 76"/>
-                <path d="M 90 98 L 130 98 L 130 120 L 170 120"/>
-                <path d="M 90 98 L 130 98 L 130 164 L 170 164"/>
+                <path d="M 90 98 L 170 98"/>
             </g>
 
-            <!-- Four counter blocks: each with its own terminal value -->
+            <!-- Single counter block: T = 25M-1, toggle every 1 s -->
             <g font-family="JetBrains Mono, monospace">
-                <!-- counter 1: T1 = 25M-1, every 1 s -->
-                <rect x="170" y="14" width="240" height="36" rx="4" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.6"/>
-                <text x="180" y="32" font-size="11" font-weight="700" fill="#FFC904">cnt1</text>
-                <text x="180" y="44" font-size="9" fill="#E8E8E4">→ T1 = 24,999,999</text>
-                <text x="320" y="32" font-size="10" fill="#888" text-anchor="middle">toggle every</text>
-                <text x="320" y="44" font-size="11" font-weight="700" fill="#27AE60" text-anchor="middle">1 s</text>
-
-                <!-- counter 2: T2 = 50M-1, every 2 s -->
-                <rect x="170" y="58" width="240" height="36" rx="4" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.6"/>
-                <text x="180" y="76" font-size="11" font-weight="700" fill="#FFC904">cnt2</text>
-                <text x="180" y="88" font-size="9" fill="#E8E8E4">→ T2 = 49,999,999</text>
-                <text x="320" y="76" font-size="10" fill="#888" text-anchor="middle">toggle every</text>
-                <text x="320" y="88" font-size="11" font-weight="700" fill="#27AE60" text-anchor="middle">2 s</text>
-
-                <!-- counter 3: T3 = 75M-1, every 3 s -->
-                <rect x="170" y="102" width="240" height="36" rx="4" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.6"/>
-                <text x="180" y="120" font-size="11" font-weight="700" fill="#FFC904">cnt3</text>
-                <text x="180" y="132" font-size="9" fill="#E8E8E4">→ T3 = 74,999,999</text>
-                <text x="320" y="120" font-size="10" fill="#888" text-anchor="middle">toggle every</text>
-                <text x="320" y="132" font-size="11" font-weight="700" fill="#27AE60" text-anchor="middle">3 s</text>
-
-                <!-- counter 4: T4 = 100M-1, every 4 s -->
-                <rect x="170" y="146" width="240" height="36" rx="4" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.6"/>
-                <text x="180" y="164" font-size="11" font-weight="700" fill="#FFC904">cnt4</text>
-                <text x="180" y="176" font-size="9" fill="#E8E8E4">→ T4 = 99,999,999</text>
-                <text x="320" y="164" font-size="10" fill="#888" text-anchor="middle">toggle every</text>
-                <text x="320" y="176" font-size="11" font-weight="700" fill="#27AE60" text-anchor="middle">4 s</text>
+                <rect x="170" y="80" width="240" height="36" rx="4" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.6"/>
+                <text x="180" y="98" font-size="11" font-weight="700" fill="#FFC904">cnt</text>
+                <text x="180" y="110" font-size="9" fill="#E8E8E4">→ T = 24,999,999</text>
+                <text x="320" y="98" font-size="10" fill="#888" text-anchor="middle">toggle every</text>
+                <text x="320" y="110" font-size="11" font-weight="700" fill="#27AE60" text-anchor="middle">1 s</text>
             </g>
 
-            <!-- wires from counters to LEDs -->
+            <!-- Wire counter -> LED1 -->
             <g stroke="#E8E8E4" stroke-width="1.5" fill="none">
-                <line x1="410" y1="32"  x2="500" y2="32"/>
-                <line x1="410" y1="76"  x2="500" y2="76"/>
-                <line x1="410" y1="120" x2="500" y2="120"/>
-                <line x1="410" y1="164" x2="500" y2="164"/>
+                <line x1="410" y1="98" x2="500" y2="98"/>
             </g>
 
-            <!-- Four LED ports -->
+            <!-- Three off LEDs each tied to 1'b0 -->
+            <g stroke="#666" stroke-width="1.5" stroke-dasharray="4,3" fill="none">
+                <line x1="430" y1="32"  x2="500" y2="32"/>
+                <line x1="430" y1="142" x2="500" y2="142"/>
+                <line x1="430" y1="172" x2="500" y2="172"/>
+            </g>
+            <g font-family="JetBrains Mono, monospace" font-size="9" fill="#888">
+                <text x="425" y="29"  text-anchor="end">1'b0</text>
+                <text x="425" y="139" text-anchor="end">1'b0</text>
+                <text x="425" y="169" text-anchor="end">1'b0</text>
+            </g>
+
+            <!-- Four LED ports: L1 lit (toggling), L2/L3/L4 dark -->
             <g>
-                <circle cx="540" cy="32"  r="14" fill="#27AE60" stroke="#FFC904" stroke-width="1.5"/>
-                <text x="540" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#000">L1</text>
-                <text x="600" y="36" font-size="10" fill="#E8E8E4">o_led1 (1 s)</text>
+                <!-- L1: active, glowing -->
+                <circle cx="540" cy="98"  r="14" fill="#27AE60" stroke="#FFC904" stroke-width="1.8"/>
+                <text x="540" y="102" text-anchor="middle" font-size="10" font-weight="700" fill="#000">L1</text>
+                <text x="600" y="102" font-size="10" fill="#E8E8E4">o_led1 (1 s ON / 1 s OFF)</text>
 
-                <circle cx="540" cy="76"  r="14" fill="#27AE60" stroke="#FFC904" stroke-width="1.5"/>
-                <text x="540" y="80" text-anchor="middle" font-size="10" font-weight="700" fill="#000">L2</text>
-                <text x="600" y="80" font-size="10" fill="#E8E8E4">o_led2 (2 s)</text>
+                <!-- L2/L3/L4: off, dark, dim border -->
+                <circle cx="540" cy="32"  r="14" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
+                <text x="540" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#555">L2</text>
+                <text x="600" y="36" font-size="10" fill="#888">o_led2 (off)</text>
 
-                <circle cx="540" cy="120" r="14" fill="#27AE60" stroke="#FFC904" stroke-width="1.5"/>
-                <text x="540" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#000">L3</text>
-                <text x="600" y="124" font-size="10" fill="#E8E8E4">o_led3 (3 s)</text>
+                <circle cx="540" cy="142" r="14" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
+                <text x="540" y="146" text-anchor="middle" font-size="10" font-weight="700" fill="#555">L3</text>
+                <text x="600" y="146" font-size="10" fill="#888">o_led3 (off)</text>
 
-                <circle cx="540" cy="164" r="14" fill="#27AE60" stroke="#FFC904" stroke-width="1.5"/>
-                <text x="540" y="168" text-anchor="middle" font-size="10" font-weight="700" fill="#000">L4</text>
-                <text x="600" y="168" font-size="10" fill="#E8E8E4">o_led4 (4 s)</text>
+                <circle cx="540" cy="172" r="14" fill="#1a1a1a" stroke="#555" stroke-width="1.5"/>
+                <text x="540" y="176" text-anchor="middle" font-size="10" font-weight="700" fill="#555">L4</text>
+                <text x="600" y="176" font-size="10" fill="#888">o_led4 (off)</text>
             </g>
         </svg>
     </div>
     <div style="margin-top:0.4em;background:#1a1a1a;padding:0.5em 0.6em;border-radius:6px;border:1px solid #D4A843;">
         <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;letter-spacing:0.12em;">▸ TAKEAWAY</p>
         <p style="color:#E8E8E4;font-size:0.62em;margin:0;text-align:left;">
-            One clock, four counters, four terminal values → four visibly different rates. Same <code>always @(posedge i_clk)</code> pattern, just <code>CLK_HZ * N - 1</code> for each. Watching all four side-by-side makes the divider intuition <em>physical</em> before we generalize it in segment 4.
+            One clock, one counter, one terminal value → one LED you can <em>see</em> blink at human speed. Same <code>always @(posedge i_clk)</code> pattern with <code>T = CLK_HZ - 1</code>. The other three LEDs are tied to <code>1'b0</code> — pure visual focus on the single divider before we generalize the math in segment 4.
         </p>
     </div>
-    <aside class="notes">[Run make prog and point at the board] LED1 toggles every second; LED4 takes four times as long. Same clock, same pattern — different terminal counts. Each counter is independent: they don't synchronize, they each just count their own N cycles between toggles. This is the live-hardware preview of the divider math we formalize in segment 4. Mention: counters need 27 bits because 2^26 = 67M is too small to hold T4 = 100M-1.</aside>
+    <aside class="notes">[Run make prog and point at the board] LED1 sits ON for one second, OFF for one second — a 0.5 Hz blink off a 25 MHz clock. Same clock, one counter, one terminal value (24,999,999). Strip everything else away so students see the divider as a single moving thing. The other three LEDs are tied to 1'b0 so the synthesis result is one counter + one toggle flop and nothing else. Mention: 25 bits is the smallest width that holds 24,999,999 (2^25 = 33.5M). Segment 4 will generalize this to arbitrary divide-by-N.</aside>
 </section>
 
 <!-- I Do: fundamental pattern -->

@@ -1,5 +1,5 @@
 # Auto-generated Makefile — lecture example week1_day04/d04_s1_ex4
-# Demo: led_blink_rates  (segment s1, example 4) — four LEDs at 1/2/3/4 s rates
+# Demo: led_blink_rates  (segment s1, example 4) — one LED, 1 s ON / 1 s OFF
 TOP      = led_blink_rates
 SRCS     = day04_ex03_led_blink_rates.v
 PCF      = ../go_board.pcf
