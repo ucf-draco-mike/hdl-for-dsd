@@ -83,6 +83,102 @@
             </g>
         </svg>
     </div>
+
+    <!-- RTL block diagram: registers around a combinational cloud, driven by clk -->
+    <div style="display:flex;justify-content:center;margin:0.2em 0 0.3em;">
+        <svg viewBox="0 0 820 230" width="82%" style="max-width:880px;" font-family="JetBrains Mono, monospace" aria-label="RTL block diagram: register, combinational cloud, register, all driven by clk">
+            <defs>
+                <!-- Cloud silhouette for the combinational logic -->
+                <path id="combo-cloud" d="M -100,0
+                    C -110,-32 -78,-58 -46,-50
+                    C -34,-72 8,-72 24,-54
+                    C 52,-72 96,-54 96,-26
+                    C 118,-14 118,18 96,30
+                    C 96,58 52,68 24,52
+                    C 8,72 -34,72 -46,52
+                    C -78,62 -110,32 -100,0 Z"/>
+                <marker id="rtl-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#222"/>
+                </marker>
+            </defs>
+
+            <!-- Section labels along the top -->
+            <text x="170" y="22" font-size="11" fill="#5F6062" text-anchor="middle">current state Q</text>
+            <text x="410" y="22" font-size="11" fill="#5F6062" text-anchor="middle">next-state logic (combinational)</text>
+            <text x="650" y="22" font-size="11" fill="#5F6062" text-anchor="middle">captured next state Q′</text>
+
+            <!-- Left register (current state) -->
+            <g>
+                <rect x="120" y="80" width="100" height="80" rx="6" fill="#FFFFFF" stroke="#222" stroke-width="2.5"/>
+                <text x="170" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#222">Register</text>
+                <text x="170" y="132" text-anchor="middle" font-size="11" fill="#5F6062">D &nbsp;Q</text>
+                <!-- Clock-input triangle on the bottom edge -->
+                <polyline points="158,160 170,148 182,160" fill="none" stroke="#222" stroke-width="2"/>
+                <!-- Capture flash overlay -->
+                <rect x="120" y="80" width="100" height="80" rx="6" fill="none" stroke="#FFC904" stroke-width="6" opacity="0">
+                    <animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.04;0.18;1" dur="3.2s" repeatCount="indefinite"/>
+                </rect>
+            </g>
+
+            <!-- Combinational cloud (centered at 410,120) -->
+            <g transform="translate(410,120)">
+                <use href="#combo-cloud" fill="#FFFAEB" stroke="#C9A000" stroke-width="2"/>
+                <!-- Tiny gate hints inside the cloud -->
+                <g font-size="10" fill="#5F6062" text-anchor="middle" font-weight="700">
+                    <text x="-50" y="-8">AND</text>
+                    <text x="-12" y="14">XOR</text>
+                    <text x="36" y="-12">OR</text>
+                    <text x="46" y="22">MUX</text>
+                </g>
+                <text x="0" y="-32" text-anchor="middle" font-size="13" font-weight="700" fill="#222">Combinational Logic</text>
+                <!-- Subtle "settling" pulse on the cloud border -->
+                <use href="#combo-cloud" fill="none" stroke="#FFC904" stroke-width="3" opacity="0">
+                    <animate attributeName="opacity" values="0;0;0.55;0.15;0" keyTimes="0;0.18;0.55;0.85;1" dur="3.2s" repeatCount="indefinite"/>
+                </use>
+            </g>
+
+            <!-- Right register (next state) -->
+            <g>
+                <rect x="600" y="80" width="100" height="80" rx="6" fill="#FFFFFF" stroke="#222" stroke-width="2.5"/>
+                <text x="650" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#222">Register</text>
+                <text x="650" y="132" text-anchor="middle" font-size="11" fill="#5F6062">D &nbsp;Q</text>
+                <polyline points="638,160 650,148 662,160" fill="none" stroke="#222" stroke-width="2"/>
+                <rect x="600" y="80" width="100" height="80" rx="6" fill="none" stroke="#FFC904" stroke-width="6" opacity="0">
+                    <animate attributeName="opacity" values="0;1;0;0" keyTimes="0;0.04;0.18;1" dur="3.2s" repeatCount="indefinite"/>
+                </rect>
+            </g>
+
+            <!-- Wires: Reg-out → cloud-in, cloud-out → Reg-in -->
+            <path d="M 220 120 L 318 120" fill="none" stroke="#222" stroke-width="2" marker-end="url(#rtl-arr)"/>
+            <path d="M 502 120 L 598 120" fill="none" stroke="#222" stroke-width="2" marker-end="url(#rtl-arr)"/>
+
+            <!-- Hidden path for the data packet animation: leaves left register, traces a gentle curve through the cloud, lands at right register's D input -->
+            <path id="rtl-datapath" d="M 220 120 C 280 100, 340 90, 410 120 C 480 150, 540 110, 600 120" fill="none" stroke="none"/>
+            <circle r="6" fill="#2E86AB" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.15;0.22;0.92;1" dur="3.2s" repeatCount="indefinite"/>
+                <animateMotion dur="3.2s" repeatCount="indefinite" keyTimes="0;0.18;0.95;1" keyPoints="0;0;1;1" calcMode="linear">
+                    <mpath href="#rtl-datapath"/>
+                </animateMotion>
+            </circle>
+
+            <!-- Clock distribution: red rail under both flops, branching up to each clock-input triangle -->
+            <path d="M 170 175 L 170 162" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <path d="M 650 175 L 650 162" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <path d="M 170 175 L 650 175" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <text x="220" y="172" font-size="11" fill="#C0392B" font-weight="700">clk</text>
+
+            <!-- Clock-edge indicator pulse on the rail (centered) -->
+            <circle cx="410" cy="175" r="4" fill="#C0392B">
+                <animate attributeName="r" values="3;10;3;3" keyTimes="0;0.05;0.22;1" dur="3.2s" repeatCount="indefinite"/>
+                <animate attributeName="fill" values="#C0392B;#FFC904;#C0392B;#C0392B" keyTimes="0;0.05;0.22;1" dur="3.2s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Caption row -->
+            <text x="410" y="205" font-size="11" fill="#5F6062" text-anchor="middle">↑ posedge clk &mdash; every register captures simultaneously</text>
+            <text x="410" y="222" font-size="11" fill="#5F6062" text-anchor="middle">between edges &mdash; the cloud settles to the next-state value</text>
+        </svg>
+    </div>
+
     <p style="font-size:0.78em;">On each <strong>positive edge</strong>, every flip-flop captures its input. Between edges, combinational logic computes next values.</p>
     <p class="fragment" style="font-size:0.78em;">This is <strong>Register Transfer Level (RTL)</strong> — the fundamental abstraction of synchronous design.</p>
     <aside class="notes">Sequential logic adds the time axis. On each positive edge, every flip-flop simultaneously captures its input. Between edges, combinational logic computes next values.</aside>
