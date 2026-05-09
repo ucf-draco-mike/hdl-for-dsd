@@ -316,9 +316,39 @@ PASS: q stays through many
 === 8 passed, 0 failed ===</code></pre>
         </div>
     </div>
-    <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
-        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
-        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">
+    <div style="margin-top:0.5em;background:#111;padding:0.45em 0.6em;border-radius:6px;border:1px solid #333;display:flex;align-items:center;gap:0.6em;">
+        <p style="color:#FFC904;font-size:0.55em;margin:0;letter-spacing:0.12em;writing-mode:vertical-rl;transform:rotate(180deg);flex-shrink:0;">▸ CIRCUIT</p>
+        <svg viewBox="0 0 560 110" style="flex:1;max-height:90px;" font-family="JetBrains Mono, monospace" aria-label="D flip-flop schematic: i_d into D, i_clk into clock notch, o_q out of Q">
+            <!-- i_clk port (top-left) -->
+            <rect x="8" y="8" width="62" height="22" rx="3" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.5"/>
+            <text x="39" y="23" text-anchor="middle" font-size="11" font-weight="700" fill="#FFC904">i_clk</text>
+            <!-- i_d port (left, aligned with D) -->
+            <rect x="8" y="44" width="62" height="22" rx="3" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.5"/>
+            <text x="39" y="59" text-anchor="middle" font-size="11" font-weight="700" fill="#FFC904">i_d</text>
+            <!-- wire i_d → D -->
+            <line x1="70" y1="55" x2="220" y2="55" stroke="#E8E8E4" stroke-width="2"/>
+            <!-- wire i_clk → clock notch on FF left edge (bottom-left) -->
+            <polyline points="70,19 200,19 200,84 220,84" fill="none" stroke="#C0392B" stroke-width="2"/>
+            <!-- D flip-flop body -->
+            <rect x="220" y="30" width="120" height="68" rx="3" fill="#1a1a1a" stroke="#FFC904" stroke-width="2"/>
+            <text x="228" y="60" font-size="12" font-weight="700" fill="#E8E8E4">D</text>
+            <text x="332" y="60" text-anchor="end" font-size="12" font-weight="700" fill="#E8E8E4">Q</text>
+            <text x="280" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#FFC904">D-FF</text>
+            <text x="280" y="92" text-anchor="middle" font-size="9" fill="#888">SB_DFF</text>
+            <!-- Clock notch: inward triangle on FF's left edge -->
+            <polyline points="220,78 228,84 220,90" fill="none" stroke="#FFC904" stroke-width="1.8"/>
+            <!-- wire Q → o_q -->
+            <line x1="340" y1="55" x2="490" y2="55" stroke="#E8E8E4" stroke-width="2"/>
+            <!-- o_q port (right) -->
+            <rect x="490" y="44" width="62" height="22" rx="3" fill="#1a1a1a" stroke="#FFC904" stroke-width="1.5"/>
+            <text x="521" y="59" text-anchor="middle" font-size="11" font-weight="700" fill="#FFC904">o_q</text>
+            <!-- behavior caption -->
+            <text x="555" y="105" text-anchor="end" font-size="9" fill="#888" font-style="italic">o_q &lt;= i_d on ↑ i_clk</text>
+        </svg>
+    </div>
+    <div style="margin-top:0.4em;background:#1a1a1a;padding:0.5em 0.6em;border-radius:6px;border:1px solid #D4A843;">
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.2em 0;letter-spacing:0.12em;">▸ GTKWAVE</p>
+        <p style="color:#E8E8E4;font-size:0.62em;margin:0;text-align:left;">
             Add <code>clk · d · q</code>. Look for: <code>q</code> transitions happen <em>right after</em> each posedge of <code>clk</code>, never between edges. The step-function shape is the visual signature of synchronous design.
         </p>
     </div>
