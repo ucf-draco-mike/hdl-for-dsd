@@ -2,11 +2,12 @@
 # Routes targets into per-example subdirectories.
 #
 # Examples in this day:
-#   ex1 -> d04_s2_ex1  (shift_nonblocking, segment s2)
-#   ex2 -> d04_s3_ex2  (d_flip_flop,       segment s3)
-#   ex3 -> d04_s4_ex3  (led_blinker,       segment s4)
+#   ex1 -> d04_s2_ex1  (shift_nonblocking,  segment s2)
+#   ex2 -> d04_s3_ex2  (d_flip_flop,        segment s3)
+#   ex3 -> d04_s4_ex3  (led_blinker,        segment s4)
+#   ex4 -> d04_s1_ex4  (led_blink_rates,    segment s1)
 #
-# Targets (replace N with the example number: 1, 2, or 3):
+# Targets (replace N with the example number: 1, 2, 3, or 4):
 #   make exN          # default: stat (synth report)
 #   make exN_sim      # iverilog + vvp simulation
 #   make exN_wave     # run sim, then open VCD in gtkwave
@@ -16,8 +17,8 @@
 #   make exN_clean    # remove build artifacts in that example
 #   make clean        # clean every example in this day
 
-EXAMPLES := d04_s2_ex1 d04_s3_ex2 d04_s4_ex3
-EX_NUMS  := 1 2 3
+EXAMPLES := d04_s2_ex1 d04_s3_ex2 d04_s4_ex3 d04_s1_ex4
+EX_NUMS  := 1 2 3 4
 
 ex1:
 	$(MAKE) -C d04_s2_ex1 stat
@@ -28,10 +29,14 @@ ex2:
 ex3:
 	$(MAKE) -C d04_s4_ex3 stat
 
+ex4:
+	$(MAKE) -C d04_s1_ex4 stat
+
 clean:
 	$(MAKE) -C d04_s2_ex1 clean
 	$(MAKE) -C d04_s3_ex2 clean
 	$(MAKE) -C d04_s4_ex3 clean
+	$(MAKE) -C d04_s1_ex4 clean
 
 SIM_TARGETS   := $(foreach n,$(EX_NUMS),ex$(n)_sim)
 WAVE_TARGETS  := $(foreach n,$(EX_NUMS),ex$(n)_wave)
@@ -47,4 +52,4 @@ $(SYNTH_TARGETS): ex%_synth: ; $(MAKE) -C $(wildcard d04_s*_ex$*) synth
 $(PROG_TARGETS):  ex%_prog:  ; $(MAKE) -C $(wildcard d04_s*_ex$*) prog
 $(CLEAN_TARGETS): ex%_clean: ; $(MAKE) -C $(wildcard d04_s*_ex$*) clean
 
-.PHONY: clean ex1 ex2 ex3 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)
+.PHONY: clean ex1 ex2 ex3 ex4 $(SIM_TARGETS) $(WAVE_TARGETS) $(STAT_TARGETS) $(SYNTH_TARGETS) $(PROG_TARGETS) $(CLEAN_TARGETS)
