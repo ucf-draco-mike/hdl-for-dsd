@@ -263,10 +263,11 @@ assign o_clk_div = r_clk_div;</code></pre>
 
             <!-- r_count: bus shape, value labels at center of each 40px cycle -->
             <text x="6" y="92" font-size="12" fill="#333">r_count</text>
-            <!-- Bus rails (top + bottom) with X-transitions at each posedge -->
-            <path d="M 60 76 L 76 76 L 80 84 L 116 84 L 120 76 L 156 76 L 160 84 L 196 84 L 200 76 L 236 76 L 240 84 L 276 84 L 280 76 L 316 76 L 320 84 L 356 84 L 360 76 L 396 76 L 400 84 L 436 84 L 440 76 L 476 76 L 480 84 L 516 84 L 520 76 L 556 76 L 560 84 L 596 84 L 600 76 L 636 76 L 640 84 L 676 84 L 680 76 L 716 76 L 720 84 L 740 84"
+            <!-- Bus rails (top + bottom) with X-transitions at each posedge.
+                 Rails stay parallel (y=76 top, y=96 bottom) and briefly cross at y=86 at every posedge. -->
+            <path d="M 60 76 L 76 76 L 80 86 L 84 76 L 116 76 L 120 86 L 124 76 L 156 76 L 160 86 L 164 76 L 196 76 L 200 86 L 204 76 L 236 76 L 240 86 L 244 76 L 276 76 L 280 86 L 284 76 L 316 76 L 320 86 L 324 76 L 356 76 L 360 86 L 364 76 L 396 76 L 400 86 L 404 76 L 436 76 L 440 86 L 444 76 L 476 76 L 480 86 L 484 76 L 516 76 L 520 86 L 524 76 L 556 76 L 560 86 L 564 76 L 596 76 L 600 86 L 604 76 L 636 76 L 640 86 L 644 76 L 676 76 L 680 86 L 684 76 L 716 76 L 720 86 L 724 76 L 740 76"
                   fill="none" stroke="#2E86AB" stroke-width="1.6"/>
-            <path d="M 60 96 L 76 96 L 80 88 L 116 88 L 120 96 L 156 96 L 160 88 L 196 88 L 200 96 L 236 96 L 240 88 L 276 88 L 280 96 L 316 96 L 320 88 L 356 88 L 360 96 L 396 96 L 400 88 L 436 88 L 440 96 L 476 96 L 480 88 L 516 88 L 520 96 L 556 96 L 560 88 L 596 88 L 600 96 L 636 96 L 640 88 L 676 88 L 680 96 L 716 96 L 720 88 L 740 88"
+            <path d="M 60 96 L 76 96 L 80 86 L 84 96 L 116 96 L 120 86 L 124 96 L 156 96 L 160 86 L 164 96 L 196 96 L 200 86 L 204 96 L 236 96 L 240 86 L 244 96 L 276 96 L 280 86 L 284 96 L 316 96 L 320 86 L 324 96 L 356 96 L 360 86 L 364 96 L 396 96 L 400 86 L 404 96 L 436 96 L 440 86 L 444 96 L 476 96 L 480 86 L 484 96 L 516 96 L 520 86 L 524 96 L 556 96 L 560 86 L 564 96 L 596 96 L 600 86 L 604 96 L 636 96 L 640 86 L 644 96 L 676 96 L 680 86 L 684 96 L 716 96 L 720 86 L 724 96 L 740 96"
                   fill="none" stroke="#2E86AB" stroke-width="1.6"/>
             <!-- Count values: 0,1,2,3, 0,1,2,3, ... rolling each 4 cycles -->
             <g font-size="11" fill="#2E86AB" text-anchor="middle" font-weight="700">
