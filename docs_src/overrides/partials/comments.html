@@ -27,7 +27,7 @@
   (function () {
     var palette = __md_get("__palette");
     var theme = palette && palette.color && palette.color.scheme === "slate"
-      ? "dark" : "light";
+      ? "noborder_dark" : "noborder_light";
 
     function postTheme(t) {
       var frame = document.querySelector("iframe.giscus-frame");
@@ -44,7 +44,7 @@
     if (ref) {
       ref.addEventListener("change", function () {
         var p = __md_get("__palette");
-        theme = p && p.color && p.color.scheme === "slate" ? "dark" : "light";
+        theme = p && p.color && p.color.scheme === "slate" ? "noborder_dark" : "noborder_light";
         postTheme(theme);
       });
     }
