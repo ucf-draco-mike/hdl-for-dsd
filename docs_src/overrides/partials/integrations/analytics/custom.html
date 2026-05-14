@@ -1,0 +1,42 @@
+{# Custom analytics partial.
+
+   Material requires this file when extra.analytics.provider is "custom".
+   We don't load a tracker here — Umami is already injected site-wide via
+   overrides/main.html. This partial only wires the built-in feedback form
+   so each 👍/👎 click is reported to Umami as a "feedback" event with the
+   current page path and rating value (0 = negative, 1 = positive). #}
+<script>
+  (function () {
+    function bindFeedback() {
+      var feedback = document.forms && document.forms.feedback;
+      if (!feedback || feedback.dataset.bound === "1") return;
+      feedback.dataset.bound = "1";
+
+      feedback.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var rating = ev.submitter && ev.submitter.getAttribute("data-md-value");
+        if (rating == null) return;
+
+        if (window.umami && typeof window.umami.track === "function") {
+          window.umami.track("page-feedback", {
+            page: location.pathname,
+            rating: Number(rating)
+          });
+        }
+
+        var first = feedback.firstElementChild;
+        if (first) first.disabled = true;
+        var note = feedback.querySelector(
+          ".md-feedback__note [data-md-value='" + rating + "']"
+        );
+        if (note) note.hidden = false;
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bindFeedback);
+    } else {
+      bindFeedback();
+    }
+  })();
+</script>

@@ -60,6 +60,29 @@ extra_css:
 extra_javascript:
   - overrides/extra.js
 
+extra:
+  # Per-page feedback widget. provider: custom routes Material's built-in
+  # 👍/👎 form through overrides/partials/integrations/analytics/custom.html,
+  # which forwards each click to Umami (already loaded site-wide). The
+  # negative-rating note links to a prefilled issue in the student-facing
+  # repo so the main repo stays clean.
+  analytics:
+    provider: custom
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This was helpful
+          data: 1
+          note: Thanks for the feedback!
+        - icon: material/emoticon-sad-outline
+          name: This could be improved
+          data: 0
+          note: >-
+            Thanks — please <a
+              href="https://github.com/ucf-draco-mike/hdl-for-dsd-student/issues/new?title=Site+feedback&body=Page%3A+{url}%0A%0AWhat+was+unclear+or+missing%3F"
+              target="_blank" rel="noopener">tell us what was unclear</a>.
+
 markdown_extensions:
   - tables
   - fenced_code
