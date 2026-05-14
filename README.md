@@ -136,6 +136,23 @@ nix develop .#full
 
 See [`docs/course_setup_guide.md`](docs/course_setup_guide.md) for full toolchain setup and troubleshooting.
 
+### Per-page Feedback
+
+Every page on [hdl4dsd.com](https://hdl4dsd.com/) carries two feedback channels, both routed to the student-facing repo `ucf-draco-mike/hdl-for-dsd-student` so the main repo stays clean:
+
+- **👍 / 👎 widget** at the bottom of each page. Clicks fire a `page-feedback` event into the existing Umami dashboard (page path + rating). A 👎 also surfaces a link that opens a prefilled issue on `hdl-for-dsd-student`.
+- **Discussion thread** (Giscus) below the feedback widget, backed by GitHub Discussions on `hdl-for-dsd-student`, mapped one-thread-per-page by URL pathname.
+
+To activate Giscus on a fresh `hdl-for-dsd-student`:
+
+1. **Public + Discussions on.** Repo Settings → General → Features → enable *Discussions*.
+2. **Add a category** named `Site Feedback` (Discussions tab → New category → Announcement format).
+3. **Install the Giscus app** at <https://github.com/apps/giscus> and grant access to `hdl-for-dsd-student` only.
+4. **Get the IDs** at <https://giscus.app/> — fill in repo `ucf-draco-mike/hdl-for-dsd-student`, page-↔-discussion mapping = *pathname*, category = *Site Feedback*. Copy `data-repo-id` and `data-category-id` from the generated snippet.
+5. **Paste into `docs_src/overrides/partials/comments.html`**, replacing `TODO_REPO_ID` and `TODO_CATEGORY_ID`. Until those values are filled in, the widget loads but logs a config error in the browser console — no other impact.
+
+Per-page opt-out: add `comments: false` to a page's YAML front-matter to suppress the discussion thread on that page (the 👍/👎 widget remains).
+
 ## Toolchain Quick Reference
 
 ```bash

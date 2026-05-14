@@ -1,0 +1,54 @@
+{# Giscus comments — per-page discussion threads backed by GitHub Discussions
+   on ucf-draco-mike/hdl-for-dsd-student. The IDs below come from
+   https://giscus.app after the Giscus app is installed on that repo and
+   Discussions are enabled there. Until those IDs are filled in, the widget
+   loads but reports a config error in the browser console (no impact on the
+   rest of the page). See README "Course Site → Per-page Feedback" for setup. #}
+<h2 id="__comments">Discussion</h2>
+<script src="https://giscus.app/client.js"
+        data-repo="ucf-draco-mike/hdl-for-dsd-student"
+        data-repo-id="TODO_REPO_ID"
+        data-category="Site Feedback"
+        data-category-id="TODO_CATEGORY_ID"
+        data-mapping="pathname"
+        data-strict="1"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>
+
+{# Re-render Giscus when Material's instant navigation swaps the article,
+   and re-theme it when the user toggles light/dark. Safe no-op when
+   instant navigation is disabled. #}
+<script>
+  (function () {
+    var palette = __md_get("__palette");
+    var theme = palette && palette.color && palette.color.scheme === "slate"
+      ? "dark" : "light";
+
+    function postTheme(t) {
+      var frame = document.querySelector("iframe.giscus-frame");
+      if (!frame) return;
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: t } } }, "https://giscus.app"
+      );
+    }
+
+    if (typeof document$ !== "undefined" && document$.subscribe) {
+      document$.subscribe(function () { postTheme(theme); });
+    }
+    var ref = document.querySelector("[data-md-component=palette]");
+    if (ref) {
+      ref.addEventListener("change", function () {
+        var p = __md_get("__palette");
+        theme = p && p.color && p.color.scheme === "slate" ? "dark" : "light";
+        postTheme(theme);
+      });
+    }
+  })();
+</script>
