@@ -143,13 +143,12 @@ Every page on [hdl4dsd.com](https://hdl4dsd.com/) carries two feedback channels,
 - **👍 / 👎 widget** at the bottom of each page. Clicks fire a `page-feedback` event into the existing Umami dashboard (page path + rating). A 👎 also surfaces a link that opens a prefilled issue on `hdl-for-dsd-student`.
 - **Discussion thread** (Giscus) below the feedback widget, backed by GitHub Discussions on `hdl-for-dsd-student`, mapped one-thread-per-page by URL pathname.
 
-To activate Giscus on a fresh `hdl-for-dsd-student`:
+Both channels are wired up — the `data-repo-id` / `data-category-id` for Giscus live in `COMMENTS_HTML` inside `scripts/prep_mkdocs.py` (and the mirrored copy at `docs_src/overrides/partials/comments.html`). To regenerate the IDs (e.g. if the student repo is renamed or the category recreated):
 
-1. **Public + Discussions on.** Repo Settings → General → Features → enable *Discussions*.
-2. **Add a category** named `Site Feedback` (Discussions tab → New category → Announcement format).
-3. **Install the Giscus app** at <https://github.com/apps/giscus> and grant access to `hdl-for-dsd-student` only.
-4. **Get the IDs** at <https://giscus.app/> — fill in repo `ucf-draco-mike/hdl-for-dsd-student`, page-↔-discussion mapping = *pathname*, category = *Site Feedback*. Copy `data-repo-id` and `data-category-id` from the generated snippet.
-5. **Paste into `docs_src/overrides/partials/comments.html`**, replacing `TODO_REPO_ID` and `TODO_CATEGORY_ID`. Until those values are filled in, the widget loads but logs a config error in the browser console — no other impact.
+1. Confirm the student repo has Discussions enabled (Settings → General → Features) and a `Site Feedback` category (Discussions tab → New category → Announcement format).
+2. Confirm the Giscus app at <https://github.com/apps/giscus> has access to `hdl-for-dsd-student`.
+3. Visit <https://giscus.app/>, fill in repo `ucf-draco-mike/hdl-for-dsd-student`, mapping `pathname`, category `Site Feedback`. Copy the new `data-repo-id` and `data-category-id` from the generated snippet.
+4. Replace both values in `COMMENTS_HTML` in `scripts/prep_mkdocs.py` *and* in `docs_src/overrides/partials/comments.html`.
 
 Per-page opt-out: add `comments: false` to a page's YAML front-matter to suppress the discussion thread on that page (the 👍/👎 widget remains).
 

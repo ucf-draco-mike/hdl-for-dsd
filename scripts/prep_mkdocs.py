@@ -854,8 +854,20 @@ def main():
     ov.mkdir(exist_ok=True)
     (ov / "extra.css").write_text(EXTRA_CSS)
     (ov / "extra.js").write_text(EXTRA_JS)
+    (ov / "main.html").write_text(MAIN_HTML)
+    # partials/ holds Material template overrides; analytics/custom.html is
+    # required by mkdocs.yml (extra.analytics.provider: custom).
+    (ov / "partials").mkdir(exist_ok=True)
+    (ov / "partials" / "comments.html").write_text(COMMENTS_HTML)
+    (ov / "partials" / "integrations" / "analytics").mkdir(parents=True, exist_ok=True)
+    (ov / "partials" / "integrations" / "analytics" / "custom.html").write_text(
+        ANALYTICS_CUSTOM_HTML
+    )
     print(f"  Created: overrides/extra.css")
     print(f"  Created: overrides/extra.js")
+    print(f"  Created: overrides/main.html")
+    print(f"  Created: overrides/partials/comments.html")
+    print(f"  Created: overrides/partials/integrations/analytics/custom.html")
 
     total = sum(1 for _ in DOCS.rglob("*") if _.is_file() or _.is_symlink())
     print(f"  Total: {total} files in docs_src/\n")
@@ -1194,6 +1206,125 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+"""
+
+MAIN_HTML = """\
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="b4e233a1-450a-4f9b-922e-5d3b085050d1"></script>
+{% endblock %}
+
+{# Giscus comments are appended to the page body. Per-page opt-out:
+   add `comments: false` to the page front-matter. #}
+{% block content %}
+  {{ super() }}
+  {% if page and page.meta.comments != false %}
+    {% include "partials/comments.html" %}
+  {% endif %}
+{% endblock %}
+"""
+
+COMMENTS_HTML = """\
+{# Giscus comments -- per-page discussion threads backed by GitHub Discussions
+   on ucf-draco-mike/hdl-for-dsd-student in the "Site Feedback" category.
+   IDs were generated at https://giscus.app/. To regenerate (e.g. category
+   rename or repo move), see README "Course Site -> Per-page Feedback". #}
+<h2 id="__comments">Discussion</h2>
+<script src="https://giscus.app/client.js"
+        data-repo="ucf-draco-mike/hdl-for-dsd-student"
+        data-repo-id="R_kgDOSCxllQ"
+        data-category="Site Feedback"
+        data-category-id="DIC_kwDOSCxllc4C9Eop"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        data-loading="lazy"
+        crossorigin="anonymous"
+        async>
+</script>
+
+{# Re-render Giscus when Material's instant navigation swaps the article,
+   and re-theme it when the user toggles light/dark. Safe no-op when
+   instant navigation is disabled. #}
+<script>
+  (function () {
+    var palette = __md_get("__palette");
+    var theme = palette && palette.color && palette.color.scheme === "slate"
+      ? "dark" : "light";
+
+    function postTheme(t) {
+      var frame = document.querySelector("iframe.giscus-frame");
+      if (!frame) return;
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: t } } }, "https://giscus.app"
+      );
+    }
+
+    if (typeof document$ !== "undefined" && document$.subscribe) {
+      document$.subscribe(function () { postTheme(theme); });
+    }
+    var ref = document.querySelector("[data-md-component=palette]");
+    if (ref) {
+      ref.addEventListener("change", function () {
+        var p = __md_get("__palette");
+        theme = p && p.color && p.color.scheme === "slate" ? "dark" : "light";
+        postTheme(theme);
+      });
+    }
+  })();
+</script>
+"""
+
+ANALYTICS_CUSTOM_HTML = """\
+{# Custom analytics partial.
+
+   Material requires this file when extra.analytics.provider is "custom".
+   We don't load a tracker here -- Umami is already injected site-wide via
+   overrides/main.html. This partial only wires the built-in feedback form
+   so each thumbs-up/down click is reported to Umami as a "page-feedback"
+   event with the current page path and rating value (0 = negative,
+   1 = positive). #}
+<script>
+  (function () {
+    function bindFeedback() {
+      var feedback = document.forms && document.forms.feedback;
+      if (!feedback || feedback.dataset.bound === "1") return;
+      feedback.dataset.bound = "1";
+
+      feedback.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var rating = ev.submitter && ev.submitter.getAttribute("data-md-value");
+        if (rating == null) return;
+
+        if (window.umami && typeof window.umami.track === "function") {
+          window.umami.track("page-feedback", {
+            page: location.pathname,
+            rating: Number(rating)
+          });
+        }
+
+        var first = feedback.firstElementChild;
+        if (first) first.disabled = true;
+        var note = feedback.querySelector(
+          ".md-feedback__note [data-md-value='" + rating + "']"
+        );
+        if (note) note.hidden = false;
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bindFeedback);
+    } else {
+      bindFeedback();
+    }
+  })();
+</script>
 """
 
 if __name__ == "__main__":
