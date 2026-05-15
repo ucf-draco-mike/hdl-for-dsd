@@ -15,11 +15,11 @@
 <section class="title-slide" data-background-color="#000000">
     <div style="margin-bottom:1em;"><span style="color:#FFC904;font-weight:700;font-size:0.6em;letter-spacing:0.15em;text-transform:uppercase;">Topic 8 · Hierarchy &amp; Reuse</span></div>
     <h1 style="color:#FFC904;border-bottom:none;font-size:2.2em;">Design for Reuse</h1>
-    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes · <em>Week 2 Capstone</em></p>
+    <p class="subtitle" style="color:#E8E8E4;">Video 4 of 4 · ~8 minutes · <em>Topic 8 Capstone</em></p>
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Hierarchy</span><span class="seg-label">Parameters</span><span class="seg-label">Generate</span><span class="seg-label active">Reuse</span></div>
-    <aside class="notes">Video 4 of 4 for Topic 8. The capstone of Week 2. Ties together everything you've learned into a design philosophy.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 8 — the capstone of the Hierarchy &amp; Reuse theme. Ties together everything from this topic into a design philosophy.</aside>
 </section>
 
 <section>
@@ -31,7 +31,7 @@
         </div>
         <div class="col">
             <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Your Week 1-2 module library now includes ~10 tested modules. Week 3 will build UART and SPI by combining them. Capstone and senior-design projects will reach back into this library for years. Today's practices determine whether that library is <em>usable</em> or merely <em>available</em>.</p>
+            <p style="font-size:0.75em;">Your module library from the foundational topics now includes several tested blocks. The next theme &mdash; communication protocols &mdash; will build UART and SPI by combining them. Capstone and senior-design projects will reach back into this library for years. Today's practices determine whether that library is <em>usable</em> or merely <em>available</em>.</p>
         </div>
     </div>
     <aside class="notes">This is the career-level takeaway. Reusable IP is the economic unit of the hardware industry. Engineers who produce it are valuable; engineers who only consume it are commodity.</aside>
@@ -39,25 +39,24 @@
 
 <section>
     <h2>Your Growing Module Library</h2>
-    <table style="font-size:0.7em;margin-top:0.3em;">
-        <thead><tr><th>Module</th><th>Topic</th><th>Parameters</th><th>Tested?</th></tr></thead>
+    <table style="font-size:0.66em;margin-top:0.2em;">
+        <thead><tr><th>Module</th><th>Topic</th><th>Parameters</th><th>Where it lives</th></tr></thead>
         <tbody>
-            <tr><td><code>sync_2ff</code></td><td>5</td><td>WIDTH</td><td>✓</td></tr>
-            <tr><td><code>debounce</code></td><td>5</td><td>CLKS_STABLE</td><td>✓</td></tr>
-            <tr><td><code>edge_detect</code></td><td>5</td><td>&mdash;</td><td>✓</td></tr>
-            <tr><td><code>mod_n_counter</code></td><td>5</td><td>N</td><td>✓</td></tr>
-            <tr><td><code>sipo_shift</code></td><td>5</td><td>WIDTH</td><td>✓</td></tr>
-            <tr><td><code>piso_shift</code></td><td>5</td><td>WIDTH</td><td>✓</td></tr>
-            <tr><td><code>traffic_fsm</code></td><td>7</td><td>&mdash;</td><td>✓</td></tr>
-            <tr><td><code>pattern_detector</code></td><td>7</td><td>PATTERN, WIDTH</td><td>✓</td></tr>
-            <tr><td><code>fifo</code></td><td>8</td><td>DEPTH, WIDTH</td><td>✓</td></tr>
-            <tr><td><code>button_array</code></td><td>8</td><td>N, CLKS_STABLE</td><td>✓</td></tr>
+            <tr><td><code>debounce</code></td><td>5</td><td>CLKS_STABLE</td><td><code>shared/lib/</code> &mdash; reference impl</td></tr>
+            <tr><td><code>edge_detect</code></td><td>5</td><td>&mdash;</td><td><code>shared/lib/</code> &mdash; reference impl</td></tr>
+            <tr><td><code>counter_mod_n</code></td><td>5</td><td>N</td><td><code>shared/lib/</code> &mdash; reference impl</td></tr>
+            <tr><td><code>sync_2ff</code></td><td>5</td><td>WIDTH</td><td>lecture example (d08_s1_ex1)</td></tr>
+            <tr><td><code>traffic_light</code></td><td>7</td><td>&mdash;</td><td>lab (week2_day07/ex1)</td></tr>
+            <tr><td><code>pattern_detector</code></td><td>7</td><td>&mdash;</td><td>lab (week2_day07/ex2)</td></tr>
+            <tr><td><code>button_array</code></td><td>8</td><td>N, CLKS_STABLE</td><td>lecture example (d08_s3_ex3)</td></tr>
+            <tr><td><code>piso_shift</code> / <code>sipo_shift</code></td><td>5*</td><td>WIDTH</td><td><em>not yet built &mdash; you&rsquo;ll need these</em></td></tr>
+            <tr><td><code>fifo</code></td><td>8*</td><td>DEPTH, WIDTH</td><td><em>sketched today &mdash; not yet built</em></td></tr>
         </tbody>
     </table>
-    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>These are the building blocks for Week 3.</strong> UART TX = <code>piso_shift</code> + <code>mod_n_counter</code> (baud) + FSM. UART RX = <code>sync_2ff</code> + <code>sipo_shift</code> + oversampler FSM. SPI = both + CS debounce. Everything composes.
+    <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
+        <strong>Honest accounting:</strong> Some modules are in <code>shared/lib/</code> ready to instantiate; others exist as starter/solution code in your labs; a few you haven&rsquo;t built yet. The next theme&rsquo;s composition work (UART = shift + baud + FSM; SPI = shift + debounce) will surface the gaps &mdash; that&rsquo;s when we promote the lab versions into the shared library.
     </div>
-    <aside class="notes">Ten modules. Week 3 doesn't build new primitive blocks — it combines these. The investment in parameterization and testing pays off now.</aside>
+    <aside class="notes">Be honest with students: not every module on this list is a polished, parameterized library block today. shared/lib has debounce, edge_detect, counter_mod_n. Sync_2ff and button_array are lecture examples. Traffic and pattern_detector are lab solutions. piso/sipo and fifo are still to-build. Frame the next theme as &ldquo;promote your lab modules into the library as you compose them.&rdquo;</aside>
 </section>
 
 <section>
@@ -131,7 +130,7 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Audit One of Your Modules</h2>
-    <p style="font-size:0.78em;">Pick a module from your Week 1-2 labs. Score it against the reusability checklist. For each unchecked box, name the work you'd do to check it.</p>
+    <p style="font-size:0.78em;">Pick a module from any earlier lab. Score it against the reusability checklist. For each unchecked box, name the work you&rsquo;d do to check it.</p>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>Most common gaps (I've seen them all):</strong>
         <ul style="font-size:0.92em;">
@@ -142,7 +141,7 @@ endmodule</code></pre>
             <li>No Makefile target → add <code>make sim</code></li>
         </ul>
     </div>
-    <aside class="notes">Self-audit exercise. This happens before Week 3 — your modules need to be reusable when UART composition begins. Doing this audit properly saves hours next week.</aside>
+    <aside class="notes">Self-audit exercise. This happens before the next theme &mdash; your modules need to be reusable when UART composition begins. Doing this audit properly saves hours later.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">
@@ -198,7 +197,7 @@ endmodule</code></pre>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">①</span>&ensp;A module is reusable when a stranger can use it from the header alone.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Everything that could vary is a parameter; everything else is documented.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;The header comment is the IP datasheet. Write it as such.</p>
-        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Your 10-module library becomes Week 3's UART + SPI backbone.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Your module library becomes the next theme&rsquo;s UART + SPI backbone.</p>
     </div>
     <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">If reading the implementation is necessary to use it, it isn't reusable.</div>
 </section>
@@ -225,12 +224,12 @@ endmodule</code></pre>
 
 <section data-background-color="#000000">
     <div style="text-align:center;">
-        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Week 2</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">Week 3: Real Communication Protocols</h2>
+        <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 8 · Hierarchy &amp; Reuse</p>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Next Theme: Real Communication Protocols</h2>
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">UART · SPI · Integration Projects</p>
         <div style="max-width:820px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You've now learned the <em>alphabet</em> of hardware design: combinational logic, sequential logic, synchronization, verification, state machines, and reuse. Week 3 is where you <em>compose words and sentences</em>. UART TX + RX — to actually talk to your computer over a serial cable. SPI master — to drive peripherals. Your <strong>Week 1-2 module library</strong> isn't the byproduct; it's the <em>material</em> of Week 3's designs. You're not going to learn many new primitives next week — you're going to <em>build real things</em> out of the ones you already have. See you Topic 9.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You&rsquo;ve now learned the <em>alphabet</em> of hardware design: combinational logic, sequential logic, synchronization, verification, state machines, and reuse. The next theme is where you <em>compose words and sentences</em>. UART TX + RX &mdash; to actually talk to your computer over a serial cable. SPI master &mdash; to drive peripherals. Your <strong>module library from the foundational topics</strong> isn&rsquo;t the byproduct; it&rsquo;s the <em>material</em> of the upcoming designs. You&rsquo;re not going to learn many new primitives next &mdash; you&rsquo;re going to <em>build real things</em> out of the ones you already have. See you in the next topic.</p>
         </div>
     </div>
 </section>

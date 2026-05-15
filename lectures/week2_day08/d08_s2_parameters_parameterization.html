@@ -103,24 +103,41 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Design a Parameterized FIFO</h2>
-    <p style="font-size:0.78em;">Sketch the parameter declaration for a FIFO module. You need <em>depth</em> (how many entries) and <em>width</em> (bits per entry) as user-settable. Internal derived constants: address width, flags width.</p>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Sketch:</strong>
+    <p style="font-size:0.72em;">Here&rsquo;s a hard-coded 16-deep &times; 8-wide FIFO. Every dimension is baked in. <strong>Find every number that would need to change for a different size — then parameterize them.</strong></p>
+    <pre class="synth" style="font-size:0.6em;margin-top:0.3em;"><code class="language-verilog">module fifo (
+    input  wire        i_clk, i_reset,
+    input  wire        i_wr,   i_rd,
+    input  wire [7:0]  i_wdata,        // 8-bit data in
+    output reg  [7:0]  o_rdata,        // 8-bit data out
+    output wire        o_full, o_empty
+);
+    reg [7:0] memory [0:15];           // 16 entries, 8 bits each
+    reg [3:0] r_wptr, r_rptr;          // 4-bit pointers ($clog2(16)=4)
+    reg [4:0] r_count;                 // 0..16 → needs 5 bits
+    // ... read/write/full/empty logic ...
+endmodule</code></pre>
+    <div class="fragment callout" style="font-size:0.65em;">
+        <strong>Reveal &mdash; parameterized version:</strong>
         <pre style="font-size:0.85em;"><code class="language-verilog">module fifo #(
     parameter DEPTH = 16,         // user: how many entries
     parameter WIDTH = 8           // user: bits per entry
 ) (
-    // ... ports ...
+    input  wire              i_clk, i_reset, i_wr, i_rd,
+    input  wire [WIDTH-1:0]  i_wdata,
+    output reg  [WIDTH-1:0]  o_rdata,
+    output wire              o_full, o_empty
 );
-    localparam ADDR_W = $clog2(DEPTH);
-    localparam MAX_CNT = DEPTH;
+    localparam ADDR_W  = $clog2(DEPTH);     // pointer width auto-sizes
+    localparam COUNT_W = $clog2(DEPTH+1);   // count needs one more value
 
-    reg [WIDTH-1:0]  memory [0:DEPTH-1];
-    reg [ADDR_W-1:0] r_wptr, r_rptr;
-    // ... logic ...
+    reg [WIDTH-1:0]   memory [0:DEPTH-1];
+    reg [ADDR_W-1:0]  r_wptr, r_rptr;
+    reg [COUNT_W-1:0] r_count;
+    // ... same logic, now size-agnostic ...
 endmodule</code></pre>
+    Same logic. One source. Works for 8&times;8, 1024&times;64, or any other size by changing two numbers at instantiation.
     </div>
-    <aside class="notes">FIFO is the classic parameterized module. Depth and width as parameters gives you 8-deep×8-wide, 1024-deep×64-wide, etc., all from the same source.</aside>
+    <aside class="notes">Start by reading the hardcoded version aloud and pointing at each magic number: 7, 15, 3, 4. Each one is a parameter waiting to happen. The reveal shows the &ldquo;after&rdquo; — note the count needs $clog2(DEPTH+1), not $clog2(DEPTH), because the count ranges 0..DEPTH inclusive. Classic off-by-one trap.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">
