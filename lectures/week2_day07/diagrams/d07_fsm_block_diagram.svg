@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 380" font-family="Inter, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 410" font-family="Inter, sans-serif">
   <defs>
     <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
       <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
@@ -7,12 +7,15 @@
     <marker id="arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
       <path d="M0,0 L8,3 L0,6 Z" fill="#1565C0"/>
     </marker>
+    <marker id="arr-m" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#9C27B0"/>
+    </marker>
   </defs>
 
   <text x="390" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#333">3-Always-Block FSM Architecture (Moore)</text>
 
   <!-- ══════ OUTER FSM BOX ══════ -->
-  <rect x="30" y="40" width="720" height="290" rx="12" fill="#FAFAFA" stroke="#999" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <rect x="30" y="40" width="720" height="320" rx="12" fill="#FAFAFA" stroke="#999" stroke-width="1.5" stroke-dasharray="6,3"/>
   <text x="50" y="62" font-size="11" fill="#888" font-style="italic">FSM Module</text>
 
   <!-- ══════ INPUTS ══════ -->
@@ -49,11 +52,10 @@
   <line x1="420" y1="280" x2="420" y2="225" stroke="#C62828" stroke-width="1.5" marker-end="url(#arr)"/>
   <text x="420" y="298" text-anchor="middle" font-size="9" fill="#C62828">i_reset</text>
 
-  <!-- Feedback: Block1 → Block2 (current state) -->
-  <line x1="460" y1="120" x2="460" y2="80" stroke="#333" stroke-width="2"/>
-  <line x1="460" y1="80" x2="130" y2="80" stroke="#333" stroke-width="2"/>
-  <line x1="130" y1="80" x2="130" y2="95" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-  <text x="295" y="73" text-anchor="middle" font-size="9" fill="#555" font-weight="600">r_state (feedback)</text>
+  <!-- Feedback: Block1 → Block2 (current state) - rounded corners -->
+  <path d="M 460,120 L 460,82 Q 460,75 453,75 L 137,75 Q 130,75 130,82 L 130,95"
+        fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="295" y="68" text-anchor="middle" font-size="9" fill="#555" font-weight="600">r_state (feedback)</text>
 
   <!-- Arrow Block1 → Block3 (current state) -->
   <line x1="530" y1="170" x2="580" y2="170" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
@@ -73,19 +75,21 @@
   <line x1="735" y1="170" x2="770" y2="170" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arr)"/>
   <text x="768" y="160" font-size="12" fill="#2E7D32" font-weight="600">Outputs</text>
 
-  <!-- Mealy dashed arrow (inputs → Block 3) -->
-  <line x1="120" y1="235" x2="580" y2="235" stroke="#9C27B0" stroke-width="1.2" stroke-dasharray="5,3"/>
-  <line x1="580" y1="235" x2="580" y2="210" stroke="#9C27B0" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#arr)"/>
-  <text x="350" y="253" text-anchor="middle" font-size="9" fill="#9C27B0" font-style="italic">(Mealy only: inputs also feed Block 3)</text>
+  <!-- Mealy dashed path: tap from input bus, route cleanly below blocks, enter Block 3 from below -->
+  <!-- Tap point: short stub down from input arrow at x=90 -->
+  <circle cx="90" cy="190" r="2.5" fill="#9C27B0"/>
+  <path d="M 90,190 L 90,320 Q 90,330 100,330 L 650,330 Q 660,330 660,320 L 660,243"
+        fill="none" stroke="#9C27B0" stroke-width="1.4" stroke-dasharray="5,3" marker-end="url(#arr-m)"/>
+  <text x="375" y="324" text-anchor="middle" font-size="9" fill="#9C27B0" font-style="italic">Mealy only — inputs also feed Block 3</text>
 
   <!-- Legend -->
-  <rect x="40" y="340" width="700" height="28" rx="4" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
-  <rect x="55" y="349" width="14" height="10" rx="2" fill="#E3F2FD" stroke="#1565C0" stroke-width="1"/>
-  <text x="75" y="358" font-size="9" fill="#333">Sequential (posedge clk)</text>
-  <rect x="215" y="349" width="14" height="10" rx="2" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
-  <text x="235" y="358" font-size="9" fill="#333">Combinational (always @(*))</text>
-  <rect x="415" y="349" width="14" height="10" rx="2" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
-  <text x="435" y="358" font-size="9" fill="#333">Combinational — outputs</text>
-  <line x1="575" y1="354" x2="605" y2="354" stroke="#9C27B0" stroke-width="1.2" stroke-dasharray="5,3"/>
-  <text x="615" y="358" font-size="9" fill="#9C27B0">Mealy path (optional)</text>
+  <rect x="40" y="370" width="700" height="28" rx="4" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
+  <rect x="55" y="379" width="14" height="10" rx="2" fill="#E3F2FD" stroke="#1565C0" stroke-width="1"/>
+  <text x="75" y="388" font-size="9" fill="#333">Sequential (posedge clk)</text>
+  <rect x="215" y="379" width="14" height="10" rx="2" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="235" y="388" font-size="9" fill="#333">Combinational (always @(*))</text>
+  <rect x="415" y="379" width="14" height="10" rx="2" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
+  <text x="435" y="388" font-size="9" fill="#333">Combinational — outputs</text>
+  <line x1="575" y1="384" x2="605" y2="384" stroke="#9C27B0" stroke-width="1.4" stroke-dasharray="5,3"/>
+  <text x="615" y="388" font-size="9" fill="#9C27B0">Mealy path (optional)</text>
 </svg>

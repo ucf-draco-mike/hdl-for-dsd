@@ -95,6 +95,58 @@ reg [2:0] r_state, r_next_state;
     <aside class="notes">One-hot: output = single bit, no decoder needed. That's the speed advantage. Cost: N flops instead of log2(N).</aside>
 </section>
 
+<!-- ============ ENCODING → RTL IMPACT (visual) ============ -->
+<section>
+    <h2><span style="color:#D4A843;">🔍</span> Encoding &rarr; RTL Impact</h2>
+    <p style="font-size:0.72em; margin-bottom:0.2em;">Same FSM. Different encoding. The <em>shape of the hardware</em> changes.</p>
+    <div style="margin-top:0.15em;">
+        <img src="diagrams/d07_encoding_rtl_compare.svg"
+             alt="Side-by-side RTL: binary encoding uses 2 flops plus an output decoder; one-hot uses 3 flops and direct output wires."
+             style="width:100%; max-width:880px; display:block; margin:0 auto;">
+    </div>
+    <div class="fragment callout" style="font-size:0.66em; margin-top:0.15em;">
+        <strong>Read it carefully:</strong> Binary trades flops for a small decoder.
+        One-hot trades a decoder for an extra flop and turns every output into a single wire from a single flop.
+        On an FPGA with cheap flops, that single-wire output is a real timing-and-power win.
+    </div>
+    <aside class="notes">The encoding choice physically reshapes the RTL — not just the source code. Binary gets a small decoder; one-hot gets direct wires. Different silicon, different timing characteristics, same behavior.</aside>
+</section>
+
+<!-- ============ RTL OPTIMIZATIONS (designer awareness) ============ -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#E65100;">⚙️</span> What the Tool Does Behind Your Back</h2>
+    <p style="font-size:0.74em;">Synthesizers run dozens of optimization passes on your FSM. Most are invisible &mdash; until they bite.</p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col">
+            <h3 style="font-size:0.9em; color:#E65100; margin-top:0;">Common passes (Yosys / Synopsys / Quartus)</h3>
+            <ul style="font-size:0.7em;">
+                <li><strong>FSM extraction &amp; re-encoding</strong> &mdash; Yosys's <code>fsm_recode</code> may silently convert your binary <code>localparam</code>s to one-hot (or vice versa).</li>
+                <li><strong>State minimization</strong> &mdash; equivalent states merged; unreachable states removed.</li>
+                <li><strong>Output retiming</strong> &mdash; combinational output logic pushed into or out of the state register.</li>
+                <li><strong>Logic flattening / sharing</strong> &mdash; LUTs combined across blocks; gate-level cleanup.</li>
+                <li><strong>Constant propagation</strong> &mdash; tied-off inputs simplify whole branches away.</li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3 style="font-size:0.9em; color:#E65100; margin-top:0;">Ramifications</h3>
+            <ul style="font-size:0.7em;">
+                <li>Your source-level encoding may not match the silicon &mdash; <code>stat</code> shows what's actually built.</li>
+                <li>Waveform signal names may disappear or rename. Use <code>(* keep *)</code> / <code>(* mark_debug *)</code> to preserve them.</li>
+                <li>A bug visible in sim can vanish (or appear) post-synthesis if optimizations rewrite the FSM.</li>
+                <li>Two engineers, identical RTL, different tool versions &rarr; different gate counts.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em; margin-top:0.3em;">
+        <strong>Turning them off:</strong>
+        <code>synth_ice40 -nofsm</code> (Yosys) disables FSM recoding/optimization.
+        <code>(* fsm_encoding = "user" *)</code> / <code>"one_hot"</code> / <code>"binary"</code> (Vivado, Quartus) pin a specific encoding.
+        <code>(* keep = "true" *)</code> on signals prevents constant-prop / sharing.
+        Use these <em>sparingly</em> &mdash; they're for debugging or hard timing constraints, not as a default.
+    </div>
+    <aside class="notes">Designers absolutely should know that synthesizers will rewrite their FSM. Show fsm_recode in Yosys, fsm_encoding attribute in Vivado/Quartus. The key habit: always run stat after synthesis and confirm the cell count matches your mental model. If it doesn't, find out why before moving on.</aside>
+</section>
+
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Difference</h2>
     <p style="font-size:0.78em;">Same FSM with 8 states. Predict iCE40 cell counts for binary vs one-hot.</p>

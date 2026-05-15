@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="tarr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
+    </marker>
+    <marker id="tarr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/>
+    </marker>
+  </defs>
+  <style>
+    .colHdr { font-size: 11px; font-weight: 700; fill: #333; }
+    .timeLbl { font-size: 10px; font-weight: 600; fill: #555; }
+    .stateTxt { font-size: 12px; font-weight: 700; }
+    .detYes { fill: #2E7D32; font-weight: 700; }
+    .detNo { fill: #999; }
+  </style>
+
+  <text x="440" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">
+    Walking the FSM — Input stream: 1 0 1 1 1 0 1 1
+  </text>
+
+  <!-- Time labels along top -->
+  <g>
+    <text x="80" y="56" text-anchor="middle" class="timeLbl">t=0</text>
+    <text x="170" y="56" text-anchor="middle" class="timeLbl">t=1</text>
+    <text x="260" y="56" text-anchor="middle" class="timeLbl">t=2</text>
+    <text x="350" y="56" text-anchor="middle" class="timeLbl">t=3</text>
+    <text x="440" y="56" text-anchor="middle" class="timeLbl">t=4</text>
+    <text x="530" y="56" text-anchor="middle" class="timeLbl">t=5</text>
+    <text x="620" y="56" text-anchor="middle" class="timeLbl">t=6</text>
+    <text x="710" y="56" text-anchor="middle" class="timeLbl">t=7</text>
+    <text x="800" y="56" text-anchor="middle" class="timeLbl">t=8</text>
+  </g>
+
+  <!-- Input row -->
+  <text x="30" y="86" class="colHdr">input</text>
+  <g font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#1565C0">
+    <text x="170" y="92" text-anchor="middle">1</text>
+    <text x="260" y="92" text-anchor="middle">0</text>
+    <text x="350" y="92" text-anchor="middle">1</text>
+    <text x="440" y="92" text-anchor="middle">1</text>
+    <text x="530" y="92" text-anchor="middle">1</text>
+    <text x="620" y="92" text-anchor="middle">0</text>
+    <text x="710" y="92" text-anchor="middle">1</text>
+    <text x="800" y="92" text-anchor="middle">1</text>
+  </g>
+
+  <!-- State bubbles row -->
+  <!-- S0 -->
+  <g>
+    <circle cx="80" cy="160" r="28" fill="#F5F5F5" stroke="#666" stroke-width="2"/>
+    <text x="80" y="165" text-anchor="middle" class="stateTxt" fill="#555">S0</text>
+  </g>
+  <!-- t=1: S1 (on input 1) -->
+  <g>
+    <circle cx="170" cy="160" r="28" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+    <text x="170" y="165" text-anchor="middle" class="stateTxt" fill="#B8860B">S1</text>
+  </g>
+  <!-- t=2: S10 -->
+  <g>
+    <circle cx="260" cy="160" r="28" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+    <text x="260" y="165" text-anchor="middle" class="stateTxt" fill="#B8860B">S10</text>
+  </g>
+  <!-- t=3: S101 -->
+  <g>
+    <circle cx="350" cy="160" r="28" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+    <text x="350" y="165" text-anchor="middle" class="stateTxt" fill="#B8860B">S101</text>
+  </g>
+  <!-- t=4: SMATCH (MATCH) -->
+  <g>
+    <circle cx="440" cy="160" r="30" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <circle cx="440" cy="160" r="23" fill="none" stroke="#2E7D32" stroke-width="1"/>
+    <text x="440" y="165" text-anchor="middle" class="stateTxt" fill="#2E7D32">SMATCH</text>
+  </g>
+  <!-- t=5: S1 (overlap!) -->
+  <g>
+    <circle cx="530" cy="160" r="28" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+    <text x="530" y="165" text-anchor="middle" class="stateTxt" fill="#B8860B">S1</text>
+  </g>
+  <!-- t=6: S10 -->
+  <g>
+    <circle cx="620" cy="160" r="28" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+    <text x="620" y="165" text-anchor="middle" class="stateTxt" fill="#B8860B">S10</text>
+  </g>
+  <!-- t=7: S101 -->
+  <g>
+    <circle cx="710" cy="160" r="28" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+    <text x="710" y="165" text-anchor="middle" class="stateTxt" fill="#B8860B">S101</text>
+  </g>
+  <!-- t=8: SMATCH (MATCH again) -->
+  <g>
+    <circle cx="800" cy="160" r="30" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+    <circle cx="800" cy="160" r="23" fill="none" stroke="#2E7D32" stroke-width="1"/>
+    <text x="800" y="165" text-anchor="middle" class="stateTxt" fill="#2E7D32">SMATCH</text>
+  </g>
+
+  <!-- Transition arrows between bubbles with input label -->
+  <g>
+    <line x1="108" y1="160" x2="142" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#tarr)"/>
+    <line x1="198" y1="160" x2="232" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#tarr)"/>
+    <line x1="288" y1="160" x2="322" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#tarr)"/>
+    <line x1="378" y1="160" x2="410" y2="160" stroke="#2E7D32" stroke-width="2" marker-end="url(#tarr-g)"/>
+    <line x1="470" y1="160" x2="502" y2="160" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#tarr-g)"/>
+    <line x1="558" y1="160" x2="592" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#tarr)"/>
+    <line x1="648" y1="160" x2="682" y2="160" stroke="#555" stroke-width="1.5" marker-end="url(#tarr)"/>
+    <line x1="738" y1="160" x2="770" y2="160" stroke="#2E7D32" stroke-width="2" marker-end="url(#tarr-g)"/>
+  </g>
+
+  <!-- o_detected row -->
+  <text x="30" y="234" class="colHdr">o_detected</text>
+  <g font-family="JetBrains Mono, monospace" font-size="14">
+    <text x="80" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="170" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="260" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="350" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="440" y="234" text-anchor="middle" class="detYes">1 ✓</text>
+    <text x="530" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="620" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="710" y="234" text-anchor="middle" class="detNo">0</text>
+    <text x="800" y="234" text-anchor="middle" class="detYes">1 ✓</text>
+  </g>
+
+  <!-- Overlap annotation -->
+  <rect x="395" y="252" width="200" height="42" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="495" y="270" text-anchor="middle" font-size="10" font-weight="700" fill="#2E7D32">★ Overlap transition</text>
+  <text x="495" y="285" text-anchor="middle" font-size="9" fill="#2E7D32">SMATCH → S1 on '1' (not S0!)</text>
+
+  <!-- Arrow from annotation to SMATCH→S1 transition -->
+  <line x1="495" y1="252" x2="490" y2="190" stroke="#2E7D32" stroke-width="1.2" stroke-dasharray="2,2"/>
+
+  <!-- Match annotations under match states -->
+  <text x="440" y="120" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">↓ MATCH #1</text>
+  <text x="800" y="120" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">↓ MATCH #2</text>
+</svg>

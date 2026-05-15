@@ -75,60 +75,60 @@
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Pattern Detector for &ldquo;1011&rdquo;</h2>
-    <p style="font-size:0.78em;">Detect when the input bit stream contains <code>1011</code>. Assert <code>o_detected</code> for one cycle when the last 4 bits form the pattern. Overlapping patterns allowed.</p>
-    <pre style="font-family:monospace;font-size:0.62em;background:none;border:none;color:#333;">
-  input:   0 1 0 1 1 0 1 1 0 1 1
-  output:  0 0 0 0 1 0 0 1 0 0 1
-                   ↑       ↑     ↑
-                 match   match  match (overlapping)</pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>States (enumerate distinct histories):</strong>
-        <ul style="font-size:0.92em;">
-            <li><code>S0</code>: haven't matched anything yet</li>
-            <li><code>S1</code>: last bit was <code>1</code> (matched first bit of pattern)</li>
-            <li><code>S10</code>: last two bits were <code>10</code></li>
-            <li><code>S101</code>: last three bits were <code>101</code> — one more <code>1</code> completes the pattern</li>
+    <p style="font-size:0.72em; margin-bottom:0.15em;">Assert <code>o_detected</code> for one cycle whenever the last 4 input bits form <code>1011</code>. Overlapping patterns allowed.</p>
+
+    <!-- Step 1: I/O timing as a small inline table -->
+    <div style="background:#FAFAFA; border:1px solid #DDD; border-radius:6px; padding:0.35em; font-size:0.6em; font-family:JetBrains Mono, monospace; margin-top:0.2em;">
+        <div style="display:flex; gap:0.4em; align-items:center;">
+            <span style="font-family:Inter; font-weight:700; color:#333; min-width:80px;">input :</span>
+            <span style="letter-spacing:0.4em; color:#1565C0; font-weight:700;">0 1 0 1 1 0 1 1 0 1 1</span>
+        </div>
+        <div style="display:flex; gap:0.4em; align-items:center; margin-top:0.15em;">
+            <span style="font-family:Inter; font-weight:700; color:#333; min-width:80px;">o_det :</span>
+            <span style="letter-spacing:0.4em; color:#555;">0 0 0 0 <span style="color:#2E7D32; font-weight:700;">1</span> 0 0 <span style="color:#2E7D32; font-weight:700;">1</span> 0 0 <span style="color:#2E7D32; font-weight:700;">1</span></span>
+        </div>
+        <p style="font-family:Inter; font-size:0.9em; color:#777; margin:0.25em 0 0;">↑ three matches; the last two are overlapping with the previous.</p>
+    </div>
+
+    <!-- Step 2: enumerate states (progressive disclosure) -->
+    <div class="fragment callout" style="font-size:0.68em; margin-top:0.3em;">
+        <strong>Step 1 — enumerate distinct histories (one per "what have we matched so far?"):</strong>
+        <ul style="font-size:0.95em; margin:0.15em 0;">
+            <li><code>S0</code>: nothing matched yet</li>
+            <li><code>S1</code>: last bit was <code>1</code> (matched <strong>1</strong>•••)</li>
+            <li><code>S10</code>: last two bits were <code>10</code> (matched <strong>10</strong>••)</li>
+            <li><code>S101</code>: last three bits were <code>101</code> (matched <strong>101</strong>•)</li>
+            <li><code>SMATCH</code>: just saw the final <code>1</code> of <code>1011</code> — <strong>this is where <code>o_detected = 1</code></strong></li>
         </ul>
     </div>
-    <aside class="notes">Walk through: each state represents &ldquo;what have we matched so far?&rdquo; S0 = nothing. S1 = first char. S10 = first two. S101 = first three. From S101, getting &lsquo;1&rsquo; is a match, &lsquo;0&rsquo; returns to... well, let's see.</aside>
+    <aside class="notes">Each state represents "what have we matched so far?" Five states for a 4-bit pattern in Moore form: one per prefix length 0..4. The match state is where the Moore output asserts.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> State Diagram (Completed)</h2>
-    <pre style="font-family:monospace;font-size:0.62em;background:none;border:none;color:#333;">
-         ┌─── 0 ───┐
-         ↓         │
-    ┌─ S0 ────── 1 ──→ S1
-    │    ↑              │
-    │    │              │
-    0    0              0
-    │    │              ↓
-    │    └────────── S10
-    │                   │
-    │                   1
-    │                   ↓
-    └── 0 ──── S101 ──1──→ S101 (with o_detected=1)
-                                 (and can immediately match
-                                  again in overlapping case)
-    </pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Key insight:</strong> From S101, a <code>1</code> completes the pattern AND we're now seeing <code>...11</code>, which could be the start of the next overlapping match. So from S101 + input=1, we go to <strong>S1</strong> (not S0), because we just saw <code>1</code>. This is what makes pattern detectors subtle.
+    <div style="margin-top:0.1em;">
+        <img src="diagrams/d07_pattern_detector_states.svg"
+             alt="Pattern detector state diagram: S0, S1, S10, S101, S1011 with all transitions including fail paths and overlap handling"
+             style="width:96%; max-width:880px; display:block; margin:0 auto;">
     </div>
-    <aside class="notes">The overlapping case is where pattern detectors break. From S101 + '1', you've matched — but you've also started the next potential match with the '1' you just saw. Go to S1, not S0. This nuance is why we draw the diagram before coding.</aside>
+    <div class="fragment callout" style="font-size:0.66em; margin-top:0.15em;">
+        <strong>Key insight (the overlap trick):</strong> From <code>SMATCH</code> on a <code>1</code>, we don't go back to <code>S0</code> — we go to <code>S1</code>. Why? Because the <code>1</code> we just consumed could be the start of the next match. From <code>SMATCH</code> on a <code>0</code>, the last two bits are <code>10</code>, which is a prefix of <code>1011</code> — go to <code>S10</code>. <strong>Always keep the longest suffix that's still a valid prefix.</strong>
+    </div>
+    <aside class="notes">After the match state, transitions must preserve any usable suffix of the input. From SMATCH on '1', suffix "1" is a prefix → S1. On '0', suffix "10" is a prefix → S10. Returning to S0 on every match is the canonical beginner bug.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Walk the FSM</h2>
-    <p style="font-size:0.78em;">Input stream: <code>1 0 1 1 1 0 1 1</code>. What's the state trajectory and where does <code>o_detected</code> pulse?</p>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <strong>Trace (start in S0):</strong>
-        <pre style="font-size:0.85em;"><code>Input:  1    0    1    1    1    0    1    1
-State: S0 → S1 → S10→ S101→  ✓   → S10→ S101→  ✓
-                            S1                  S1
-                            (overlapping match!)
-o_det:  0    0    0    0    1    0    0    1</code></pre>
+    <p style="font-size:0.72em; margin-bottom:0.15em;">Input stream <code>1 0 1 1 1 0 1 1</code>. Trace the state and <code>o_detected</code> per cycle.</p>
+    <div style="margin-top:0.15em;">
+        <img src="diagrams/d07_pattern_detector_trace.svg"
+             alt="Walk-through trace of input 10111011 showing S0→S1→S10→S101→S1011 (match), then S1→S10→S101→S1011 (second match via overlap)"
+             style="width:100%; max-width:920px; display:block; margin:0 auto;">
     </div>
-    <aside class="notes">Two matches in this short input, including one overlap. It's easy to get this wrong on the second pass — forgetting the S101 → S1 overlap transition. Walking with a pencil catches it.</aside>
+    <div class="fragment callout" style="font-size:0.62em; margin-top:0.1em;">
+        <strong>Read the trace:</strong> two matches in 8 cycles, including the overlap. The dashed green edge at <code>t=4→t=5</code> is the <code>SMATCH → S1</code> transition that makes back-to-back matches possible. Forgetting this edge is the classic bug — your second match would never fire.
+    </div>
+    <aside class="notes">Show the trace, then pause. Ask: "where does the second match come from?" Answer: the overlap edge. This is the single most important transition in the diagram — and the one beginners forget.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">
@@ -169,10 +169,13 @@ PASS: overlap: detects second '1011'
     <ul style="font-size:0.78em;">
         <li class="fragment">☐ State diagram drawn on paper before opening the editor</li>
         <li class="fragment">☐ Hand-walk at least 2 test cases, including edge cases</li>
-        <li class="fragment">☐ 3 separate <code>always</code> blocks (state reg, next-state, output)</li>
-        <li class="fragment">☐ Block 1 is trivial (just DFF with reset)</li>
-        <li class="fragment">☐ Block 2: default assignment first (<code>r_next = r_state;</code>), <code>default:</code> case at end</li>
-        <li class="fragment">☐ Block 3: default output assignments for <em>every</em> output, <code>default:</code> case at end</li>
+        <li class="fragment">☐ 3 separate <code>always</code> blocks (state reg, next-state, output)
+            <ul style="font-size:0.92em;margin-top:0.15em;">
+                <li class="fragment">☐ <strong>Block 1</strong> is trivial (just DFF with reset)</li>
+                <li class="fragment">☐ <strong>Block 2</strong>: default assignment first (<code>r_next = r_state;</code>), <code>default:</code> case at end</li>
+                <li class="fragment">☐ <strong>Block 3</strong>: default output assignments for <em>every</em> output, <code>default:</code> case at end</li>
+            </ul>
+        </li>
         <li class="fragment">☐ States use <code>localparam</code>, never magic numbers</li>
         <li class="fragment">☐ Nonblocking <code>&lt;=</code> in sequential (Block 1); blocking <code>=</code> in combinational (Blocks 2, 3)</li>
         <li class="fragment">☐ Self-checking testbench covers <em>every transition</em>, including error paths</li>
@@ -226,7 +229,7 @@ PASS: overlap: detects second '1011'
 <section data-background-color="#000000">
     <div style="text-align:center;">
         <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 7</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Modules Within Modules</h2>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Next Topic: Modules Within Modules</h2>
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 8 · Hierarchy, Parameters, Generate</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
