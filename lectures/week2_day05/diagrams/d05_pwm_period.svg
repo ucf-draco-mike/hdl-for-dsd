@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">PWM with a Loadable Period Register</text>
+  <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">Loadable counter sets PWM period; a duty-cycle compare sets the high-time</text>
+
+  <!-- Period register -->
+  <rect x="40" y="80" width="130" height="50" rx="6" fill="#FFF9C4" stroke="#D4A843" stroke-width="2"/>
+  <text x="105" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#7B5E00">Period Register</text>
+  <text x="105" y="118" text-anchor="middle" font-size="10" fill="#333">i_load_val (= N-1)</text>
+
+  <!-- Loadable counter -->
+  <rect x="220" y="160" width="160" height="70" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="300" y="182" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">Loadable Counter</text>
+  <text x="300" y="200" text-anchor="middle" font-size="10" fill="#333">priority: reset &gt; load &gt; +1</text>
+  <text x="300" y="216" text-anchor="middle" font-size="10" fill="#333">o_count → 0..N-1</text>
+
+  <!-- Period reg -> counter load value -->
+  <line x1="170" y1="105" x2="200" y2="105" stroke="#333" stroke-width="1.5"/>
+  <line x1="200" y1="105" x2="200" y2="175" stroke="#333" stroke-width="1.5"/>
+  <line x1="200" y1="175" x2="220" y2="175" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="178" y="160" font-size="9" fill="#666">load_val</text>
+
+  <!-- Duty register -->
+  <rect x="430" y="80" width="130" height="50" rx="6" fill="#FFF9C4" stroke="#D4A843" stroke-width="2"/>
+  <text x="495" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#7B5E00">Duty Register</text>
+  <text x="495" y="118" text-anchor="middle" font-size="10" fill="#333">i_duty (≤ N-1)</text>
+
+  <!-- Compare -->
+  <rect x="430" y="170" width="130" height="50" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="495" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">Compare</text>
+  <text x="495" y="208" text-anchor="middle" font-size="10" fill="#333">o_count &lt; duty ?</text>
+
+  <!-- Wiring -->
+  <line x1="380" y1="195" x2="430" y2="195" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="495" y1="130" x2="495" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- PWM out -->
+  <line x1="560" y1="195" x2="640" y2="195" stroke="#27AE60" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="660" y="198" font-size="11" font-weight="700" fill="#27AE60">o_pwm</text>
+
+  <!-- Mini PWM waveform -->
+  <text x="60" y="265" font-size="10" fill="#27AE60" font-weight="600">o_pwm</text>
+  <line x1="105" y1="280" x2="160" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="160" y1="280" x2="160" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="160" y1="260" x2="225" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="225" y1="260" x2="225" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="225" y1="280" x2="280" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="280" y1="280" x2="280" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="280" y1="260" x2="345" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="345" y1="260" x2="345" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="345" y1="280" x2="400" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="400" y1="280" x2="400" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="400" y1="260" x2="465" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="465" y1="260" x2="465" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="465" y1="280" x2="520" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="520" y1="280" x2="520" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="520" y1="260" x2="585" y2="260" stroke="#27AE60" stroke-width="2"/>
+  <line x1="585" y1="260" x2="585" y2="280" stroke="#27AE60" stroke-width="2"/>
+  <line x1="585" y1="280" x2="680" y2="280" stroke="#27AE60" stroke-width="2"/>
+
+  <text x="160" y="305" font-size="9" fill="#777" font-style="italic">period = N cycles · duty = (high time / N)</text>
+</svg>

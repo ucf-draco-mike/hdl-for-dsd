@@ -90,6 +90,15 @@ endmodule</code></pre>
 </section>
 
 <section>
+    <h2><span style="color:#27AE60;">🔧</span> SIPO — RTL View</h2>
+    <img src="diagrams/d05_sipo_rtl.svg" alt="SIPO RTL block diagram: chain of D flip-flops, each Q feeding next D, parallel taps off every flop, single serial input at bit 0" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>Read the picture:</strong> the concatenation <code>{o_parallel[N-2:0], i_serial_in}</code> is literally <em>wires</em> — flop $k$'s Q drives flop $k{+}1$'s D, and the new serial bit drives flop $0$. No combinational logic, no muxes; just a chain. That's why the synthesizer reports zero LUTs.
+    </div>
+    <aside class="notes">The RTL view makes the &ldquo;shift is just wiring&rdquo; claim concrete. Each line in the chain corresponds to one term in the concatenation.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; PISO (Parallel-In, Serial-Out)</h2>
     <pre class="synth"><code class="language-verilog">module shift_reg_piso #(parameter WIDTH = 8) (
     input  wire              i_clk, i_reset, i_load, i_shift_en,
@@ -111,6 +120,15 @@ endmodule</code></pre>
 </section>
 
 <section>
+    <h2><span style="color:#27AE60;">🔧</span> PISO — RTL View</h2>
+    <img src="diagrams/d05_piso_rtl.svg" alt="PISO RTL block diagram: each bit has a 2:1 mux selecting between parallel-in load value and neighbor's Q, output is LSB of the register" style="width:100%;max-width:800px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>Read the picture:</strong> every flop now has a small <em>2:1 mux</em> at its D input — choosing between the <code>i_parallel_in</code> bit (on load cycles) and the right-neighbor's Q (on shift cycles). The mux is the price of being loadable. Output is just the LSB flop's Q tied directly to <code>o_serial_out</code>.
+    </div>
+    <aside class="notes">The PISO is structurally identical to the SIPO except for a per-bit 2:1 mux. That mux is one LUT per bit; for an 8-bit PISO that's ~8 LUTs added on top of the flops.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Trace the SIPO</h2>
     <p style="font-size:0.78em;">Starting <code>o_parallel = 8'b00000000</code>. Serial input stream: <code>1, 0, 1, 1, 0, 0, 1, 0</code> (one bit per cycle, enable=1 every cycle).</p>
     <p style="font-size:0.78em;">What is <code>o_parallel</code> after 8 cycles?</p>
@@ -123,7 +141,7 @@ endmodule</code></pre>
 
 <section data-background-color="#000000" class="live-demo">
     <div class="demo-label">▶ LIVE DEMO</div>
-    <h2 style="color:#FFC904;">Shift Register in GTKWave</h2>
+    <h2 style="color:#FFC904;">Shift Register Waveform</h2>
     <p style="font-size:0.65em;color:#E8E8E4;margin-top:0.2em;">~4 minutes</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8em;margin-top:0.6em;text-align:left;">
         <div style="background:#111;padding:0.7em;border-radius:6px;border:1px solid #333;">
@@ -144,8 +162,8 @@ PASS: assembled 0xB2</code></pre>
         </div>
     </div>
     <div style="margin-top:0.6em;background:#1a1a1a;padding:0.6em;border-radius:6px;border:1px solid #D4A843;">
-        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ GTKWAVE — THE SIGNATURE SHAPE</p>
-        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Add all 8 bits of <code>o_parallel</code> separately (not as a bus). Watch them &ldquo;walk&rdquo; to the left each clock edge — new bits enter at the right (LSB), old bits climb toward the MSB and fall off. That marching pattern is what a shift register <em>looks like</em>.</p>
+        <p style="color:#D4A843;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WAVEFORM — THE SIGNATURE SHAPE</p>
+        <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">In your waveform viewer (GTKWave, Surfer, ModelSim — pick your tool), add all 8 bits of <code>o_parallel</code> separately (not as a bus). Watch them &ldquo;walk&rdquo; to the left each clock edge — new bits enter at the right (LSB), old bits climb toward the MSB and fall off. That marching pattern is what a shift register <em>looks like</em>.</p>
     </div>
     <aside class="notes">[GTKWave] Expand the 8-bit bus into individual bits. Watch them march. This is what a shift register looks like — and once you see it, you'll never forget it. Highly visual pattern.</aside>
 </section>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Quick Primer — What Is a State Machine?</text>
+  <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">States = circles. Transitions = arrows labeled by input conditions.</text>
+
+  <!-- State A -->
+  <circle cx="200" cy="170" r="55" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="200" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">STATE_A</text>
+  <text x="200" y="185" text-anchor="middle" font-size="10" fill="#555">output = 0</text>
+
+  <!-- State B -->
+  <circle cx="500" cy="170" r="55" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.5"/>
+  <text x="500" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#2E7D32">STATE_B</text>
+  <text x="500" y="185" text-anchor="middle" font-size="10" fill="#555">output = 1</text>
+
+  <!-- A -> B -->
+  <path d="M 255,155 Q 350,110 445,155" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="350" y="115" text-anchor="middle" font-size="10" fill="#333" font-weight="600">condition_X = 1</text>
+
+  <!-- B -> A -->
+  <path d="M 445,190 Q 350,235 255,190" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="350" y="248" text-anchor="middle" font-size="10" fill="#333" font-weight="600">condition_Y = 1</text>
+
+  <!-- Self loop A -->
+  <path d="M 155,140 Q 110,90 165,130" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="105" y="100" font-size="9" fill="#888">else</text>
+
+  <!-- Self loop B -->
+  <path d="M 545,140 Q 605,90 545,128" fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="3,2" marker-end="url(#arr)"/>
+  <text x="610" y="100" font-size="9" fill="#888">else</text>
+
+  <!-- Reset arrow -->
+  <line x1="200" y1="80" x2="200" y2="113" stroke="#C62828" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="200" y="72" text-anchor="middle" font-size="10" fill="#C62828" font-weight="600">RESET</text>
+
+  <!-- Caption: Verilog idiom -->
+  <rect x="80" y="265" width="600" height="42" rx="6" fill="#FFF9C4" stroke="#D4A843" stroke-width="1.5"/>
+  <text x="380" y="282" text-anchor="middle" font-size="11" fill="#333">An FSM in Verilog ≈ a <tspan font-weight="700">register holding the current state</tspan> + an always block</text>
+  <text x="380" y="298" text-anchor="middle" font-size="11" fill="#333">that <tspan font-weight="700">decides the next state</tspan> from inputs. We'll cover the formal pattern in Topic 7.</text>
+</svg>

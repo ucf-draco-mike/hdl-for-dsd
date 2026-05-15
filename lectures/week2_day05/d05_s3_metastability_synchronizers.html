@@ -59,16 +59,9 @@
 </section>
 
 <section>
-    <h2>The Setup/Hold Window</h2>
-    <pre style="font-family:monospace;font-size:0.58em;text-align:center;background:none;border:none;box-shadow:none;color:#333;">
-           setup         hold
-            ←──►         ←──►
-  clk  ─────────┐       ┌─────────
-                └───────┘
-  D    ─────────∎─(must be stable in windows)─∎─────
-                ∎ METASTABLE ZONE if D changes here
-    </pre>
-    <p style="font-size:0.75em;">If <code>D</code> changes <strong>during</strong> the setup/hold window, the flop's output becomes <strong>metastable</strong> — stuck between 0 and 1 — until it resolves (probabilistically).</p>
+    <h2>The Setup / Hold Window</h2>
+    <img src="diagrams/d05_setup_hold.svg" alt="Setup and hold window relative to a rising clock edge: D must be stable for t_setup before and t_hold after; transitions inside the window cause metastability" style="width:100%;max-width:780px;display:block;margin:0.1em auto;">
+    <p style="font-size:0.72em;margin-top:0.2em;">If <code>D</code> changes <strong>during</strong> the setup/hold window, the flop's output becomes <strong>metastable</strong> — stuck between 0 and 1 — until it resolves (probabilistically).</p>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>iCE40 specs:</strong> t<sub>setup</sub> ≈ 0.4 ns, t<sub>hold</sub> ≈ 0.3 ns. Miss that 0.7 ns window on a 25 MHz asynchronous input: you'll hit it eventually.
     </div>
@@ -93,6 +86,15 @@ endmodule</code></pre>
         <strong>My thinking:</strong> The first flop may go metastable — but metastability <em>resolves</em> exponentially (probabilistic decay). Given a full clock period (~40 ns on iCE40) to settle, the probability it's still metastable at the <em>second</em> flop's capture edge is astronomically small. At 25 MHz with iCE40's τ, MTBF is measured in <strong>centuries</strong>.
     </div>
     <aside class="notes">This is THE pattern. Two flops. The first one absorbs metastability; the second one gets a clean stable input. MTBF formula: exp(T_resolve / tau) × F_clock × F_async. For iCE40 at 25 MHz with T = 40 ns, MTBF is ~10^18 years. Safe enough.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#27AE60;">🔧</span> 2-FF Synchronizer — RTL View</h2>
+    <img src="diagrams/d05_synchronizer_rtl.svg" alt="Two-flop synchronizer RTL diagram: async input feeds first flop which may go metastable, then drives a second flop that resolves cleanly" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>Why two flops, not one?</strong> Metastability decays exponentially: $P(\text{still meta after } t) \propto e^{-t/\tau}$. One flop gives metastability zero recovery time before its Q is consumed. A second flop hands it a full clock period — and on iCE40 ($\tau \approx 200$ ps, $T_{clk} = 40$ ns), that's $\sim e^{-200}$, i.e. astronomically improbable.
+    </div>
+    <aside class="notes">RTL view of the same two-flop pattern. First flop is the &ldquo;sacrifice&rdquo; flop — it absorbs the metastability hit. Second flop sees a value that has had a full clock period to settle.</aside>
 </section>
 
 <section>
@@ -163,6 +165,36 @@ PASS: glitches on async do
         <p style="color:#E8E8E4;font-size:0.66em;margin:0;text-align:left;">Signals: <code>i_async_in · r_meta · r_sync</code>. Note: <code>r_meta</code> <em>may</em> glitch in simulation (if the TB drives pulses shorter than the clock period); <code>r_sync</code> is always clean. Latency is 2 clock cycles. That's the cost of safety.</p>
     </div>
     <aside class="notes">The testbench intentionally drives narrow pulses to show the first flop capturing mid-transition. The second flop always presents a clean value. 2 cycles of latency is the universal cost.</aside>
+</section>
+
+<!-- HOW TO EMULATE METASTABILITY -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#C0392B;">🧪</span> Can We Emulate Metastability?</h2>
+    <p style="font-size:0.74em;">Standard Verilog simulators model flops as ideal — they snap to 0 or 1 every edge. So <em>real</em> metastability can't be observed in a vanilla testbench. But we can <strong>emulate the consequences</strong> in several useful ways:</p>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel" style="background:#FFF;border:2px solid #1565C0;">
+            <h3 style="color:#1565C0;font-size:0.9em;">① Race the clock (TB)</h3>
+            <p style="font-size:0.7em;">Drive the async input with edges placed at deliberately bad offsets — e.g., 1&nbsp;ps before/after the rising clock. With non-zero <code>#delay</code> on the assignment, many simulators will issue a <strong>timing violation</strong> warning and the unsynchronized flop captures the <em>old</em> value while the synchronizer's downstream flop sees something consistent. Useful for visualizing latency, not the metastable analog state itself.</p>
+        </div>
+        <div class="col panel" style="background:#FFF;border:2px solid #E65100;">
+            <h3 style="color:#E65100;font-size:0.9em;">② Inject randomness (TB)</h3>
+            <p style="font-size:0.7em;">When a setup/hold violation is detected, force the flop's Q to <code>$urandom % 2</code> for one cycle. This emulates the &ldquo;flop resolves to either value, randomly.&rdquo; Run the testbench 10,000× and watch downstream FSMs misbehave <em>without</em> a synchronizer — and behave correctly <em>with</em> one.</p>
+        </div>
+    </div>
+    <div class="two-col" style="margin-top:0.3em;">
+        <div class="col panel" style="background:#FFF;border:2px solid #2E7D32;">
+            <h3 style="color:#2E7D32;font-size:0.9em;">③ Use 'X' propagation</h3>
+            <p style="font-size:0.7em;">Drive the async input as <code>1'bx</code> for one cycle around the violation point. The first flop captures X; if the design doesn't synchronize, X propagates through downstream logic and lights up the waveform. SystemVerilog's <code>$asserton</code> and assertion-based verification (Topic 9) make this systematic.</p>
+        </div>
+        <div class="col panel" style="background:#FFF;border:2px solid #8E6BBF;">
+            <h3 style="color:#8E6BBF;font-size:0.9em;">④ Gate-level + SDF</h3>
+            <p style="font-size:0.7em;">Post-synthesis simulation with SDF (Standard Delay Format) back-annotation and <code>specify</code> blocks <em>does</em> model setup/hold checks. Violations produce <code>X</code> on the flop output until the next stable edge. This is the closest free simulators get to real silicon behavior — the industry-standard pre-tapeout signoff flow.</p>
+        </div>
+    </div>
+    <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.4em;">
+        <strong>Bottom line:</strong> RTL simulation will not surprise you with metastability — that's why missing synchronizers ship to silicon. The fix is process (always synchronize external inputs), not testbench cleverness.
+    </div>
+    <aside class="notes">Four techniques. (1) Race the clock — bad-offset stimuli. (2) Random injection — emulates the &ldquo;coin-flip&rdquo; resolution. (3) X-propagation — exposes downstream consumers that don't synchronize. (4) Gate-level with SDF — the real industry approach, models actual setup/hold checks. The key point: you can't catch metastability with default RTL sim alone; the engineering discipline is &ldquo;always synchronize external inputs&rdquo; — process, not testbench tricks.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">

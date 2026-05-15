@@ -9,6 +9,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" defer></script>
 </head>
 <body>
 <div class="reveal"><div class="slides">
@@ -56,9 +60,40 @@
         </div>
     </div>
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
-        <strong>The receipt:</strong> Verilog <code>%</code> does not synthesize efficiently for non-power-of-2 moduli. You always write the comparator + conditional reset pattern explicitly. The synthesizer builds exactly what you wrote.
+        <strong>The problem with <code>%</code>:</strong> Verilog <code>%</code> by a non-power-of-2 synthesizes to a <strong>divider</strong> — a multi-cycle, multi-LUT, multi-carry-chain monster. On iCE40, <code>count % 10</code> can cost 30–60 LUTs and miss timing at moderate clock rates. An explicit comparator + conditional reset costs ~4 LUTs and meets timing easily. You always write the comparator pattern; never the <code>%</code>.
     </div>
-    <aside class="notes">Key reframe. Anyone who learned modular arithmetic in software expects <code>%</code> to work. In hardware, <code>%</code> by a non-power-of-2 synthesizes to a divider — expensive. Write the comparator explicitly.</aside>
+    <aside class="notes">Key reframe. Anyone who learned modular arithmetic in software expects <code>%</code> to work. In hardware, <code>%</code> by a non-power-of-2 synthesizes to a divider — expensive, slow, and often won't meet timing. Write the comparator explicitly. Reserve <code>%</code> only for compile-time constant power-of-2 moduli where it reduces to bit-masking.</aside>
+</section>
+
+<!-- DEFINITION: Module-N Counter -->
+<section>
+    <h2><span style="color:#2E86AB;">📘</span> Modulo-N Counter — Definition</h2>
+    <div class="two-col" style="margin-top:0.4em;">
+        <div class="col">
+            <p style="font-size:0.78em;">A <strong>modulo-N counter</strong> is a counter that takes values from $\{0, 1, 2, \ldots, N-1\}$ and wraps back to $0$ on the cycle after reaching $N-1$. It cycles forever through exactly $N$ distinct states.</p>
+            <p style="font-size:0.74em;margin-top:0.3em;"><strong>Required width:</strong> to represent $N$ distinct values we need
+            $$W \;=\; \lceil \log_2 N \rceil \;=\; \texttt{\$clog2}(N)$$
+            bits. The SystemVerilog primitive <code>$clog2(N)</code> computes the ceiling of the base-2 log at elaboration time — no off-by-one bugs.</p>
+            <p style="font-size:0.72em;margin-top:0.3em;"><strong>Examples:</strong> $N{=}10 \Rightarrow W{=}4$ (since $2^4{=}16 \ge 10$); $N{=}1000 \Rightarrow W{=}10$; $N{=}500{,}000 \Rightarrow W{=}19$.</p>
+        </div>
+        <div class="col">
+            <img src="diagrams/d05_modn_counter_overview.svg" alt="Modulo-N counter behavior overview" style="width:100%;border-radius:6px;">
+        </div>
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Three signals you almost always want:</strong> the count value <code>o_count</code>, a 1-cycle <code>o_wrap</code> pulse at the rollover, and (optionally) an enable input <code>i_enable</code> so the counter can be paused.
+    </div>
+    <aside class="notes">Definition slide. Modulo-N = a counter modulo N — cycles through N distinct values then wraps. Width is the ceiling of log2(N). $clog2 is the SystemVerilog primitive that computes this. The wrap pulse is the most useful output for cascading.</aside>
+</section>
+
+<!-- RTL diagram overview -->
+<section>
+    <h2><span style="color:#2E86AB;">🔧</span> Modulo-N Counter — RTL View</h2>
+    <img src="diagrams/d05_modn_counter_rtl.svg" alt="Modulo-N counter RTL block diagram with adder, register, and equality comparator" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Three pieces of hardware:</strong> (1) a $W$-bit register holding the state, (2) an increment-by-one adder feeding back into the register, (3) an equality comparator that detects <code>o_count == N-1</code> and forces the next state to $0$. Everything else — enable, reset — is just steering logic on the register's D input.
+    </div>
+    <aside class="notes">RTL view. Three pieces: register, +1 adder, comparator. The comparator is the &ldquo;modulo&rdquo; part. Without it you'd have a free-running 2^W counter; with it you wrap at any arbitrary N.</aside>
 </section>
 
 <!-- I Do: modulo-N -->
@@ -77,7 +112,9 @@
     assign o_wrap = i_enable &amp;&amp; (o_count == N-1);                    // pulse at rollover
 endmodule</code></pre>
     <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> <code>$clog2(N)</code> auto-sizes the width — no off-by-one errors. The <code>o_wrap</code> pulse goes high for exactly one cycle per cycle-of-N; perfect for cascading counters or triggering periodic events.
+        <strong>My thinking:</strong> the port width comes straight from the math definition,
+        $$W \;=\; \lceil \log_2 N \rceil \;=\; \texttt{\$clog2}(N),$$
+        which is the smallest $W$ satisfying $2^W \ge N$. Using <code>$clog2(N)</code> lets the elaborator size the bus — no hand-counted bit widths, no off-by-one errors when $N$ changes. The <code>o_wrap</code> pulse goes high for exactly one cycle per cycle-of-$N$; perfect for cascading counters or triggering periodic events.
     </div>
     <aside class="notes">Modulo-N wraps at any N, not just powers of 2. Clog2 auto-sizes the width. The wrap pulse is often more useful than the count value itself — great for driving the enable of a downstream block.</aside>
 </section>
@@ -115,6 +152,17 @@ end</code></pre>
         <strong>Priority:</strong> reset &gt; load &gt; count. This is the preload pattern used in timers and PWM period registers.
     </div>
     <aside class="notes">60-second exercise. The priority chain is: reset highest, then load, then increment. It's tempting to swap reset and load — physical meaning matters, put reset first.</aside>
+</section>
+
+<!-- PWM period register visual (callback to repeated mention) -->
+<section>
+    <h2><span style="color:#27AE60;">🎛️</span> Where Loadable Counters Live — A PWM Period Register</h2>
+    <p style="font-size:0.72em;">We've name-dropped &ldquo;PWM period register&rdquo; in a few decks now. Here's what one actually looks like — and why the loadable counter you just wrote <em>is</em> the period register.</p>
+    <img src="diagrams/d05_pwm_period.svg" alt="PWM block diagram: loadable counter as the period register, duty register, comparator producing PWM output, with sample PWM waveform" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>How it fits:</strong> the <code>i_load_val</code> port of your loadable counter <em>is</em> the period register; it sets $N$. A separate duty register and comparator then split each period into a high-time and low-time. Change the period register → frequency changes. Change the duty register → brightness/speed changes.
+    </div>
+    <aside class="notes">The promised visual. Loadable counters underpin every PWM peripheral: load the period value, count up to it, compare against a duty register, drive the output. This is exactly Topic 10's PWM lab structure.</aside>
 </section>
 
 <!-- LIVE DEMO -->
