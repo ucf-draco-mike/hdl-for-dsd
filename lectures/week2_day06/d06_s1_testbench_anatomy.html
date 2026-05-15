@@ -59,6 +59,24 @@
 </section>
 
 <section>
+    <h2><span style="color:#1565C0;">🧬</span> How the Testbench Wraps the DUT</h2>
+    <img src="diagrams/d06_tb_wraps_dut.svg" alt="Testbench wraps DUT" style="width:88%;max-height:62vh;display:block;margin:0.3em auto 0;">
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.4em;">
+        <strong>Three boundaries, one module:</strong> stimulus on the left <em>drives</em> the DUT's inputs (so those signals are <code>reg</code> in the tb); the checker on the right <em>reads</em> the DUT's outputs (those are <code>wire</code>). The whole assembly is a single Verilog module — <code>tb_my_design</code> — sitting at the top of the simulation hierarchy with nothing above it.
+    </div>
+    <aside class="notes">Walk the diagram: stimulus drives in, DUT computes, checker reads out, dump records everything for GTKWave. The dashed outer box is the testbench module — no ports because nothing outside sim ever connects to it. Everything you'll write today fits inside that box.</aside>
+</section>
+
+<section data-background-color="#FFF5F5">
+    <h2><span style="color:#C0392B;">🪞</span> The Biggest Issue: Designer = Verifier</h2>
+    <img src="diagrams/d06_designer_verifier_blindspot.svg" alt="Designer-verifier blindspot" style="width:80%;max-height:50vh;display:block;margin:0.2em auto 0;">
+    <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Logic flaws are the same on both sides.</strong> If you misread the spec when writing the RTL, you will <em>almost always</em> misread it the same way when writing the testbench. Your &ldquo;PASS&rdquo; report just confirms that your bug is internally consistent. Industry's 2:1 verifier:designer ratio is not bureaucracy — it's because <strong>independent eyes</strong> are the only reliable cure.
+    </div>
+    <aside class="notes">This is the single most important meta-lesson of the week. Beginners think &ldquo;I'll write the design AND the testbench&rdquo; is efficient. It is — for syntax bugs and typos. It is catastrophically bad for logic and spec bugs, because the same brain made both. Real teams use independent verifiers, golden reference models in different languages (we'll do this in s4 with Python), and pair-review of the spec itself. When you must be both, mitigate by: (a) writing the testbench from the spec, not from your RTL, (b) generating expected values in a different language, (c) having a peer read the spec and your tb side-by-side.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Testbench Template</h2>
     <pre class="synth" style="font-size:0.58em;"><code class="language-verilog">`timescale 1ns/1ps         // simulation resolution
 module tb_adder;            // no ports — top of sim hierarchy
@@ -189,6 +207,7 @@ ERROR: Module `\tb_adder' is not synthesizable.
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">②</span>&ensp;Five parts: decls, DUT instance, clock, dumpfile, stimulus.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">③</span>&ensp;DUT inputs → <code>reg</code> in tb. DUT outputs → <code>wire</code> in tb.</p>
         <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">④</span>&ensp;Testbenches don't synthesize — that's the whole point.</p>
+        <p class="fragment" style="font-size:0.85em;"><span style="color:var(--ucf-gold);font-size:1.3em;font-weight:700;">⑤</span>&ensp;Same person writing RTL and testbench = same logic flaw on both sides.</p>
     </div>
     <div class="fragment golden-rule" style="margin-top:0.8em;font-size:0.95em;">Verification is bigger than design. Today you start becoming that engineer.</div>
 </section>
