@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Counter-Based Debouncer — RTL Block Diagram</text>
+  <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">Counter measures how long i_noisy has differed from o_clean. Accept only after CLKS_STABLE.</text>
+
+  <!-- Noisy input -->
+  <text x="55" y="123" text-anchor="end" font-size="11" fill="#333" font-weight="600">i_noisy</text>
+  <line x1="60" y1="120" x2="170" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- XOR compare (differ?) -->
+  <rect x="170" y="95" width="100" height="50" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="220" y="115" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">≠ Compare</text>
+  <text x="220" y="132" text-anchor="middle" font-size="10" fill="#333">i_noisy ≠ o_clean</text>
+
+  <!-- o_clean feedback to compare -->
+  <line x1="640" y1="240" x2="640" y2="290" stroke="#666" stroke-width="1.2" stroke-dasharray="3,3"/>
+  <line x1="640" y1="290" x2="220" y2="290" stroke="#666" stroke-width="1.2" stroke-dasharray="3,3"/>
+  <line x1="220" y1="290" x2="220" y2="145" stroke="#666" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arr)"/>
+  <text x="380" y="305" font-size="9" fill="#666" font-style="italic">feedback: o_clean</text>
+
+  <!-- Counter (with enable + sync reset) -->
+  <rect x="310" y="170" width="160" height="80" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="390" y="195" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">Counter</text>
+  <text x="390" y="213" text-anchor="middle" font-size="10" fill="#333">$clog2(CLKS_STABLE) bits</text>
+  <text x="390" y="230" text-anchor="middle" font-size="10" fill="#333">enable: differ</text>
+  <text x="390" y="245" text-anchor="middle" font-size="10" fill="#333">sync_reset: same</text>
+
+  <!-- Compare out splits to counter enable and to reset (inverted) -->
+  <line x1="270" y1="120" x2="295" y2="120" stroke="#333" stroke-width="1.5"/>
+  <line x1="295" y1="120" x2="295" y2="195" stroke="#333" stroke-width="1.5"/>
+  <line x1="295" y1="195" x2="310" y2="195" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="278" y="180" font-size="9" fill="#666">en</text>
+
+  <!-- Terminal count comparator -->
+  <rect x="510" y="170" width="130" height="50" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="575" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">Compare</text>
+  <text x="575" y="208" text-anchor="middle" font-size="10" fill="#333">count == MAX</text>
+  <line x1="470" y1="195" x2="510" y2="195" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- o_clean register: when terminal count, capture i_noisy -->
+  <rect x="510" y="100" width="130" height="50" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="575" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32">o_clean Register</text>
+  <text x="575" y="138" text-anchor="middle" font-size="10" fill="#333">load i_noisy on accept</text>
+
+  <!-- terminal count -> o_clean register enable -->
+  <line x1="575" y1="170" x2="575" y2="150" stroke="#E65100" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="585" y="165" font-size="9" fill="#E65100">accept</text>
+
+  <!-- i_noisy bypass into o_clean register -->
+  <line x1="160" y1="120" x2="160" y2="60" stroke="#333" stroke-width="1.2"/>
+  <line x1="160" y1="60" x2="575" y2="60" stroke="#333" stroke-width="1.2"/>
+  <line x1="575" y1="60" x2="575" y2="100" stroke="#333" stroke-width="1.2" marker-end="url(#arr)"/>
+  <text x="350" y="55" font-size="9" fill="#666" font-style="italic">D input on accept cycle</text>
+
+  <!-- Output -->
+  <line x1="640" y1="125" x2="700" y2="125" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="710" y="128" font-size="11" font-weight="700" fill="#2E7D32">o_clean</text>
+</svg>

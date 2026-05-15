@@ -19,7 +19,7 @@
     <p class="course-info" style="color:#888;">Dr. Mike Borowczak · Electrical &amp; Computer Engineering · CECS · UCF</p>
     <div class="seg-breadcrumb"><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot"></div><div class="seg-dot active"></div></div>
     <div class="seg-breadcrumb-labels"><span class="seg-label">Counter Variations</span><span class="seg-label">Shift Registers</span><span class="seg-label">Metastability</span><span class="seg-label active">Debouncing</span></div>
-    <aside class="notes">Video 4 of 4 for Topic 5. The capstone: combining yesterday's synchronizer with a debounce counter to produce the universal input-processing pipeline.</aside>
+    <aside class="notes">Video 4 of 4 for Topic 5. The capstone: combining the previous topic's synchronizer with a debounce counter to produce the universal input-processing pipeline.</aside>
 </section>
 
 <section>
@@ -87,6 +87,33 @@ endmodule</code></pre>
 </section>
 
 <section>
+    <h2><span style="color:#27AE60;">🔧</span> Debouncer — RTL View</h2>
+    <img src="diagrams/d05_debounce_rtl.svg" alt="Counter-based debouncer RTL: not-equal comparator drives counter enable, terminal-count comparator triggers capture of i_noisy into o_clean register" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>Three blocks:</strong> (1) the <code>≠</code> comparator gates the counter — it only ticks when input differs from stable output, (2) the persistence counter, (3) the terminal-count comparator triggers a one-shot &ldquo;accept&rdquo; that latches <code>i_noisy</code> into <code>o_clean</code>. Bounces force the input to <em>match</em> <code>o_clean</code> again, which resets the counter.
+    </div>
+    <aside class="notes">RTL view of the always block on the previous slide. Two comparators (one for &ldquo;is input different?&rdquo;, one for &ldquo;has it been different long enough?&rdquo;), one counter, one output register.</aside>
+</section>
+
+<!-- FSM PRIMER -->
+<section data-background-color="#FFF8E1">
+    <h2><span style="color:#2E86AB;">📘</span> Quick Primer — What's a State Machine?</h2>
+    <p style="font-size:0.74em;">We haven't formally covered finite state machines yet — Topic 7 does that in depth. But the next slide reads the debouncer <em>as</em> an FSM, so a 60-second primer:</p>
+    <img src="diagrams/d05_fsm_primer.svg" alt="Two-state FSM primer: circles for states, labeled arrows for transitions on input conditions, with a reset arrow and self-loops" style="width:100%;max-width:740px;display:block;margin:0.1em auto;">
+    <div class="two-col" style="margin-top:0.2em;">
+        <div class="col" style="font-size:0.7em;">
+            <p><strong>States</strong> (circles): the modes your design can be in. Each state typically produces a specific output.</p>
+            <p><strong>Transitions</strong> (arrows): labeled by the input condition that triggers a state change on the clock edge. If no labeled condition matches, the FSM stays put (self-loop).</p>
+        </div>
+        <div class="col" style="font-size:0.7em;">
+            <p><strong>Reset</strong>: a special arrow pointing to the start state — where the FSM lives at <code>i_reset = 1</code>.</p>
+            <p><strong>Implementation:</strong> one register holds the state; one combinational block computes the next state from <code>(state, inputs)</code>. That's it. Topic 7 will formalize the coding patterns.</p>
+        </div>
+    </div>
+    <aside class="notes">Bare-minimum primer. States = circles, transitions = arrows labeled with input conditions. Reset arrow points to the start state. Implementation: one register + one combinational block. The full pattern (Moore vs. Mealy, encoding choices, idiomatic two/three-block style) is Topic 7.</aside>
+</section>
+
+<section>
     <h2>Debouncer as a State Machine</h2>
     <div style="margin-top:0.2em;">
         <img src="diagrams/d05_debounce_fsm.svg"
@@ -117,6 +144,15 @@ wire pressed_pulse = w_clean &amp; ~r_clean_d1;  // rising-edge detect</code></p
         <strong>The three-stage pipeline:</strong> (1) synchronizer — metastability safety, (2) debouncer — bounce filter, (3) edge detector — one-cycle pulse. Any external button signal needs all three stages. Build it as a reusable module and instantiate it.
     </div>
     <aside class="notes">Three stages, three different problems, three specific solutions. Sync for metastability. Debounce for bouncing. Edge detect to turn a held-down signal into a single clean pulse. This is a unit — not optional.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#27AE60;">🔧</span> Input Pipeline — RTL View</h2>
+    <img src="diagrams/d05_input_pipeline.svg" alt="Three-stage button input pipeline RTL: synchronizer fixes timing, debouncer filters bounces, edge detector emits one-cycle pulse" style="width:100%;max-width:800px;display:block;margin:0.2em auto;">
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
+        <strong>Read the picture left-to-right:</strong> async/noisy enters, sync flops produce a clean-timed signal, debouncer collapses bounce bursts into stable transitions, edge detector reduces the held-high level into a single 1-cycle event. Three problems, three blocks, in series.
+    </div>
+    <aside class="notes">RTL view of the three-stage pipeline. Each block fixes one and only one problem. Composability is the win — these blocks compose cleanly because each has a single responsibility.</aside>
 </section>
 
 <section>
@@ -224,7 +260,7 @@ With debounce:
 <section data-background-color="#000000">
     <div style="text-align:center;">
         <p style="color:#FFC904;font-size:0.7em;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">🔗 End of Topic 5</p>
-        <h2 style="color:#FFFFFF;font-size:1.6em;">Tomorrow: Testbenches</h2>
+        <h2 style="color:#FFFFFF;font-size:1.6em;">Next Topic: Testbenches</h2>
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Topic 6 · Writing the tests that protect your designs</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>

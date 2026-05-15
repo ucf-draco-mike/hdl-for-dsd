@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arrL" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6 Z" fill="#333"/>
+    </marker>
+    <marker id="arrR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">The Setup / Hold Window</text>
+  <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">D must be stable from t_setup before to t_hold after the rising clock edge</text>
+
+  <!-- Clock waveform -->
+  <text x="60" y="115" text-anchor="end" font-size="12" font-weight="700" fill="#333">clk</text>
+  <line x1="75" y1="135" x2="290" y2="135" stroke="#1565C0" stroke-width="2"/>
+  <line x1="290" y1="135" x2="290" y2="95" stroke="#1565C0" stroke-width="2"/>
+  <line x1="290" y1="95"  x2="430" y2="95" stroke="#1565C0" stroke-width="2"/>
+  <line x1="430" y1="95"  x2="430" y2="135" stroke="#1565C0" stroke-width="2"/>
+  <line x1="430" y1="135" x2="700" y2="135" stroke="#1565C0" stroke-width="2"/>
+
+  <!-- Rising edge marker (highlighted) -->
+  <line x1="290" y1="60" x2="290" y2="270" stroke="#E65100" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="290" y="55" text-anchor="middle" font-size="10" fill="#E65100" font-weight="700">rising edge</text>
+
+  <!-- Setup window -->
+  <rect x="240" y="60" width="50" height="210" fill="#FFE0B2" opacity="0.5"/>
+  <line x1="240" y1="78" x2="290" y2="78" stroke="#333" stroke-width="1.2" marker-start="url(#arrL)" marker-end="url(#arrR)"/>
+  <text x="265" y="73" text-anchor="middle" font-size="11" font-weight="700" fill="#333">t_setup</text>
+
+  <!-- Hold window -->
+  <rect x="290" y="60" width="40" height="210" fill="#FFCCBC" opacity="0.5"/>
+  <line x1="290" y1="78" x2="330" y2="78" stroke="#333" stroke-width="1.2" marker-start="url(#arrL)" marker-end="url(#arrR)"/>
+  <text x="310" y="73" text-anchor="middle" font-size="11" font-weight="700" fill="#333">t_hold</text>
+
+  <!-- D waveform -->
+  <text x="60" y="208" text-anchor="end" font-size="12" font-weight="700" fill="#333">D</text>
+  <!-- Stable LOW before window -->
+  <line x1="75" y1="220" x2="240" y2="220" stroke="#2E7D32" stroke-width="2"/>
+  <!-- Stable during window (highlighted) -->
+  <line x1="240" y1="220" x2="330" y2="220" stroke="#2E7D32" stroke-width="3"/>
+  <!-- Transition after window -->
+  <line x1="330" y1="220" x2="345" y2="180" stroke="#2E7D32" stroke-width="2"/>
+  <line x1="345" y1="180" x2="700" y2="180" stroke="#2E7D32" stroke-width="2"/>
+
+  <!-- Stability indicator markers -->
+  <circle cx="240" cy="220" r="4" fill="#2E7D32"/>
+  <circle cx="330" cy="220" r="4" fill="#2E7D32"/>
+
+  <text x="380" y="245" text-anchor="middle" font-size="10" fill="#2E7D32" font-style="italic">D stable across setup+hold ✓</text>
+
+  <!-- Forbidden zone callout -->
+  <rect x="450" y="290" width="240" height="40" rx="6" fill="#FFEBEE" stroke="#C62828" stroke-width="1.5"/>
+  <text x="570" y="307" text-anchor="middle" font-size="11" font-weight="700" fill="#C62828">⚠ METASTABLE ZONE</text>
+  <text x="570" y="322" text-anchor="middle" font-size="9" fill="#333">if D changes inside the orange window</text>
+
+  <!-- Pointer from forbidden zone to the highlighted window -->
+  <line x1="450" y1="298" x2="335" y2="170" stroke="#C62828" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrR)"/>
+
+  <!-- Legend -->
+  <rect x="60" y="290" width="14" height="14" fill="#FFE0B2"/>
+  <text x="80" y="302" font-size="10" fill="#333">setup window</text>
+  <rect x="180" y="290" width="14" height="14" fill="#FFCCBC"/>
+  <text x="200" y="302" font-size="10" fill="#333">hold window</text>
+</svg>

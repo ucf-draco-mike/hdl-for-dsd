@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 260" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="400" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Complete Button Input Pipeline — RTL</text>
+  <text x="400" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">Three stages, three distinct problems, three specific fixes</text>
+
+  <!-- Input -->
+  <text x="60" y="118" text-anchor="end" font-size="11" fill="#333" font-weight="600">i_btn</text>
+  <text x="60" y="132" text-anchor="end" font-size="9" fill="#C62828" font-style="italic">(async, noisy)</text>
+  <line x1="65" y1="115" x2="135" y2="115" stroke="#C62828" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Stage 1: synchronizer -->
+  <rect x="135" y="80" width="130" height="80" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
+  <text x="200" y="105" text-anchor="middle" font-size="12" font-weight="700" fill="#C62828">Synchronizer</text>
+  <text x="200" y="123" text-anchor="middle" font-size="10" fill="#333">2 flops</text>
+  <text x="200" y="140" text-anchor="middle" font-size="9" fill="#666" font-style="italic">→ metastability</text>
+  <text x="200" y="153" text-anchor="middle" font-size="9" fill="#666" font-style="italic">safety</text>
+
+  <line x1="265" y1="115" x2="305" y2="115" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="285" y="105" text-anchor="middle" font-size="9" fill="#777">w_synced</text>
+
+  <!-- Stage 2: debouncer -->
+  <rect x="305" y="80" width="130" height="80" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="370" y="105" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">Debouncer</text>
+  <text x="370" y="123" text-anchor="middle" font-size="10" fill="#333">counter + cmp</text>
+  <text x="370" y="140" text-anchor="middle" font-size="9" fill="#666" font-style="italic">→ filter</text>
+  <text x="370" y="153" text-anchor="middle" font-size="9" fill="#666" font-style="italic">mechanical bounces</text>
+
+  <line x1="435" y1="115" x2="475" y2="115" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="455" y="105" text-anchor="middle" font-size="9" fill="#777">w_clean</text>
+
+  <!-- Stage 3: edge detect -->
+  <rect x="475" y="80" width="140" height="80" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="545" y="105" text-anchor="middle" font-size="12" font-weight="700" fill="#2E7D32">Edge Detect</text>
+  <text x="545" y="123" text-anchor="middle" font-size="10" fill="#333">1 FF + AND</text>
+  <text x="545" y="140" text-anchor="middle" font-size="9" fill="#666" font-style="italic">→ 1-cycle pulse</text>
+  <text x="545" y="153" text-anchor="middle" font-size="9" fill="#666" font-style="italic">per press</text>
+
+  <line x1="615" y1="115" x2="700" y2="115" stroke="#2E7D32" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="730" y="118" font-size="11" font-weight="700" fill="#2E7D32">pressed_pulse</text>
+  <text x="730" y="132" font-size="9" fill="#999" font-style="italic">(sync, 1-cycle)</text>
+
+  <!-- Annotations under each stage -->
+  <text x="200" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#C62828">Fixes timing</text>
+  <text x="200" y="215" text-anchor="middle" font-size="9" fill="#555">≈ 2 flops</text>
+
+  <text x="370" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#1565C0">Fixes noise</text>
+  <text x="370" y="215" text-anchor="middle" font-size="9" fill="#555">≈ 20 flops + LUTs</text>
+
+  <text x="545" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#2E7D32">Fixes shape</text>
+  <text x="545" y="215" text-anchor="middle" font-size="9" fill="#555">≈ 1 flop + 1 LUT</text>
+
+  <text x="400" y="245" text-anchor="middle" font-size="10" fill="#666" font-style="italic">Build once as a reusable module — instantiate on every button input.</text>
+</svg>
