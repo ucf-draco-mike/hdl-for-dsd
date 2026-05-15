@@ -39,20 +39,18 @@
 
 <section>
     <h2><span style="color:#C0392B;">⚠️</span> Eyeballing Waveforms Does Not Scale</h2>
-    <div class="two-col" style="margin-top:0.5em;">
+    <div class="two-col" style="margin-top:0.3em;">
         <div class="col panel panel-bad">
             <h3 style="color:#C62828;font-size:1em;">❌ Wrong Model</h3>
-            <p style="font-size:0.72em;">&ldquo;I'll run the simulation, open GTKWave, check that the outputs look right. If I add more tests later I'll just re-check by eye.&rdquo;</p>
+            <p style="font-size:0.7em;">&ldquo;I'll run the simulation, open GTKWave, check that the outputs look right. If I add more tests later I'll just re-check by eye.&rdquo;</p>
         </div>
         <div class="col panel panel-good">
             <h3 style="color:#2E7D32;font-size:1em;">✓ Right Model</h3>
-            <p style="font-size:0.72em;">Manual inspection <strong>does not scale, does not regress, and does not communicate</strong>. A self-checking testbench codifies <em>expected</em> behavior, compares it against <em>actual</em> behavior, and emits a structured PASS/FAIL report. When someone hands you a repo and says &ldquo;it works,&rdquo; you run <code>make sim</code> and trust the exit code, not their screenshot.</p>
+            <p style="font-size:0.7em;">Manual inspection <strong>does not scale, does not regress, and does not communicate</strong>. A self-checking testbench codifies expected behavior, compares it against actual behavior, and emits a structured PASS/FAIL report.</p>
         </div>
     </div>
-    <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">
-        <strong>The receipt:</strong> If your testbench doesn't print &ldquo;<code>=== N passed, 0 failed ===</code>&rdquo;, it isn't done. No exceptions.
-    </div>
-    <aside class="notes">The biggest culture shift of the course. It's tempting to look at waveforms. Professional engineers write self-checking tests and only open GTKWave when the test reports a failure — and even then, only to find the root cause.</aside>
+    <img src="diagrams/d06_eyeballing_limits.svg" alt="Limits of eyeballing waveforms" style="width:78%;max-height:42vh;display:block;margin:0.3em auto 0;">
+    <aside class="notes">Walk the diagram: the left waveform is realistic — 4 visible signals, dozens of state transitions — and that's a tiny FSM by industry standards. No human reliably spots a single bit-wrong in this. The right column lists the four classic limits. The bottom strip is the punchline: one summary line replaces all of it. Professional engineers open GTKWave only after a self-check has already fired FAIL — to root-cause, not to verify.</aside>
 </section>
 
 <section>
@@ -86,16 +84,27 @@ end</code></pre>
 </section>
 
 <section>
+    <h2><span style="color:#8E6BBF;">🧠</span> Aside &mdash; Verilog Has Four Logic States</h2>
+    <p style="font-size:0.72em;margin:0 0 0.2em 0;">Before we compare signals, know what a signal can <em>be</em>. Every Verilog bit in simulation is one of four values — not two:</p>
+    <img src="diagrams/d06_four_state_logic.svg" alt="Four logic states: 0, 1, X, Z with RTL and waveform" style="width:90%;max-height:55vh;display:block;margin:0.1em auto 0;">
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.2em;">
+        <strong>Why this matters for verification:</strong> a brand-new flip-flop with no reset comes up as <code>X</code>. The <code>X</code> propagates through every gate it touches until something forces it to a known value. If your testbench compares against <code>X</code> using the wrong operator, the compare itself becomes <code>X</code> — and silently looks like &ldquo;pass.&rdquo; That's why the next slide matters.
+    </div>
+    <aside class="notes">Synthesis only deals with 0 and 1 — real silicon has no &ldquo;X.&rdquo; Simulation has four states because we need to model uncertainty: uninitialized flops, multiple drivers, floating wires. X is the simulator saying &ldquo;I literally don't know what value this bit has.&rdquo; Z is &ldquo;nobody is driving this wire.&rdquo; The waveform on the right is the bread-and-butter case: a flop with no reset port stays X until the first clock edge after its D input has a defined value. Tracing X back to its source is how you find missing resets.</aside>
+</section>
+
+<section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>==</code> vs <code>===</code></h2>
     <pre class="synth" style="font-size:0.72em;"><code class="language-verilog">reg [3:0] signal = 4'b10x1;
 
 if (signal == 4'b1011)  $display("A fires?");  // result: X — if-condition is ambiguous
 if (signal === 4'b1011) $display("B fires?");  // result: 0 — cleanly false, B does not fire
 if (signal === 4'b10x1) $display("C fires?");  // result: 1 — matches including X, C fires</code></pre>
+    <img src="diagrams/d06_eq_vs_ceq_waveform.svg" alt="Waveform showing == vs === when X enters the signal" style="width:80%;max-height:38vh;display:block;margin:0.2em auto 0;">
     <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> <code>==</code> returns <code>X</code> when either operand contains <code>X</code>. In an <code>if</code>, ambiguous results often get treated as false, but the behavior is fragile. <code>===</code> treats <code>X</code> as a literal value and always returns a clean 0 or 1. In testbenches, <strong>always use <code>===</code> and <code>!==</code></strong>.
+        <strong>Together:</strong> <code>==</code> returns <code>X</code> when either operand contains <code>X</code>. In an <code>if</code>, an X result is treated as false — your check is <em>silently skipped</em>. <code>===</code> treats <code>X</code> as a literal value and always returns a clean 0 or 1. In testbenches, <strong>always use <code>===</code> and <code>!==</code></strong>.
     </div>
-    <aside class="notes">The three-equals operators treat X and Z as distinct values rather than &ldquo;unknown.&rdquo; This is exactly what you want in a testbench, where X usually means &ldquo;the DUT is broken&rdquo; and you want that to be a FAIL.</aside>
+    <aside class="notes">Walk the waveform: in the middle region the signal contains an X. == produces X (a silent failure mode in an if). === produces a clean 0 — which is exactly what you want when an X means &ldquo;DUT broken; this is a FAIL.&rdquo; The classic bug is using == in a testbench, then watching an undefined output sail through as &ldquo;pass.&rdquo;</aside>
 </section>
 
 <section>
