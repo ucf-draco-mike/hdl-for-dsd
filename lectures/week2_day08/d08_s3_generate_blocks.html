@@ -110,8 +110,60 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Generate an N-Bit Ripple Adder</h2>
-    <p style="font-size:0.78em;">Write a generate block that builds an N-bit ripple-carry adder out of N full-adder instances. Full adder has inputs <code>a, b, cin</code> and outputs <code>sum, cout</code>.</p>
-    <div class="fragment callout" style="font-size:0.68em;">
+    <p style="font-size:0.72em;">Build an N-bit ripple-carry adder from N full-adder instances. Each <code>full_adder</code> has inputs <code>a, b, cin</code> and outputs <code>sum, cout</code>. The carry chains from bit <em>i</em> to bit <em>i+1</em>.</p>
+    <div style="margin-top:0.3em;text-align:center;">
+        <svg viewBox="0 0 920 180" style="max-width:100%;height:auto;font-family:'JetBrains Mono',monospace;">
+            <!-- carry-in label -->
+            <text x="8" y="98" font-size="12" fill="#C0392B">cin</text>
+            <line x1="30" y1="95" x2="60" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
+            <defs>
+                <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#C0392B"/></marker>
+                <marker id="arrK" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#333"/></marker>
+            </defs>
+
+            <!-- FA[0] -->
+            <rect x="60" y="60" width="110" height="70" rx="6" fill="#FFF" stroke="#2E86AB" stroke-width="2"/>
+            <text x="115" y="88" font-size="13" text-anchor="middle" fill="#2E86AB" font-weight="700">full_adder</text>
+            <text x="115" y="106" font-size="11" text-anchor="middle" fill="#666">u_fa[0]</text>
+            <text x="115" y="122" font-size="10" text-anchor="middle" fill="#888">a[0] b[0]</text>
+            <!-- sum out -->
+            <line x1="115" y1="60" x2="115" y2="35" stroke="#27AE60" stroke-width="2"/>
+            <text x="115" y="28" font-size="11" text-anchor="middle" fill="#27AE60">sum[0]</text>
+            <!-- carry out 0 → cin 1 -->
+            <line x1="170" y1="95" x2="240" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
+            <text x="205" y="88" font-size="10" text-anchor="middle" fill="#C0392B">carry[1]</text>
+
+            <!-- FA[1] -->
+            <rect x="240" y="60" width="110" height="70" rx="6" fill="#FFF" stroke="#2E86AB" stroke-width="2"/>
+            <text x="295" y="88" font-size="13" text-anchor="middle" fill="#2E86AB" font-weight="700">full_adder</text>
+            <text x="295" y="106" font-size="11" text-anchor="middle" fill="#666">u_fa[1]</text>
+            <text x="295" y="122" font-size="10" text-anchor="middle" fill="#888">a[1] b[1]</text>
+            <line x1="295" y1="60" x2="295" y2="35" stroke="#27AE60" stroke-width="2"/>
+            <text x="295" y="28" font-size="11" text-anchor="middle" fill="#27AE60">sum[1]</text>
+            <line x1="350" y1="95" x2="420" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
+            <text x="385" y="88" font-size="10" text-anchor="middle" fill="#C0392B">carry[2]</text>
+
+            <!-- ellipsis -->
+            <text x="445" y="100" font-size="22" fill="#888">···</text>
+            <line x1="480" y1="95" x2="540" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
+            <text x="510" y="88" font-size="10" text-anchor="middle" fill="#C0392B">carry[N-1]</text>
+
+            <!-- FA[N-1] -->
+            <rect x="540" y="60" width="130" height="70" rx="6" fill="#FFF" stroke="#2E86AB" stroke-width="2"/>
+            <text x="605" y="88" font-size="13" text-anchor="middle" fill="#2E86AB" font-weight="700">full_adder</text>
+            <text x="605" y="106" font-size="11" text-anchor="middle" fill="#666">u_fa[N-1]</text>
+            <text x="605" y="122" font-size="10" text-anchor="middle" fill="#888">a[N-1] b[N-1]</text>
+            <line x1="605" y1="60" x2="605" y2="35" stroke="#27AE60" stroke-width="2"/>
+            <text x="605" y="28" font-size="11" text-anchor="middle" fill="#27AE60">sum[N-1]</text>
+            <line x1="670" y1="95" x2="730" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
+            <text x="755" y="98" font-size="12" fill="#C0392B">cout</text>
+
+            <!-- generate scope label -->
+            <rect x="50" y="50" width="630" height="92" rx="8" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <text x="365" y="160" font-size="11" text-anchor="middle" fill="#D4A843" font-weight="700">generate for (gi=0; gi&lt;N; gi=gi+1) begin : g_fa</text>
+        </svg>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.2em;">
         <strong>Sketch:</strong>
         <pre style="font-size:0.85em;"><code class="language-verilog">wire [N:0] carry;
 assign carry[0] = cin;
@@ -208,7 +260,7 @@ N=16: 640 cells (~50%)
         <p style="color:#E8E8E4;font-size:0.8em;margin-top:0.3em;">Video 4 of 4 · ~8 minutes</p>
         <div style="max-width:800px;margin:1.2em auto 0;background:#1a1a1a;padding:1em;border-radius:8px;border-left:4px solid #FFC904;text-align:left;">
             <p style="color:#FFC904;font-size:0.55em;margin:0 0 0.3em 0;letter-spacing:0.12em;">▸ WHY THIS MATTERS NEXT</p>
-            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have all the tools: hierarchy, parameters, generate. Video 4 ties them together into a <strong>design philosophy</strong>: how to build modules someone else (or future-you) can drop into a project without reading the source. This is how your Week 1-2 modules become a permanent toolbox — and it's the skill Week 3 relies on.</p>
+            <p style="color:#E8E8E4;font-size:0.72em;margin:0;">You have all the tools: hierarchy, parameters, generate. Video 4 ties them together into a <strong>design philosophy</strong>: how to build modules someone else (or future-you) can drop into a project without reading the source. This is how your foundational-topic modules become a permanent toolbox &mdash; and it&rsquo;s the skill the next theme relies on.</p>
         </div>
     </div>
 </section>
