@@ -206,15 +206,13 @@
 <!-- ==================== I DO — MINIMAL FSM SKETCH (NEW) ==================== -->
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; A Traffic Light in 4 Lines</h2>
-    <p style="font-size: 0.8em;">Three states. Three outputs. One timer input. Here's the state diagram:</p>
-    <pre style="font-size: 0.85em; text-align: center; border: none; background: transparent; box-shadow: none;">
-<code>  ┌───────────┐ timer ┌────────────┐ timer ┌─────────┐
-  │  S_GREEN  │─────▶ │  S_YELLOW  │─────▶│  S_RED  │
-  │ o_green=1 │       │ o_yellow=1 │      │ o_red=1 │
-  └───────────┘       └────────────┘      └─────────┘
-       ▲                                        │
-       └────────────── timer ───────────────────┘</code></pre>
-    <div class="callout" style="font-size: 0.75em; margin-top: 0.3em;">
+    <p style="font-size: 0.78em; margin-bottom: 0.2em;">Three states. Three outputs. One timer input. Here's the state diagram:</p>
+    <div style="margin-top: 0.2em;">
+        <img src="diagrams/d07_traffic_light_states.svg"
+             alt="Traffic light state diagram: S_GREEN → S_YELLOW → S_RED → S_GREEN, each transition on timer_done"
+             style="width:78%;max-width:620px;display:block;margin:0 auto;">
+    </div>
+    <div class="callout" style="font-size: 0.72em; margin-top: 0.25em;">
         <strong>My thinking:</strong> I named states by <em>what they mean</em>, not by number.
         <code>S_GREEN</code> is more useful than <code>S0</code> in a waveform trace.
         Outputs are inside each state bubble — that's the Moore convention.
@@ -232,14 +230,21 @@
 <!-- ==================== WE DO — PREDICT THE TRAJECTORY (NEW) ==================== -->
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Predict the Trajectory</h2>
-    <p style="font-size: 0.8em;">Given the state diagram, with <code>timer</code> asserting every 4 cycles,
-    fill in the next 12 cycles starting from <code>S_GREEN</code>:</p>
-    <pre class="synth" style="font-size: 0.75em;"><code>cycle:   0  1  2  3  4  5  6  7  8  9  10 11 12
-state:   G  G  G  G  Y  ?  ?  ?  ?  ?  ?  ?  ?
-timer:   0  0  0  1  0  0  0  1  0  0  0  1  0
-o_red:   0  0  0  0  0  ?  ?  ?  ?  ?  ?  ?  ?
-o_green: 1  1  1  1  0  ?  ?  ?  ?  ?  ?  ?  ?</code></pre>
-    <div class="fragment callout" style="font-size: 0.72em;">
+    <p style="font-size: 0.72em; margin-bottom: 0.2em;">Given the FSM below (timer fires every 4 cycles), fill in cycles 5–12 of the waveform.</p>
+    <div style="display:grid; grid-template-columns: 32% 1fr; gap: 0.6em; align-items: start;">
+        <div style="background:#FAFAFA; border:1px solid #DDD; border-radius:6px; padding:0.3em;">
+            <p style="font-size:0.55em; color:#888; margin:0 0 0.1em 0; text-align:center; letter-spacing:0.1em;">FSM (reference)</p>
+            <img src="diagrams/d07_traffic_light_states.svg"
+                 alt="Traffic light FSM reference"
+                 style="width:100%; display:block;">
+        </div>
+        <div>
+            <img src="diagrams/d07_traffic_light_waveform.svg"
+                 alt="Waveform with cycles 5-12 to fill in"
+                 style="width:100%; display:block;">
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size: 0.66em; margin-top: 0.25em;">
         <strong>Answer:</strong>
         state: G,G,G,G, <strong>Y</strong>,Y,Y,Y, <strong>R</strong>,R,R,R, <strong>G</strong>.
         o_green: 1,1,1,1,0,0,0,0,0,0,0,0,<strong>1</strong>.

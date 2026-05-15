@@ -8,6 +8,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<style>
+/* "Where am I" mini-overview bar: FSM bubble + three RTL blocks */
+.fsm-mini { display: flex; align-items: center; justify-content: center; gap: 0.5em; padding: 0.35em 0.6em; background: #FAFAFA; border: 1px solid #E0E0E0; border-radius: 8px; margin: 0.15em 0 0.4em; font-family: Inter, sans-serif; }
+.fsm-mini .mini-fsm { background: #FFFDE7; border: 1.5px solid #F9A825; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 0.55em; font-weight: 700; color: #555; }
+.fsm-mini .mini-arrow { color: #999; font-size: 0.8em; }
+.fsm-mini .mini-blocks { display: flex; gap: 0.3em; align-items: center; }
+.fsm-mini .mini-block { padding: 0.25em 0.55em; border-radius: 5px; border: 1.5px solid #CCC; background: #F5F5F5; font-size: 0.5em; font-weight: 600; color: #999; opacity: 0.55; transition: all 0.2s; }
+.fsm-mini .mini-block.active { opacity: 1; background: #FFF8E1; border-color: #D4A843; color: #B8860B; box-shadow: 0 0 0 2px rgba(212,168,67,0.25); }
+.fsm-mini .mini-block.b1.active { background: #E3F2FD; border-color: #1565C0; color: #1565C0; box-shadow: 0 0 0 2px rgba(21,101,192,0.25); }
+.fsm-mini .mini-block.b2.active { background: #FFF8E1; border-color: #F9A825; color: #B8860B; box-shadow: 0 0 0 2px rgba(249,168,37,0.25); }
+.fsm-mini .mini-block.b3.active { background: #E8F5E9; border-color: #2E7D32; color: #2E7D32; box-shadow: 0 0 0 2px rgba(46,125,50,0.25); }
+.fsm-mini .mini-arrow-rtl { color: #777; font-size: 0.8em; margin: 0 0.1em; }
+.fsm-mini .mini-label { font-size: 0.5em; color: #888; font-weight: 600; letter-spacing: 0.08em; margin-right: 0.4em; }
+</style>
 </head>
 <body>
 <div class="reveal"><div class="slides">
@@ -60,6 +74,19 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Block 1: State Register</h2>
+    <div class="fsm-mini">
+        <span class="mini-label">PICTURE</span>
+        <div class="mini-fsm">FSM</div>
+        <span class="mini-arrow">⟶</span>
+        <span class="mini-label">RTL</span>
+        <div class="mini-blocks">
+            <div class="mini-block b1 active">Block 1<br>State Reg</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b2">Block 2<br>Next-State</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b3">Block 3<br>Outputs</div>
+        </div>
+    </div>
     <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// --- Block 1: state register (sequential, nonblocking) ---
 always @(posedge i_clk) begin
     if (i_reset) r_state &lt;= S_INIT;
@@ -73,6 +100,19 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Block 2: Next-State Logic</h2>
+    <div class="fsm-mini">
+        <span class="mini-label">PICTURE</span>
+        <div class="mini-fsm">FSM</div>
+        <span class="mini-arrow">⟶</span>
+        <span class="mini-label">RTL</span>
+        <div class="mini-blocks">
+            <div class="mini-block b1">Block 1<br>State Reg</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b2 active">Block 2<br>Next-State</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b3">Block 3<br>Outputs</div>
+        </div>
+    </div>
     <pre class="synth" style="font-size:0.63em;"><code class="language-verilog">// --- Block 2: next-state logic (combinational, blocking) ---
 always @(*) begin
     r_next_state = r_state;            // DEFAULT: stay in current state (prevents latches)
@@ -95,6 +135,19 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Block 3: Output Logic (Moore)</h2>
+    <div class="fsm-mini">
+        <span class="mini-label">PICTURE</span>
+        <div class="mini-fsm">FSM</div>
+        <span class="mini-arrow">⟶</span>
+        <span class="mini-label">RTL</span>
+        <div class="mini-blocks">
+            <div class="mini-block b1">Block 1<br>State Reg</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b2">Block 2<br>Next-State</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b3 active">Block 3<br>Outputs</div>
+        </div>
+    </div>
     <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// --- Block 3: output logic (combinational, Moore: depends only on state) ---
 always @(*) begin
     // defaults for ALL outputs (prevents latches)
@@ -117,6 +170,19 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Spot the Bug</h2>
+    <div class="fsm-mini">
+        <span class="mini-label">PICTURE</span>
+        <div class="mini-fsm">FSM</div>
+        <span class="mini-arrow">⟶</span>
+        <span class="mini-label">RTL</span>
+        <div class="mini-blocks">
+            <div class="mini-block b1">Block 1<br>State Reg</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b2 active">Block 2<br>Next-State</div>
+            <div class="mini-arrow-rtl">→</div>
+            <div class="mini-block b3 active">Block 3<br>Outputs</div>
+        </div>
+    </div>
     <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">always @(*) begin
     case (r_state)
         S_GREEN:  begin r_next_state = S_YELLOW; o_green = 1; end
