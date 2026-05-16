@@ -339,11 +339,11 @@ PASS: Mid-cycle reset -&gt; GRN -- R=0 Y=0 G=1
 <!-- ==================== WHAT DID THE TOOL BUILD? (NEW) ==================== -->
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
-    <p style="font-size: 0.78em;">Running <code>make stat</code> on the traffic light:</p>
+    <p style="font-size: 0.74em;">Running <code>make stat</code> on the traffic light — and the gates behind that count:</p>
 
-    <div class="two-col" style="margin-top: 0.3em;">
+    <div class="two-col" style="margin-top: 0.25em;">
         <div class="col">
-            <pre style="font-size: 0.6em;"><code class="language-bash">$ yosys -p "read_verilog day07_ex01_fsm_template.v; \
+            <pre style="font-size: 0.55em;"><code class="language-bash">$ yosys -p "read_verilog day07_ex01_fsm_template.v; \
              synth_ice40 -top traffic_light; stat" -q
 
 === traffic_light ===
@@ -353,24 +353,26 @@ PASS: Mid-cycle reset -&gt; GRN -- R=0 Y=0 G=1
      SB_DFF                           2  ← state register
      SB_LUT4                          6  ← next-state + output
 </code></pre>
-        </div>
-        <div class="col" style="font-size: 0.75em;">
-            <p><strong>Match your prediction?</strong></p>
-            <ul style="font-size: 0.9em;">
+            <ul style="font-size: 0.62em; margin-top: 0.3em;">
                 <li>3 states &rarr; ⌈log₂3⌉ = <strong>2 flops ✓</strong></li>
-                <li>Yosys chose <strong>binary encoding</strong> (default for small FSMs on iCE40)</li>
-                <li>6 LUTs: ~3 for next-state case, ~3 for output decoding</li>
+                <li>Yosys chose <strong>binary encoding</strong> (default on iCE40)</li>
+                <li>6 LUTs: ~3 next-state · ~3 output decoding</li>
+                <li class="fragment"><strong>Red flag:</strong> <code>≥4 flops</code> → inferred latch.</li>
             </ul>
-            <p class="fragment" style="margin-top: 0.5em;">
-                <strong>Red flag if you see:</strong> <code>≥4 flops</code>
-                (you inferred a latch — check Block 2 defaults).
-            </p>
+        </div>
+        <div class="col">
+            <img src="diagrams/d07_synth_gates_rtl.svg"
+                 alt="Synthesized gate-level RTL: timer_done and i_clk drive 2 SB_DFF flops via 3 next-state LUTs; r_state Q feeds 3 output decoder LUTs producing o_green, o_yellow, o_red"
+                 style="width:100%; display:block;">
+            <div style="font-size: 0.55em; text-align:center; color:#888; margin-top:0.15em; letter-spacing:0.06em;">
+                Signals colored to match Block-template code on Video 2
+            </div>
         </div>
     </div>
 
-    <div class="fragment callout" style="font-size: 0.72em; margin-top: 0.3em;">
+    <div class="fragment callout" style="font-size: 0.66em; margin-top: 0.25em;">
         <strong>Generate this yourself:</strong>
-        <code>yosys -p "read_verilog day07_ex01_fsm_template.v; synth_ice40 -top traffic_light; show -format svg -prefix fsm_synth" </code>
+        <code>yosys -p "read_verilog day07_ex01_fsm_template.v; synth_ice40 -top traffic_light; show -format svg -prefix fsm_synth"</code>
         &mdash; produces <code>fsm_synth.svg</code> showing the actual gates and flops Yosys built.
     </div>
 

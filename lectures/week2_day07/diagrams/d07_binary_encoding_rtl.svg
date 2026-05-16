@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="bin-state" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#EF6C00"/></marker>
+    <marker id="bin-next"  markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#FFA000"/></marker>
+    <marker id="bin-timer" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#7B1FA2"/></marker>
+    <marker id="bin-clk"   markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#00B8D4"/></marker>
+  </defs>
+
+  <text x="260" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#5A7FA0">
+    Binary Encoding · 2-bit state · 3 states
+  </text>
+
+  <!-- Two DFFs stacked -->
+  <g>
+    <rect x="240" y="80" width="80" height="50" rx="4" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <text x="280" y="102" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">DFF</text>
+    <text x="280" y="120" text-anchor="middle" font-size="9" fill="#EF6C00" font-weight="700">r_state[0]</text>
+    <polygon points="240,118 250,112 250,124" fill="none" stroke="#1565C0" stroke-width="1.4"/>
+  </g>
+  <g>
+    <rect x="240" y="155" width="80" height="50" rx="4" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <text x="280" y="177" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">DFF</text>
+    <text x="280" y="195" text-anchor="middle" font-size="9" fill="#EF6C00" font-weight="700">r_state[1]</text>
+    <polygon points="240,193 250,187 250,199" fill="none" stroke="#1565C0" stroke-width="1.4"/>
+  </g>
+  <text x="280" y="73" text-anchor="middle" font-size="9" fill="#888" font-weight="700">2 flops · ⌈log₂(3)⌉</text>
+
+  <!-- Next-state comb logic on the left -->
+  <rect x="60" y="80" width="140" height="125" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <text x="130" y="105" text-anchor="middle" font-size="11" font-weight="700" fill="#B8860B">Next-State</text>
+  <text x="130" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#B8860B">Logic</text>
+  <text x="130" y="140" text-anchor="middle" font-size="9" fill="#888" font-style="italic">case (r_state)</text>
+  <text x="130" y="158" text-anchor="middle" font-size="9" fill="#888" font-style="italic">on timer_done</text>
+  <text x="130" y="184" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="700">~3-5 LUTs</text>
+
+  <!-- Output decoder on the right -->
+  <rect x="360" y="80" width="140" height="125" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="430" y="103" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">Output</text>
+  <text x="430" y="118" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">Decoder</text>
+  <text x="430" y="138" text-anchor="middle" font-size="8.5" fill="#555">o_green  = !s1 &amp; !s0</text>
+  <text x="430" y="152" text-anchor="middle" font-size="8.5" fill="#555">o_yellow = !s1 &amp;  s0</text>
+  <text x="430" y="166" text-anchor="middle" font-size="8.5" fill="#555">o_red    =  s1 &amp; !s0</text>
+  <text x="430" y="188" text-anchor="middle" font-size="9" fill="#E65100" font-weight="700">~3 LUTs</text>
+
+  <!-- Wires: NextState → DFF.D (amber) -->
+  <line x1="200" y1="105" x2="238" y2="105" stroke="#FFA000" stroke-width="2.5" marker-end="url(#bin-next)"/>
+  <line x1="200" y1="180" x2="238" y2="180" stroke="#FFA000" stroke-width="2.5" marker-end="url(#bin-next)"/>
+  <text x="218" y="98" text-anchor="middle" font-size="8" fill="#FFA000" font-weight="700">D</text>
+  <text x="218" y="173" text-anchor="middle" font-size="8" fill="#FFA000" font-weight="700">D</text>
+
+  <!-- Wires: DFF.Q → Output Decoder (orange) -->
+  <line x1="320" y1="105" x2="358" y2="125" stroke="#EF6C00" stroke-width="2.5" marker-end="url(#bin-state)"/>
+  <line x1="320" y1="180" x2="358" y2="160" stroke="#EF6C00" stroke-width="2.5" marker-end="url(#bin-state)"/>
+  <text x="340" y="98" text-anchor="middle" font-size="8" fill="#EF6C00" font-weight="700">s0</text>
+  <text x="340" y="196" text-anchor="middle" font-size="8" fill="#EF6C00" font-weight="700">s1</text>
+
+  <!-- Feedback: state[1:0] back to NextState (curved under) -->
+  <path d="M 320,200 L 320,225 L 100,225 L 100,205" fill="none" stroke="#EF6C00" stroke-width="2" marker-end="url(#bin-state)"/>
+  <text x="210" y="240" text-anchor="middle" font-size="9" font-style="italic" fill="#EF6C00">r_state (feedback)</text>
+
+  <!-- timer_done input -->
+  <line x1="10" y1="142" x2="58" y2="142" stroke="#7B1FA2" stroke-width="2.5" marker-end="url(#bin-timer)"/>
+  <text x="10" y="134" font-size="10" font-weight="700" fill="#7B1FA2">timer_done</text>
+
+  <!-- Outputs from decoder -->
+  <line x1="500" y1="138" x2="515" y2="138" stroke="#43A047" stroke-width="2.5"/>
+  <text x="505" y="132" font-size="9" font-weight="700" fill="#43A047" text-anchor="end">o_green→</text>
+  <line x1="500" y1="155" x2="515" y2="155" stroke="#FBC02D" stroke-width="2.5"/>
+  <text x="505" y="166" font-size="9" font-weight="700" fill="#B8860B" text-anchor="end">o_yellow→</text>
+  <line x1="500" y1="180" x2="515" y2="180" stroke="#E53935" stroke-width="2.5"/>
+  <text x="505" y="190" font-size="9" font-weight="700" fill="#E53935" text-anchor="end">o_red→</text>
+
+  <!-- Cell summary -->
+  <rect x="60" y="265" width="440" height="46" rx="5" fill="#FFFFFF" stroke="#5A7FA0" stroke-width="1.5"/>
+  <text x="75" y="284" font-size="10" font-weight="700" fill="#5A7FA0">iCE40 cost:</text>
+  <text x="155" y="284" font-size="10" fill="#333">2 × SB_DFF (flops)  +  ~5 × SB_LUT4 (next + outputs)</text>
+  <text x="75" y="302" font-size="9.5" font-style="italic" fill="#666">Compact in flops · outputs require an AND-decoder</text>
+</svg>
