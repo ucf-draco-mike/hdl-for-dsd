@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arrK" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/>
+    </marker>
+    <marker id="arrA" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00ACC1"/>
+    </marker>
+    <marker id="arrB" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FFB300"/>
+    </marker>
+    <marker id="arrS" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+    </marker>
+    <marker id="arrV" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#7E57C2"/>
+    </marker>
+    <marker id="arrY" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FFC107"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Python Generator → vectors.hex → Verilog DUT</text>
+  <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">Python is the golden reference · same signals colored in the code and the diagram</text>
+
+  <!-- Python block (left) -->
+  <rect x="20" y="60" width="240" height="280" rx="10" fill="#fff" stroke="#26A69A" stroke-width="2.5"/>
+  <text x="140" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#26A69A" font-family="JetBrains Mono">gen_vectors.py</text>
+
+  <!-- seed box -->
+  <rect x="40" y="98" width="200" height="34" rx="6" fill="#FFF8E1" stroke="#FFC107" stroke-width="1.8"/>
+  <text x="140" y="118" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">random.seed(</tspan>
+    <tspan fill="#FFC107" font-weight="700">42</tspan>
+    <tspan fill="#555">)</tspan>
+  </text>
+  <text x="140" y="129" text-anchor="middle" font-size="8" fill="#888" font-style="italic">seeded → reproducible</text>
+
+  <!-- a -->
+  <rect x="40" y="148" width="200" height="32" rx="6" fill="#fff" stroke="#00ACC1" stroke-width="2"/>
+  <text x="140" y="167" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#555"> = randint(0, 255)</tspan>
+  </text>
+
+  <!-- b -->
+  <rect x="40" y="186" width="200" height="32" rx="6" fill="#fff" stroke="#FFB300" stroke-width="2"/>
+  <text x="140" y="206" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#555"> = randint(0, 255)</tspan>
+  </text>
+
+  <!-- s = a + b (golden) -->
+  <rect x="40" y="224" width="200" height="32" rx="6" fill="#E8F5E9" stroke="#43A047" stroke-width="2"/>
+  <text x="140" y="244" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#43A047" font-weight="700">s</tspan>
+    <tspan fill="#555"> = </tspan>
+    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#555"> + </tspan>
+    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#555">  ← golden ref</tspan>
+  </text>
+
+  <!-- write line -->
+  <rect x="40" y="262" width="200" height="32" rx="6" fill="#F3E5F5" stroke="#7E57C2" stroke-width="2"/>
+  <text x="140" y="282" text-anchor="middle" font-size="9" font-family="JetBrains Mono">
+    <tspan fill="#555">f.write("{</tspan>
+    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#555">}{</tspan>
+    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#555">}_{</tspan>
+    <tspan fill="#43A047" font-weight="700">s</tspan>
+    <tspan fill="#555">}\n")</tspan>
+  </text>
+
+  <text x="140" y="315" text-anchor="middle" font-size="9" fill="#888" font-style="italic">loop 1000 times</text>
+
+  <!-- big down arrow to file -->
+  <line x1="270" y1="180" x2="295" y2="180" stroke="#7E57C2" stroke-width="2.5" marker-end="url(#arrV)"/>
+
+  <!-- vectors.hex file (center) -->
+  <rect x="300" y="80" width="160" height="220" rx="6" fill="#fff" stroke="#7E57C2" stroke-width="2.2"/>
+  <polygon points="300,80 425,80 460,115 460,300 300,300" fill="none" stroke="#7E57C2" stroke-width="2.2"/>
+  <polyline points="425,80 425,115 460,115" fill="none" stroke="#7E57C2" stroke-width="2.2"/>
+  <text x="380" y="115" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">vectors.hex</text>
+
+  <text x="310" y="140" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">4F</tspan>
+    <tspan fill="#FFB300" font-weight="700">37</tspan>
+    <tspan fill="#555">_</tspan>
+    <tspan fill="#43A047" font-weight="700">0086</tspan>
+  </text>
+  <text x="310" y="158" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">1C</tspan>
+    <tspan fill="#FFB300" font-weight="700">E9</tspan>
+    <tspan fill="#555">_</tspan>
+    <tspan fill="#43A047" font-weight="700">0105</tspan>
+  </text>
+  <text x="310" y="176" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">A2</tspan>
+    <tspan fill="#FFB300" font-weight="700">B8</tspan>
+    <tspan fill="#555">_</tspan>
+    <tspan fill="#43A047" font-weight="700">015A</tspan>
+  </text>
+  <text x="310" y="194" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">07</tspan>
+    <tspan fill="#FFB300" font-weight="700">2D</tspan>
+    <tspan fill="#555">_</tspan>
+    <tspan fill="#43A047" font-weight="700">0034</tspan>
+  </text>
+  <text x="380" y="215" text-anchor="middle" font-size="11" fill="#888">…</text>
+  <text x="380" y="240" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#555">1000 lines</text>
+
+  <!-- bit layout -->
+  <text x="310" y="270" font-size="8" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">[31:24]a</tspan>
+  </text>
+  <text x="310" y="284" font-size="8" font-family="JetBrains Mono">
+    <tspan fill="#FFB300" font-weight="700">[23:16]b</tspan>
+  </text>
+  <text x="392" y="270" font-size="8" font-family="JetBrains Mono">
+    <tspan fill="#43A047" font-weight="700">[15:0] s</tspan>
+  </text>
+
+  <!-- arrow to Verilog -->
+  <line x1="475" y1="180" x2="500" y2="180" stroke="#7E57C2" stroke-width="2.5" marker-end="url(#arrV)"/>
+
+  <!-- Verilog tb (right) -->
+  <rect x="505" y="60" width="240" height="280" rx="10" fill="#fff" stroke="#1E88E5" stroke-width="2.5"/>
+  <text x="625" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#1E88E5" font-family="JetBrains Mono">tb_adder_file.v</text>
+
+  <!-- $readmemh -->
+  <rect x="520" y="98" width="210" height="34" rx="6" fill="#F3E5F5" stroke="#7E57C2" stroke-width="1.8"/>
+  <text x="625" y="118" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#7E57C2" font-weight="700">$readmemh</tspan>
+    <tspan fill="#555">("vectors.hex",</tspan>
+  </text>
+  <text x="625" y="129" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#555">vec_mem)</text>
+
+  <!-- loop -->
+  <rect x="520" y="148" width="210" height="50" rx="6" fill="#FFEBEE" stroke="#FF5252" stroke-width="1.8"/>
+  <text x="625" y="168" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#FF5252" font-weight="700">for (i=0; i&lt;1000; i++)</tspan>
+  </text>
+  <text x="625" y="186" text-anchor="middle" font-size="9" fill="#555">unpack + drive + check</text>
+
+  <!-- DUT -->
+  <rect x="520" y="214" width="210" height="60" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <text x="625" y="232" text-anchor="middle" font-size="11" font-weight="700" fill="#333">DUT — adder</text>
+  <text x="625" y="250" text-anchor="middle" font-size="9" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1">a</tspan>
+    <tspan fill="#555"> + </tspan>
+    <tspan fill="#FFB300">b</tspan>
+    <tspan fill="#555"> = </tspan>
+    <tspan fill="#43A047" font-weight="700">sum</tspan>
+  </text>
+  <text x="625" y="266" text-anchor="middle" font-size="9" font-style="italic" fill="#888">Verilog DUT</text>
+
+  <!-- check_eq -->
+  <rect x="520" y="288" width="210" height="40" rx="6" fill="#E8F5E9" stroke="#43A047" stroke-width="1.8"/>
+  <text x="625" y="306" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#26A69A" font-weight="700">check_eq</tspan>
+    <tspan fill="#555">(</tspan>
+    <tspan fill="#43A047" font-weight="700">sum</tspan>
+    <tspan fill="#555">, </tspan>
+    <tspan fill="#43A047" font-weight="700">exp</tspan>
+    <tspan fill="#555">)</tspan>
+  </text>
+  <text x="625" y="321" text-anchor="middle" font-size="9" fill="#888" font-style="italic">DUT vs golden</text>
+
+  <!-- bottom note -->
+  <text x="380" y="365" text-anchor="middle" font-size="10" fill="#26A69A" font-weight="700">two languages, one source of truth — Python's <tspan font-family="JetBrains Mono">a + b</tspan> is too simple to be buggy</text>
+</svg>

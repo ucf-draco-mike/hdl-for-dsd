@@ -1,66 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="Inter, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Inter, sans-serif">
   <defs>
     <marker id="arr" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/>
     </marker>
-    <marker id="arrBlue" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#1565C0"/>
+    <marker id="arrCyan" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00ACC1"/>
+    </marker>
+    <marker id="arrAmber" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FFB300"/>
     </marker>
     <marker id="arrGreen" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+    </marker>
+    <marker id="arrMagenta" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#E91E63"/>
+    </marker>
+    <marker id="arrViolet" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#7E57C2"/>
     </marker>
   </defs>
 
-  <text x="360" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#333">The Testbench Wraps the DUT</text>
-  <text x="360" y="42" text-anchor="middle" font-size="11" fill="#666">no ports outside · drives inputs · reads outputs · compares</text>
+  <text x="380" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#222">The Testbench Wraps the DUT</text>
+  <text x="380" y="42" text-anchor="middle" font-size="11" fill="#555">no ports outside · drives inputs · reads outputs · compares</text>
 
   <!-- Outer testbench box -->
-  <rect x="30" y="58" width="660" height="280" rx="14" fill="#FAFAFA" stroke="#1565C0" stroke-width="2.5" stroke-dasharray="10,5"/>
-  <text x="50" y="82" font-size="13" font-weight="700" fill="#1565C0">module tb_my_design;</text>
-  <text x="50" y="98" font-size="10" fill="#1565C0" font-style="italic">no port list — top of simulation hierarchy</text>
+  <rect x="22" y="58" width="716" height="295" rx="14" fill="#FAFAFA" stroke="#333" stroke-width="2.2" stroke-dasharray="10,5"/>
+  <text x="38" y="82" font-size="13" font-weight="700" fill="#333" font-family="JetBrains Mono">module tb_my_design;</text>
+  <text x="38" y="98" font-size="10" fill="#777" font-style="italic">no port list — top of simulation hierarchy</text>
 
   <!-- Stimulus block -->
-  <rect x="60" y="125" width="170" height="105" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.8"/>
-  <text x="145" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">Stimulus</text>
-  <text x="145" y="166" text-anchor="middle" font-size="10" fill="#555">reg a, b, clk, rst</text>
-  <text x="145" y="182" text-anchor="middle" font-size="10" fill="#555">initial begin … end</text>
-  <text x="145" y="198" text-anchor="middle" font-size="10" fill="#555">always #5 clk = ~clk</text>
-  <text x="145" y="216" text-anchor="middle" font-size="9" font-style="italic" fill="#888">drives DUT inputs</text>
+  <rect x="50" y="125" width="190" height="120" rx="8" fill="#fff" stroke="#00ACC1" stroke-width="2.2"/>
+  <text x="145" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#00ACC1">Stimulus</text>
+  <text x="60" y="170" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">reg </tspan>
+    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#555">, </tspan>
+    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#555">, </tspan>
+    <tspan fill="#E91E63" font-weight="700">clk</tspan>
+    <tspan fill="#555">, </tspan>
+    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+  </text>
+  <text x="60" y="187" font-size="10" font-family="JetBrains Mono" fill="#555">initial begin … end</text>
+  <text x="60" y="204" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">always #5 </tspan>
+    <tspan fill="#E91E63" font-weight="700">clk</tspan>
+    <tspan fill="#555"> = ~</tspan>
+    <tspan fill="#E91E63" font-weight="700">clk</tspan>
+  </text>
+  <text x="145" y="228" text-anchor="middle" font-size="9" font-style="italic" fill="#888">drives DUT inputs</text>
 
   <!-- DUT box (yellow/highlighted) -->
-  <rect x="275" y="120" width="170" height="115" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
-  <text x="360" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#333">DUT</text>
-  <text x="360" y="161" text-anchor="middle" font-size="10" fill="#555">my_design dut (</text>
-  <text x="360" y="176" text-anchor="middle" font-size="10" fill="#555">  .i_a(a), .i_b(b),</text>
-  <text x="360" y="191" text-anchor="middle" font-size="10" fill="#555">  .i_clk(clk),</text>
-  <text x="360" y="206" text-anchor="middle" font-size="10" fill="#555">  .o_sum(sum));</text>
-  <text x="360" y="225" text-anchor="middle" font-size="9" font-style="italic" fill="#888">your synthesizable design</text>
+  <rect x="285" y="120" width="190" height="130" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="380" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#333">DUT</text>
+  <text x="295" y="167" font-size="10" font-family="JetBrains Mono" fill="#555">my_design dut (</text>
+  <text x="295" y="184" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">  .i_a(</tspan>
+    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#555">), .i_b(</tspan>
+    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#555">),</tspan>
+  </text>
+  <text x="295" y="201" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">  .i_clk(</tspan>
+    <tspan fill="#E91E63" font-weight="700">clk</tspan>
+    <tspan fill="#555">),</tspan>
+  </text>
+  <text x="295" y="218" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">  .o_sum(</tspan>
+    <tspan fill="#43A047" font-weight="700">sum</tspan>
+    <tspan fill="#555">));</tspan>
+  </text>
+  <text x="380" y="240" text-anchor="middle" font-size="9" font-style="italic" fill="#888">your synthesizable design</text>
 
   <!-- Checker -->
-  <rect x="490" y="125" width="170" height="105" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.8"/>
-  <text x="575" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#2E7D32">Checker</text>
-  <text x="575" y="166" text-anchor="middle" font-size="10" fill="#555">wire sum</text>
-  <text x="575" y="182" text-anchor="middle" font-size="10" fill="#555">if (sum !== exp)</text>
-  <text x="575" y="198" text-anchor="middle" font-size="10" fill="#555">  $display("FAIL");</text>
-  <text x="575" y="216" text-anchor="middle" font-size="9" font-style="italic" fill="#888">reads DUT outputs</text>
+  <rect x="520" y="125" width="190" height="120" rx="8" fill="#fff" stroke="#43A047" stroke-width="2.2"/>
+  <text x="615" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="#43A047">Checker</text>
+  <text x="530" y="170" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">wire </tspan>
+    <tspan fill="#43A047" font-weight="700">sum</tspan>
+  </text>
+  <text x="530" y="187" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">if (</tspan>
+    <tspan fill="#43A047" font-weight="700">sum</tspan>
+    <tspan fill="#555"> !== </tspan>
+    <tspan fill="#1E88E5" font-weight="700">exp</tspan>
+    <tspan fill="#555">)</tspan>
+  </text>
+  <text x="530" y="204" font-size="10" font-family="JetBrains Mono" fill="#FF5252">  $display("FAIL");</text>
+  <text x="615" y="228" text-anchor="middle" font-size="9" font-style="italic" fill="#888">reads DUT outputs</text>
 
-  <!-- Arrow stimulus -> DUT -->
-  <line x1="230" y1="175" x2="275" y2="175" stroke="#1565C0" stroke-width="2.5" marker-end="url(#arrBlue)"/>
-  <text x="252" y="167" text-anchor="middle" font-size="10" font-weight="600" fill="#1565C0">drive</text>
+  <!-- Arrows: a and b stimulus -> DUT -->
+  <line x1="240" y1="172" x2="285" y2="172" stroke="#00ACC1" stroke-width="2.5" marker-end="url(#arrCyan)"/>
+  <text x="262" y="166" text-anchor="middle" font-size="10" font-weight="700" fill="#00ACC1" font-family="JetBrains Mono">a</text>
+  <line x1="240" y1="188" x2="285" y2="188" stroke="#FFB300" stroke-width="2.5" marker-end="url(#arrAmber)"/>
+  <text x="262" y="201" text-anchor="middle" font-size="10" font-weight="700" fill="#FFB300" font-family="JetBrains Mono">b</text>
+  <line x1="240" y1="208" x2="285" y2="208" stroke="#E91E63" stroke-width="2.5" marker-end="url(#arrMagenta)"/>
+  <text x="262" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#E91E63" font-family="JetBrains Mono">clk</text>
 
-  <!-- Arrow DUT -> Checker -->
-  <line x1="445" y1="175" x2="490" y2="175" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arrGreen)"/>
-  <text x="467" y="167" text-anchor="middle" font-size="10" font-weight="600" fill="#2E7D32">observe</text>
+  <!-- Arrow DUT -> Checker (sum) -->
+  <line x1="475" y1="188" x2="520" y2="188" stroke="#43A047" stroke-width="2.5" marker-end="url(#arrGreen)"/>
+  <text x="497" y="182" text-anchor="middle" font-size="10" font-weight="700" fill="#43A047" font-family="JetBrains Mono">sum</text>
 
   <!-- Waveform dump bottom strip -->
-  <rect x="200" y="260" width="320" height="55" rx="8" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.5"/>
-  <text x="360" y="280" text-anchor="middle" font-size="11" font-weight="700" fill="#9C27B0">$dumpfile + $dumpvars</text>
-  <text x="360" y="297" text-anchor="middle" font-size="10" fill="#666">→ tb.vcd → GTKWave (for debugging only)</text>
+  <rect x="200" y="275" width="360" height="60" rx="8" fill="#fff" stroke="#7E57C2" stroke-width="2"/>
+  <text x="380" y="296" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">$dumpfile + $dumpvars</text>
+  <text x="380" y="313" text-anchor="middle" font-size="10" fill="#666">→ tb.vcd → GTKWave (for debugging only)</text>
+  <text x="380" y="328" text-anchor="middle" font-size="9" font-style="italic" fill="#888">records every signal at every event</text>
 
   <!-- Arrow from DUT down to dump -->
-  <line x1="360" y1="235" x2="360" y2="258" stroke="#9C27B0" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="380" y1="250" x2="380" y2="273" stroke="#7E57C2" stroke-width="2" marker-end="url(#arrViolet)"/>
 
   <!-- legend: reg vs wire -->
-  <text x="50" y="328" font-size="9" fill="#555"><tspan font-weight="700" fill="#1565C0">tb drives</tspan> → declare <tspan font-family="JetBrains Mono">reg</tspan>     ·     <tspan font-weight="700" fill="#2E7D32">tb reads</tspan> → declare <tspan font-family="JetBrains Mono">wire</tspan></text>
+  <text x="38" y="345" font-size="10" fill="#555">
+    <tspan font-weight="700" fill="#00ACC1">tb drives</tspan>
+    <tspan> → declare </tspan>
+    <tspan font-family="JetBrains Mono">reg</tspan>
+    <tspan>     ·     </tspan>
+    <tspan font-weight="700" fill="#43A047">tb reads</tspan>
+    <tspan> → declare </tspan>
+    <tspan font-family="JetBrains Mono">wire</tspan>
+    <tspan>     ·     each colored signal matches the source code → →</tspan>
+  </text>
 </svg>

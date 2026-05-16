@@ -55,7 +55,7 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Self-Checking Pattern</h2>
-    <pre class="synth" style="font-size:0.63em;"><code class="language-verilog">integer tests_run = 0, tests_failed = 0;
+    <pre class="synth" style="font-size:0.6em;"><code class="language-verilog" data-signal-colors="tests_run:#7E57C2,tests_failed:#FF5252,check_eq:#26A69A,actual:#43A047,expected:#1E88E5,label:#26A69A,sum:#43A047">integer tests_run = 0, tests_failed = 0;
 
 task check_eq(input [31:0] actual, input [31:0] expected, input [256*8-1:0] label);
 begin
@@ -77,10 +77,19 @@ initial begin
     $display("=== %0d passed, %0d failed ===", tests_run - tests_failed, tests_failed);
     $finish;
 end</code></pre>
-    <div class="callout" style="font-size:0.68em;">
-        <strong>My thinking:</strong> Three key choices. (1) Use <code>!==</code> (case-inequality) — <em>not</em> <code>!=</code> — to correctly compare signals that may contain <code>X</code> or <code>Z</code>. (2) Track <code>tests_run</code> and <code>tests_failed</code> as integer counters. (3) Always print a <em>summary line</em> at the end so CI/CD can grep for it.
+    <div class="callout" style="font-size:0.65em;">
+        <strong>Three key choices:</strong> (1) <code>!==</code> for X/Z safety, (2) integer counters <span style="color:#7E57C2;font-weight:700;font-family:monospace;">tests_run</span> / <span style="color:#FF5252;font-weight:700;font-family:monospace;">tests_failed</span>, (3) end-of-test summary. Block diagram on the next slide.
     </div>
     <aside class="notes">Three critical habits. Three-equals vs two-equals: three-equals returns 0 or 1, cleanly, even if operands are X. Two-equals returns X, propagating. Track counters explicitly. Always end with a summary line.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧱</span> <code>check_eq</code> &mdash; as a Datapath Diagram</h2>
+    <img src="diagrams/d06_s2_check_eq_task_rtl.svg" alt="check_eq task datapath: actual/expected/label → compare → PASS/FAIL + counters" style="width:90%;max-height:62vh;display:block;margin:0.2em auto 0;">
+    <div class="callout" style="font-size:0.66em;margin-top:0.3em;">
+        <strong>Reading the diagram:</strong> three inputs (<span style="color:#43A047;font-weight:700;font-family:monospace;">actual</span>, <span style="color:#1E88E5;font-weight:700;font-family:monospace;">expected</span>, <span style="color:#26A69A;font-weight:700;font-family:monospace;">label</span>) flow into a single <code>!==</code> compare. The result splits: mismatch increments <span style="color:#FF5252;font-weight:700;font-family:monospace;">tests_failed</span> and fires FAIL; match fires PASS. <span style="color:#7E57C2;font-weight:700;font-family:monospace;">tests_run</span> always increments.
+    </div>
+    <aside class="notes">The diagram shows the dataflow inside the task. Three inputs (actual, expected, label) enter the compare; one branches to the FAIL counter and PASS display. tests_run always ticks. The summary line at the bottom uses both counters.</aside>
 </section>
 
 <section>
@@ -95,16 +104,25 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>==</code> vs <code>===</code></h2>
-    <pre class="synth" style="font-size:0.72em;"><code class="language-verilog">reg [3:0] signal = 4'b10x1;
+    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog" data-signal-colors="signal:#00ACC1,4'b1011:#7E57C2,4'b10x1:#7E57C2">reg [3:0] signal = 4'b10x1;
 
-if (signal == 4'b1011)  $display("A fires?");  // result: X — if-condition is ambiguous
+if (signal ==  4'b1011) $display("A fires?");  // result: X — if-condition is ambiguous
 if (signal === 4'b1011) $display("B fires?");  // result: 0 — cleanly false, B does not fire
 if (signal === 4'b10x1) $display("C fires?");  // result: 1 — matches including X, C fires</code></pre>
-    <img src="diagrams/d06_eq_vs_ceq_waveform.svg" alt="Waveform showing == vs === when X enters the signal" style="width:80%;max-height:38vh;display:block;margin:0.2em auto 0;">
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> <code>==</code> returns <code>X</code> when either operand contains <code>X</code>. In an <code>if</code>, an X result is treated as false — your check is <em>silently skipped</em>. <code>===</code> treats <code>X</code> as a literal value and always returns a clean 0 or 1. In testbenches, <strong>always use <code>===</code> and <code>!==</code></strong>.
+    <img src="diagrams/d06_s2_eq_vs_ceq_code.svg" alt="Three outcomes for == and === over signal with X bit" style="width:88%;max-height:34vh;display:block;margin:0.2em auto 0;">
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Together:</strong> <span style="color:#FF5252;font-weight:700;font-family:monospace;">==</span> returns <span style="color:#FF5252;font-weight:700;font-family:monospace;">X</span> when either operand contains <span style="color:#FF5252;font-weight:700;font-family:monospace;">X</span>. In an <code>if</code>, X is treated as false — check is <em>silently skipped</em>. <span style="color:#1E88E5;font-weight:700;font-family:monospace;">===</span> treats <span style="color:#FF5252;font-weight:700;font-family:monospace;">X</span> as a literal — clean 0 or 1. In testbenches, <strong>always use <span style="color:#1E88E5;font-weight:700;font-family:monospace;">===</span> and <span style="color:#1E88E5;font-weight:700;font-family:monospace;">!==</span></strong>.
     </div>
-    <aside class="notes">Walk the waveform: in the middle region the signal contains an X. == produces X (a silent failure mode in an if). === produces a clean 0 — which is exactly what you want when an X means &ldquo;DUT broken; this is a FAIL.&rdquo; The classic bug is using == in a testbench, then watching an undefined output sail through as &ldquo;pass.&rdquo;</aside>
+    <aside class="notes">Walk the diagram: three branches from the same signal lead to three outcomes. == on X is ambiguous (silent skip). === on X gives a clean 0 (FAIL caught). === against the exact X-pattern matches (1).</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">📊</span> Same Idea &mdash; As a Waveform</h2>
+    <img src="diagrams/d06_eq_vs_ceq_waveform.svg" alt="Waveform showing == vs === when X enters the signal" style="width:88%;max-height:60vh;display:block;margin:0.3em auto 0;">
+    <div class="callout" style="font-size:0.66em;margin-top:0.3em;">
+        <strong>In time:</strong> the X bit in <span style="color:#00ACC1;font-weight:700;font-family:monospace;">signal</span> shows up in the middle region. <span style="color:#FF5252;font-weight:700;font-family:monospace;">==</span> propagates the X (red); <span style="color:#1E88E5;font-weight:700;font-family:monospace;">===</span> resolves to a clean 0 (blue). Clean regions on either side both return 1 (green).
+    </div>
+    <aside class="notes">The waveform makes the time-domain behavior explicit. When the signal is fully defined the two operators agree; when an X enters, only the case-equality form produces a usable answer.</aside>
 </section>
 
 <section>
@@ -216,6 +234,7 @@ $ yosys -p "synth_ice40 -top tb_adder" ...
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
+<script src="../theme/signal-color.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

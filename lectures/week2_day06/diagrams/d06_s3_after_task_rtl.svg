@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arrA" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00ACC1"/>
+    </marker>
+    <marker id="arrB" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FFB300"/>
+    </marker>
+    <marker id="arrE" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#1E88E5"/>
+    </marker>
+    <marker id="arrG" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">After — task <tspan font-family="JetBrains Mono" fill="#26A69A">test_add</tspan> is the only stamped block</text>
+  <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">each test case becomes one line; check logic lives in ONE place</text>
+
+  <!-- LEFT: test plan (one-line cases) -->
+  <rect x="30" y="62" width="280" height="290" rx="12" fill="#fff" stroke="#7E57C2" stroke-width="2" stroke-dasharray="9,4"/>
+  <text x="42" y="82" font-size="12" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">initial begin   (test plan)</text>
+
+  <text x="42" y="108" font-size="10" font-family="JetBrains Mono"><tspan fill="#26A69A" font-weight="700">test_add</tspan><tspan fill="#555">(</tspan><tspan fill="#00ACC1" font-weight="700">4'd5</tspan><tspan fill="#555">, </tspan><tspan fill="#FFB300" font-weight="700">4'd3</tspan><tspan fill="#555">, </tspan><tspan fill="#1E88E5" font-weight="700">5'd8</tspan><tspan fill="#555">);</tspan></text>
+  <text x="42" y="128" font-size="10" font-family="JetBrains Mono"><tspan fill="#26A69A" font-weight="700">test_add</tspan><tspan fill="#555">(</tspan><tspan fill="#00ACC1" font-weight="700">4'd7</tspan><tspan fill="#555">, </tspan><tspan fill="#FFB300" font-weight="700">4'd9</tspan><tspan fill="#555">, </tspan><tspan fill="#1E88E5" font-weight="700">5'd16</tspan><tspan fill="#555">);</tspan></text>
+  <text x="42" y="148" font-size="10" font-family="JetBrains Mono"><tspan fill="#26A69A" font-weight="700">test_add</tspan><tspan fill="#555">(</tspan><tspan fill="#00ACC1" font-weight="700">4'd15</tspan><tspan fill="#555">,</tspan><tspan fill="#FFB300" font-weight="700">4'd15</tspan><tspan fill="#555">,</tspan><tspan fill="#1E88E5" font-weight="700">5'd30</tspan><tspan fill="#555">);</tspan></text>
+  <text x="42" y="168" font-size="10" font-family="JetBrains Mono"><tspan fill="#26A69A" font-weight="700">test_add</tspan><tspan fill="#555">(</tspan><tspan fill="#00ACC1" font-weight="700">4'd0</tspan><tspan fill="#555">, </tspan><tspan fill="#FFB300" font-weight="700">4'd0</tspan><tspan fill="#555">, </tspan><tspan fill="#1E88E5" font-weight="700">5'd0</tspan><tspan fill="#555">);</tspan></text>
+  <text x="42" y="188" font-size="10" font-family="JetBrains Mono"><tspan fill="#26A69A" font-weight="700">test_add</tspan><tspan fill="#555">(</tspan><tspan fill="#00ACC1" font-weight="700">4'd8</tspan><tspan fill="#555">, </tspan><tspan fill="#FFB300" font-weight="700">4'd8</tspan><tspan fill="#555">, </tspan><tspan fill="#1E88E5" font-weight="700">5'd16</tspan><tspan fill="#555">);</tspan></text>
+  <text x="42" y="208" font-size="10" font-family="JetBrains Mono" fill="#888">…   one line per case …</text>
+
+  <!-- Summary -->
+  <text x="42" y="240" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#555">$display("=== </tspan>
+    <tspan fill="#7E57C2" font-weight="700">N</tspan>
+    <tspan fill="#555">,</tspan>
+    <tspan fill="#FF5252" font-weight="700"> F</tspan>
+    <tspan fill="#555"> ===");</tspan>
+  </text>
+  <text x="42" y="262" font-size="12" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">end</text>
+
+  <!-- Reads-like-test-plan label -->
+  <rect x="42" y="290" width="252" height="50" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.5"/>
+  <text x="168" y="308" text-anchor="middle" font-size="10" fill="#7E57C2" font-weight="700">reads like a test plan</text>
+  <text x="168" y="324" text-anchor="middle" font-size="9" fill="#555">add a case = add one line</text>
+
+  <!-- 3 arrows: a, b, expected from cases into task -->
+  <line x1="310" y1="120" x2="380" y2="155" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrA)"/>
+  <line x1="310" y1="145" x2="380" y2="185" stroke="#FFB300" stroke-width="2" marker-end="url(#arrB)"/>
+  <line x1="310" y1="170" x2="380" y2="215" stroke="#1E88E5" stroke-width="2" marker-end="url(#arrE)"/>
+  <text x="328" y="118" font-size="10" font-weight="700" fill="#00ACC1" font-family="JetBrains Mono">a_in</text>
+  <text x="328" y="145" font-size="10" font-weight="700" fill="#FFB300" font-family="JetBrains Mono">b_in</text>
+  <text x="324" y="172" font-size="10" font-weight="700" fill="#1E88E5" font-family="JetBrains Mono">expected</text>
+
+  <!-- RIGHT: task body (single canonical block) -->
+  <rect x="385" y="115" width="345" height="200" rx="12" fill="#E0F7FA" stroke="#26A69A" stroke-width="2.5"/>
+  <text x="395" y="135" font-size="12" font-weight="700" fill="#26A69A" font-family="JetBrains Mono">task test_add</text>
+  <text x="395" y="151" font-size="10" font-family="JetBrains Mono" fill="#555">begin</text>
+  <text x="395" y="170" font-size="10" font-family="JetBrains Mono"><tspan fill="#00ACC1" font-weight="700">  a</tspan><tspan fill="#555"> = </tspan><tspan fill="#00ACC1" font-weight="700">a_in</tspan><tspan fill="#555">;</tspan></text>
+  <text x="395" y="186" font-size="10" font-family="JetBrains Mono"><tspan fill="#FFB300" font-weight="700">  b</tspan><tspan fill="#555"> = </tspan><tspan fill="#FFB300" font-weight="700">b_in</tspan><tspan fill="#555">;</tspan></text>
+  <text x="395" y="202" font-size="10" font-family="JetBrains Mono" fill="#555">  #10;  // combinational settle</text>
+  <text x="395" y="220" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">  check_eq(</tspan><tspan fill="#43A047" font-weight="700">sum</tspan><tspan fill="#555">, </tspan><tspan fill="#1E88E5" font-weight="700">expected</tspan><tspan fill="#555">,</tspan></text>
+  <text x="395" y="236" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">    $sformatf("%d+%d",</tspan></text>
+  <text x="395" y="252" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">    </tspan><tspan fill="#00ACC1" font-weight="700">a_in</tspan><tspan fill="#555">, </tspan><tspan fill="#FFB300" font-weight="700">b_in</tspan><tspan fill="#555">));</tspan></text>
+  <text x="395" y="270" font-size="10" font-family="JetBrains Mono" fill="#555">end</text>
+  <text x="395" y="288" font-size="10" font-family="JetBrains Mono" fill="#26A69A" font-weight="700">endtask</text>
+
+  <!-- "one place to fix bugs" label -->
+  <rect x="395" y="298" width="325" height="40" rx="6" fill="#fff" stroke="#26A69A" stroke-width="1.5"/>
+  <text x="558" y="315" text-anchor="middle" font-size="10" fill="#26A69A" font-weight="700">one canonical block — fix bugs once</text>
+  <text x="558" y="330" text-anchor="middle" font-size="9" fill="#555">centralizes stimulus + check + label</text>
+
+
+  <!-- Title strip at top of task -->
+  <text x="558" y="358" text-anchor="middle" font-size="10" fill="#26A69A" font-style="italic">→ 100 lines  ⇒  ~10 lines  +  one-line cases</text>
+</svg>

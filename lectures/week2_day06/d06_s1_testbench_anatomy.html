@@ -78,7 +78,7 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Testbench Template</h2>
-    <pre class="synth" style="font-size:0.58em;"><code class="language-verilog">`timescale 1ns/1ps         // simulation resolution
+    <pre class="synth" style="font-size:0.58em;"><code class="language-verilog" data-signal-colors="clk:#E91E63,a:#00ACC1,b:#FFB300,sum:#43A047,$dumpfile:#7E57C2,$dumpvars:#7E57C2">`timescale 1ns/1ps         // simulation resolution
 module tb_adder;            // no ports — top of sim hierarchy
 
     // 1. Declare DUT signals
@@ -106,10 +106,19 @@ module tb_adder;            // no ports — top of sim hierarchy
         #10; $finish;
     end
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.68em;">
-        <strong>Five standard parts:</strong> (1) signal declarations, (2) DUT instantiation, (3) clock generator, (4) waveform dump, (5) stimulus/checks. Every testbench you ever write has these five parts.
+    <div class="callout" style="font-size:0.66em;">
+        <strong>Five standard parts:</strong> (1) signal declarations, (2) DUT instantiation, (3) clock generator, (4) waveform dump, (5) stimulus/checks. Color key: <span style="color:#00ACC1;font-weight:700;font-family:monospace;">a</span> · <span style="color:#FFB300;font-weight:700;font-family:monospace;">b</span> · <span style="color:#43A047;font-weight:700;font-family:monospace;">sum</span> · <span style="color:#E91E63;font-weight:700;font-family:monospace;">clk</span> · <span style="color:#7E57C2;font-weight:700;font-family:monospace;">$dump*</span> — same colors in the next slide's block diagram.
     </div>
     <aside class="notes">Five parts. Memorize them. 1) Declare: inputs as reg (tb drives them), outputs as wire (tb reads them). 2) Instantiate with named ports. 3) Clock if needed. 4) Dumpfile/dumpvars for GTKWave. 5) Initial block with stimulus.</aside>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🧱</span> Same Template &mdash; as an RTL Block Diagram</h2>
+    <img src="diagrams/d06_s1_tb_template_rtl.svg" alt="Testbench template — five-part RTL block diagram" style="width:90%;max-height:62vh;display:block;margin:0.2em auto 0;">
+    <div class="callout" style="font-size:0.68em;margin-top:0.3em;">
+        <strong>One-to-one mapping:</strong> each numbered region in the diagram corresponds to a numbered section of the code. The colored wires &mdash; <span style="color:#00ACC1;font-weight:700;font-family:monospace;">a</span>, <span style="color:#FFB300;font-weight:700;font-family:monospace;">b</span>, <span style="color:#E91E63;font-weight:700;font-family:monospace;">clk</span>, <span style="color:#43A047;font-weight:700;font-family:monospace;">sum</span> &mdash; match the highlighted identifiers in the template.
+    </div>
+    <aside class="notes">Reading the diagram against the code: stimulus drives a and b (cyan, amber) into the DUT's input ports; the clock generator wiggles clk (magenta) into the DUT; the DUT produces sum (green) which the dump block records to .vcd. Five regions of code, five regions of the diagram.</aside>
 </section>
 
 <section>
@@ -127,16 +136,17 @@ endmodule</code></pre>
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Predict the Simulation</h2>
     <p style="font-size:0.78em;">At what simulation time does the third <code>$display</code> fire?</p>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">initial begin
+    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog" data-signal-colors="$display:#FFC107,$time:#26A69A,$finish:#FF5252">initial begin
     #5   $display("first at t=%0t", $time);
     #10  $display("second at t=%0t", $time);
     #20  $display("third at t=%0t", $time);
     $finish;
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answer:</strong> <strong>t=35</strong>. Delays are cumulative. <code>#5</code> at start → t=5 → first display. <code>#10</code> → t=15 → second. <code>#20</code> → t=35 → third. Then <code>$finish</code>.
+    <img src="diagrams/d06_s1_timing_predict.svg" alt="Cumulative delay timeline — #5, #10, #20 → t=5, t=15, t=35" style="width:88%;max-height:38vh;display:block;margin:0.3em auto 0;">
+    <div class="fragment callout" style="font-size:0.68em;">
+        <strong>Answer:</strong> <strong>t=35</strong>. Delays are cumulative. <span style="color:#7E57C2;font-weight:700;font-family:monospace;">#5</span> at start → t=5 → first display. <span style="color:#7E57C2;font-weight:700;font-family:monospace;">#10</span> → t=15 → second. <span style="color:#7E57C2;font-weight:700;font-family:monospace;">#20</span> → t=35 → <span style="color:#FF5252;font-weight:700;">third</span>. Then <code>$finish</code>.
     </div>
-    <aside class="notes">Delays inside initial accumulate. Total time = sum of delays. Common bug: thinking each delay is from t=0.</aside>
+    <aside class="notes">Delays inside initial accumulate. Total time = sum of delays. Common bug: thinking each delay is from t=0. The diagram shows the timeline with three event dots; the third (red) is the answer at t=35.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">
@@ -174,16 +184,14 @@ tb_adder.v:31: $finish called</code></pre>
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> What Did the Tool Build?</h2>
     <p style="font-size:0.78em;">Testbenches don't synthesize &mdash; they're simulation-only:</p>
-    <pre style="font-size:0.62em;"><code class="language-bash">$ yosys -p "read_verilog tb_adder.v; synth_ice40 -top tb_adder" -q
+    <pre style="font-size:0.62em;"><code class="language-bash" data-signal-colors="ERROR:#FF5252,initial:#FF5252,$display:#FF5252">$ yosys -p "read_verilog tb_adder.v; synth_ice40 -top tb_adder" -q
 ERROR: Module `\tb_adder' is not synthesizable.
   - contains initial block (simulation only)
   - contains $display (simulation only)
   - contains timing control (#10) (simulation only)</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
-        <strong>Expected.</strong> Testbenches use <code>initial</code>, <code>$display</code>, and <code>#delay</code> — none of which synthesize. That's the point. The testbench orchestrates the simulation; it's not meant to become hardware.
-    </div>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <strong>Checkpoint:</strong> Yosys being this specific about what's unsynthesizable is useful — if your DUT contains any of these constructs, you have a bug.
+    <img src="diagrams/d06_s1_synth_failure.svg" alt="Yosys rejects testbench; accepts DUT" style="width:78%;max-height:40vh;display:block;margin:0.3em auto 0;">
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
+        <strong>Expected.</strong> The three highlighted constructs are sim-only and never synthesize. The DUT (right side of the diagram) compiles fine; the testbench (left) is rejected by design.
     </div>
     <aside class="notes">Important distinction: the testbench is sim-only. Topic 1 Video 2 told you this; now you're writing both and seeing the split in action. If your DUT synth fails with these errors, you have sim constructs in your design code — bug.</aside>
 </section>
@@ -229,6 +237,7 @@ ERROR: Module `\tb_adder' is not synthesizable.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
 <script src="../theme/fit-to-slide.js"></script>
+<script src="../theme/signal-color.js"></script>
 <script>Reveal.initialize({hash:true,slideNumber:'c/t',showSlideNumber:'all',width:1280,height:720,margin:0.04,transition:'slide',plugins:[RevealHighlight,RevealNotes]});</script>
 </body>
 </html>

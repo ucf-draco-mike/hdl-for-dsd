@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 290" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arrTeal" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#26A69A"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Cumulative Delays — Timeline for the <tspan font-family="JetBrains Mono">initial</tspan> block</text>
+  <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">each <tspan font-family="JetBrains Mono">#N</tspan> advances simulation time relative to the previous statement</text>
+
+  <!-- Time axis -->
+  <line x1="60" y1="160" x2="720" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrTeal)"/>
+  <text x="730" y="164" font-size="11" font-weight="700" fill="#26A69A" font-family="JetBrains Mono">$time</text>
+
+  <!-- t=0 marker -->
+  <line x1="80" y1="155" x2="80" y2="165" stroke="#333" stroke-width="1.5"/>
+  <text x="80" y="180" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#333">t=0</text>
+  <text x="80" y="195" text-anchor="middle" font-size="9" fill="#888">begin</text>
+
+  <!-- #5 segment -->
+  <rect x="80" y="100" width="140" height="36" rx="6" fill="#fff" stroke="#7E57C2" stroke-width="2"/>
+  <text x="150" y="115" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">#5</text>
+  <text x="150" y="130" text-anchor="middle" font-size="9" fill="#555">advance 5 units</text>
+  <line x1="150" y1="136" x2="150" y2="158" stroke="#7E57C2" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- t=5 event 1 -->
+  <line x1="220" y1="155" x2="220" y2="165" stroke="#333" stroke-width="2"/>
+  <text x="220" y="180" text-anchor="middle" font-size="11" font-weight="700" font-family="JetBrains Mono" fill="#FFC107">t=5</text>
+  <circle cx="220" cy="160" r="6" fill="#FFC107" stroke="#333" stroke-width="1.5"/>
+  <text x="220" y="225" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#333">first</text>
+  <text x="220" y="240" text-anchor="middle" font-size="9" fill="#555">$display</text>
+  <line x1="220" y1="167" x2="220" y2="215" stroke="#FFC107" stroke-width="2"/>
+
+  <!-- #10 segment -->
+  <rect x="220" y="100" width="180" height="36" rx="6" fill="#fff" stroke="#7E57C2" stroke-width="2"/>
+  <text x="310" y="115" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">#10</text>
+  <text x="310" y="130" text-anchor="middle" font-size="9" fill="#555">advance 10 units</text>
+  <line x1="310" y1="136" x2="310" y2="158" stroke="#7E57C2" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- t=15 event 2 -->
+  <line x1="400" y1="155" x2="400" y2="165" stroke="#333" stroke-width="2"/>
+  <text x="400" y="180" text-anchor="middle" font-size="11" font-weight="700" font-family="JetBrains Mono" fill="#FFC107">t=15</text>
+  <circle cx="400" cy="160" r="6" fill="#FFC107" stroke="#333" stroke-width="1.5"/>
+  <text x="400" y="225" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#333">second</text>
+  <text x="400" y="240" text-anchor="middle" font-size="9" fill="#555">$display</text>
+  <line x1="400" y1="167" x2="400" y2="215" stroke="#FFC107" stroke-width="2"/>
+
+  <!-- #20 segment -->
+  <rect x="400" y="100" width="240" height="36" rx="6" fill="#fff" stroke="#7E57C2" stroke-width="2"/>
+  <text x="520" y="115" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">#20</text>
+  <text x="520" y="130" text-anchor="middle" font-size="9" fill="#555">advance 20 units</text>
+  <line x1="520" y1="136" x2="520" y2="158" stroke="#7E57C2" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- t=35 event 3 -->
+  <line x1="640" y1="155" x2="640" y2="165" stroke="#333" stroke-width="2"/>
+  <text x="640" y="180" text-anchor="middle" font-size="11" font-weight="700" font-family="JetBrains Mono" fill="#FF5252">t=35</text>
+  <circle cx="640" cy="160" r="8" fill="#FF5252" stroke="#333" stroke-width="1.5"/>
+  <text x="640" y="225" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#FF5252">third</text>
+  <text x="640" y="240" text-anchor="middle" font-size="9" fill="#555">$display ← answer</text>
+  <line x1="640" y1="170" x2="640" y2="215" stroke="#FF5252" stroke-width="2.5"/>
+
+  <!-- $finish marker (off-axis) -->
+  <line x1="680" y1="155" x2="680" y2="165" stroke="#888" stroke-width="1.5"/>
+  <text x="680" y="180" text-anchor="middle" font-size="9" font-style="italic" fill="#888">$finish</text>
+
+  <!-- Sum equation -->
+  <rect x="60" y="252" width="640" height="30" rx="6" fill="#fff" stroke="#26A69A" stroke-width="1.5"/>
+  <text x="380" y="272" text-anchor="middle" font-size="11" fill="#333">
+    <tspan font-family="JetBrains Mono" fill="#7E57C2" font-weight="700">5</tspan>
+    <tspan fill="#555"> + </tspan>
+    <tspan font-family="JetBrains Mono" fill="#7E57C2" font-weight="700">10</tspan>
+    <tspan fill="#555"> + </tspan>
+    <tspan font-family="JetBrains Mono" fill="#7E57C2" font-weight="700">20</tspan>
+    <tspan fill="#555"> = </tspan>
+    <tspan font-family="JetBrains Mono" fill="#FF5252" font-weight="700">35</tspan>
+    <tspan fill="#555">  · delays inside an </tspan>
+    <tspan font-family="JetBrains Mono" fill="#26A69A" font-weight="700">initial</tspan>
+    <tspan fill="#555"> block accumulate — they are NOT measured from t=0</tspan>
+  </text>
+
+  <!-- Mini code snippet (top-left, vertically aligned with timeline) -->
+  <rect x="60" y="56" width="640" height="28" rx="4" fill="#1E1E1E" stroke="#333" stroke-width="1"/>
+  <text x="72" y="74" font-size="10" font-family="JetBrains Mono" fill="#D4D4D4">
+    <tspan fill="#7E57C2" font-weight="700">#5  </tspan>
+    <tspan fill="#FFC107">$display(...);  </tspan>
+    <tspan fill="#7E57C2" font-weight="700">#10 </tspan>
+    <tspan fill="#FFC107">$display(...);  </tspan>
+    <tspan fill="#7E57C2" font-weight="700">#20 </tspan>
+    <tspan fill="#FF5252" font-weight="700">$display(...);</tspan>
+    <tspan fill="#D4D4D4">  $finish;</tspan>
+  </text>
+</svg>

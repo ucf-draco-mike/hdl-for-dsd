@@ -1,43 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Inter, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="Inter, sans-serif">
   <defs>
     <marker id="arr" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#C62828"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FF5252"/>
     </marker>
   </defs>
 
-  <text x="360" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#333">The Designer-as-Verifier Blind Spot</text>
-  <text x="360" y="42" text-anchor="middle" font-size="11" fill="#666">if you wrote the bug, you wrote the test that misses it</text>
+  <text x="380" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#222">The Designer-as-Verifier Blind Spot</text>
+  <text x="380" y="42" text-anchor="middle" font-size="11" fill="#555">if you wrote the bug, you wrote the test that misses it</text>
 
   <!-- left circle: spec -->
-  <circle cx="180" cy="180" r="100" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
-  <text x="180" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">What the SPEC says</text>
-  <text x="180" y="158" text-anchor="middle" font-size="10" fill="#555">e.g. "reset is</text>
-  <text x="180" y="172" text-anchor="middle" font-size="10" fill="#555">active-LOW,</text>
-  <text x="180" y="186" text-anchor="middle" font-size="10" fill="#555">synchronous,</text>
-  <text x="180" y="200" text-anchor="middle" font-size="10" fill="#555">held ≥ 2 cycles"</text>
+  <circle cx="180" cy="180" r="105" fill="#fff" stroke="#1E88E5" stroke-width="2.5"/>
+  <text x="180" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#1E88E5">What the SPEC says</text>
+  <text x="180" y="155" text-anchor="middle" font-size="11" font-family="JetBrains Mono">
+    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+    <tspan fill="#555"> is active-LOW,</tspan>
+  </text>
+  <text x="180" y="175" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">synchronous,</text>
+  <text x="180" y="195" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">held ≥ 2 cycles</text>
+  <text x="180" y="225" text-anchor="middle" font-size="9" font-style="italic" fill="#888">the contract you must implement</text>
 
   <!-- right circle: implementation -->
-  <circle cx="540" cy="180" r="100" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
-  <text x="540" y="135" text-anchor="middle" font-size="12" font-weight="700" fill="#C62828">What you BUILT</text>
-  <text x="540" y="158" text-anchor="middle" font-size="10" fill="#555">misread spec —</text>
-  <text x="540" y="172" text-anchor="middle" font-size="10" fill="#555">implemented as</text>
-  <text x="540" y="186" text-anchor="middle" font-size="10" fill="#555">active-HIGH,</text>
-  <text x="540" y="200" text-anchor="middle" font-size="10" fill="#555">async, 1 cycle</text>
+  <circle cx="580" cy="180" r="105" fill="#fff" stroke="#FF5252" stroke-width="2.5"/>
+  <text x="580" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#FF5252">What you BUILT</text>
+  <text x="580" y="155" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">misread spec —</text>
+  <text x="580" y="175" text-anchor="middle" font-size="11" font-family="JetBrains Mono">
+    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+    <tspan fill="#555"> active-HIGH,</tspan>
+  </text>
+  <text x="580" y="195" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">async, 1 cycle</text>
+  <text x="580" y="225" text-anchor="middle" font-size="9" font-style="italic" fill="#888">your RTL</text>
 
   <!-- middle: testbench -->
-  <rect x="290" y="135" width="140" height="90" rx="10" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
-  <text x="360" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#333">Your testbench</text>
-  <text x="360" y="178" text-anchor="middle" font-size="9" fill="#555">also drives reset</text>
-  <text x="360" y="192" text-anchor="middle" font-size="9" fill="#555">active-HIGH,</text>
-  <text x="360" y="206" text-anchor="middle" font-size="9" font-weight="700" fill="#C62828">async, 1 cycle</text>
-  <text x="360" y="220" text-anchor="middle" font-size="9" font-style="italic" fill="#888">"matches my RTL"</text>
+  <rect x="300" y="135" width="160" height="100" rx="10" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="380" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#333">Your testbench</text>
+  <text x="380" y="178" text-anchor="middle" font-size="9" font-family="JetBrains Mono">
+    <tspan fill="#555">also drives </tspan>
+    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+  </text>
+  <text x="380" y="194" text-anchor="middle" font-size="9" fill="#555">active-HIGH,</text>
+  <text x="380" y="210" text-anchor="middle" font-size="9" font-weight="700" fill="#FF5252">async, 1 cycle</text>
+  <text x="380" y="226" text-anchor="middle" font-size="9" font-style="italic" fill="#888">"matches my RTL"</text>
 
   <!-- arrow showing same misreading -->
-  <path d="M 220 240 Q 360 290 500 240" stroke="#C62828" stroke-width="2" fill="none" stroke-dasharray="6,4"/>
-  <text x="360" y="280" text-anchor="middle" font-size="11" font-weight="700" fill="#C62828">same brain, same misreading → bug hides on both sides</text>
+  <path d="M 230 250 Q 380 305 530 250" stroke="#FF5252" stroke-width="2.5" fill="none" stroke-dasharray="7,4"/>
+  <text x="380" y="297" text-anchor="middle" font-size="11" font-weight="700" fill="#FF5252">same brain, same misreading → bug hides on both sides</text>
 
   <!-- bottom callout -->
-  <rect x="60" y="295" width="600" height="20" rx="4" fill="#FFF8E1" stroke="#D4A843" stroke-width="1"/>
-  <text x="360" y="309" text-anchor="middle" font-size="10" fill="#333">Cure: independent verifier · pair-review the spec · golden reference in a different language</text>
+  <rect x="60" y="312" width="640" height="22" rx="4" fill="#fff" stroke="#FFC107" stroke-width="1.5"/>
+  <text x="380" y="327" text-anchor="middle" font-size="10" fill="#333">Cure: <tspan fill="#26A69A" font-weight="700">independent verifier</tspan> · pair-review the spec · <tspan fill="#7E57C2" font-weight="700">golden reference</tspan> in a different language</text>
 </svg>
