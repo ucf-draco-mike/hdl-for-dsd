@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arrK" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Three Compare Outcomes — same <tspan fill="#00ACC1" font-family="JetBrains Mono">signal</tspan>, three operators</text>
+  <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">a 4-bit value with an X in the middle bit: <tspan font-family="JetBrains Mono" fill="#FF5252" font-weight="700">4'b10x1</tspan></text>
+
+  <!-- Common input: signal -->
+  <rect x="30" y="100" width="160" height="56" rx="8" fill="#fff" stroke="#00ACC1" stroke-width="2.5"/>
+  <text x="110" y="122" text-anchor="middle" font-size="12" font-weight="700" fill="#00ACC1" font-family="JetBrains Mono">signal</text>
+  <text x="110" y="140" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#333">= 4'b10<tspan fill="#FF5252" font-weight="700">x</tspan>1</text>
+
+  <!-- Three compare blocks (A, B, C) -->
+  <!-- A: == 4'b1011 -->
+  <line x1="190" y1="115" x2="240" y2="85" stroke="#00ACC1" stroke-width="2"/>
+  <line x1="240" y1="85" x2="280" y2="85" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrK)"/>
+  <rect x="280" y="60" width="190" height="56" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
+  <text x="375" y="80" text-anchor="middle" font-size="11" font-weight="700" fill="#333" font-family="JetBrains Mono">
+    A: <tspan fill="#00ACC1">signal</tspan> == <tspan fill="#7E57C2">4'b1011</tspan>
+  </text>
+  <text x="375" y="100" text-anchor="middle" font-size="10" fill="#C62828" font-style="italic">X in operand → result is X</text>
+
+  <line x1="470" y1="88" x2="510" y2="88" stroke="#333" stroke-width="2" marker-end="url(#arrK)"/>
+  <rect x="510" y="60" width="220" height="56" rx="8" fill="#fff" stroke="#FF5252" stroke-width="2.5"/>
+  <text x="620" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#FF5252" font-family="JetBrains Mono">if (X) → false-ish</text>
+  <text x="620" y="102" text-anchor="middle" font-size="10" fill="#555">A does NOT fire · silent skip</text>
+
+  <!-- B: === 4'b1011 -->
+  <line x1="190" y1="130" x2="280" y2="160" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrK)"/>
+  <rect x="280" y="145" width="190" height="56" rx="8" fill="#fff" stroke="#1E88E5" stroke-width="2"/>
+  <text x="375" y="165" text-anchor="middle" font-size="11" font-weight="700" fill="#333" font-family="JetBrains Mono">
+    B: <tspan fill="#00ACC1">signal</tspan> === <tspan fill="#7E57C2">4'b1011</tspan>
+  </text>
+  <text x="375" y="184" text-anchor="middle" font-size="10" fill="#1E88E5" font-style="italic">X treated as literal — clean compare</text>
+
+  <line x1="470" y1="173" x2="510" y2="173" stroke="#333" stroke-width="2" marker-end="url(#arrK)"/>
+  <rect x="510" y="145" width="220" height="56" rx="8" fill="#fff" stroke="#1E88E5" stroke-width="2.5"/>
+  <text x="620" y="165" text-anchor="middle" font-size="12" font-weight="700" fill="#1E88E5" font-family="JetBrains Mono">result: 0</text>
+  <text x="620" y="187" text-anchor="middle" font-size="10" fill="#555">B does NOT fire · cleanly false</text>
+
+  <!-- C: === 4'b10x1 -->
+  <line x1="190" y1="145" x2="240" y2="245" stroke="#00ACC1" stroke-width="2"/>
+  <line x1="240" y1="245" x2="280" y2="245" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrK)"/>
+  <rect x="280" y="220" width="190" height="56" rx="8" fill="#fff" stroke="#43A047" stroke-width="2"/>
+  <text x="375" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#333" font-family="JetBrains Mono">
+    C: <tspan fill="#00ACC1">signal</tspan> === <tspan fill="#7E57C2">4'b10x1</tspan>
+  </text>
+  <text x="375" y="259" text-anchor="middle" font-size="10" fill="#43A047" font-style="italic">pattern matches including the X</text>
+
+  <line x1="470" y1="248" x2="510" y2="248" stroke="#333" stroke-width="2" marker-end="url(#arrK)"/>
+  <rect x="510" y="220" width="220" height="56" rx="8" fill="#E8F5E9" stroke="#43A047" stroke-width="2.5"/>
+  <text x="620" y="240" text-anchor="middle" font-size="12" font-weight="700" fill="#43A047" font-family="JetBrains Mono">result: 1</text>
+  <text x="620" y="262" text-anchor="middle" font-size="10" fill="#555">C fires · matched</text>
+
+  <!-- Bottom rule -->
+  <rect x="40" y="290" width="680" height="22" rx="4" fill="#FFF8E1" stroke="#FFC107" stroke-width="1.5"/>
+  <text x="380" y="306" text-anchor="middle" font-size="11" font-weight="700" fill="#333">In testbenches: always use <tspan font-family="JetBrains Mono" fill="#1E88E5">===</tspan> / <tspan font-family="JetBrains Mono" fill="#1E88E5">!==</tspan> so an <tspan font-family="JetBrains Mono" fill="#FF5252">X</tspan> becomes a clean FAIL, not a silent skip.</text>
+</svg>

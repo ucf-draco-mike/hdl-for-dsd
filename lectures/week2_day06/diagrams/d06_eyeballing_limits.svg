@@ -1,59 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Inter, sans-serif">
-  <text x="360" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Why Eyeballing Waveforms Breaks Down</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="Inter, sans-serif">
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Why Eyeballing Waveforms Breaks Down</text>
 
   <!-- panel 1: dense waveform -->
-  <text x="180" y="55" text-anchor="middle" font-size="11" font-weight="700" fill="#C62828">"is the FSM correct?"</text>
-  <g transform="translate(40,65)">
+  <text x="190" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#FF5252">"is the FSM correct?"</text>
+  <g transform="translate(50,62)">
     <!-- clk -->
-    <text x="-5" y="14" text-anchor="end" font-size="9" font-family="JetBrains Mono" fill="#333">clk</text>
+    <text x="-5" y="14" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#E91E63">clk</text>
     <polyline points="0,18 10,18 10,5 20,5 20,18 30,18 30,5 40,5 40,18 50,18 50,5 60,5 60,18 70,18 70,5 80,5 80,18 90,18 90,5 100,5 100,18 110,18 110,5 120,5 120,18 130,18 130,5 140,5 140,18 150,18 150,5 160,5 160,18 170,18 170,5 180,5 180,18 190,18 190,5 200,5 200,18 210,18 210,5 220,5 220,18 230,18 230,5 240,5 240,18 250,18 250,5 260,5 260,18 270,18 270,5 280,5 280,18"
-       fill="none" stroke="#1565C0" stroke-width="1.2"/>
+       fill="none" stroke="#E91E63" stroke-width="1.4"/>
     <!-- state[3:0] bus -->
-    <text x="-5" y="40" text-anchor="end" font-size="9" font-family="JetBrains Mono" fill="#333">state</text>
-    <rect x="0" y="30" width="40" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <text x="-5" y="40" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#7E57C2">state</text>
+    <rect x="0" y="30" width="40" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="20" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">IDLE</text>
-    <rect x="40" y="30" width="50" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <rect x="40" y="30" width="50" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="65" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">RECV</text>
-    <rect x="90" y="30" width="35" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <rect x="90" y="30" width="35" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="107" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">CRC</text>
-    <rect x="125" y="30" width="45" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <rect x="125" y="30" width="45" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="147" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">ACK</text>
-    <rect x="170" y="30" width="30" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <rect x="170" y="30" width="30" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="185" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">TX</text>
-    <rect x="200" y="30" width="40" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <rect x="200" y="30" width="40" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="220" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">WAIT</text>
-    <rect x="240" y="30" width="40" height="18" fill="#E3F2FD" stroke="#1565C0"/>
+    <rect x="240" y="30" width="40" height="18" fill="#F3E5F5" stroke="#7E57C2"/>
     <text x="260" y="42" text-anchor="middle" font-size="8" font-family="JetBrains Mono">DONE</text>
     <!-- data bus -->
-    <text x="-5" y="65" text-anchor="end" font-size="9" font-family="JetBrains Mono" fill="#333">data</text>
-    <rect x="0" y="55" width="280" height="18" fill="#FAFAFA" stroke="#888"/>
+    <text x="-5" y="65" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#00ACC1">data</text>
+    <rect x="0" y="55" width="280" height="18" fill="#E0F7FA" stroke="#00ACC1"/>
     <text x="140" y="67" text-anchor="middle" font-size="8" font-family="JetBrains Mono">2A · 7F · 03 · 91 · CC · 00 · 5E · A2</text>
     <!-- valid -->
-    <text x="-5" y="90" text-anchor="end" font-size="9" font-family="JetBrains Mono" fill="#333">valid</text>
-    <polyline points="0,90 50,90 50,80 90,80 90,90 130,90 130,80 175,80 175,90 220,90 220,80 270,80 270,90 280,90" fill="none" stroke="#2E7D32" stroke-width="1.4"/>
+    <text x="-5" y="90" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#43A047">valid</text>
+    <polyline points="0,90 50,90 50,80 90,80 90,90 130,90 130,80 175,80 175,90 220,90 220,80 270,80 270,90 280,90" fill="none" stroke="#43A047" stroke-width="1.6"/>
+    <!-- ready -->
+    <text x="-5" y="115" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#FFB300">ready</text>
+    <polyline points="0,115 40,115 40,105 100,105 100,115 150,115 150,105 200,105 200,115 280,115" fill="none" stroke="#FFB300" stroke-width="1.6"/>
   </g>
 
-  <text x="180" y="185" text-anchor="middle" font-size="10" fill="#666">15 signals × 500 cycles → human pattern-match fails</text>
-  <text x="180" y="200" text-anchor="middle" font-size="10" fill="#C62828" font-style="italic">"looks right" ≠ "is right"</text>
+  <text x="190" y="200" text-anchor="middle" font-size="10" fill="#666">15 signals × 500 cycles → human pattern-match fails</text>
+  <text x="190" y="215" text-anchor="middle" font-size="10" fill="#FF5252" font-style="italic">"looks right" ≠ "is right"</text>
 
   <!-- panel 2: limits list -->
-  <rect x="380" y="50" width="305" height="200" rx="8" fill="#FAFAFA" stroke="#C62828" stroke-width="1.5"/>
-  <text x="395" y="74" font-size="12" font-weight="700" fill="#C62828">The four limits of manual inspection</text>
+  <rect x="395" y="55" width="320" height="215" rx="10" fill="#fff" stroke="#FF5252" stroke-width="2"/>
+  <text x="410" y="78" font-size="12" font-weight="700" fill="#FF5252">The four limits of manual inspection</text>
 
-  <text x="395" y="100" font-size="10" font-weight="700" fill="#333">① Doesn't scale</text>
-  <text x="395" y="115" font-size="9" fill="#555">100 cases × 50 signals = nobody will check that</text>
+  <circle cx="418" cy="105" r="9" fill="#FF5252"/>
+  <text x="418" y="109" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">①</text>
+  <text x="435" y="103" font-size="10" font-weight="700" fill="#333">Doesn't scale</text>
+  <text x="435" y="118" font-size="9" fill="#555">100 cases × 50 signals = nobody will check that</text>
 
-  <text x="395" y="138" font-size="10" font-weight="700" fill="#333">② Doesn't regress</text>
-  <text x="395" y="153" font-size="9" fill="#555">a fix today, a re-check tomorrow — manual every time</text>
+  <circle cx="418" cy="138" r="9" fill="#FF5252"/>
+  <text x="418" y="142" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">②</text>
+  <text x="435" y="136" font-size="10" font-weight="700" fill="#333">Doesn't regress</text>
+  <text x="435" y="151" font-size="9" fill="#555">a fix today, a re-check tomorrow — manual every time</text>
 
-  <text x="395" y="176" font-size="10" font-weight="700" fill="#333">③ Doesn't communicate</text>
-  <text x="395" y="191" font-size="9" fill="#555">"works on my screen" is not a build artifact</text>
+  <circle cx="418" cy="171" r="9" fill="#FF5252"/>
+  <text x="418" y="175" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">③</text>
+  <text x="435" y="169" font-size="10" font-weight="700" fill="#333">Doesn't communicate</text>
+  <text x="435" y="184" font-size="9" fill="#555">"works on my screen" is not a build artifact</text>
 
-  <text x="395" y="214" font-size="10" font-weight="700" fill="#333">④ Hides X / Z silently</text>
-  <text x="395" y="229" font-size="9" fill="#555">red wave in GTKWave is easy to skim past</text>
+  <circle cx="418" cy="204" r="9" fill="#FF5252"/>
+  <text x="418" y="208" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">④</text>
+  <text x="435" y="202" font-size="10" font-weight="700" fill="#333">Hides <tspan font-family="JetBrains Mono" fill="#FF5252">X</tspan> / <tspan font-family="JetBrains Mono" fill="#FFB300">Z</tspan> silently</text>
+  <text x="435" y="217" font-size="9" fill="#555">red wave in GTKWave is easy to skim past</text>
+
+  <text x="555" y="248" text-anchor="middle" font-size="9" font-style="italic" fill="#888">…and these compound when you add more cases</text>
 
   <!-- bottom takeaway -->
-  <rect x="40" y="270" width="640" height="35" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
-  <text x="360" y="293" text-anchor="middle" font-size="11" fill="#333">A self-checking testbench replaces all four with one line: <tspan font-family="JetBrains Mono" font-weight="700" fill="#2E7D32">=== N passed, 0 failed ===</tspan></text>
+  <rect x="40" y="290" width="680" height="40" rx="8" fill="#E8F5E9" stroke="#43A047" stroke-width="2"/>
+  <text x="380" y="313" text-anchor="middle" font-size="12" fill="#333">A self-checking testbench replaces all four with one line:</text>
+  <text x="380" y="326" text-anchor="middle" font-size="11" font-family="JetBrains Mono" font-weight="700" fill="#43A047">=== N passed, 0 failed ===</text>
 </svg>

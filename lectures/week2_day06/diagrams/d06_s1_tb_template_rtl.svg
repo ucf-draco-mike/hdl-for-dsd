@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="arrCyan" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00ACC1"/>
+    </marker>
+    <marker id="arrAmber" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FFB300"/>
+    </marker>
+    <marker id="arrGreen" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+    </marker>
+    <marker id="arrMagenta" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#E91E63"/>
+    </marker>
+    <marker id="arrViolet" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#7E57C2"/>
+    </marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Testbench Template — Five-Part RTL Block Diagram</text>
+  <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">each numbered region maps to a labeled section in the Verilog template</text>
+
+  <!-- Outer module box: tb_adder (no ports) -->
+  <rect x="22" y="58" width="716" height="310" rx="14" fill="#FAFAFA" stroke="#333" stroke-width="2.2" stroke-dasharray="9,4"/>
+  <text x="38" y="80" font-size="13" font-weight="700" fill="#333" font-family="JetBrains Mono">module tb_adder;</text>
+  <text x="38" y="96" font-size="10" fill="#777" font-style="italic">no port list — top of simulation hierarchy</text>
+
+  <!-- Part 1: Signal declarations -->
+  <rect x="40" y="115" width="180" height="70" rx="7" fill="#fff" stroke="#555" stroke-width="1.5"/>
+  <text x="48" y="133" font-size="11" font-weight="700" fill="#333">① Signal Decls</text>
+  <text x="48" y="151" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">reg  [3:0] </tspan><tspan fill="#00ACC1" font-weight="700">a</tspan><tspan fill="#555">, </tspan><tspan fill="#FFB300" font-weight="700">b</tspan></text>
+  <text x="48" y="166" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">wire [4:0] </tspan><tspan fill="#43A047" font-weight="700">sum</tspan></text>
+  <text x="48" y="180" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">reg        </tspan><tspan fill="#E91E63" font-weight="700">clk</tspan></text>
+
+  <!-- Part 3: Clock generator (top right) -->
+  <rect x="560" y="115" width="160" height="70" rx="7" fill="#fff" stroke="#E91E63" stroke-width="2"/>
+  <text x="568" y="133" font-size="11" font-weight="700" fill="#E91E63">③ Clock Gen</text>
+  <text x="568" y="151" font-size="10" font-family="JetBrains Mono" fill="#555">always #5</text>
+  <text x="568" y="166" font-size="10" font-family="JetBrains Mono"><tspan fill="#E91E63" font-weight="700">clk</tspan><tspan fill="#555"> = ~</tspan><tspan fill="#E91E63" font-weight="700">clk</tspan></text>
+  <text x="568" y="180" font-size="9" fill="#888" font-style="italic">10 ns = 100 MHz</text>
+
+  <!-- Part 5: Stimulus (left middle) -->
+  <rect x="40" y="210" width="180" height="105" rx="7" fill="#fff" stroke="#555" stroke-width="1.5"/>
+  <text x="48" y="228" font-size="11" font-weight="700" fill="#333">⑤ Stimulus</text>
+  <text x="48" y="246" font-size="10" font-family="JetBrains Mono" fill="#555">initial begin</text>
+  <text x="48" y="261" font-size="10" font-family="JetBrains Mono"><tspan fill="#00ACC1" font-weight="700">  a</tspan><tspan fill="#555"> = 4'd5;</tspan></text>
+  <text x="48" y="276" font-size="10" font-family="JetBrains Mono"><tspan fill="#FFB300" font-weight="700">  b</tspan><tspan fill="#555"> = 4'd3;</tspan></text>
+  <text x="48" y="290" font-size="10" font-family="JetBrains Mono" fill="#555">  #10;</text>
+  <text x="48" y="304" font-size="10" font-family="JetBrains Mono" fill="#555">  $finish;</text>
+
+  <!-- DUT box (yellow, central) -->
+  <rect x="290" y="160" width="180" height="120" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <text x="380" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#333">② DUT</text>
+  <text x="380" y="203" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#555">adder dut (</text>
+  <text x="380" y="219" text-anchor="middle" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">  .i_a(</tspan><tspan fill="#00ACC1" font-weight="700">a</tspan><tspan fill="#555">),</tspan></text>
+  <text x="380" y="234" text-anchor="middle" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">  .i_b(</tspan><tspan fill="#FFB300" font-weight="700">b</tspan><tspan fill="#555">),</tspan></text>
+  <text x="380" y="250" text-anchor="middle" font-size="10" font-family="JetBrains Mono"><tspan fill="#555">  .o_sum(</tspan><tspan fill="#43A047" font-weight="700">sum</tspan><tspan fill="#555">)</tspan></text>
+  <text x="380" y="268" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#555">);</text>
+
+  <!-- Part 4: Waveform dump -->
+  <rect x="540" y="280" width="180" height="65" rx="7" fill="#fff" stroke="#7E57C2" stroke-width="2"/>
+  <text x="548" y="298" font-size="11" font-weight="700" fill="#7E57C2">④ Dump</text>
+  <text x="548" y="315" font-size="10" font-family="JetBrains Mono" fill="#555">$dumpfile</text>
+  <text x="548" y="330" font-size="10" font-family="JetBrains Mono" fill="#555">$dumpvars → .vcd</text>
+
+  <!-- Wires: stimulus a -> DUT.i_a -->
+  <line x1="220" y1="246" x2="270" y2="200" stroke="#00ACC1" stroke-width="2.2"/>
+  <line x1="270" y1="200" x2="290" y2="200" stroke="#00ACC1" stroke-width="2.2" marker-end="url(#arrCyan)"/>
+  <text x="245" y="195" font-size="10" font-weight="700" fill="#00ACC1" font-family="JetBrains Mono">a</text>
+
+  <!-- Wires: stimulus b -> DUT.i_b -->
+  <line x1="220" y1="276" x2="270" y2="225" stroke="#FFB300" stroke-width="2.2"/>
+  <line x1="270" y1="225" x2="290" y2="225" stroke="#FFB300" stroke-width="2.2" marker-end="url(#arrAmber)"/>
+  <text x="245" y="248" font-size="10" font-weight="700" fill="#FFB300" font-family="JetBrains Mono">b</text>
+
+  <!-- Wire: clock from gen down to DUT (right side) -->
+  <line x1="640" y1="185" x2="640" y2="248" stroke="#E91E63" stroke-width="2.2"/>
+  <line x1="640" y1="248" x2="470" y2="248" stroke="#E91E63" stroke-width="2.2" marker-end="url(#arrMagenta)"/>
+  <text x="555" y="241" font-size="10" font-weight="700" fill="#E91E63" font-family="JetBrains Mono">clk</text>
+
+  <!-- Wire: DUT sum -> dump (down/right) -->
+  <line x1="470" y1="220" x2="500" y2="220" stroke="#43A047" stroke-width="2.2"/>
+  <line x1="500" y1="220" x2="500" y2="312" stroke="#43A047" stroke-width="2.2"/>
+  <line x1="500" y1="312" x2="540" y2="312" stroke="#43A047" stroke-width="2.2" marker-end="url(#arrGreen)"/>
+  <text x="508" y="215" font-size="10" font-weight="700" fill="#43A047" font-family="JetBrains Mono">sum</text>
+
+  <!-- Legend strip -->
+  <rect x="40" y="335" width="490" height="22" rx="4" fill="#fff" stroke="#999" stroke-width="1"/>
+  <text x="50" y="350" font-size="10" font-family="JetBrains Mono">
+    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#555">  </tspan>
+    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#555">  </tspan>
+    <tspan fill="#43A047" font-weight="700">sum</tspan>
+    <tspan fill="#555">  </tspan>
+    <tspan fill="#E91E63" font-weight="700">clk</tspan>
+    <tspan fill="#555">     decls→drive→DUT→dump  ·  same colors used in the code block →</tspan>
+  </text>
+</svg>
