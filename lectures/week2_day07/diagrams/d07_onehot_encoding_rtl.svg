@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="oh-state" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#EF6C00"/></marker>
+    <marker id="oh-next"  markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#FFA000"/></marker>
+    <marker id="oh-timer" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#7B1FA2"/></marker>
+    <marker id="oh-g"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/></marker>
+    <marker id="oh-y"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#FBC02D"/></marker>
+    <marker id="oh-r"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#E53935"/></marker>
+  </defs>
+
+  <text x="260" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#2E7D32">
+    One-Hot Encoding · 3-bit state · 3 states · outputs = direct wires
+  </text>
+
+  <!-- Three DFFs stacked -->
+  <g>
+    <rect x="220" y="70" width="90" height="44" rx="4" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <text x="265" y="89" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">DFF</text>
+    <text x="265" y="106" text-anchor="middle" font-size="9" fill="#EF6C00" font-weight="700">r_state[0]</text>
+    <polygon points="220,106 230,100 230,112" fill="none" stroke="#1565C0" stroke-width="1.4"/>
+  </g>
+  <g>
+    <rect x="220" y="128" width="90" height="44" rx="4" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <text x="265" y="147" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">DFF</text>
+    <text x="265" y="164" text-anchor="middle" font-size="9" fill="#EF6C00" font-weight="700">r_state[1]</text>
+    <polygon points="220,164 230,158 230,170" fill="none" stroke="#1565C0" stroke-width="1.4"/>
+  </g>
+  <g>
+    <rect x="220" y="186" width="90" height="44" rx="4" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+    <text x="265" y="205" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">DFF</text>
+    <text x="265" y="222" text-anchor="middle" font-size="9" fill="#EF6C00" font-weight="700">r_state[2]</text>
+    <polygon points="220,222 230,216 230,228" fill="none" stroke="#1565C0" stroke-width="1.4"/>
+  </g>
+  <text x="265" y="62" text-anchor="middle" font-size="9" fill="#888" font-weight="700">3 flops · one bit per state</text>
+
+  <!-- Next-state comb logic -->
+  <rect x="50" y="80" width="140" height="145" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <text x="120" y="105" text-anchor="middle" font-size="11" font-weight="700" fill="#B8860B">Next-State</text>
+  <text x="120" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#B8860B">Logic</text>
+  <text x="120" y="140" text-anchor="middle" font-size="9" fill="#888" font-style="italic">one-hot shift</text>
+  <text x="120" y="158" text-anchor="middle" font-size="9" fill="#888" font-style="italic">on timer_done</text>
+  <text x="120" y="180" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="700">~3 LUTs</text>
+  <text x="120" y="200" text-anchor="middle" font-size="8" font-style="italic" fill="#666">single-bit conditions</text>
+
+  <!-- Wires NextState → DFF.D -->
+  <line x1="190" y1="92" x2="218" y2="92" stroke="#FFA000" stroke-width="2.5" marker-end="url(#oh-next)"/>
+  <line x1="190" y1="150" x2="218" y2="150" stroke="#FFA000" stroke-width="2.5" marker-end="url(#oh-next)"/>
+  <line x1="190" y1="208" x2="218" y2="208" stroke="#FFA000" stroke-width="2.5" marker-end="url(#oh-next)"/>
+  <text x="204" y="84" font-size="8" fill="#FFA000" font-weight="700" text-anchor="middle">D</text>
+  <text x="204" y="142" font-size="8" fill="#FFA000" font-weight="700" text-anchor="middle">D</text>
+  <text x="204" y="200" font-size="8" fill="#FFA000" font-weight="700" text-anchor="middle">D</text>
+
+  <!-- Direct wires Q → outputs (no decoder!) -->
+  <line x1="310" y1="92" x2="470" y2="92" stroke="#43A047" stroke-width="3" marker-end="url(#oh-g)"/>
+  <text x="480" y="96" font-size="11" font-weight="700" fill="#43A047">o_green</text>
+  <text x="390" y="85" text-anchor="middle" font-size="8" font-style="italic" fill="#43A047">= r_state[0] (direct)</text>
+
+  <line x1="310" y1="150" x2="470" y2="150" stroke="#FBC02D" stroke-width="3" marker-end="url(#oh-y)"/>
+  <text x="480" y="154" font-size="11" font-weight="700" fill="#B8860B">o_yellow</text>
+  <text x="390" y="143" text-anchor="middle" font-size="8" font-style="italic" fill="#B8860B">= r_state[1] (direct)</text>
+
+  <line x1="310" y1="208" x2="470" y2="208" stroke="#E53935" stroke-width="3" marker-end="url(#oh-r)"/>
+  <text x="480" y="212" font-size="11" font-weight="700" fill="#E53935">o_red</text>
+  <text x="390" y="201" text-anchor="middle" font-size="8" font-style="italic" fill="#E53935">= r_state[2] (direct)</text>
+
+  <!-- Feedback -->
+  <path d="M 310,225 L 310,250 L 90,250 L 90,225" fill="none" stroke="#EF6C00" stroke-width="2" marker-end="url(#oh-state)"/>
+  <text x="200" y="265" text-anchor="middle" font-size="9" font-style="italic" fill="#EF6C00">r_state (feedback)</text>
+
+  <!-- timer_done input -->
+  <line x1="5" y1="142" x2="48" y2="142" stroke="#7B1FA2" stroke-width="2.5" marker-end="url(#oh-timer)"/>
+  <text x="5" y="134" font-size="10" font-weight="700" fill="#7B1FA2">timer_done</text>
+
+  <!-- Cell summary -->
+  <rect x="50" y="285" width="450" height="46" rx="5" fill="#FFFFFF" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="65" y="304" font-size="10" font-weight="700" fill="#2E7D32">iCE40 cost:</text>
+  <text x="140" y="304" font-size="10" fill="#333">3 × SB_DFF (flops)  +  ~3 × SB_LUT4 (next-state)  + 0 LUTs for outputs!</text>
+  <text x="65" y="322" font-size="9.5" font-style="italic" fill="#666">More flops · zero output decoder · fastest output path</text>
+</svg>

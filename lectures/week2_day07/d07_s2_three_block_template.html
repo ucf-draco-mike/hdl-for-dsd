@@ -21,6 +21,34 @@
 .fsm-mini .mini-block.b3.active { background: #E8F5E9; border-color: #2E7D32; color: #2E7D32; box-shadow: 0 0 0 2px rgba(46,125,50,0.25); }
 .fsm-mini .mini-arrow-rtl { color: #777; font-size: 0.8em; margin: 0 0.1em; }
 .fsm-mini .mini-label { font-size: 0.5em; color: #888; font-weight: 600; letter-spacing: 0.08em; margin-right: 0.4em; }
+
+/* Signal-colored code blocks (match adjacent RTL diagram palette) */
+.reveal pre.code-rtl {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
+    line-height: 1.45; padding: 0.8em 1em; border-radius: 6px;
+    border-left: 4px solid #27AE60; margin: 0.4em 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    white-space: pre; overflow-x: auto;
+}
+.reveal pre.code-rtl.mistake { border-left-color: #C62828; }
+.sig-clk   { color:#00B8D4; font-weight:700; }
+.sig-rst   { color:#E91E63; font-weight:700; }
+.sig-state { color:#EF6C00; font-weight:700; }
+.sig-next  { color:#FFA000; font-weight:700; }
+.sig-timer { color:#7B1FA2; font-weight:700; }
+.sig-g     { color:#43A047; font-weight:700; }
+.sig-y     { color:#FBC02D; font-weight:700; }
+.sig-r     { color:#E53935; font-weight:700; }
+.sig-bit   { color:#0288D1; font-weight:700; }
+.sig-det   { color:#43A047; font-weight:700; }
+.sig-sinit { color:#90A4AE; font-weight:700; }
+.kw        { color:#C586C0; }
+.cm        { color:#6A9955; font-style:italic; }
+.num       { color:#B5CEA8; }
+/* Side-by-side code + RTL grid */
+.code-rtl-grid { display:grid; grid-template-columns: 1.05fr 1fr; gap: 0.6em; align-items: start; }
+.code-rtl-grid .rtl-cap { font-size:0.55em; color:#888; text-align:center; margin-top:0.15em; letter-spacing:0.06em; }
 </style>
 </head>
 <body>
@@ -87,13 +115,24 @@
             <div class="mini-block b3">Block 3<br>Outputs</div>
         </div>
     </div>
-    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// --- Block 1: state register (sequential, nonblocking) ---
-always @(posedge i_clk) begin
-    if (i_reset) r_state &lt;= S_INIT;
-    else         r_state &lt;= r_next_state;
-end</code></pre>
-    <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> Block 1 is <strong>always trivial</strong>. It says: &ldquo;on every clock edge, load <code>r_next_state</code> into <code>r_state</code>; on reset, go to <code>S_INIT</code>.&rdquo; That's all it ever does. If you find yourself putting <em>logic</em> here, you're doing it wrong — logic goes in Block 2.
+    <div class="code-rtl-grid">
+        <div>
+<pre class="code-rtl" style="font-size:0.6em;"><span class="cm">// --- Block 1: state register ---</span>
+<span class="kw">always</span> @(<span class="kw">posedge</span> <span class="sig-clk">i_clk</span>) <span class="kw">begin</span>
+    <span class="kw">if</span> (<span class="sig-rst">i_reset</span>) <span class="sig-state">r_state</span> &lt;= <span class="sig-sinit">S_INIT</span>;
+    <span class="kw">else</span>         <span class="sig-state">r_state</span> &lt;= <span class="sig-next">r_next_state</span>;
+<span class="kw">end</span></pre>
+            <div class="rtl-cap">3 inputs · 1 output · pure DFF</div>
+        </div>
+        <div>
+            <img src="diagrams/d07_block1_state_reg_rtl.svg"
+                 alt="Block 1 RTL: r_next_state into D pin of DFF; i_clk into clock pin; i_reset into reset pin; r_state at Q output"
+                 style="width:100%; display:block;">
+            <div class="rtl-cap">Signal colors match the code on the left</div>
+        </div>
+    </div>
+    <div class="callout" style="font-size:0.66em;">
+        <strong>My thinking:</strong> Block 1 is <strong>always trivial</strong>. It says: &ldquo;on every clock edge, load <span class="sig-next">r_next_state</span> into <span class="sig-state">r_state</span>; on reset, go to <span class="sig-sinit">S_INIT</span>.&rdquo; That's all it ever does. If you find yourself putting <em>logic</em> here, you're doing it wrong — logic goes in Block 2.
     </div>
     <aside class="notes">Memorize: Block 1 is always trivial. It's a D flip-flop with reset. Nothing more. The FSM's intelligence lives in Blocks 2 and 3.</aside>
 </section>
@@ -113,20 +152,30 @@ end</code></pre>
             <div class="mini-block b3">Block 3<br>Outputs</div>
         </div>
     </div>
-    <pre class="synth" style="font-size:0.63em;"><code class="language-verilog">// --- Block 2: next-state logic (combinational, blocking) ---
-always @(*) begin
-    r_next_state = r_state;            // DEFAULT: stay in current state (prevents latches)
-    case (r_state)
-        S_GREEN:  if (timer_done) r_next_state = S_YELLOW;
-        S_YELLOW: if (timer_done) r_next_state = S_RED;
-        S_RED:    if (timer_done) r_next_state = S_GREEN;
-        default:                  r_next_state = S_INIT;   // illegal-state safety
-    endcase
-end</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
+    <div class="code-rtl-grid">
+        <div>
+<pre class="code-rtl" style="font-size:0.56em;"><span class="cm">// --- Block 2: next-state logic (combinational) ---</span>
+<span class="kw">always</span> @(*) <span class="kw">begin</span>
+    <span class="sig-next">r_next_state</span> = <span class="sig-state">r_state</span>;            <span class="cm">// DEFAULT: stay (no latch)</span>
+    <span class="kw">case</span> (<span class="sig-state">r_state</span>)
+        <span class="sig-g">S_GREEN</span>:  <span class="kw">if</span> (<span class="sig-timer">timer_done</span>) <span class="sig-next">r_next_state</span> = <span class="sig-y">S_YELLOW</span>;
+        <span class="sig-y">S_YELLOW</span>: <span class="kw">if</span> (<span class="sig-timer">timer_done</span>) <span class="sig-next">r_next_state</span> = <span class="sig-r">S_RED</span>;
+        <span class="sig-r">S_RED</span>:    <span class="kw">if</span> (<span class="sig-timer">timer_done</span>) <span class="sig-next">r_next_state</span> = <span class="sig-g">S_GREEN</span>;
+        <span class="kw">default</span>:                  <span class="sig-next">r_next_state</span> = <span class="sig-sinit">S_INIT</span>;   <span class="cm">// illegal-state safety</span>
+    <span class="kw">endcase</span>
+<span class="kw">end</span></pre>
+        </div>
+        <div>
+            <img src="diagrams/d07_block2_next_state_rtl.svg"
+                 alt="Block 2 RTL: r_state and timer_done feed a case-decoder that produces r_next_state; default branch keeps r_state to prevent latches"
+                 style="width:100%; display:block;">
+            <div class="rtl-cap">Combinational case-decoder · no flops</div>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;">
         <strong>Together — two critical habits:</strong>
         <ol style="font-size:0.9em;">
-            <li><strong>Default assignment <em>first</em>:</strong> <code>r_next_state = r_state;</code> — prevents latch inference and means &ldquo;if no transition fires, stay put.&rdquo;</li>
+            <li><strong>Default assignment <em>first</em>:</strong> <code><span class="sig-next">r_next_state</span> = <span class="sig-state">r_state</span>;</code> — prevents latch inference and means &ldquo;if no transition fires, stay put.&rdquo;</li>
             <li><strong><code>default</code> case at end:</strong> recovers from illegal states. For a 2-bit state with only 3 legal values, the 4th is unreachable <em>in theory</em>, but silicon glitches happen in practice.</li>
         </ol>
     </div>
@@ -148,22 +197,32 @@ end</code></pre>
             <div class="mini-block b3 active">Block 3<br>Outputs</div>
         </div>
     </div>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// --- Block 3: output logic (combinational, Moore: depends only on state) ---
-always @(*) begin
-    // defaults for ALL outputs (prevents latches)
-    o_red    = 1'b0;
-    o_yellow = 1'b0;
-    o_green  = 1'b0;
+    <div class="code-rtl-grid">
+        <div>
+<pre class="code-rtl" style="font-size:0.56em;"><span class="cm">// --- Block 3: output logic (Moore: f(state) only) ---</span>
+<span class="kw">always</span> @(*) <span class="kw">begin</span>
+    <span class="cm">// defaults for ALL outputs (no latches)</span>
+    <span class="sig-r">o_red</span>    = <span class="num">1'b0</span>;
+    <span class="sig-y">o_yellow</span> = <span class="num">1'b0</span>;
+    <span class="sig-g">o_green</span>  = <span class="num">1'b0</span>;
 
-    case (r_state)
-        S_GREEN:  o_green  = 1'b1;
-        S_YELLOW: o_yellow = 1'b1;
-        S_RED:    o_red    = 1'b1;
-        default: ;  // all off
-    endcase
-end</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Together — the same two habits reappear:</strong> defaults at top (for <em>every</em> output, not just one), <code>default:</code> case at end. Same discipline, same reasons, same template. <strong>Moore</strong> = outputs depend only on <code>r_state</code>; <strong>Mealy</strong> = outputs also depend on inputs, but the structure stays identical.
+    <span class="kw">case</span> (<span class="sig-state">r_state</span>)
+        <span class="sig-g">S_GREEN</span>:  <span class="sig-g">o_green</span>  = <span class="num">1'b1</span>;
+        <span class="sig-y">S_YELLOW</span>: <span class="sig-y">o_yellow</span> = <span class="num">1'b1</span>;
+        <span class="sig-r">S_RED</span>:    <span class="sig-r">o_red</span>    = <span class="num">1'b1</span>;
+        <span class="kw">default</span>: ;  <span class="cm">// all off</span>
+    <span class="kw">endcase</span>
+<span class="kw">end</span></pre>
+        </div>
+        <div>
+            <img src="diagrams/d07_block3_output_rtl.svg"
+                 alt="Block 3 RTL: r_state into an output decoder producing o_green, o_yellow, o_red. Default-0 above the case prevents latches."
+                 style="width:100%; display:block;">
+            <div class="rtl-cap">Moore: only r_state drives outputs</div>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Together — the same two habits reappear:</strong> defaults at top (for <em>every</em> output, not just one), <code>default:</code> case at end. Same discipline, same reasons, same template. <strong>Moore</strong> = outputs depend only on <span class="sig-state">r_state</span>; <strong>Mealy</strong> = outputs also depend on inputs, but the structure stays identical.
     </div>
     <aside class="notes">Output logic follows the same template. Defaults for every output. Case by state. Default-case for safety. Mealy variants add inputs to the condition, not additional structure.</aside>
 </section>
@@ -183,20 +242,30 @@ end</code></pre>
             <div class="mini-block b3 active">Block 3<br>Outputs</div>
         </div>
     </div>
-    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">always @(*) begin
-    case (r_state)
-        S_GREEN:  begin r_next_state = S_YELLOW; o_green = 1; end
-        S_YELLOW: begin r_next_state = S_RED;                 end
-        S_RED:    begin r_next_state = S_GREEN;  o_red   = 1; end
-    endcase
-end</code></pre>
-    <p style="font-size:0.78em;">Three bugs. Find them.</p>
-    <div class="fragment callout" style="font-size:0.7em;">
+    <div class="code-rtl-grid">
+        <div>
+<pre class="code-rtl mistake" style="font-size:0.58em;"><span class="kw">always</span> @(*) <span class="kw">begin</span>
+    <span class="kw">case</span> (<span class="sig-state">r_state</span>)
+        <span class="sig-g">S_GREEN</span>:  <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-y">S_YELLOW</span>; <span class="sig-g">o_green</span> = <span class="num">1</span>; <span class="kw">end</span>
+        <span class="sig-y">S_YELLOW</span>: <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-r">S_RED</span>;                 <span class="kw">end</span>
+        <span class="sig-r">S_RED</span>:    <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-g">S_GREEN</span>;  <span class="sig-r">o_red</span>   = <span class="num">1</span>; <span class="kw">end</span>
+    <span class="kw">endcase</span>
+<span class="kw">end</span></pre>
+            <p style="font-size:0.68em; margin: 0.25em 0 0;">Three bugs. Find them.</p>
+        </div>
+        <div>
+            <img src="diagrams/d07_bug_latch_rtl.svg"
+                 alt="Buggy combined block infers latches on o_green, o_yellow, and r_next_state — outputs become 'stuck' memory cells"
+                 style="width:100%; display:block;">
+            <div class="rtl-cap">⚠ Inferred latches in synthesized silicon</div>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.64em; margin-top:0.3em;">
         <strong>Answers:</strong>
-        <ol style="font-size:0.92em;">
-            <li><strong>Combined blocks:</strong> state logic and output logic are in the same <code>always</code> block — violates the template.</li>
-            <li><strong>No defaults:</strong> <code>o_green</code>, <code>o_yellow</code>, <code>o_red</code> aren't assigned in every branch → <strong>latch inference</strong>.</li>
-            <li><strong>No <code>default:</code> case:</strong> if <code>r_state</code> takes an illegal value, <code>r_next_state</code> isn't assigned in that branch → another latch, plus no recovery.</li>
+        <ol style="font-size:0.95em; margin:0.2em 0;">
+            <li><strong>Combined blocks:</strong> state and output logic are in the same <code>always</code> block — violates the template.</li>
+            <li><strong>No defaults:</strong> <span class="sig-g">o_green</span>, <span class="sig-y">o_yellow</span>, <span class="sig-r">o_red</span> aren't assigned in every branch → <strong>latch inference</strong>.</li>
+            <li><strong>No <code>default:</code> case:</strong> if <span class="sig-state">r_state</span> takes an illegal value, <span class="sig-next">r_next_state</span> isn't assigned → another latch, plus no recovery.</li>
         </ol>
     </div>
     <aside class="notes">Three canonical FSM bugs in one 5-line snippet. Each breaks the template in a different way. Memorable because every newcomer writes something like this first.</aside>

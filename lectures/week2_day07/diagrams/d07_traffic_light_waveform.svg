@@ -6,7 +6,7 @@
     </pattern>
   </defs>
   <style>
-    .label { font-family: Inter, sans-serif; font-size: 11px; fill: #333; font-weight: 600; }
+    .label { font-family: Inter, sans-serif; font-size: 11px; font-weight: 700; }
     .small { font-family: Inter, sans-serif; font-size: 9px; fill: #666; }
     .cyclehdr { font-family: Inter, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
     .stateLbl { font-family: Inter, sans-serif; font-size: 10px; fill: #222; font-weight: 700; }
@@ -19,8 +19,6 @@
 
   <!-- Cycle header -->
   <text x="140" y="48" class="cyclehdr">cycle</text>
-  <!-- Each cycle is 45px wide, starting at x=180 -->
-  <!-- cycles 0..12 -->
   <g class="cyclehdr">
     <text x="195" y="48" text-anchor="middle">0</text>
     <text x="240" y="48" text-anchor="middle">1</text>
@@ -55,50 +53,44 @@
     <line x1="757" y1="55" x2="757" y2="245"/>
   </g>
 
-  <!-- clk row -->
-  <text x="170" y="74" text-anchor="end" class="label">i_clk</text>
-  <g stroke="#1565C0" stroke-width="1.4" fill="none">
-    <!-- square wave: each cycle ~45px, low for half, high for half -->
+  <!-- clk row (cyan) -->
+  <text x="170" y="74" text-anchor="end" class="label" fill="#00B8D4">i_clk</text>
+  <g stroke="#00B8D4" stroke-width="1.6" fill="none">
     <path d="M 172,80 L 172,68 L 194,68 L 194,80 L 217,80 L 217,68 L 239,68 L 239,80 L 262,80 L 262,68 L 284,68 L 284,80 L 307,80 L 307,68 L 329,68 L 329,80 L 352,80 L 352,68 L 374,68 L 374,80 L 397,80 L 397,68 L 419,68 L 419,80 L 442,80 L 442,68 L 464,68 L 464,80 L 487,80 L 487,68 L 509,68 L 509,80 L 532,80 L 532,68 L 554,68 L 554,80 L 577,80 L 577,68 L 599,68 L 599,80 L 622,80 L 622,68 L 644,68 L 644,80 L 667,80 L 667,68 L 689,68 L 689,80 L 712,80 L 712,68 L 734,68 L 734,80 L 757,80"/>
   </g>
 
-  <!-- timer row: pulse=1 at cycles 3, 7, 11 -->
-  <text x="170" y="105" text-anchor="end" class="label">timer</text>
-  <g stroke="#F9A825" stroke-width="1.6" fill="none">
-    <!-- cycles 0-2: 0; cycle 3: 1; cycle 4-6: 0; cycle 7: 1; cycle 8-10:0; cycle 11:1; cycle 12:0 -->
+  <!-- timer row (purple) -->
+  <text x="170" y="105" text-anchor="end" class="label" fill="#7B1FA2">timer_done</text>
+  <g stroke="#7B1FA2" stroke-width="1.8" fill="none">
     <path d="M 172,110 L 307,110 L 307,95 L 352,95 L 352,110 L 487,110 L 487,95 L 532,95 L 532,110 L 667,110 L 667,95 L 712,95 L 712,110 L 757,110"/>
   </g>
 
-  <!-- state row -->
-  <text x="170" y="143" text-anchor="end" class="label">r_state</text>
+  <!-- state row (orange theme) -->
+  <text x="170" y="143" text-anchor="end" class="label" fill="#EF6C00">r_state</text>
   <line x1="172" y1="148" x2="757" y2="148" stroke="#999" stroke-width="0.8"/>
   <line x1="172" y1="132" x2="757" y2="132" stroke="#999" stroke-width="0.8"/>
-  <!-- state segments: G G G G | Y ? ? ? | ? ? ? ? | ? -->
-  <!-- Known: cycles 0-3 G, cycle 4 Y, cycles 5-12 unknown -->
   <g>
-    <rect x="172" y="132" width="180" height="16" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
+    <rect x="172" y="132" width="180" height="16" fill="#E8F5E9" stroke="#43A047" stroke-width="1.2"/>
     <text x="262" y="144" text-anchor="middle" class="stateLbl" fill="#2E7D32">S_GREEN</text>
 
-    <rect x="352" y="132" width="45" height="16" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
-    <text x="374" y="144" text-anchor="middle" class="stateLbl" fill="#F9A825">Y</text>
+    <rect x="352" y="132" width="45" height="16" fill="#FFFDE7" stroke="#FBC02D" stroke-width="1.2"/>
+    <text x="374" y="144" text-anchor="middle" class="stateLbl" fill="#B8860B">Y</text>
 
     <rect x="397" y="132" width="360" height="16" fill="url(#hatch)" stroke="#999" stroke-width="1" stroke-dasharray="4,2"/>
     <text x="577" y="144" text-anchor="middle" class="questionLbl">? ? ? ? ? ? ? ?</text>
   </g>
 
-  <!-- o_green row -->
-  <text x="170" y="178" text-anchor="end" class="label">o_green</text>
-  <g stroke="#2E7D32" stroke-width="1.6" fill="none">
-    <!-- 1 for cycles 0-3, then 0 for cycle 4, then unknown -->
+  <!-- o_green row (green) -->
+  <text x="170" y="178" text-anchor="end" class="label" fill="#43A047">o_green</text>
+  <g stroke="#43A047" stroke-width="1.8" fill="none">
     <path d="M 172,168 L 352,168 L 352,183 L 397,183"/>
   </g>
-  <!-- unknown portion hatched -->
   <rect x="397" y="166" width="360" height="20" fill="url(#hatch)" opacity="0.5"/>
   <text x="577" y="180" text-anchor="middle" class="questionLbl">? ? ? ? ? ? ? ?</text>
 
-  <!-- o_red row -->
-  <text x="170" y="213" text-anchor="end" class="label">o_red</text>
-  <g stroke="#C62828" stroke-width="1.6" fill="none">
+  <!-- o_red row (red) -->
+  <text x="170" y="213" text-anchor="end" class="label" fill="#E53935">o_red</text>
+  <g stroke="#E53935" stroke-width="1.8" fill="none">
     <path d="M 172,218 L 397,218"/>
   </g>
   <rect x="397" y="201" width="360" height="20" fill="url(#hatch)" opacity="0.5"/>
@@ -106,6 +98,6 @@
 
   <!-- Hint line -->
   <text x="380" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#555" font-style="italic">
-    Hint: state changes on the clock edge AFTER timer=1 (one-cycle Moore latency)
+    Hint: state changes on the clock edge AFTER timer_done=1 (one-cycle Moore latency)
   </text>
 </svg>

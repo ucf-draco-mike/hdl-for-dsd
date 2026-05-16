@@ -8,6 +8,30 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../theme/ucf-hdl.css">
+<style>
+/* Signal-colored code blocks (match adjacent RTL diagram palette) */
+.reveal pre.code-rtl {
+    background: #1e1e1e; color: #d4d4d4;
+    font-family: 'JetBrains Mono','Fira Code','Cascadia Code','Consolas',monospace;
+    line-height: 1.45; padding: 0.8em 1em; border-radius: 6px;
+    border-left: 4px solid #27AE60; margin: 0.4em 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    white-space: pre; overflow-x: auto;
+}
+.sig-clk   { color:#00B8D4; font-weight:700; }
+.sig-rst   { color:#E91E63; font-weight:700; }
+.sig-state { color:#EF6C00; font-weight:700; }
+.sig-next  { color:#FFA000; font-weight:700; }
+.sig-timer { color:#7B1FA2; font-weight:700; }
+.sig-g     { color:#43A047; font-weight:700; }
+.sig-y     { color:#FBC02D; font-weight:700; }
+.sig-r     { color:#E53935; font-weight:700; }
+.kw        { color:#C586C0; }
+.cm        { color:#6A9955; font-style:italic; }
+.num       { color:#B5CEA8; }
+.code-rtl-grid { display:grid; grid-template-columns: 1.05fr 1fr; gap: 0.6em; align-items: start; }
+.code-rtl-grid .rtl-cap { font-size:0.55em; color:#888; text-align:center; margin-top:0.15em; letter-spacing:0.06em; }
+</style>
 </head>
 <body>
 <div class="reveal"><div class="slides">
@@ -57,23 +81,33 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Write It With <code>localparam</code></h2>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// Use localparam for state names — never magic numbers
-localparam [1:0] S_GREEN  = 2'd0;
-localparam [1:0] S_YELLOW = 2'd1;
-localparam [1:0] S_RED    = 2'd2;
+    <div class="code-rtl-grid">
+        <div>
+<pre class="code-rtl" style="font-size:0.56em;"><span class="cm">// Use localparam for state names — never magic numbers</span>
+<span class="kw">localparam</span> [1:0] <span class="sig-g">S_GREEN</span>  = <span class="num">2'd0</span>;
+<span class="kw">localparam</span> [1:0] <span class="sig-y">S_YELLOW</span> = <span class="num">2'd1</span>;
+<span class="kw">localparam</span> [1:0] <span class="sig-r">S_RED</span>    = <span class="num">2'd2</span>;
 
-reg [1:0] r_state, r_next_state;
+<span class="kw">reg</span> [1:0] <span class="sig-state">r_state</span>, <span class="sig-next">r_next_state</span>;
 
-always @(*) begin
-    r_next_state = r_state;
-    case (r_state)
-        S_GREEN:  if (timer_done) r_next_state = S_YELLOW;
-        S_YELLOW: if (timer_done) r_next_state = S_RED;
-        S_RED:    if (timer_done) r_next_state = S_GREEN;
-        default:                  r_next_state = S_GREEN;
-    endcase
-end</code></pre>
-    <div class="callout" style="font-size:0.7em;">
+<span class="kw">always</span> @(*) <span class="kw">begin</span>
+    <span class="sig-next">r_next_state</span> = <span class="sig-state">r_state</span>;
+    <span class="kw">case</span> (<span class="sig-state">r_state</span>)
+        <span class="sig-g">S_GREEN</span>:  <span class="kw">if</span> (<span class="sig-timer">timer_done</span>) <span class="sig-next">r_next_state</span> = <span class="sig-y">S_YELLOW</span>;
+        <span class="sig-y">S_YELLOW</span>: <span class="kw">if</span> (<span class="sig-timer">timer_done</span>) <span class="sig-next">r_next_state</span> = <span class="sig-r">S_RED</span>;
+        <span class="sig-r">S_RED</span>:    <span class="kw">if</span> (<span class="sig-timer">timer_done</span>) <span class="sig-next">r_next_state</span> = <span class="sig-g">S_GREEN</span>;
+        <span class="kw">default</span>:                  <span class="sig-next">r_next_state</span> = <span class="sig-g">S_GREEN</span>;
+    <span class="kw">endcase</span>
+<span class="kw">end</span></pre>
+        </div>
+        <div>
+            <img src="diagrams/d07_binary_encoding_rtl.svg"
+                 alt="Binary encoding RTL: 2 DFFs hold r_state[1:0]; next-state logic on the left; output decoder on the right produces o_green/o_yellow/o_red"
+                 style="width:100%; display:block;">
+            <div class="rtl-cap">2 flops · output decoder needed</div>
+        </div>
+    </div>
+    <div class="callout" style="font-size:0.66em;">
         <strong>My thinking:</strong> Write the FSM in binary encoding using <code>localparam</code> names. Don't use <code>2'd1</code> scattered in your code — the compiler lets you, but no human can read it. Yosys's <code>fsm_recode</code> pass will convert to the optimal encoding at synthesis time anyway.
     </div>
     <aside class="notes">localparam names make the code readable. Magic numbers destroy it. Yosys picks the encoding during synthesis (fsm_recode pass) — your source code just describes intent.</aside>
@@ -81,16 +115,30 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Convert to One-Hot</h2>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// One-hot encoding: N bits, only one high at a time
-localparam [2:0] S_GREEN  = 3'b001;
-localparam [2:0] S_YELLOW = 3'b010;
-localparam [2:0] S_RED    = 3'b100;
+    <div class="code-rtl-grid">
+        <div>
+<pre class="code-rtl" style="font-size:0.58em;"><span class="cm">// One-hot encoding: N bits, only one high at a time</span>
+<span class="kw">localparam</span> [2:0] <span class="sig-g">S_GREEN</span>  = <span class="num">3'b001</span>;
+<span class="kw">localparam</span> [2:0] <span class="sig-y">S_YELLOW</span> = <span class="num">3'b010</span>;
+<span class="kw">localparam</span> [2:0] <span class="sig-r">S_RED</span>    = <span class="num">3'b100</span>;
 
-reg [2:0] r_state, r_next_state;
+<span class="kw">reg</span> [2:0] <span class="sig-state">r_state</span>, <span class="sig-next">r_next_state</span>;
 
-// Same next-state logic structure — only the encoding changed</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Together:</strong> Only three things changed: state width (2→3), state values (binary→one-hot), register width. The <code>case</code> structure is identical. The <strong>output logic gets faster</strong> because, e.g., <code>o_green = r_state[0]</code> — a single wire, no decoder. That's the one-hot win.
+<span class="cm">// Same next-state structure — only the encoding changed</span>
+<span class="cm">// Outputs become single-wire taps:</span>
+<span class="kw">assign</span> <span class="sig-g">o_green</span>  = <span class="sig-state">r_state</span>[<span class="num">0</span>];
+<span class="kw">assign</span> <span class="sig-y">o_yellow</span> = <span class="sig-state">r_state</span>[<span class="num">1</span>];
+<span class="kw">assign</span> <span class="sig-r">o_red</span>    = <span class="sig-state">r_state</span>[<span class="num">2</span>];</pre>
+        </div>
+        <div>
+            <img src="diagrams/d07_onehot_encoding_rtl.svg"
+                 alt="One-hot encoding RTL: 3 DFFs each tied directly to an output (o_green/o_yellow/o_red) with no decoder LUTs"
+                 style="width:100%; display:block;">
+            <div class="rtl-cap">3 flops · outputs = direct wires</div>
+        </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Together:</strong> Only three things changed: state width (2→3), state values (binary→one-hot), register width. The <code>case</code> structure is identical. The <strong>output logic gets faster</strong> because, e.g., <code><span class="sig-g">o_green</span> = <span class="sig-state">r_state</span>[0]</code> — a single wire, no decoder. That's the one-hot win.
     </div>
     <aside class="notes">One-hot: output = single bit, no decoder needed. That's the speed advantage. Cost: N flops instead of log2(N).</aside>
 </section>
