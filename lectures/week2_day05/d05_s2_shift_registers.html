@@ -72,13 +72,13 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; SIPO (Serial-In, Parallel-Out)</h2>
-    <pre class="synth"><code class="language-verilog">module shift_reg_sipo #(parameter WIDTH = 8) (
-    input  wire              i_clk, i_reset, i_shift_en, i_serial_in,
-    output reg  [WIDTH-1:0]  o_parallel_out
+    <pre class="synth"><code class="language-verilog" data-noescape>module shift_reg_sipo #(parameter WIDTH = 8) (
+    input  wire              <span style="color:#1E88E5;font-weight:700">i_clk</span>, <span style="color:#E53935;font-weight:700">i_reset</span>, <span style="color:#8E24AA;font-weight:700">i_shift_en</span>, <span style="color:#00897B;font-weight:700">i_serial_in</span>,
+    output reg  [WIDTH-1:0]  <span style="color:#43A047;font-weight:700">o_parallel_out</span>
 );
-    always @(posedge i_clk) begin
-        if (i_reset)         o_parallel_out &lt;= {WIDTH{1'b0}};
-        else if (i_shift_en) o_parallel_out &lt;= {o_parallel_out[WIDTH-2:0], i_serial_in};
+    always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
+        if (<span style="color:#E53935;font-weight:700">i_reset</span>)         <span style="color:#43A047;font-weight:700">o_parallel_out</span> &lt;= {WIDTH{1'b0}};
+        else if (<span style="color:#8E24AA;font-weight:700">i_shift_en</span>) <span style="color:#43A047;font-weight:700">o_parallel_out</span> &lt;= {<span style="color:#43A047;font-weight:700">o_parallel_out</span>[WIDTH-2:0], <span style="color:#00897B;font-weight:700">i_serial_in</span>};
         //                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         //                                      shift left, new bit at LSB
     end
@@ -100,18 +100,18 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; PISO (Parallel-In, Serial-Out)</h2>
-    <pre class="synth"><code class="language-verilog">module shift_reg_piso #(parameter WIDTH = 8) (
-    input  wire              i_clk, i_reset, i_load, i_shift_en,
-    input  wire [WIDTH-1:0]  i_parallel_in,
-    output wire              o_serial_out
+    <pre class="synth"><code class="language-verilog" data-noescape>module shift_reg_piso #(parameter WIDTH = 8) (
+    input  wire              <span style="color:#1E88E5;font-weight:700">i_clk</span>, <span style="color:#E53935;font-weight:700">i_reset</span>, <span style="color:#8E24AA;font-weight:700">i_load</span>, <span style="color:#3949AB;font-weight:700">i_shift_en</span>,
+    input  wire [WIDTH-1:0]  <span style="color:#00897B;font-weight:700">i_parallel_in</span>,
+    output wire              <span style="color:#43A047;font-weight:700">o_serial_out</span>
 );
-    reg [WIDTH-1:0] r_shift;
-    always @(posedge i_clk) begin
-        if (i_reset)         r_shift &lt;= {WIDTH{1'b0}};
-        else if (i_load)     r_shift &lt;= i_parallel_in;            // load wins over shift
-        else if (i_shift_en) r_shift &lt;= {1'b0, r_shift[WIDTH-1:1]}; // shift right
+    reg [WIDTH-1:0] <span style="color:#FB8C00;font-weight:700">r_shift</span>;
+    always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
+        if (<span style="color:#E53935;font-weight:700">i_reset</span>)         <span style="color:#FB8C00;font-weight:700">r_shift</span> &lt;= {WIDTH{1'b0}};
+        else if (<span style="color:#8E24AA;font-weight:700">i_load</span>)     <span style="color:#FB8C00;font-weight:700">r_shift</span> &lt;= <span style="color:#00897B;font-weight:700">i_parallel_in</span>;            // load wins over shift
+        else if (<span style="color:#3949AB;font-weight:700">i_shift_en</span>) <span style="color:#FB8C00;font-weight:700">r_shift</span> &lt;= {1'b0, <span style="color:#FB8C00;font-weight:700">r_shift</span>[WIDTH-1:1]}; // shift right
     end
-    assign o_serial_out = r_shift[0];                              // LSB first
+    assign <span style="color:#43A047;font-weight:700">o_serial_out</span> = <span style="color:#FB8C00;font-weight:700">r_shift</span>[0];                              // LSB first
 endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>Together:</strong> Load has priority over shift (you can't load and shift same cycle). <code>r_shift[0]</code> is exposed as the serial output — LSB first, matching UART convention. After WIDTH shifts the register holds zeros; for UART you'd swap the reset / fill bit to <code>1'b1</code> (idle state).
