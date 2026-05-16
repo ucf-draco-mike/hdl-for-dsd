@@ -23,10 +23,27 @@ example is its own `make sim` / `make stat` / `make prog` directory.
 
 ## Diagrams
 
+Every Verilog code block in the four pre-class decks is paired with an RTL
+block diagram. Signals share a consistent palette across all diagrams:
+clk → blue, reset → red, noisy/raw → orange, clean/output → green,
+count/internal → purple, carry → pink, parameters → gold. The same colors
+are applied inline in the code blocks so a signal can be traced from
+source to silhouette.
+
 | File | Description |
 |------|-------------|
-| `diagrams/d08_hierarchy_tree.svg` | Module hierarchy tree with levels, parameterization annotations |
+| `diagrams/d08_hierarchy_tree.svg` | Module hierarchy tree (Level 0/1/2) with per-block colors |
 | `diagrams/d08_generate_concept.svg` | generate-for: one source → N hardware copies at elaboration |
+| `diagrams/d08_button_handler_rtl.svg` | s1 I-Do — button_handler wraps a debounce submodule |
+| `diagrams/d08_bad_hierarchy_rtl.svg` | s1 You-Do — anonymous-chain anti-pattern |
+| `diagrams/d08_param_counter_rtl.svg` | s2 I-Do — parameterized counter (WIDTH/MAX_VAL) |
+| `diagrams/d08_param_debounce_rtl.svg` | s2 We-Do — debounce with `localparam` + `$clog2` |
+| `diagrams/d08_fifo_rtl.svg` | s2 You-Do — FIFO (hardcoded & parameterized share the picture) |
+| `diagrams/d08_button_array_rtl.svg` | s3 I-Do — `generate for` unrolls N debouncers |
+| `diagrams/d08_generate_if_rtl.svg` | s3 We-Do — `generate if` selects between 2-FF sync vs pass-through |
+| `diagrams/d08_ripple_adder_rtl.svg` | s3 You-Do — N-bit ripple-carry adder via `generate for` |
+| `diagrams/d08_reusable_debounce_rtl.svg` | s4 I-Do — datasheet header alongside black-box RTL |
+| `diagrams/d08_before_after_rtl.svg` | s4 — "works for me" (grey pins) vs reusable (colored pins) |
 
 ## Key Concepts
 - Hierarchy for complexity management, descriptive naming
@@ -55,7 +72,17 @@ lectures/week2_day08/
 ├── d08_s4_design_for_reuse.html
 ├── diagrams/
 │   ├── d08_hierarchy_tree.svg
-│   └── d08_generate_concept.svg
+│   ├── d08_generate_concept.svg
+│   ├── d08_button_handler_rtl.svg
+│   ├── d08_bad_hierarchy_rtl.svg
+│   ├── d08_param_counter_rtl.svg
+│   ├── d08_param_debounce_rtl.svg
+│   ├── d08_fifo_rtl.svg
+│   ├── d08_button_array_rtl.svg
+│   ├── d08_generate_if_rtl.svg
+│   ├── d08_ripple_adder_rtl.svg
+│   ├── d08_reusable_debounce_rtl.svg
+│   └── d08_before_after_rtl.svg
 ├── day08_quiz.md
 └── day08_readme.md
 

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aRed"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="aOrg"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+  </defs>
+
+  <text x="360" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#333">button_handler — Top Module Wraps a Debouncer Submodule</text>
+
+  <!-- Outer module: button_handler -->
+  <rect x="40" y="40" width="640" height="200" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="55" y="60" font-size="12" font-weight="700" fill="#37474F">module button_handler</text>
+
+  <!-- Inner submodule: debounce -->
+  <rect x="260" y="80" width="240" height="130" rx="8" fill="#FFF8E1" stroke="#9A6F00" stroke-width="2"/>
+  <text x="380" y="103" text-anchor="middle" font-size="13" font-weight="700" fill="#9A6F00">debounce</text>
+  <text x="380" y="120" text-anchor="middle" font-size="10" fill="#9A6F00" font-weight="600">u_debounce_sw1</text>
+  <text x="380" y="136" text-anchor="middle" font-size="10" fill="#9A6F00" font-style="italic">#(.CLKS_STABLE(500_000))</text>
+
+  <!-- Inner port labels -->
+  <text x="266" y="166" font-size="10" fill="#1976D2" font-weight="700">.i_clk</text>
+  <text x="266" y="186" font-size="10" fill="#D32F2F" font-weight="700">.i_reset</text>
+  <text x="266" y="206" font-size="10" fill="#F57C00" font-weight="700">.i_noisy</text>
+  <text x="495" y="186" text-anchor="end" font-size="10" fill="#2E7D32" font-weight="700">.o_clean</text>
+
+  <!-- Outer ports + wires (left side) -->
+  <text x="48" y="166" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="84" y1="162" x2="262" y2="162" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlue)"/>
+
+  <text x="48" y="186" font-size="12" fill="#D32F2F" font-weight="700">i_reset</text>
+  <line x1="95" y1="182" x2="262" y2="182" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRed)"/>
+
+  <text x="48" y="206" font-size="12" fill="#F57C00" font-weight="700">i_btn_raw</text>
+  <line x1="115" y1="202" x2="262" y2="202" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- Output wire (right side) -->
+  <line x1="500" y1="182" x2="640" y2="182" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+  <text x="645" y="186" font-size="12" fill="#2E7D32" font-weight="700">o_btn_clean</text>
+
+  <!-- Legend caption -->
+  <text x="360" y="265" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Named-port connection: outer i_btn_raw → inner .i_noisy, inner .o_clean → outer o_btn_clean</text>
+</svg>
