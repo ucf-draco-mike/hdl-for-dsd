@@ -70,17 +70,17 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The 2-FF Synchronizer</h2>
-    <pre class="synth"><code class="language-verilog">module synchronizer (
-    input  wire i_clk,
-    input  wire i_async_in,    // from external world, any timing
-    output wire o_sync_out     // clean, synchronous to i_clk
+    <pre class="synth"><code class="language-verilog" data-noescape>module synchronizer (
+    input  wire <span style="color:#1E88E5;font-weight:700">i_clk</span>,
+    input  wire <span style="color:#00897B;font-weight:700">i_async_in</span>,    // from external world, any timing
+    output wire <span style="color:#43A047;font-weight:700">o_sync_out</span>     // clean, synchronous to i_clk
 );
-    reg r_meta, r_sync;
-    always @(posedge i_clk) begin
-        r_meta &lt;= i_async_in;  // first flop: may go metastable
-        r_sync &lt;= r_meta;      // second flop: has a full clock period to resolve
+    reg <span style="color:#FB8C00;font-weight:700">r_meta</span>, <span style="color:#FB8C00;font-weight:700">r_sync</span>;
+    always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
+        <span style="color:#FB8C00;font-weight:700">r_meta</span> &lt;= <span style="color:#00897B;font-weight:700">i_async_in</span>;  // first flop: may go metastable
+        <span style="color:#FB8C00;font-weight:700">r_sync</span> &lt;= <span style="color:#FB8C00;font-weight:700">r_meta</span>;      // second flop: has a full clock period to resolve
     end
-    assign o_sync_out = r_sync;
+    assign <span style="color:#43A047;font-weight:700">o_sync_out</span> = <span style="color:#FB8C00;font-weight:700">r_sync</span>;
 endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>My thinking:</strong> The first flop may go metastable — but metastability <em>resolves</em> exponentially (probabilistic decay). Given a full clock period (~40 ns on iCE40) to settle, the probability it's still metastable at the <em>second</em> flop's capture edge is astronomically small. At 25 MHz with iCE40's τ, MTBF is measured in <strong>centuries</strong>.
@@ -123,16 +123,17 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Spot the Bug</h2>
-    <pre class="mistake"><code class="language-verilog">module reader (
-    input wire clk, async_ready, async_data,
-    output reg captured
+    <pre class="mistake"><code class="language-verilog" data-noescape>module reader (
+    input wire <span style="color:#1E88E5;font-weight:700">clk</span>, <span style="color:#E53935;font-weight:700">async_ready</span>, <span style="color:#8E24AA;font-weight:700">async_data</span>,
+    output reg <span style="color:#43A047;font-weight:700">captured</span>
 );
-    always @(posedge clk)
-        if (async_ready) captured &lt;= async_data;
+    always @(posedge <span style="color:#1E88E5;font-weight:700">clk</span>)
+        if (<span style="color:#E53935;font-weight:700">async_ready</span>) <span style="color:#43A047;font-weight:700">captured</span> &lt;= <span style="color:#8E24AA;font-weight:700">async_data</span>;
 endmodule</code></pre>
-    <p style="font-size:0.78em;">Find the metastability bugs.</p>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answer:</strong> <strong>Both</strong> inputs (<code>async_ready</code> and <code>async_data</code>) are asynchronous and feed flops directly. Need synchronizers on each. Worse: using <code>async_ready</code> as both a clock-enable and a mux select creates a risk of capturing <code>async_data</code> mid-transition even if it <em>were</em> synchronized. <strong>Fix:</strong> synchronize both signals through 2-FF synchronizers first, <em>then</em> use them.
+    <img src="diagrams/d05_reader_bug_rtl.svg" alt="Buggy reader RTL: both async_ready and async_data go straight into a flop (CE and D pins) — both can cause metastability. Fix is to insert a 2-FF synchronizer on each async input." style="width:100%;max-width:720px;display:block;margin:0.1em auto;">
+    <p style="font-size:0.74em;">Find the metastability bugs.</p>
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Answer:</strong> <strong>Both</strong> inputs (<code><span style="color:#E53935;font-weight:700">async_ready</span></code> and <code><span style="color:#8E24AA;font-weight:700">async_data</span></code>) are asynchronous and feed flops directly. Need synchronizers on each. Worse: using <code><span style="color:#E53935;font-weight:700">async_ready</span></code> as both a clock-enable and a mux select creates a risk of capturing <code><span style="color:#8E24AA;font-weight:700">async_data</span></code> mid-transition even if it <em>were</em> synchronized. <strong>Fix:</strong> synchronize both signals through 2-FF synchronizers first, <em>then</em> use them.
     </div>
     <aside class="notes">Every external signal needs its own synchronizer. Don't share synchronizers across related signals (unless you're doing gray coding on a multi-bit bus — advanced topic). This is a common code-review bug.</aside>
 </section>
