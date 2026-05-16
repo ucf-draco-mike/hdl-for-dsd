@@ -158,11 +158,39 @@ end</code></pre>
 <section>
     <h2><span style="color:#27AE60;">🎛️</span> Where Loadable Counters Live — A PWM Period Register</h2>
     <p style="font-size:0.72em;">We've name-dropped &ldquo;PWM period register&rdquo; in a few decks now. Here's what one actually looks like — and why the loadable counter you just wrote <em>is</em> the period register.</p>
-    <img src="diagrams/d05_pwm_period.svg" alt="PWM block diagram: loadable counter as the period register, duty register, comparator producing PWM output, with sample PWM waveform" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
+    <img src="diagrams/d05_pwm_period.svg" alt="PWM block diagram: loadable counter as the period register, duty register, comparator producing PWM output, with two sample PWM waveforms at N=8 and N=16 (same 50% duty) showing how period N sets the output frequency" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
     <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
         <strong>How it fits:</strong> the <code>i_load_val</code> port of your loadable counter <em>is</em> the period register; it sets $N$. A separate duty register and comparator then split each period into a high-time and low-time. Change the period register → frequency changes. Change the duty register → brightness/speed changes.
     </div>
     <aside class="notes">The promised visual. Loadable counters underpin every PWM peripheral: load the period value, count up to it, compare against a duty register, drive the output. This is exactly Topic 10's PWM lab structure.</aside>
+</section>
+
+<!-- PWM period register — RTL minisketch -->
+<section>
+    <h2><span style="color:#27AE60;">🧩</span> PWM Period Register &mdash; RTL Sketch</h2>
+    <p style="font-size:0.7em;">Not the full peripheral &mdash; just the three pieces that turn the previous diagram into Verilog. The middle block is literally the loadable counter you just wrote, with the wrap event playing the role of <code>i_load</code>.</p>
+    <pre class="synth"><code class="language-verilog">// 1) Period & duty registers — software-loadable (CSR-style)
+reg [W-1:0] period, duty;          // period = N-1; duty = high-time
+always @(posedge i_clk) begin
+    if (i_we_period) period &lt;= i_wdata;
+    if (i_we_duty)   duty   &lt;= i_wdata;
+end
+
+// 2) Period counter — same priority chain as the previous slide.
+//    The "load" event is the natural end-of-period wrap.
+reg [W-1:0] count;
+always @(posedge i_clk) begin
+    if      (i_reset)         count &lt;= 0;
+    else if (count == period) count &lt;= 0;        // ← reload @ wrap
+    else                      count &lt;= count + 1'b1;
+end
+
+// 3) Duty comparator drives the PWM output
+assign o_pwm = (count &lt; duty);</code></pre>
+    <div class="callout" style="font-size:0.68em;margin-top:0.2em;">
+        <strong>Three signals to keep straight:</strong> <code>period</code> sets $N$ (frequency), <code>duty</code> sets the high-time (brightness), <code>count</code> is the loadable counter sweeping <code>0..N-1</code>. Topic 10's PWM lab is this skeleton plus bus glue.
+    </div>
+    <aside class="notes">Keep this sketch visible during the live demo. Connect the dots: i_load_val from the previous slide → the period register here; the loadable counter's i_load case → the wrap-to-zero branch; the new compare is what actually makes it a PWM. The CSR write-enables (i_we_period, i_we_duty) are how software changes period/duty at runtime — that's how a CPU updates LED brightness or motor speed without rebuilding the bitstream.</aside>
 </section>
 
 <!-- LIVE DEMO -->
