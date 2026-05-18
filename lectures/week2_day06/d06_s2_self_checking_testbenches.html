@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Regression suites at Intel/NVIDIA/Apple run thousands of self-checking testbenches overnight. CI/CD pipelines for RTL exist. A failing testbench emits a precise error log that developers can triage in minutes. <strong>Waveform inspection is reserved for root-causing</strong>; it is never how tests report status.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">A regression run at Apple's CPU team kicks off a hundred thousand tests at midnight. In the morning, the engineer reads one number: &ldquo;0 failed.&rdquo; Not a hundred thousand waveforms. Not even one. The waveform viewer is the microscope you reach for after something is already known to be broken &mdash; never the way you find out it's broken.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every lab from here forward uses a self-checking testbench. Your <code>make sim</code> either prints &ldquo;0 failed&rdquo; or it doesn't. Labs are graded on the self-check output. Video 3 organizes this pattern with <code>task</code>s; Video 4 scales it with external test vectors.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">When verification depends on a human eyeballing waves, humans get tired. They miss things. They mark passes that aren't passes. Bugs that ought to die in nightly regression slip past and arrive in customers' hands instead. The Ariane 5 telemetry, examined post-mortem, plainly showed the overflow &mdash; no automated check had been written to notice. Every &ldquo;I'll just take a quick look at the wave&rdquo; workflow scales until it doesn't.</p>
         </div>
     </div>
     <aside class="notes">Waveforms are for debugging — specifically, for root-causing bugs that tests have already caught. They're not for confirming behavior. That's what self-checking testbenches do.</aside>

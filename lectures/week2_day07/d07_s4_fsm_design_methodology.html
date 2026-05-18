@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Every serial-protocol controller is a pattern detector for the protocol's start sequence. CAN bus, Ethernet MAC, PCIe link training, USB SOF detection — all start-of-frame detection is a pattern-matching FSM. Packet inspection hardware in network switches runs dozens of pattern-detector FSMs in parallel.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">Every serial protocol &mdash; Ethernet, USB, PCIe, CAN bus, Bluetooth, WiFi, NFC, MIDI &mdash; begins with a hardware block that watches a stream of bits for a specific opening sequence and locks on. Network switches run dozens of these watchers in parallel, one per port, every cycle. When you &ldquo;connect&rdquo; to anything that isn't visible text, a small piece of hardware just recognized a pattern in the noise.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Your Topic 11 UART RX detects the start bit using this pattern. Your Topic 12 SPI detects chip select. Your capstone FSM will almost certainly be a pattern detector of some kind. Today's methodology is the template.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">Pick any major industrial software disaster &mdash; Knight Capital, Ariane 5, Boeing MCAS, the 2003 blackout &mdash; and the post-mortem says some variation of &ldquo;an unexpected combination of inputs caused the system to enter a state the designers had not anticipated.&rdquo; Not &ldquo;a calculation was wrong.&rdquo; A state was missed. The methodology is the difference between enumerating those states up front and discovering them in production.</p>
         </div>
     </div>
     <aside class="notes">Pattern detectors are the canonical FSM shape. Almost every protocol starts with one. Good choice for the capstone example because the pattern repeats across the course.</aside>

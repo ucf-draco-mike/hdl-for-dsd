@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Real verification suites use <em>randomized</em> input generators that produce hundreds of thousands of vectors, written to files, then replayed. Golden reference models in C or Python produce expected outputs; the testbench reads both input and expected-output files, runs the DUT, and compares. This is how Apple's CPU teams validate instruction decoders — against a C reference model fed millions of generated vectors.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">When a CPU vendor checks an instruction decoder, they run a C reference and the RTL in parallel against the same million-instruction file, comparing every cycle. When SpaceX checks an avionics box, the input file is the recording of an actual flight. When a memory vendor checks a controller, the trace is captured from a real Linux boot. Real inputs, replayed end-to-end.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Topic 11 UART bring-up uses a file of received-byte test patterns. Topic 14 capstone verification leans on this pattern. Any time you have &ldquo;I need to test N cases and N is big,&rdquo; file-driven testing is the answer.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">Mars Climate Orbiter burned in the Martian atmosphere because two teams used different units. The conversion was tested. The trajectory was tested. The actual recorded sequence of commands from the real mission profile, fed end-to-end through the combined system, was never tried. The data wasn't hard to find. Nobody had a clean way to feed it in.</p>
         </div>
     </div>
     <aside class="notes">File-driven testing is how real verification scales. You can't hand-write a million test cases — you write a generator, dump to a file, then consume the file in a loop.</aside>

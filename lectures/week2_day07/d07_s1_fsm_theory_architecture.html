@@ -50,20 +50,23 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top: 0.5em;">
         <div class="col">
-            <h3 style="color: #2E86AB; font-size: 1em;">In Industry</h3>
+            <h3 style="color: #2E86AB; font-size: 1em;">Where it shows up</h3>
             <p style="font-size: 0.75em;">
-                UART / SPI / I²C controllers. PCIe link trainers. Memory arbiters.
-                Cache coherence protocols. The instruction issue logic of every CPU
-                you own. When a RTL engineer says &ldquo;control path,&rdquo; they mean the FSM layer.
+                Every elevator. Every traffic light. Every microwave. Every washing
+                machine that pauses mid-cycle when you open the lid. Every coffee
+                maker that knows &ldquo;brewing&rdquo; from &ldquo;waiting.&rdquo; Every ATM that decides
+                &ldquo;card inserted, now expecting PIN.&rdquo; Every game character that walks,
+                jumps, or attacks depending on what it was doing a moment before.
             </p>
         </div>
         <div class="col">
-            <h3 style="color: #27AE60; font-size: 1em;">In This Course</h3>
+            <h3 style="color: #C0392B; font-size: 1em;">When it goes wrong</h3>
             <p style="font-size: 0.75em;">
-                Traffic light (today's demo) · Pattern detector (Video 4) ·
-                UART TX (Topic 11) · UART RX (Topic 12) · Memory test engine (Topic 9) ·
-                Your <strong>capstone</strong> traffic controller.
-                Get comfortable here &rarr; the rest of the course unlocks.
+                Therac-25 delivered lethal radiation doses to multiple patients in
+                the 1980s because a specific keystroke sequence pushed the machine
+                into a configuration its designers had never enumerated. The 2003
+                Northeast blackout cascaded across eight US states partly because
+                an alarm system entered a condition operators didn't know existed.
             </p>
         </div>
     </div>
@@ -73,12 +76,15 @@
         assumes you can write a clean 3-block FSM on a whiteboard in under 5 minutes.
     </div>
     <aside class="notes">
-        Before we touch any code, I want to ground why this matters.
-        [Point to industry column] Every serial protocol. Every memory controller.
-        Every bus interface — the control logic is an FSM. This is not a toy pattern.
-        [Point to course column] In the next four weeks alone, you'll build at least six.
-        [PAUSE] If you nail FSMs in this video, the rest of the course gets dramatically easier.
-        If you don't, you'll be fighting your own code for the next three weeks. Stay with me.
+        Before we touch any code, ground why this matters. [Point to left column]
+        Every device you've used today that remembers what step it's on — elevator,
+        microwave, ATM, the lid switch on your laundry — is one of these.
+        [Point to right column] Therac-25 killed people because the designers missed
+        a state. The Northeast blackout took down eight states because an alarm
+        system entered a condition no one had planned for. &ldquo;An unexpected combination
+        of inputs caused the system to enter a state the designers had not anticipated&rdquo;
+        is one of the most common sentences in post-mortems. [PAUSE] What we're about
+        to build is the formal way to enumerate those states before they enumerate themselves.
     </aside>
 </section>
 

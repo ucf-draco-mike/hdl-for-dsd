@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">A modern SoC has millions of gates arranged in a hierarchy 10+ levels deep. The top-level module of an Apple M-series chip probably fits on one page — it instantiates ~50 major blocks (CPU clusters, GPU, memory controller, NPUs), each a module, each decomposed into sub-modules, all the way down to leaf cells. Without hierarchy, no one person could understand a chip.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">Linux is 30 million lines of code. The chip in your phone is hundreds of millions of gates. The CERN ATLAS detector handles a petabyte of raw data per second. None of these has ever been held in any one person's head, and every one of them works. The trick is the same one architects use for skyscrapers: nobody draws the whole building &mdash; they draw the rooms, and the rooms are made of walls, and the walls are made of bricks.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Topic 5 button pipeline: sync + debounce + edge-detect are three modules. Topic 7 traffic light used a sub-module timer. Topic 11 UART top has TX + RX + control as sub-modules. Topic 12 SPI is the same. The pattern scales from this week to the capstone.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">Boeing's 737 MAX MCAS was added without any one engineer tracing how it interacted with the rest of the autopilot. Ariane 5 reused a piece of Ariane 4 code that no longer made sense in its new context &mdash; but it was copied, not instantiated, so the assumption it carried was buried and forgotten. When the structure isn't clean, the failure modes get clever in ways no individual reviewer can anticipate.</p>
         </div>
     </div>
     <aside class="notes">Hierarchy isn't optional at scale. Every real design uses it. Learning to instantiate modules, connect them properly, and give them descriptive names is a fundamental skill.</aside>

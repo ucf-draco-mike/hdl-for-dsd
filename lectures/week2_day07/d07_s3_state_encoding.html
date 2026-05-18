@@ -50,12 +50,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">FPGA vendors publish encoding style guides (Xilinx UG901, Intel Quartus Handbook) that recommend <strong>one-hot</strong> for fast FPGA FSMs. ASIC flows (Synopsys DC, Cadence Genus) often pick <strong>binary</strong> for gate-count optimization. Clock-domain-crossing FSMs use <strong>Gray</strong> to prevent multi-bit transitions. The choice has measurable consequences in real silicon.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">In aerospace, a single cosmic-ray-induced bit flip can crash a flight computer. In a medical device, a glitch on an output line can deliver a wrong dose. In a car, a 30-nanosecond pulse on the airbag firing line can deploy at 70mph for no reason at all. The exact bit-pattern an engineer chooses to label &ldquo;step 3 of the wash cycle&rdquo; or &ldquo;configuration A&rdquo; is not a stylistic choice. It is a safety choice.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Topic 10 PPA exercise compares the same FSM across encodings and measures LUT count, timing, and power — directly. Topic 14 retrospective revisits this decision. Today you learn the three encodings and the <code>yosys stat</code> evidence that distinguishes them.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">Mariner 1 was destroyed 293 seconds after launch because of a single character missing in a guidance equation. Multiple automakers have recalled airbag controllers after EMI glitches caused phantom deployments. Therac-25 had encoded its operating modes such that a single corruption could push it into a mode it should never have been able to reach. Same machine, same logic, different bit-pattern: different outcome under noise.</p>
         </div>
     </div>
     <aside class="notes">Encoding is where Verilog meets silicon economics. Same state machine, three encodings, three different gate counts. Real choice with measurable consequences.</aside>

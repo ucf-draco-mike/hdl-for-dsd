@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Every device with mechanical input — keyboards, remote controls, industrial control panels, elevator buttons, car key fobs — has a debouncer. For a 10-key keypad, the firmware detects 10 distinct presses only because each button is debounced. Oscilloscope captures of raw switch closures show 5-20 ms of noise — thousands of transitions — that must be filtered.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">Every elevator call button. Every keyboard key you have ever pressed. Every car key fob, microwave keypad, garage door clicker, TV remote, ATM keypad, and the emergency-stop on every industrial machine. The mechanical world is loud: when two pieces of metal touch, they don't stay touching &mdash; they chatter for 5&ndash;20 milliseconds before settling. A single press is a brief burst of noise.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every lab with a pushbutton input. Topic 7 FSM input demo. Topic 10 PPA comparison (is your debouncer efficient?). Your capstone project will use this pattern verbatim on at least one input.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">A passenger taps the call button once and the elevator dutifully queues &ldquo;floor 7, floor 12, floor 3, floor 23, close door&rdquo; and lurches nowhere. A driver pushes start once and the ECU sees seven presses. Industrial panels with un-filtered inputs have triggered emergency stops on an accidental brush. Every shipped product with a physical input has either solved this or had to issue a recall.</p>
         </div>
     </div>
     <aside class="notes">Debouncing is everywhere. Every device with a physical button needs it. The counter-based pattern you build today is the canonical solution — direct from textbook to tapeout.</aside>
