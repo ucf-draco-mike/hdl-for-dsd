@@ -57,62 +57,66 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Complete UART TX</h2>
-    <pre class="synth" style="font-size:0.52em;"><code class="language-verilog">module uart_tx #(
-    parameter CLKS_PER_BIT = 217       // 25 MHz / 115200 baud
-) (
-    input  wire       i_clk, i_reset,
-    input  wire       i_valid,
-    input  wire [7:0] i_data,
-    output reg        o_busy,
-    output reg        o_tx
+    <div class="two-col" style="margin-top:0.15em;">
+      <div class="col" style="flex:1.15;">
+        <pre class="synth" style="font-size:0.42em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module uart_tx #(parameter CLKS_PER_BIT = 217) (
+    input  wire       <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
+    input  wire       <span style="color:#F48FB1;font-weight:700;">i_valid</span>,
+    input  wire [7:0] <span style="color:#FFB74D;font-weight:700;">i_data</span>,
+    output reg        <span style="color:#81C784;font-weight:700;">o_busy</span>,
+    output reg        <span style="color:#81C784;font-weight:700;">o_tx</span>
 );
-    localparam [1:0] S_IDLE = 2'd0, S_START = 2'd1, S_DATA = 2'd2, S_STOP = 2'd3;
-    localparam       CNT_W  = $clog2(CLKS_PER_BIT);
+    localparam [1:0] S_IDLE=2'd0, S_START=2'd1, S_DATA=2'd2, S_STOP=2'd3;
+    localparam       CNT_W = $clog2(CLKS_PER_BIT);
 
-    reg [1:0]       r_state;
-    reg [CNT_W-1:0] r_baud;     // 0..CLKS_PER_BIT-1 per bit
-    reg [2:0]       r_bit;      // 0..7, which data bit
-    reg [7:0]       r_shift;    // the byte being shifted out
+    reg [1:0]       <span style="color:#CE93D8;font-weight:700;">r_state</span>;
+    reg [CNT_W-1:0] <span style="color:#CE93D8;font-weight:700;">r_baud</span>;
+    reg [2:0]       <span style="color:#CE93D8;font-weight:700;">r_bit</span>;
+    reg [7:0]       <span style="color:#FFD54F;font-weight:700;">r_shift</span>;
 
-    always @(posedge i_clk) begin
-        if (i_reset) begin
-            r_state  &lt;= S_IDLE; r_baud &lt;= 0; r_bit &lt;= 0;
-            o_tx     &lt;= 1'b1;   o_busy &lt;= 1'b0;
-        end else case (r_state)
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+        if (<span style="color:#EF5350;font-weight:700;">i_reset</span>) begin
+            <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_IDLE; <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= 0; <span style="color:#CE93D8;font-weight:700;">r_bit</span> &lt;= 0;
+            <span style="color:#81C784;font-weight:700;">o_tx</span> &lt;= 1'b1;     <span style="color:#81C784;font-weight:700;">o_busy</span> &lt;= 1'b0;
+        end else case (<span style="color:#CE93D8;font-weight:700;">r_state</span>)
             S_IDLE: begin
-                o_tx   &lt;= 1'b1;
-                o_busy &lt;= 1'b0;
-                if (i_valid) begin
-                    r_shift &lt;= i_data;
-                    r_state &lt;= S_START;  r_baud &lt;= 0;  o_busy &lt;= 1'b1;
+                <span style="color:#81C784;font-weight:700;">o_tx</span> &lt;= 1'b1; <span style="color:#81C784;font-weight:700;">o_busy</span> &lt;= 1'b0;
+                if (<span style="color:#F48FB1;font-weight:700;">i_valid</span>) begin
+                    <span style="color:#FFD54F;font-weight:700;">r_shift</span> &lt;= <span style="color:#FFB74D;font-weight:700;">i_data</span>;
+                    <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_START; <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= 0; <span style="color:#81C784;font-weight:700;">o_busy</span> &lt;= 1'b1;
                 end
             end
             S_START: begin
-                o_tx &lt;= 1'b0;     // start bit
-                if (r_baud == CLKS_PER_BIT-1) begin
-                    r_state &lt;= S_DATA; r_baud &lt;= 0; r_bit &lt;= 0;
-                end else r_baud &lt;= r_baud + 1'b1;
+                <span style="color:#81C784;font-weight:700;">o_tx</span> &lt;= 1'b0;
+                if (<span style="color:#CE93D8;font-weight:700;">r_baud</span> == CLKS_PER_BIT-1) begin
+                    <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_DATA; <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= 0; <span style="color:#CE93D8;font-weight:700;">r_bit</span> &lt;= 0;
+                end else <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_baud</span> + 1'b1;
             end
             S_DATA: begin
-                o_tx &lt;= r_shift[0];   // LSB first
-                if (r_baud == CLKS_PER_BIT-1) begin
-                    r_baud  &lt;= 0;
-                    r_shift &lt;= {1'b1, r_shift[7:1]};  // shift right, fill with idle
-                    if (r_bit == 3'd7) r_state &lt;= S_STOP;
-                    else              r_bit  &lt;= r_bit + 1'b1;
-                end else r_baud &lt;= r_baud + 1'b1;
+                <span style="color:#81C784;font-weight:700;">o_tx</span> &lt;= <span style="color:#FFD54F;font-weight:700;">r_shift</span>[0];   // LSB first
+                if (<span style="color:#CE93D8;font-weight:700;">r_baud</span> == CLKS_PER_BIT-1) begin
+                    <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= 0;
+                    <span style="color:#FFD54F;font-weight:700;">r_shift</span> &lt;= {1'b1, <span style="color:#FFD54F;font-weight:700;">r_shift</span>[7:1]};
+                    if (<span style="color:#CE93D8;font-weight:700;">r_bit</span> == 3'd7) <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_STOP;
+                    else                <span style="color:#CE93D8;font-weight:700;">r_bit</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_bit</span> + 1'b1;
+                end else <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_baud</span> + 1'b1;
             end
             S_STOP: begin
-                o_tx &lt;= 1'b1;     // stop bit
-                if (r_baud == CLKS_PER_BIT-1) begin
-                    r_state &lt;= S_IDLE; o_busy &lt;= 1'b0;
-                end else r_baud &lt;= r_baud + 1'b1;
+                <span style="color:#81C784;font-weight:700;">o_tx</span> &lt;= 1'b1;
+                if (<span style="color:#CE93D8;font-weight:700;">r_baud</span> == CLKS_PER_BIT-1) begin
+                    <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_IDLE; <span style="color:#81C784;font-weight:700;">o_busy</span> &lt;= 1'b0;
+                end else <span style="color:#CE93D8;font-weight:700;">r_baud</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_baud</span> + 1'b1;
             end
         endcase
     end
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.65em;">
-        <strong>My thinking:</strong> 55 lines total, everything in one always block (single-block FSM is acceptable here because state/outputs are tightly coupled to timing). Parameter for baud rate. Uses all your familiar idioms: <code>$clog2</code>, localparam, 3-block pattern, named constants.
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d11_uart_tx_rtl.svg" alt="RTL diagram of uart_tx showing all four registers and their wiring. i_clk (blue) fans out to every register. i_reset (red) clears state. i_valid (magenta) triggers a transmit. i_data (orange) is loaded into r_shift (amber) on the S_IDLE→S_START transition. r_state (purple) is a 2-bit FSM (IDLE→START→DATA×8→STOP). r_baud (purple) is a CNT_W-bit counter that pulses a bit-time tick (teal) when it wraps. r_bit (purple) is a 3-bit data-bit index. The PISO shift register r_shift drives o_tx (green); o_busy (green) is high whenever r_state ≠ S_IDLE. Color palette matches code." style="width:100%;max-width:520px;display:block;">
+      </div>
+    </div>
+    <div class="callout" style="font-size:0.58em;margin-top:0.2em;">
+        <strong>My thinking:</strong> 55 lines, one always block. Four registers do all the work: <span style="color:#7B1FA2;font-weight:700;">r_state</span> (FSM), <span style="color:#7B1FA2;font-weight:700;">r_baud</span> (bit-time counter), <span style="color:#7B1FA2;font-weight:700;">r_bit</span> (data-bit index), and the amber <span style="color:#9A6F00;font-weight:700;">r_shift</span> PISO. Outputs <span style="color:#2E7D32;font-weight:700;">o_tx</span> and <span style="color:#2E7D32;font-weight:700;">o_busy</span> are driven straight from the FSM. Every coloured signal in the code maps to the same-coloured wire in the diagram.
     </div>
     <aside class="notes">55 lines, complete, synthesizable. Single-block FSM is fine here because the datapath (r_shift, o_tx) is tightly coupled to the state transitions. Clean, readable, maintainable.</aside>
 </section>

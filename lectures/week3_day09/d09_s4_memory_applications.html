@@ -57,52 +57,53 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Pattern Sequencer Architecture</h2>
-    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module pattern_sequencer #(
-    parameter STEP_LEN    = 10_000_000,   // cycles per pattern step (0.4s @ 25 MHz)
-    parameter PATTERN_LEN = 16,            // number of steps in sequence
+    <pre class="synth" style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module pattern_sequencer #(
+    parameter STEP_LEN    = 10_000_000, parameter PATTERN_LEN = 16,
     parameter INIT_FILE   = "pattern.hex"
-) (
-    input  wire       i_clk, i_reset,
-    output wire [7:0] o_leds
-);
-    localparam STEP_W = $clog2(STEP_LEN);
-    localparam ADDR_W = $clog2(PATTERN_LEN);
-
+) (input wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, output wire [7:0] <span style="color:#81C784;font-weight:700;">o_leds</span>);
+    localparam STEP_W = $clog2(STEP_LEN); localparam ADDR_W = $clog2(PATTERN_LEN);
     // Timer: counts STEP_LEN cycles, then pulses step_tick
-    reg [STEP_W-1:0] r_step_counter;
-    wire             w_step_tick = (r_step_counter == STEP_LEN - 1);
-    always @(posedge i_clk) r_step_counter &lt;= i_reset ? 0 : (w_step_tick ? 0 : r_step_counter + 1);
-
+    reg [STEP_W-1:0] <span style="color:#CE93D8;font-weight:700;">r_step_counter</span>;
+    wire             <span style="color:#4DD0E1;font-weight:700;">w_step_tick</span> = (<span style="color:#CE93D8;font-weight:700;">r_step_counter</span> == STEP_LEN - 1);
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) <span style="color:#CE93D8;font-weight:700;">r_step_counter</span> &lt;= <span style="color:#EF5350;font-weight:700;">i_reset</span> ? 0 : (<span style="color:#4DD0E1;font-weight:700;">w_step_tick</span> ? 0 : <span style="color:#CE93D8;font-weight:700;">r_step_counter</span> + 1);
     // Address counter: advances on each step_tick
-    reg [ADDR_W-1:0] r_addr;
-    always @(posedge i_clk) r_addr &lt;= i_reset ? 0 : (w_step_tick ? r_addr + 1 : r_addr);
-
+    reg [ADDR_W-1:0] <span style="color:#CE93D8;font-weight:700;">r_addr</span>;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) <span style="color:#CE93D8;font-weight:700;">r_addr</span> &lt;= <span style="color:#EF5350;font-weight:700;">i_reset</span> ? 0 : (<span style="color:#4DD0E1;font-weight:700;">w_step_tick</span> ? <span style="color:#CE93D8;font-weight:700;">r_addr</span> + 1 : <span style="color:#CE93D8;font-weight:700;">r_addr</span>);
     // ROM: 16 × 8 patterns
     rom_array #(.ADDR_W(ADDR_W), .DATA_W(8), .INIT_FILE(INIT_FILE))
-      u_rom (.i_clk(i_clk), .i_addr(r_addr), .o_data(o_leds));
+      <span style="color:#F48FB1;font-weight:700;">u_rom</span> (.i_clk(<span style="color:#4FC3F7;font-weight:700;">i_clk</span>), .i_addr(<span style="color:#CE93D8;font-weight:700;">r_addr</span>), .o_data(<span style="color:#81C784;font-weight:700;">o_leds</span>));
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.68em;">
-        <strong>My thinking:</strong> Three sub-blocks: <strong>(1)</strong> step timer (creates a slow tick), <strong>(2)</strong> address counter (walks the pattern space), <strong>(3)</strong> ROM (pattern contents). Compose with hierarchical instantiation. Change <code>pattern.hex</code> → different animation. No RTL changes needed.
+    <img src="diagrams/d09_pattern_sequencer_rtl.svg" alt="RTL block diagram of pattern_sequencer. Three blocks fed by i_clk (blue) and i_reset (red): Step Timer holding r_step_counter (purple) emits w_step_tick (teal); Address Counter holding r_addr (purple) advances on w_step_tick; u_rom submodule (magenta) holds the pattern memory and outputs o_leds (green). Color-coded edges show clk fanout, reset fanout, w_step_tick wire, and r_addr → ROM address path." style="width:100%;max-width:760px;display:block;margin:0.3em auto 0;">
+    <div class="callout" style="font-size:0.62em;margin-top:0.2em;">
+        <strong>My thinking:</strong> Three sub-blocks: <span style="color:#7B1FA2;font-weight:700;">Timer</span> (slow tick), <span style="color:#7B1FA2;font-weight:700;">Address counter</span> (walks pattern space), <span style="color:#C2185B;font-weight:700;">u_rom</span> (pattern contents). Compose with hierarchical instantiation. <span style="color:#00838F;font-weight:700;">w_step_tick</span> connects them. Change <code>pattern.hex</code> → different animation. No RTL changes needed.
     </div>
     <aside class="notes">The three-block pattern sequencer is a canonical composition. Timer → counter → ROM → output. Each block is from previous lessons; Week 2's hierarchy and reuse paying off here.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sine Table Lookup</h2>
-    <p style="font-size:0.78em;">For an audio synthesizer, we need <code>sin(x)</code> at 1024 points per cycle with 10-bit precision:</p>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// Python: generate the table at build time
-// for i in range(1024): print(f"{int((math.sin(2*math.pi*i/1024)+1)/2 * 1023):03x}")
+    <p style="font-size:0.72em;">For an audio synthesizer, we need <code>sin(x)</code> at 1024 points per cycle with 10-bit precision:</p>
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.58em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Python: generate at build time
+// for i in range(1024):
+//   print(f"{int((sin(2π i/1024)+1)/2*1023):03x}")
 
 module sine_rom (
-    input wire i_clk,
-    input wire [9:0] i_phase,    // 0..1023 (full period)
-    output reg [9:0] o_sample    // 0..1023 (scaled)
+    input wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>,
+    input wire [9:0] <span style="color:#FFB74D;font-weight:700;">i_phase</span>,   // 0..1023
+    output reg [9:0] <span style="color:#81C784;font-weight:700;">o_sample</span>   // 0..1023
 );
-    reg [9:0] mem [0:1023];
-    initial $readmemh("sine_1024x10.hex", mem);
-    always @(posedge i_clk) o_sample &lt;= mem[i_phase];
+    reg [9:0] <span style="color:#FFD54F;font-weight:700;">mem</span> [0:1023];
+    initial $readmemh("sine_1024x10.hex", <span style="color:#FFD54F;font-weight:700;">mem</span>);
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) <span style="color:#81C784;font-weight:700;">o_sample</span> &lt;= <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">i_phase</span>];
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d09_sine_rom_rtl.svg" alt="RTL diagram of sine_rom: i_clk (blue) clocks both mem[] (amber) and the o_sample register (purple). i_phase[9:0] (orange) is the 1024-step phase input; mem array is initialized from sine_1024x10.hex; o_sample[9:0] (green) exits one cycle later. Maps to about 3 EBRs and 10 flops — ~0.8% of HX1K." style="width:100%;max-width:440px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.3em;">
         <strong>Together:</strong> 1024 × 10 = 10 Kbit ≈ 3 EBRs. Cost: <strong>3 EBRs and 10 output flops — roughly 0.8% of the chip</strong>. Equivalent compute (CORDIC iterative sine) would consume ~200-400 LUTs + multiple cycles per sample. Memory wins on both area and speed. This is the FPGA trick.
     </div>
     <aside class="notes">Sine lookup is the canonical lookup-vs-compute example. On FPGAs, memory-based is almost always better for fixed functions.</aside>

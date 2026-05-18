@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 240" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aOrg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+  </defs>
+
+  <text x="380" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Parallel Multiplier — assign product = a * b (O(N²) area)</text>
+
+  <!-- Module box -->
+  <rect x="50" y="45" width="660" height="170" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- partial product tree -->
+  <rect x="240" y="80" width="280" height="105" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
+  <text x="380" y="103" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">N×N Combinational Multiplier</text>
+  <text x="380" y="122" text-anchor="middle" font-size="10" fill="#555">N² AND gates → partial products</text>
+  <text x="380" y="140" text-anchor="middle" font-size="10" fill="#555">+ carry tree of N adders</text>
+  <text x="380" y="160" text-anchor="middle" font-size="9" fill="#C62828" font-style="italic">8×8 ≈ 80 LUTs · 16×16 ≈ 350 LUTs</text>
+  <text x="380" y="175" text-anchor="middle" font-size="9" fill="#888">no clock, single-cycle</text>
+
+  <!-- a input -->
+  <text x="60" y="112" font-size="12" fill="#F57C00" font-weight="700">a[N−1:0]</text>
+  <line x1="135" y1="107" x2="240" y2="107" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- b input -->
+  <text x="60" y="160" font-size="12" fill="#F57C00" font-weight="700">b[N−1:0]</text>
+  <line x1="135" y1="155" x2="240" y2="155" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- product output -->
+  <line x1="520" y1="132" x2="640" y2="132" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+  <text x="650" y="136" font-size="12" fill="#2E7D32" font-weight="700">product[2N−1:0]</text>
+
+  <text x="380" y="230" text-anchor="middle" font-size="10" fill="#555" font-style="italic">1-cycle latency · O(N²) LUT cost · iCE40 has no DSP block, so wide multipliers fill the chip fast</text>
+</svg>

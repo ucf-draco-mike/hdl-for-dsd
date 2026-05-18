@@ -78,16 +78,25 @@
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Start-Bit Detection</h2>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">// 1. Synchronize the async RX line (2-FF sync — Topic 5 lesson returns!)
-reg r_rx_sync1, r_rx_sync2, r_rx_sync3;
-always @(posedge i_clk) begin
-    r_rx_sync1 &lt;= i_rx;      // metastability flop 1
-    r_rx_sync2 &lt;= r_rx_sync1; // stable
-    r_rx_sync3 &lt;= r_rx_sync2; // 1 cycle earlier — for edge detect
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.58em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// 1. Synchronize the async RX line
+//    (2-FF sync — Topic 5 returns!)
+reg <span style="color:#CE93D8;font-weight:700;">r_rx_sync1</span>, <span style="color:#CE93D8;font-weight:700;">r_rx_sync2</span>, <span style="color:#CE93D8;font-weight:700;">r_rx_sync3</span>;
+always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+    <span style="color:#CE93D8;font-weight:700;">r_rx_sync1</span> &lt;= <span style="color:#FFB74D;font-weight:700;">i_rx</span>;        // metastab
+    <span style="color:#CE93D8;font-weight:700;">r_rx_sync2</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_rx_sync1</span>; // stable
+    <span style="color:#CE93D8;font-weight:700;">r_rx_sync3</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_rx_sync2</span>; // 1 cycle earlier
 end
-wire falling_edge = r_rx_sync3 &amp; ~r_rx_sync2;   // 1 → 0 transition</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> First step: synchronize <code>i_rx</code> (external, async) through 2 flops. Third flop is for edge detection. <code>falling_edge</code> pulses for 1 cycle when the line transitions from idle (1) to start-bit (0). The RX FSM uses this to leave the IDLE state and begin framing. Then the oversampling logic counts to slot 8 to verify it wasn't a glitch.
+wire <span style="color:#4DD0E1;font-weight:700;">falling_edge</span> =
+     <span style="color:#CE93D8;font-weight:700;">r_rx_sync3</span> &amp; ~<span style="color:#CE93D8;font-weight:700;">r_rx_sync2</span>;</code></pre>
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d12_rx_sync_edge_rtl.svg" alt="RTL diagram: i_rx (orange, async) enters a chain of three D flip-flops r_rx_sync1, r_rx_sync2, r_rx_sync3 (purple), all clocked by i_clk (blue). An AND gate combines r_rx_sync3 with the inverted r_rx_sync2 to produce falling_edge (teal), a 1-cycle pulse on a 1→0 transition. r_rx_sync2 is also exported as the clean r_rx_sync used by the data-sampling logic." style="width:100%;max-width:460px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.65em;margin-top:0.2em;">
+        <strong>Together:</strong> Synchronize async <span style="color:#F57C00;font-weight:700;">i_rx</span> through 2 flops, plus a third flop for edge detection. <span style="color:#00838F;font-weight:700;">falling_edge</span> pulses for 1 cycle when the line transitions 1→0. RX FSM uses this to leave IDLE; the oversampler then counts to slot 8 to verify it wasn't a glitch.
     </div>
     <aside class="notes">Start bit detection is edge-triggered. 2-FF sync for metastability, then edge detect. Glitch rejection comes from re-sampling at slot 8.</aside>
 </section>

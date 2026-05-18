@@ -30,8 +30,8 @@
   <text x="6" y="108" font-size="9" fill="#888">!i_valid</text>
 
   <!-- S_IDLE → S_START -->
-  <path d="M 162,160 Q 245,105 318,150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-  <text x="240" y="113" text-anchor="middle" font-size="9" fill="#333" font-weight="600">i_valid = 1</text>
+  <path d="M 162,160 Q 245,105 318,150" fill="none" stroke="#C2185B" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="240" y="113" text-anchor="middle" font-size="9" fill="#C2185B" font-weight="700">i_valid = 1</text>
   <text x="240" y="125" text-anchor="middle" font-size="8" fill="#888" font-style="italic">latch r_shift ← i_data</text>
 
   <!-- ===== S_START ===== -->
@@ -45,8 +45,8 @@
   <text x="305" y="100" font-size="9" fill="#888">!baud_tick</text>
 
   <!-- S_START → S_DATA -->
-  <path d="M 425,160 Q 510,110 580,150" fill="none" stroke="#F9A825" stroke-width="2" marker-end="url(#arr-y)"/>
-  <text x="500" y="113" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="600">baud_tick</text>
+  <path d="M 425,160 Q 510,110 580,150" fill="none" stroke="#00838F" stroke-width="2" marker-end="url(#arr-y)"/>
+  <text x="500" y="113" text-anchor="middle" font-size="9" fill="#00838F" font-weight="700">baud_tick</text>
   <text x="500" y="125" text-anchor="middle" font-size="8" fill="#888" font-style="italic">r_bit ← 0</text>
 
   <!-- ===== S_DATA ===== -->

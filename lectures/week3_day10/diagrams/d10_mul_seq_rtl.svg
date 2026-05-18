@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBlu" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aOrg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aPur" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aTeal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+    <marker id="aMag" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C2185B"/></marker>
+  </defs>
+
+  <text x="440" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">mul_seq — Sequential Shift-and-Add Multiplier (W cycles, ~W LUTs/bit)</text>
+
+  <!-- module box -->
+  <rect x="30" y="45" width="820" height="290" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="45" y="65" font-size="12" font-weight="700" fill="#37474F">module mul_seq #(.W)</text>
+
+  <!-- r_a register -->
+  <rect x="180" y="85" width="120" height="55" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="240" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_a</text>
+  <text x="240" y="125" text-anchor="middle" font-size="9" fill="#888">W-bit latched a</text>
+
+  <!-- r_mask register -->
+  <rect x="180" y="155" width="120" height="55" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="240" y="178" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_mask</text>
+  <text x="240" y="195" text-anchor="middle" font-size="9" fill="#888">shift-right b</text>
+
+  <!-- Shifter / Add gate -->
+  <rect x="345" y="100" width="150" height="120" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
+  <text x="420" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#C62828">Shift-and-Add</text>
+  <text x="420" y="143" text-anchor="middle" font-size="10" fill="#555">(r_a &lt;&lt; r_step)</text>
+  <text x="420" y="158" text-anchor="middle" font-size="10" fill="#555">added when r_mask[0]</text>
+  <text x="420" y="180" text-anchor="middle" font-size="9" fill="#888">1 adder + 1 mux</text>
+  <text x="420" y="198" text-anchor="middle" font-size="9" fill="#888" font-style="italic">~W LUTs reused W times</text>
+
+  <!-- r_sum accumulator -->
+  <rect x="545" y="115" width="120" height="90" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="605" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_sum</text>
+  <text x="605" y="158" text-anchor="middle" font-size="9" fill="#888">2W-bit accumulator</text>
+  <text x="605" y="178" text-anchor="middle" font-size="9" fill="#888" font-style="italic">+= (r_a&lt;&lt;step)</text>
+  <text x="605" y="193" text-anchor="middle" font-size="9" fill="#888" font-style="italic">when r_mask[0]</text>
+
+  <!-- step counter -->
+  <rect x="345" y="245" width="150" height="55" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="420" y="266" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_step</text>
+  <text x="420" y="282" text-anchor="middle" font-size="9" fill="#888">$clog2(W) bits</text>
+  <text x="420" y="296" text-anchor="middle" font-size="8" fill="#888" font-style="italic">counts 0..W−1</text>
+
+  <!-- r_busy flag -->
+  <rect x="545" y="245" width="120" height="55" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="605" y="266" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_busy</text>
+  <text x="605" y="282" text-anchor="middle" font-size="9" fill="#888">1-bit flag</text>
+
+  <!-- Inputs -->
+  <text x="40" y="100" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="76" y1="95" x2="800" y2="95" stroke="#1976D2" stroke-width="2"/>
+  <line x1="240" y1="95" x2="240" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="240" y1="155" x2="240" y2="155" stroke="#1976D2" stroke-width="0"/>
+  <line x1="240" y1="148" x2="240" y2="155" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="605" y1="95" x2="605" y2="115" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="420" y1="240" x2="420" y2="245" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="605" y1="240" x2="605" y2="245" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+
+  <text x="40" y="135" font-size="12" fill="#C2185B" font-weight="700">i_start</text>
+  <line x1="93" y1="130" x2="180" y2="130" stroke="#C2185B" stroke-width="2" marker-end="url(#aMag)"/>
+
+  <text x="40" y="180" font-size="12" fill="#F57C00" font-weight="700">i_a</text>
+  <line x1="62" y1="175" x2="180" y2="113" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <text x="40" y="220" font-size="12" fill="#F57C00" font-weight="700">i_b</text>
+  <line x1="62" y1="215" x2="180" y2="183" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- r_a → shift-add -->
+  <line x1="300" y1="113" x2="345" y2="130" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+  <!-- r_mask → shift-add -->
+  <line x1="300" y1="183" x2="345" y2="170" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+  <!-- r_step → shift-add -->
+  <line x1="420" y1="245" x2="420" y2="220" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+  <!-- shift-add → r_sum -->
+  <line x1="495" y1="160" x2="545" y2="160" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+
+  <!-- r_sum feedback -->
+  <line x1="665" y1="135" x2="690" y2="135" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="690" y1="135" x2="690" y2="75" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="690" y1="75" x2="330" y2="75" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="330" y1="75" x2="330" y2="155" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+  <text x="540" y="68" font-size="8" fill="#7B1FA2" font-style="italic">r_sum feedback (accumulate)</text>
+
+  <!-- Outputs -->
+  <line x1="665" y1="183" x2="780" y2="183" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+  <text x="788" y="187" font-size="12" fill="#2E7D32" font-weight="700">o_p[2W−1:0]</text>
+
+  <line x1="665" y1="270" x2="780" y2="270" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+  <text x="788" y="274" font-size="12" fill="#2E7D32" font-weight="700">o_done</text>
+
+  <text x="430" y="328" text-anchor="middle" font-size="10" fill="#555" font-style="italic">One adder + state regs reused W times: ~6× less area than parallel, ~W× more cycles</text>
+</svg>

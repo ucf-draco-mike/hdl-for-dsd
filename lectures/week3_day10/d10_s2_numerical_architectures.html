@@ -75,16 +75,21 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Multiplication: The LUT Explosion</h2>
-    <pre class="synth"><code class="language-verilog">// 8-bit unsigned multiplier
-assign product = a * b;   // compact source, expensive silicon</code></pre>
-    <div style="font-size:0.75em;">
-        <p>On iCE40 (no dedicated multipliers):</p>
-        <ul>
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.7em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// 8-bit unsigned multiplier
+assign <span style="color:#81C784;font-weight:700;">product</span> = <span style="color:#FFB74D;font-weight:700;">a</span> * <span style="color:#FFB74D;font-weight:700;">b</span>;
+// compact source, expensive silicon</code></pre>
+        <ul style="font-size:0.7em;margin-top:0.4em;">
             <li>4×4 multiply: ~20 LUTs</li>
             <li>8×8 multiply: ~80 LUTs</li>
-            <li>16×16 multiply: ~350 LUTs (27% of iCE40 HX1K!)</li>
+            <li>16×16 multiply: ~350 LUTs (27% HX1K!)</li>
             <li>32×32 multiply: does not fit</li>
         </ul>
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d10_parallel_mult_rtl.svg" alt="RTL diagram of a single-cycle parallel multiplier. Two operand inputs a (orange) and b (orange) feed a combinational block (red) labeled 'N×N multiplier — N² AND gates → partial products + carry tree of N adders'. The result product[2N-1:0] (green) emerges combinationally. The block is annotated with area scaling: 8×8 ≈ 80 LUTs, 16×16 ≈ 350 LUTs." style="width:100%;max-width:430px;display:block;">
+      </div>
     </div>
     <div class="fragment callout-warning" style="font-size:0.7em;margin-top:0.3em;">
         <strong>The reality:</strong> Multiplication is <em>fundamentally O(N<sup>2</sup>)</em> in area for parallel implementation. On a chip with only 1280 LUTs, you can only afford 1-2 wide multipliers. This is why DSP-heavy FPGAs (Xilinx 7-series, Intel Cyclone) include <strong>hardened multiplier blocks</strong> (DSP48, DSP slice) — to offload the area cost from general-purpose LUTs.
@@ -94,29 +99,30 @@ assign product = a * b;   // compact source, expensive silicon</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sequential Shift-and-Add Multiplier</h2>
-    <pre class="synth" style="font-size:0.63em;"><code class="language-verilog">module mul_seq #(parameter W = 8) (
-    input  wire           i_clk, i_start,
-    input  wire [W-1:0]   i_a, i_b,
-    output reg  [2*W-1:0] o_p, output reg o_done
+    <pre class="synth" style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module mul_seq #(parameter W = 8) (
+    input  wire           <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#F48FB1;font-weight:700;">i_start</span>,
+    input  wire [W-1:0]   <span style="color:#FFB74D;font-weight:700;">i_a</span>, <span style="color:#FFB74D;font-weight:700;">i_b</span>,
+    output reg  [2*W-1:0] <span style="color:#81C784;font-weight:700;">o_p</span>, output reg <span style="color:#81C784;font-weight:700;">o_done</span>
 );
-    reg [W-1:0]  r_a, r_mask;
-    reg [2*W-1:0] r_sum;
-    reg [$clog2(W)-1:0] r_step;
-    reg r_busy;
-    always @(posedge i_clk) begin
-        if (i_start) begin
-            r_a &lt;= i_a; r_sum &lt;= 0; r_step &lt;= 0; r_busy &lt;= 1; o_done &lt;= 0;
-            r_mask &lt;= i_b;
-        end else if (r_busy) begin
-            if (r_mask[0]) r_sum &lt;= r_sum + ({{W{1'b0}}, r_a} &lt;&lt; r_step);
-            r_mask &lt;= r_mask &gt;&gt; 1;
-            r_step &lt;= r_step + 1;
-            if (r_step == W-1) begin r_busy &lt;= 0; o_done &lt;= 1; o_p &lt;= r_sum; end
+    reg [W-1:0]  <span style="color:#CE93D8;font-weight:700;">r_a</span>, <span style="color:#CE93D8;font-weight:700;">r_mask</span>;
+    reg [2*W-1:0] <span style="color:#CE93D8;font-weight:700;">r_sum</span>;
+    reg [$clog2(W)-1:0] <span style="color:#CE93D8;font-weight:700;">r_step</span>;
+    reg <span style="color:#CE93D8;font-weight:700;">r_busy</span>;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+        if (<span style="color:#F48FB1;font-weight:700;">i_start</span>) begin
+            <span style="color:#CE93D8;font-weight:700;">r_a</span> &lt;= <span style="color:#FFB74D;font-weight:700;">i_a</span>; <span style="color:#CE93D8;font-weight:700;">r_sum</span> &lt;= 0; <span style="color:#CE93D8;font-weight:700;">r_step</span> &lt;= 0; <span style="color:#CE93D8;font-weight:700;">r_busy</span> &lt;= 1; <span style="color:#81C784;font-weight:700;">o_done</span> &lt;= 0;
+            <span style="color:#CE93D8;font-weight:700;">r_mask</span> &lt;= <span style="color:#FFB74D;font-weight:700;">i_b</span>;
+        end else if (<span style="color:#CE93D8;font-weight:700;">r_busy</span>) begin
+            if (<span style="color:#CE93D8;font-weight:700;">r_mask</span>[0]) <span style="color:#CE93D8;font-weight:700;">r_sum</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_sum</span> + ({{W{1'b0}}, <span style="color:#CE93D8;font-weight:700;">r_a</span>} &lt;&lt; <span style="color:#CE93D8;font-weight:700;">r_step</span>);
+            <span style="color:#CE93D8;font-weight:700;">r_mask</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_mask</span> &gt;&gt; 1;
+            <span style="color:#CE93D8;font-weight:700;">r_step</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_step</span> + 1;
+            if (<span style="color:#CE93D8;font-weight:700;">r_step</span> == W-1) begin <span style="color:#CE93D8;font-weight:700;">r_busy</span> &lt;= 0; <span style="color:#81C784;font-weight:700;">o_done</span> &lt;= 1; <span style="color:#81C784;font-weight:700;">o_p</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_sum</span>; end
         end
     end
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> Instead of 80 LUTs in <em>parallel</em>, we use ~20 LUTs across <strong>8 clock cycles</strong>. Saves 75% area at the cost of 8× latency. This is the classic <strong>throughput-vs-area tradeoff</strong>. Perfect for low-throughput paths; wrong for 1-sample-per-clock.
+    <img src="diagrams/d10_mul_seq_rtl.svg" alt="RTL diagram of mul_seq sequential multiplier. i_clk (blue) clocks five registers (purple): r_a (latched a), r_mask (shift-right b), r_sum (2W-bit accumulator), r_step (cycle counter), and r_busy (state flag). i_a and i_b (orange) feed the latches; i_start (magenta) initiates a transaction. A central red shift-and-add block (r_a << r_step) accumulates into r_sum when r_mask[0]=1. r_sum loops back for accumulation. Outputs o_p (green) and o_done (green) emit when r_step reaches W-1. The single adder is reused W times." style="width:100%;max-width:760px;display:block;margin:0.3em auto 0;">
+    <div class="fragment callout" style="font-size:0.65em;margin-top:0.2em;">
+        <strong>Together:</strong> Instead of 80 LUTs in <em>parallel</em>, we use ~20 LUTs across <strong>W=8 clock cycles</strong>. One adder is reused; the state lives in <span style="color:#7B1FA2;font-weight:700;">r_*</span> registers. Saves 75% area at the cost of 8× latency. Classic <strong>throughput-vs-area tradeoff</strong>.
     </div>
     <aside class="notes">Sequential multiplier: add-and-shift algorithm. Saves area by spending time. Fits on iCE40 even for 16- or 32-bit multiplies. Classic algorithm-to-architecture mapping.</aside>
 </section>
@@ -138,9 +144,16 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Signed Arithmetic Gotcha</h2>
-    <pre class="mistake" style="font-size:0.7em;"><code class="language-verilog">reg  [7:0] a = 8'hFF;    // declared unsigned
-wire [8:0] sum = a + 1;  // what is sum?</code></pre>
-    <p style="font-size:0.78em;">What does <code>sum</code> equal?</p>
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="mistake" style="font-size:0.7em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">reg  [7:0] <span style="color:#FFB74D;font-weight:700;">a</span> = 8'hFF;    // unsigned
+wire [8:0] <span style="color:#81C784;font-weight:700;">sum</span> = <span style="color:#FFB74D;font-weight:700;">a</span> + 1;  // what is sum?</code></pre>
+      </div>
+      <div class="col" style="flex:1.05;">
+        <img src="diagrams/d10_signed_unsigned_rtl.svg" alt="RTL diagram of an 8-bit + 1 adder. a[7:0] (orange) and constant 1 feed an 8-bit adder block (yellow, uses SB_CARRY chain) producing sum[8:0] (green). Two interpretation panels at the bottom: green box reads it as unsigned, 255+1 = 256 = 9'h100; red box reads it as signed two's complement, −1+1 = 0 = 9'h000. Same wires, two interpretations." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <p style="font-size:0.72em;margin-top:0.2em;">What does <span style="color:#2E7D32;font-weight:700;">sum</span> equal?</p>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>Answer:</strong> <strong>sum = 9'h100 = 256.</strong> <code>a</code> is unsigned, so <code>8'hFF</code> = 255. Plus 1 = 256. The 9-bit result <em>correctly</em> extends to hold the carry.
     </div>

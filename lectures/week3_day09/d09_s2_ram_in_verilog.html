@@ -57,53 +57,61 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Single-Port Synchronous RAM</h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module ram_1p #(
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.54em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module ram_1p #(
     parameter ADDR_W = 10,           // 1024 entries
     parameter DATA_W = 8
 ) (
-    input  wire              i_clk,
-    input  wire              i_we,   // write enable
-    input  wire [ADDR_W-1:0] i_addr,
-    input  wire [DATA_W-1:0] i_din,
-    output reg  [DATA_W-1:0] o_dout
+    input  wire              <span style="color:#4FC3F7;font-weight:700;">i_clk</span>,
+    input  wire              <span style="color:#F48FB1;font-weight:700;">i_we</span>,   // write enable
+    input  wire [ADDR_W-1:0] <span style="color:#FFB74D;font-weight:700;">i_addr</span>,
+    input  wire [DATA_W-1:0] <span style="color:#FFB74D;font-weight:700;">i_din</span>,
+    output reg  [DATA_W-1:0] <span style="color:#81C784;font-weight:700;">o_dout</span>
 );
-    reg [DATA_W-1:0] mem [0:(2**ADDR_W)-1];
+    reg [DATA_W-1:0] <span style="color:#FFD54F;font-weight:700;">mem</span> [0:(2**ADDR_W)-1];
 
-    always @(posedge i_clk) begin
-        if (i_we)   mem[i_addr] &lt;= i_din;   // synchronous write
-        o_dout &lt;= mem[i_addr];               // synchronous read (after the write, i.e. "read-before-write")
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+        if (<span style="color:#F48FB1;font-weight:700;">i_we</span>) <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">i_addr</span>] &lt;= <span style="color:#FFB74D;font-weight:700;">i_din</span>; // sync write
+        <span style="color:#81C784;font-weight:700;">o_dout</span> &lt;= <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">i_addr</span>];  // sync read (RBW)
     end
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> Single port — shared address bus for read and write. Writes go in when <code>i_we=1</code>. Read always happens and the old value shows up on <code>o_dout</code> one cycle later. This is the textbook block-RAM inference pattern — and it's the pattern you'll reuse for every RAM in every design.
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d09_ram_1p_rtl.svg" alt="RTL diagram of ram_1p single-port RAM: i_clk (blue) clocks both the memory array mem[] (amber) and the output register o_dout (purple). i_we (magenta) enables writes; i_addr (orange) shares between read and write; i_din (orange) drives writes; o_dout (green) exits one cycle after addr, with the synthesizer mapping to SB_RAM40_4KNR (EBR)." style="width:100%;max-width:480px;display:block;">
+      </div>
+    </div>
+    <div class="callout" style="font-size:0.64em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Single port — shared <span style="color:#F57C00;font-weight:700;">i_addr</span> bus for read and write. Writes go in when <span style="color:#C2185B;font-weight:700;">i_we</span>=1. Read always happens and the old value shows up on <span style="color:#2E7D32;font-weight:700;">o_dout</span> one cycle later. This is the textbook block-RAM inference pattern — and it's the pattern you'll reuse for every RAM in every design.
     </div>
     <aside class="notes">Single port = one address bus. Write when enabled, read every cycle. This exact code pattern triggers block RAM inference on iCE40, Xilinx, Intel — everyone. Portable.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Read-Before-Write vs. Write-First</h2>
-    <p style="font-size:0.78em;">When <code>i_we=1</code> and you're reading the <em>same</em> address you're writing, what comes out of <code>o_dout</code>?</p>
-    <div class="two-col" style="margin-top:0.3em;">
-        <div class="col panel panel-neutral">
-            <h3 style="font-size:1em;">Read-Before-Write</h3>
-            <pre style="font-size:0.7em;"><code class="language-verilog">always @(posedge clk) begin
-    if (we) mem[addr] &lt;= din;
-    dout &lt;= mem[addr];    // old value
+    <p style="font-size:0.72em;">When <span style="color:#C2185B;font-weight:700;">we</span>=1 and you're reading the <em>same</em> <span style="color:#F57C00;font-weight:700;">addr</span> you're writing, what comes out of <span style="color:#2E7D32;font-weight:700;">dout</span>?</p>
+    <div class="two-col" style="margin-top:0.2em;">
+        <div class="col panel panel-neutral" style="flex:1;">
+            <h3 style="font-size:0.95em;">Read-Before-Write</h3>
+            <pre style="font-size:0.62em;margin:0.2em 0;"><code class="nohighlight" style="color:#D4D4D4;">always @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+    if (<span style="color:#F48FB1;font-weight:700;">we</span>) <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">addr</span>] &lt;= <span style="color:#FFB74D;font-weight:700;">din</span>;
+    <span style="color:#81C784;font-weight:700;">dout</span> &lt;= <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">addr</span>];  // OLD
 end</code></pre>
-            <p style="font-size:0.7em;">Reads the <em>old</em> value while writing the new. This is the <strong>natural EBR behavior</strong> on iCE40. Cheapest.</p>
+            <p style="font-size:0.66em;margin:0.2em 0;">Reads the <em>old</em> value. <strong>Natural EBR.</strong> Cheapest.</p>
         </div>
-        <div class="col panel panel-neutral">
-            <h3 style="font-size:1em;">Write-First (Bypass)</h3>
-            <pre style="font-size:0.7em;"><code class="language-verilog">always @(posedge clk) begin
-    if (we) begin
-        mem[addr] &lt;= din;
-        dout &lt;= din;       // new value
-    end else dout &lt;= mem[addr];
+        <div class="col panel panel-neutral" style="flex:1;">
+            <h3 style="font-size:0.95em;">Write-First (Bypass)</h3>
+            <pre style="font-size:0.62em;margin:0.2em 0;"><code class="nohighlight" style="color:#D4D4D4;">always @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+    if (<span style="color:#F48FB1;font-weight:700;">we</span>) begin
+        <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">addr</span>] &lt;= <span style="color:#FFB74D;font-weight:700;">din</span>;
+        <span style="color:#81C784;font-weight:700;">dout</span> &lt;= <span style="color:#FFB74D;font-weight:700;">din</span>;  // NEW
+    end else <span style="color:#81C784;font-weight:700;">dout</span> &lt;= <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">addr</span>];
 end</code></pre>
-            <p style="font-size:0.7em;">Reads the <em>new</em> value just written. Requires extra muxing in the block RAM primitive.</p>
+            <p style="font-size:0.66em;margin:0.2em 0;">Reads the <em>new</em> value just written. Bypass mux required.</p>
         </div>
     </div>
-    <div class="fragment callout-warning" style="font-size:0.68em;">
+    <img src="diagrams/d09_ram_rbw_wf_rtl.svg" alt="Side-by-side RTL of two RAM read modes. Left (green): Read-Before-Write — mem block feeds dout register directly, no extra logic, matches native EBR. Right (amber): Write-First — adds a bypass mux selected by we to route din directly to dout when we=1, otherwise routes mem[addr]; costs extra LUTs per bit." style="width:100%;max-width:760px;display:block;margin:0.3em auto 0;">
+    <div class="fragment callout-warning" style="font-size:0.64em;margin-top:0.3em;">
         <strong>Rule of thumb:</strong> Use read-before-write unless you have a specific reason. It's cheaper, maps cleanly to the hardware, and doesn't create subtle bypass bugs.
     </div>
     <aside class="notes">Read-before-write is the natural EBR behavior. Write-first requires a bypass mux. Pick the right one for your use case — it's a subtle thing that bites later.</aside>
@@ -111,21 +119,27 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Dual-Port Sketch</h2>
-    <p style="font-size:0.78em;">What does a <strong>dual-port</strong> (one read, one write, independent addresses) RAM look like? Sketch the ports and the always block.</p>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <strong>Sketch:</strong>
-        <pre style="font-size:0.82em;"><code class="language-verilog">module ram_dp (
-    input clk,
-    input we,   input [A-1:0] waddr, input [D-1:0] din,
-                input [A-1:0] raddr, output reg [D-1:0] dout
+    <p style="font-size:0.74em;">What does a <strong>dual-port</strong> (one read, one write, independent addresses) RAM look like? Sketch the ports and the always block.</p>
+    <div class="fragment two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre style="font-size:0.6em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module ram_dp (
+    input <span style="color:#4FC3F7;font-weight:700;">clk</span>,
+    input <span style="color:#F48FB1;font-weight:700;">we</span>,   input [A-1:0] <span style="color:#FFB74D;font-weight:700;">waddr</span>, input [D-1:0] <span style="color:#FFB74D;font-weight:700;">din</span>,
+                input [A-1:0] <span style="color:#4DD0E1;font-weight:700;">raddr</span>, output reg [D-1:0] <span style="color:#81C784;font-weight:700;">dout</span>
 );
-    reg [D-1:0] mem [0:(2**A)-1];
-    always @(posedge clk) begin
-        if (we) mem[waddr] &lt;= din;
-        dout &lt;= mem[raddr];     // reads a different address
+    reg [D-1:0] <span style="color:#FFD54F;font-weight:700;">mem</span> [0:(2**A)-1];
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+        if (<span style="color:#F48FB1;font-weight:700;">we</span>) <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">waddr</span>] &lt;= <span style="color:#FFB74D;font-weight:700;">din</span>;
+        <span style="color:#81C784;font-weight:700;">dout</span> &lt;= <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#4DD0E1;font-weight:700;">raddr</span>];
     end
 endmodule</code></pre>
-        Two address ports (<code>waddr</code>, <code>raddr</code>), one shared data path. Infers a block RAM with separate read/write ports — the iCE40 EBR supports this natively. Perfect for FIFOs (write at tail, read at head).
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d09_ram_dp_rtl.svg" alt="RTL diagram of ram_dp dual-port RAM: clk (blue) clocks everything. Write port (we magenta, waddr orange, din orange) feeds the memory array mem[] (amber). Read port uses raddr (teal) on an independent address bus. mem feeds the output register (purple) producing dout (green). Maps to iCE40 EBR in dual-port mode." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.3em;">
+        Two address ports — <span style="color:#F57C00;font-weight:700;">waddr</span> for writes and <span style="color:#00838F;font-weight:700;">raddr</span> for reads — share one data path. Infers a block RAM with separate read/write ports — the iCE40 EBR supports this natively. Perfect for FIFOs (write at tail, read at head).
     </div>
     <aside class="notes">Dual-port is the FIFO primitive. Write address and read address are independent. iCE40 EBRs have native dual-port mode; so do Xilinx and Intel.</aside>
 </section>

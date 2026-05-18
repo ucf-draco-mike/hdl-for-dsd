@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 240" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aOrg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+  </defs>
+
+  <text x="370" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">8-bit + 1 — Same Hardware, Two Interpretations</text>
+
+  <!-- Adder block -->
+  <rect x="240" y="55" width="220" height="100" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <text x="350" y="80" text-anchor="middle" font-size="13" font-weight="700" fill="#333">8-bit Adder (SB_CARRY)</text>
+  <text x="350" y="100" text-anchor="middle" font-size="10" fill="#555">sum = a + 1</text>
+  <text x="350" y="120" text-anchor="middle" font-size="10" fill="#555">9-bit result widens</text>
+  <text x="350" y="140" text-anchor="middle" font-size="9" fill="#888" font-style="italic">~8 LUTs + 8 SB_CARRY</text>
+
+  <!-- a input -->
+  <text x="40" y="100" font-size="12" fill="#F57C00" font-weight="700">a[7:0] = 8'hFF</text>
+  <line x1="155" y1="95" x2="240" y2="95" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- +1 input -->
+  <text x="40" y="125" font-size="12" fill="#F57C00" font-weight="700">+ 1</text>
+  <line x1="65" y1="120" x2="240" y2="120" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- sum output -->
+  <line x1="460" y1="105" x2="540" y2="105" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+  <text x="548" y="109" font-size="12" fill="#2E7D32" font-weight="700">sum[8:0]</text>
+
+  <!-- two interpretations -->
+  <rect x="40" y="175" width="320" height="50" rx="6" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+  <text x="200" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="#2E7D32">unsigned: 255 + 1 = 256 (9'h100) ✓</text>
+  <text x="200" y="212" text-anchor="middle" font-size="9" fill="#555" font-style="italic">carry bit lifts result into 9th bit</text>
+
+  <rect x="380" y="175" width="320" height="50" rx="6" fill="#FFEBEE" stroke="#C62828" stroke-width="1.5"/>
+  <text x="540" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="#C62828">signed: −1 + 1 = 0 (9'h000)</text>
+  <text x="540" y="212" text-anchor="middle" font-size="9" fill="#555" font-style="italic">two's complement reads 8'hFF as −1</text>
+</svg>

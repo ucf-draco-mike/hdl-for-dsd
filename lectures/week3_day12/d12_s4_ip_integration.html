@@ -166,22 +166,30 @@
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> Integration at the Yosys Level</h2>
-    <pre style="font-size:0.6em;"><code class="language-bash">$ yosys -p "read_verilog uart_tx.v uart_rx.v fifo.v echo_top.v; \
-           hierarchy -top echo_top; synth_ice40; stat"
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre style="font-size:0.56em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">$ yosys -p "read_verilog uart_tx.v uart_rx.v \
+           fifo.v echo_top.v; hierarchy -top \
+           echo_top; synth_ice40; stat"
 
-=== echo_top ===                # user-written wrapper ~30 lines
+=== echo_top ===   # wrapper ~30 lines
    Number of cells:        ~220
    Submodule instances:
-     u_uart_tx      (uart_tx)
-     u_uart_rx      (uart_rx)
-     u_rx_fifo      (fifo)
-   Top-level logic:        ~15 cells (wiring, LED indicators)
+     <span style="color:#F06292;font-weight:700;">u_uart_tx</span>   (uart_tx)
+     <span style="color:#F06292;font-weight:700;">u_uart_rx</span>   (uart_rx)
+     <span style="color:#F06292;font-weight:700;">u_rx_fifo</span>   (fifo)
+   Top-level logic: ~15 cells
 
 === uart_tx ===   ~32 cells
 === uart_rx ===   ~65 cells
-=== fifo ===      ~80 cells  (8-deep × 8-wide)</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;margin-top:0.3em;">
-        <strong>What to notice:</strong> The <em>wrapper</em> is 15 cells — tiny. The sub-modules dominate. That's the signature of a well-composed design: the wrapper is small because the components do the work. If your top-level ever grows larger than any individual sub-module, you're probably not composing properly — you're re-implementing.
+=== fifo ===      ~80 cells (8×8)</code></pre>
+      </div>
+      <div class="col" style="flex:1.2;">
+        <img src="diagrams/d12_echo_top_rtl.svg" alt="RTL block diagram of echo_top integration wrapper. Three pink-bordered submodule boxes: u_uart_rx receives i_rx (orange), produces o_data (amber byte) and o_valid (magenta). The bytes feed u_rx_fifo's write port (din, wr); the fifo's o_dout (amber) feeds u_uart_tx's i_data. A handshake AND block (yellow) gates the path: when fifo !empty AND uart_tx !busy, it pulses fifo.rd and uart_tx i_valid (both magenta). u_uart_tx finally drives o_tx (green) back out. i_clk (blue) fans out to all three submodules. Wrapper itself is only ~15 cells." style="width:100%;max-width:560px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.3em;">
+        <strong>What to notice:</strong> The <em>wrapper</em> is 15 cells — tiny. The three <span style="color:#C2185B;font-weight:700;">u_*</span> sub-modules dominate. That's the signature of a well-composed design: the wrapper is small because the components do the work. If your top-level ever grows larger than any individual sub-module, you're probably not composing properly — you're re-implementing.
     </div>
     <aside class="notes">Wrapper-small is the signature of good composition. The wrapper's job is to <em>wire things together</em>, not to do work. Work belongs in named, reusable sub-modules.</aside>
 </section>
