@@ -61,20 +61,20 @@
         <pre class="synth" style="font-size:0.56em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Top-level — wraps debounce as sub-module
 module button_handler (
     input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#FFB74D;font-weight:700;">i_btn_raw</span>,
-    output wire <span style="color:#66BB6A;font-weight:700;">o_btn_clean</span>
+    output wire <span style="color:#81C784;font-weight:700;">o_btn_clean</span>
 );
     // Instantiate by name
     debounce #(.<span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span>(500_000)) <span style="color:#CE93D8;font-weight:700;">u_debounce_sw1</span> (
         .<span style="color:#4FC3F7;font-weight:700;">i_clk</span>   (<span style="color:#4FC3F7;font-weight:700;">i_clk</span>),
         .<span style="color:#EF5350;font-weight:700;">i_reset</span> (<span style="color:#EF5350;font-weight:700;">i_reset</span>),
         .<span style="color:#FFB74D;font-weight:700;">i_noisy</span> (<span style="color:#FFB74D;font-weight:700;">i_btn_raw</span>),
-        .<span style="color:#66BB6A;font-weight:700;">o_clean</span> (<span style="color:#66BB6A;font-weight:700;">o_btn_clean</span>)
+        .<span style="color:#81C784;font-weight:700;">o_clean</span> (<span style="color:#81C784;font-weight:700;">o_btn_clean</span>)
     );
 endmodule</code></pre>
         <img src="diagrams/d08_button_handler_rtl.svg" alt="RTL block diagram of button_handler: top-level outer dashed box wraps a debounce instance u_debounce_sw1 with CLKS_STABLE=500_000. Color-coded signals i_clk (blue), i_reset (red), i_btn_raw (orange) enter the outer module and map to inner .i_clk, .i_reset, .i_noisy; inner .o_clean (green) exits as o_btn_clean." style="width:100%;max-width:520px;display:block;">
     </div>
     <div class="callout" style="font-size:0.68em;margin-top:0.3em;">
-        <strong>My thinking:</strong> Three disciplines. (1) Descriptive instance <code><span style="color:#9C27B0;">u_debounce_sw1</span></code>, not <code>u1</code>. (2) Parameter override <code>#(.<span style="color:#B8860B;">CLKS_STABLE</span>(500_000))</code>. (3) Named ports — <code>.<span style="color:#1976D2;">i_clk</span>(<span style="color:#1976D2;">i_clk</span>)</code>. Each colored signal in the code maps to the same-colored arrow in the RTL.
+        <strong>My thinking:</strong> Three disciplines. (1) Descriptive instance <code><span style="color:#7B1FA2;">u_debounce_sw1</span></code>, not <code>u1</code>. (2) Parameter override <code>#(.<span style="color:#B8860B;">CLKS_STABLE</span>(500_000))</code>. (3) Named ports — <code>.<span style="color:#1976D2;">i_clk</span>(<span style="color:#1976D2;">i_clk</span>)</code>. Each colored signal in the code maps to the same-colored arrow in the RTL.
     </div>
     <aside class="notes">Three habits in 5 lines. Every instantiation you ever write follows this pattern. The <code>u_</code> prefix (&ldquo;underscore unit&rdquo;) is an industry naming convention — makes instance names searchable and distinguishable from signals. Signal coloring lets students trace each port from the Verilog to the wires in the diagram.</aside>
 </section>
@@ -104,12 +104,12 @@ endmodule</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:0.6em;align-items:center;">
         <pre class="mistake" style="font-size:0.6em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module top (input wire <span style="color:#4FC3F7;font-weight:700;">clk</span>,
             input wire <span style="color:#F48FB1;font-weight:700;">data_in</span>,
-            output wire <span style="color:#66BB6A;font-weight:700;">done</span>);
+            output wire <span style="color:#81C784;font-weight:700;">done</span>);
     wire <span style="color:#BDBDBD;font-weight:700;">x</span>, <span style="color:#BDBDBD;font-weight:700;">y</span>, <span style="color:#BDBDBD;font-weight:700;">z</span>;
     submod1 <span style="color:#CE93D8;">u1</span> (<span style="color:#4FC3F7;">clk</span>, <span style="color:#F48FB1;">data_in</span>, <span style="color:#BDBDBD;">x</span>);
     submod2 <span style="color:#CE93D8;">u2</span> (<span style="color:#BDBDBD;">x</span>, <span style="color:#BDBDBD;">y</span>);
     submod3 <span style="color:#CE93D8;">u3</span> (<span style="color:#4FC3F7;">clk</span>, <span style="color:#BDBDBD;">y</span>, <span style="color:#BDBDBD;">z</span>);
-    submod4 <span style="color:#CE93D8;">u4</span> (<span style="color:#BDBDBD;">z</span>, <span style="color:#66BB6A;">done</span>);
+    submod4 <span style="color:#CE93D8;">u4</span> (<span style="color:#BDBDBD;">z</span>, <span style="color:#81C784;">done</span>);
 endmodule</code></pre>
         <img src="diagrams/d08_bad_hierarchy_rtl.svg" alt="RTL block diagram of the bad-hierarchy top: four anonymous submod1..submod4 blocks named u1..u4 wired in a chain by single-letter wires x, y, z. Inputs clk (blue) and data_in (pink) enter; output done (green) exits. The grey x, y, z arrows and unnamed instance labels visually demonstrate that positional connections with meaningless names hide the design intent." style="width:100%;max-width:560px;display:block;">
     </div>

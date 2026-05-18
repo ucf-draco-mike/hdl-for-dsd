@@ -13,7 +13,7 @@
   <text x="380" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">D must be stable from t_setup before to t_hold after the rising clock edge</text>
 
   <!-- Clock waveform -->
-  <text x="60" y="115" text-anchor="end" font-size="12" font-weight="700" fill="#333">clk</text>
+  <text x="60" y="115" text-anchor="end" font-size="12" font-weight="700" fill="#1976D2">clk</text>
   <line x1="75" y1="135" x2="290" y2="135" stroke="#1565C0" stroke-width="2"/>
   <line x1="290" y1="135" x2="290" y2="95" stroke="#1565C0" stroke-width="2"/>
   <line x1="290" y1="95"  x2="430" y2="95" stroke="#1565C0" stroke-width="2"/>

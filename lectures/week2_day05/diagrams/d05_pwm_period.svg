@@ -15,13 +15,13 @@
   <!-- Period register -->
   <rect x="40" y="80" width="130" height="50" rx="6" fill="#FFF9C4" stroke="#D4A843" stroke-width="2"/>
   <text x="105" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#7B5E00">Period Register</text>
-  <text x="105" y="118" text-anchor="middle" font-size="10" fill="#333">i_load_val (= N-1)</text>
+  <text x="105" y="118" text-anchor="middle" font-size="10" fill="#C2185B">i_load_val (= N-1)</text>
 
   <!-- Loadable counter -->
   <rect x="220" y="160" width="160" height="70" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
   <text x="300" y="182" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">Loadable Counter</text>
   <text x="300" y="200" text-anchor="middle" font-size="10" fill="#333">priority: reset &gt; load &gt; +1</text>
-  <text x="300" y="216" text-anchor="middle" font-size="10" fill="#333">o_count → 0..N-1</text>
+  <text x="300" y="216" text-anchor="middle" font-size="10" fill="#2E7D32">o_count → 0..N-1</text>
 
   <!-- Period reg -> counter load value -->
   <line x1="170" y1="105" x2="200" y2="105" stroke="#333" stroke-width="1.5"/>
@@ -32,12 +32,12 @@
   <!-- Duty register -->
   <rect x="430" y="80" width="130" height="50" rx="6" fill="#FFF9C4" stroke="#D4A843" stroke-width="2"/>
   <text x="495" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#7B5E00">Duty Register</text>
-  <text x="495" y="118" text-anchor="middle" font-size="10" fill="#333">i_duty (≤ N-1)</text>
+  <text x="495" y="118" text-anchor="middle" font-size="10" fill="#F57C00">i_duty (≤ N-1)</text>
 
   <!-- Compare -->
   <rect x="430" y="170" width="130" height="50" rx="6" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
   <text x="495" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#E65100">Compare</text>
-  <text x="495" y="208" text-anchor="middle" font-size="10" fill="#333">o_count &lt; duty ?</text>
+  <text x="495" y="208" text-anchor="middle" font-size="10" fill="#2E7D32">o_count &lt; duty ?</text>
 
   <!-- Wiring -->
   <line x1="380" y1="195" x2="430" y2="195" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
@@ -45,7 +45,7 @@
 
   <!-- PWM out -->
   <line x1="560" y1="195" x2="640" y2="195" stroke="#27AE60" stroke-width="2" marker-end="url(#arr)"/>
-  <text x="660" y="198" font-size="11" font-weight="700" fill="#27AE60">o_pwm</text>
+  <text x="660" y="198" font-size="11" font-weight="700" fill="#2E7D32">o_pwm</text>
 
   <!-- Divider -->
   <line x1="40" y1="250" x2="720" y2="250" stroke="#DDD" stroke-width="1" stroke-dasharray="3,3"/>
@@ -55,7 +55,7 @@
   <!-- Waveform A: N = 8, duty = 4  (two full periods in 16 cycles) -->
   <!-- =========================================================== -->
   <!-- x grid: cycle 0 at x=120, cycle width = 25px, 16 cycles → x=520 -->
-  <text x="55" y="312" font-size="10" font-weight="700" fill="#27AE60">o_pwm</text>
+  <text x="55" y="312" font-size="10" font-weight="700" fill="#2E7D32">o_pwm</text>
   <text x="55" y="326" font-size="9" fill="#666">N = 8</text>
   <text x="55" y="338" font-size="9" fill="#666">duty = 4</text>
 
@@ -80,7 +80,7 @@
   <!-- =========================================================== -->
   <!-- Waveform B: N = 16, duty = 8  (one full period in 16 cycles) -->
   <!-- =========================================================== -->
-  <text x="55" y="392" font-size="10" font-weight="700" fill="#1565C0">o_pwm</text>
+  <text x="55" y="392" font-size="10" font-weight="700" fill="#2E7D32">o_pwm</text>
   <text x="55" y="406" font-size="9" fill="#666">N = 16</text>
   <text x="55" y="418" font-size="9" fill="#666">duty = 8</text>
 

@@ -5,50 +5,50 @@
   <!-- waveform area -->
   <g transform="translate(50,50)">
     <!-- clk -->
-    <text x="-5" y="14" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#E91E63">clk</text>
+    <text x="-5" y="14" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#1976D2">clk</text>
     <polyline points="0,18 20,18 20,5 40,5 40,18 60,18 60,5 80,5 80,18 100,18 100,5 120,5 120,18 140,18 140,5 160,5 160,18 180,18 180,5 200,5 200,18 220,18 220,5 240,5 240,18 260,18 260,5 280,5 280,18 300,18 300,5 320,5 320,18 340,18 340,5 360,5 360,18 380,18 380,5 400,5 400,18 420,18 420,5 440,5 440,18 460,18 460,5 480,5 480,18 500,18 500,5 520,5 520,18"
-       fill="none" stroke="#E91E63" stroke-width="1.5"/>
+       fill="none" stroke="#1976D2" stroke-width="1.5"/>
 
     <!-- signal (4 bits: contains X) -->
-    <text x="-5" y="44" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#00ACC1">signal</text>
-    <rect x="0" y="33" width="160" height="20" fill="#E0F7FA" stroke="#00ACC1" stroke-width="1.4"/>
-    <text x="80" y="48" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#00ACC1">4'b1011</text>
-    <rect x="160" y="33" width="200" height="20" fill="#FFEBEE" stroke="#FF5252" stroke-width="1.4"/>
+    <text x="-5" y="44" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#F57C00">signal</text>
+    <rect x="0" y="33" width="160" height="20" fill="#E0F7FA" stroke="#F57C00" stroke-width="1.4"/>
+    <text x="80" y="48" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#F57C00">4'b1011</text>
+    <rect x="160" y="33" width="200" height="20" fill="#FFEBEE" stroke="#D32F2F" stroke-width="1.4"/>
     <text x="260" y="48" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
-      <tspan fill="#00ACC1" font-weight="700">4'b10</tspan>
-      <tspan fill="#FF5252" font-weight="700">X</tspan>
-      <tspan fill="#00ACC1" font-weight="700">1</tspan>
+      <tspan fill="#F57C00" font-weight="700">4'b10</tspan>
+      <tspan fill="#D32F2F" font-weight="700">X</tspan>
+      <tspan fill="#F57C00" font-weight="700">1</tspan>
     </text>
-    <rect x="360" y="33" width="160" height="20" fill="#E0F7FA" stroke="#00ACC1" stroke-width="1.4"/>
-    <text x="440" y="48" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#00ACC1">4'b1011</text>
+    <rect x="360" y="33" width="160" height="20" fill="#E0F7FA" stroke="#F57C00" stroke-width="1.4"/>
+    <text x="440" y="48" text-anchor="middle" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#F57C00">4'b1011</text>
 
     <!-- result of (signal == 4'b1011) -->
-    <text x="-5" y="75" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#FF5252">==</text>
-    <rect x="0" y="63" width="160" height="20" fill="#E8F5E9" stroke="#43A047" stroke-width="1.4"/>
-    <text x="80" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#43A047" font-family="JetBrains Mono">1</text>
-    <rect x="160" y="63" width="200" height="20" fill="#FFEBEE" stroke="#FF5252" stroke-width="1.4"/>
-    <text x="260" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#FF5252" font-family="JetBrains Mono">X  ← ambiguous</text>
-    <rect x="360" y="63" width="160" height="20" fill="#E8F5E9" stroke="#43A047" stroke-width="1.4"/>
-    <text x="440" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#43A047" font-family="JetBrains Mono">1</text>
+    <text x="-5" y="75" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#D32F2F">==</text>
+    <rect x="0" y="63" width="160" height="20" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.4"/>
+    <text x="80" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">1</text>
+    <rect x="160" y="63" width="200" height="20" fill="#FFEBEE" stroke="#D32F2F" stroke-width="1.4"/>
+    <text x="260" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#D32F2F" font-family="JetBrains Mono">X  ← ambiguous</text>
+    <rect x="360" y="63" width="160" height="20" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.4"/>
+    <text x="440" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">1</text>
 
     <!-- result of (signal === 4'b1011) -->
-    <text x="-5" y="105" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#1E88E5">===</text>
-    <rect x="0" y="93" width="160" height="20" fill="#E8F5E9" stroke="#43A047" stroke-width="1.4"/>
-    <text x="80" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#43A047" font-family="JetBrains Mono">1</text>
-    <rect x="160" y="93" width="200" height="20" fill="#E3F2FD" stroke="#1E88E5" stroke-width="1.4"/>
-    <text x="260" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#1E88E5" font-family="JetBrains Mono">0  ← clean FALSE</text>
-    <rect x="360" y="93" width="160" height="20" fill="#E8F5E9" stroke="#43A047" stroke-width="1.4"/>
-    <text x="440" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#43A047" font-family="JetBrains Mono">1</text>
+    <text x="-5" y="105" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono" fill="#C2185B">===</text>
+    <rect x="0" y="93" width="160" height="20" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.4"/>
+    <text x="80" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">1</text>
+    <rect x="160" y="93" width="200" height="20" fill="#E3F2FD" stroke="#C2185B" stroke-width="1.4"/>
+    <text x="260" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#C2185B" font-family="JetBrains Mono">0  ← clean FALSE</text>
+    <rect x="360" y="93" width="160" height="20" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.4"/>
+    <text x="440" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">1</text>
 
     <!-- region label -->
     <text x="80" y="135" text-anchor="middle" font-size="9" fill="#666">clean compare</text>
-    <text x="260" y="135" text-anchor="middle" font-size="10" font-weight="700" fill="#FF5252">X bit flips into the result</text>
+    <text x="260" y="135" text-anchor="middle" font-size="10" font-weight="700" fill="#D32F2F">X bit flips into the result</text>
     <text x="440" y="135" text-anchor="middle" font-size="9" fill="#666">clean compare</text>
   </g>
 
   <!-- callout -->
-  <rect x="40" y="220" width="680" height="80" rx="8" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+  <rect x="40" y="220" width="680" height="80" rx="8" fill="#fff" stroke="#9A6F00" stroke-width="2"/>
   <text x="50" y="244" font-size="12" font-weight="700" fill="#333">Why this matters in a testbench:</text>
-  <text x="50" y="265" font-size="11" fill="#444">• <tspan font-family="JetBrains Mono" fill="#FF5252" font-weight="700">==</tspan> returns X when either operand has X — an <tspan font-style="italic">if</tspan> on X is treated as <em>false</em> → check silently skipped</text>
-  <text x="50" y="285" font-size="11" fill="#444">• <tspan font-family="JetBrains Mono" fill="#1E88E5" font-weight="700">!==</tspan> / <tspan font-family="JetBrains Mono" fill="#1E88E5" font-weight="700">===</tspan> treats X as a literal value → an undefined DUT output becomes a clean <tspan fill="#FF5252" font-weight="700">FAIL</tspan>, not a silent skip</text>
+  <text x="50" y="265" font-size="11" fill="#444">• <tspan font-family="JetBrains Mono" fill="#D32F2F" font-weight="700">==</tspan> returns X when either operand has X — an <tspan font-style="italic">if</tspan> on X is treated as <em>false</em> → check silently skipped</text>
+  <text x="50" y="285" font-size="11" fill="#444">• <tspan font-family="JetBrains Mono" fill="#C2185B" font-weight="700">!==</tspan> / <tspan font-family="JetBrains Mono" fill="#C2185B" font-weight="700">===</tspan> treats X as a literal value → an undefined DUT output becomes a clean <tspan fill="#D32F2F" font-weight="700">FAIL</tspan>, not a silent skip</text>
 </svg>

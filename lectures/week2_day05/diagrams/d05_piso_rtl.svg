@@ -5,19 +5,19 @@
       <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
     </marker>
     <marker id="arrTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#00897B"/>
+      <path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/>
     </marker>
     <marker id="arrBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#1E88E5"/>
+      <path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/>
     </marker>
     <marker id="arrGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#43A047"/>
+      <path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/>
     </marker>
     <marker id="arrPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#8E24AA"/>
+      <path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/>
     </marker>
     <marker id="arrOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#FB8C00"/>
+      <path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/>
     </marker>
   </defs>
 
@@ -25,54 +25,54 @@
   <text x="410" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">Each bit: MUX selects load value (i_load) vs neighbor's Q (shift). LSB → serial out.</text>
 
   <!-- Parallel in inputs at top (teal) -->
-  <text x="410" y="62" text-anchor="middle" font-size="11" fill="#00897B" font-weight="700">i_parallel_in [N-1:0]</text>
-  <line x1="135" y1="72" x2="135" y2="105" stroke="#00897B" stroke-width="1.4" marker-end="url(#arrTeal)"/>
-  <line x1="245" y1="72" x2="245" y2="105" stroke="#00897B" stroke-width="1.4" marker-end="url(#arrTeal)"/>
-  <line x1="355" y1="72" x2="355" y2="105" stroke="#00897B" stroke-width="1.4" marker-end="url(#arrTeal)"/>
-  <line x1="555" y1="72" x2="555" y2="105" stroke="#00897B" stroke-width="1.4" marker-end="url(#arrTeal)"/>
+  <text x="410" y="62" text-anchor="middle" font-size="11" fill="#F57C00" font-weight="700">i_parallel_in [N-1:0]</text>
+  <line x1="135" y1="72" x2="135" y2="105" stroke="#F57C00" stroke-width="1.4" marker-end="url(#arrTeal)"/>
+  <line x1="245" y1="72" x2="245" y2="105" stroke="#F57C00" stroke-width="1.4" marker-end="url(#arrTeal)"/>
+  <line x1="355" y1="72" x2="355" y2="105" stroke="#F57C00" stroke-width="1.4" marker-end="url(#arrTeal)"/>
+  <line x1="555" y1="72" x2="555" y2="105" stroke="#F57C00" stroke-width="1.4" marker-end="url(#arrTeal)"/>
 
   <!-- Mux + FF for bit 0 -->
-  <polygon points="115,105 155,115 155,140 115,150" fill="#F3E5F5" stroke="#8E24AA" stroke-width="1.8"/>
-  <text x="135" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#8E24AA">M</text>
-  <rect x="105" y="170" width="60" height="45" rx="4" fill="#FFF3E0" stroke="#FB8C00" stroke-width="1.8"/>
-  <text x="135" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#FB8C00">FF[0]</text>
+  <polygon points="115,105 155,115 155,140 115,150" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="135" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#7B1FA2">M</text>
+  <rect x="105" y="170" width="60" height="45" rx="4" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="135" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#7B1FA2">FF[0]</text>
   <text x="113" y="205" font-size="8" fill="#555">D</text>
   <text x="155" y="205" font-size="8" fill="#555">Q</text>
   <line x1="135" y1="150" x2="135" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
 
   <!-- Mux + FF for bit 1 -->
-  <polygon points="225,105 265,115 265,140 225,150" fill="#F3E5F5" stroke="#8E24AA" stroke-width="1.8"/>
-  <text x="245" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#8E24AA">M</text>
-  <rect x="215" y="170" width="60" height="45" rx="4" fill="#FFF3E0" stroke="#FB8C00" stroke-width="1.8"/>
-  <text x="245" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#FB8C00">FF[1]</text>
+  <polygon points="225,105 265,115 265,140 225,150" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="245" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#7B1FA2">M</text>
+  <rect x="215" y="170" width="60" height="45" rx="4" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="245" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#7B1FA2">FF[1]</text>
   <text x="223" y="205" font-size="8" fill="#555">D</text>
   <text x="265" y="205" font-size="8" fill="#555">Q</text>
   <line x1="245" y1="150" x2="245" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
 
   <!-- shift wire from FF[1].Q to FF[0] mux input (orange = state path) -->
-  <line x1="275" y1="192" x2="290" y2="192" stroke="#FB8C00" stroke-width="1.5"/>
-  <line x1="290" y1="192" x2="290" y2="125" stroke="#FB8C00" stroke-width="1.5"/>
-  <line x1="290" y1="125" x2="155" y2="125" stroke="#FB8C00" stroke-width="1.5" marker-end="url(#arrOrange)"/>
-  <text x="190" y="120" font-size="8" fill="#FB8C00" font-style="italic">shift</text>
+  <line x1="275" y1="192" x2="290" y2="192" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="290" y1="192" x2="290" y2="125" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="290" y1="125" x2="155" y2="125" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#arrOrange)"/>
+  <text x="190" y="120" font-size="8" fill="#F57C00" font-style="italic">shift</text>
 
   <!-- Mux + FF for bit 2 -->
-  <polygon points="335,105 375,115 375,140 335,150" fill="#F3E5F5" stroke="#8E24AA" stroke-width="1.8"/>
-  <text x="355" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#8E24AA">M</text>
-  <rect x="325" y="170" width="60" height="45" rx="4" fill="#FFF3E0" stroke="#FB8C00" stroke-width="1.8"/>
-  <text x="355" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#FB8C00">FF[2]</text>
+  <polygon points="335,105 375,115 375,140 335,150" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="355" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#7B1FA2">M</text>
+  <rect x="325" y="170" width="60" height="45" rx="4" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="355" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#7B1FA2">FF[2]</text>
   <line x1="355" y1="150" x2="355" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
 
-  <line x1="385" y1="192" x2="400" y2="192" stroke="#FB8C00" stroke-width="1.5"/>
-  <line x1="400" y1="192" x2="400" y2="125" stroke="#FB8C00" stroke-width="1.5"/>
-  <line x1="400" y1="125" x2="265" y2="125" stroke="#FB8C00" stroke-width="1.5" marker-end="url(#arrOrange)"/>
+  <line x1="385" y1="192" x2="400" y2="192" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="400" y1="192" x2="400" y2="125" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="400" y1="125" x2="265" y2="125" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#arrOrange)"/>
 
   <text x="450" y="195" font-size="14" font-weight="700" fill="#888">···</text>
 
   <!-- Last FF -->
-  <polygon points="535,105 575,115 575,140 535,150" fill="#F3E5F5" stroke="#8E24AA" stroke-width="1.8"/>
-  <text x="555" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#8E24AA">M</text>
-  <rect x="525" y="170" width="60" height="45" rx="4" fill="#FFF3E0" stroke="#FB8C00" stroke-width="1.8"/>
-  <text x="555" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#FB8C00">FF[N-1]</text>
+  <polygon points="535,105 575,115 575,140 535,150" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="555" y="130" text-anchor="middle" font-size="9" font-weight="700" fill="#7B1FA2">M</text>
+  <rect x="525" y="170" width="60" height="45" rx="4" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="555" y="190" text-anchor="middle" font-size="10" font-weight="700" fill="#7B1FA2">FF[N-1]</text>
   <line x1="555" y1="150" x2="555" y2="170" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
 
   <!-- Fill bit '0' to last mux -->
@@ -80,28 +80,28 @@
   <line x1="600" y1="125" x2="575" y2="125" stroke="#333" stroke-width="1.5" marker-end="url(#arr)"/>
 
   <!-- LSB out (green) -->
-  <line x1="165" y1="192" x2="200" y2="192" stroke="#43A047" stroke-width="2"/>
-  <line x1="200" y1="192" x2="200" y2="270" stroke="#43A047" stroke-width="2"/>
-  <line x1="200" y1="270" x2="650" y2="270" stroke="#43A047" stroke-width="2" marker-end="url(#arrGreen)"/>
-  <text x="670" y="273" font-size="11" font-weight="700" fill="#43A047">o_serial_out</text>
+  <line x1="165" y1="192" x2="200" y2="192" stroke="#2E7D32" stroke-width="2"/>
+  <line x1="200" y1="192" x2="200" y2="270" stroke="#2E7D32" stroke-width="2"/>
+  <line x1="200" y1="270" x2="650" y2="270" stroke="#2E7D32" stroke-width="2" marker-end="url(#arrGreen)"/>
+  <text x="670" y="273" font-size="11" font-weight="700" fill="#2E7D32">o_serial_out</text>
   <text x="350" y="285" font-size="9" fill="#777" font-style="italic">LSB-first transmission (UART convention)</text>
 
   <!-- Load control (purple) -->
-  <text x="55" y="123" text-anchor="end" font-size="11" fill="#8E24AA" font-weight="700">i_load</text>
-  <line x1="60" y1="120" x2="90" y2="120" stroke="#8E24AA" stroke-width="1.4"/>
-  <line x1="90" y1="120" x2="90" y2="125" stroke="#8E24AA" stroke-width="1.4" marker-end="url(#arrPurple)"/>
-  <text x="80" y="155" font-size="8" fill="#8E24AA" font-style="italic">(sel to all muxes)</text>
+  <text x="55" y="123" text-anchor="end" font-size="11" fill="#F57C00" font-weight="700">i_load</text>
+  <line x1="60" y1="120" x2="90" y2="120" stroke="#7B1FA2" stroke-width="1.4"/>
+  <line x1="90" y1="120" x2="90" y2="125" stroke="#7B1FA2" stroke-width="1.4" marker-end="url(#arrPurple)"/>
+  <text x="80" y="155" font-size="8" fill="#7B1FA2" font-style="italic">(sel to all muxes)</text>
 
   <!-- Shift enable (purple variant — passed through to FF CE) — we'll annotate separately -->
-  <text x="55" y="60" text-anchor="end" font-size="11" fill="#8E24AA" font-weight="700">i_shift_en</text>
-  <line x1="60" y1="57" x2="585" y2="57" stroke="#8E24AA" stroke-width="1.0" stroke-dasharray="2,2"/>
-  <text x="605" y="60" font-size="8" fill="#8E24AA" font-style="italic">→ each FF CE</text>
+  <text x="55" y="60" text-anchor="end" font-size="11" fill="#F57C00" font-weight="700">i_shift_en</text>
+  <line x1="60" y1="57" x2="585" y2="57" stroke="#7B1FA2" stroke-width="1.0" stroke-dasharray="2,2"/>
+  <text x="605" y="60" font-size="8" fill="#7B1FA2" font-style="italic">→ each FF CE</text>
 
   <!-- Clock (blue) -->
-  <text x="55" y="248" text-anchor="end" font-size="11" fill="#1E88E5" font-weight="700">i_clk</text>
-  <line x1="60" y1="245" x2="585" y2="245" stroke="#1E88E5" stroke-width="1.4"/>
-  <line x1="135" y1="245" x2="135" y2="215" stroke="#1E88E5" stroke-width="1.4"/>
-  <line x1="245" y1="245" x2="245" y2="215" stroke="#1E88E5" stroke-width="1.4"/>
-  <line x1="355" y1="245" x2="355" y2="215" stroke="#1E88E5" stroke-width="1.4"/>
-  <line x1="555" y1="245" x2="555" y2="215" stroke="#1E88E5" stroke-width="1.4"/>
+  <text x="55" y="248" text-anchor="end" font-size="11" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="60" y1="245" x2="585" y2="245" stroke="#1976D2" stroke-width="1.4"/>
+  <line x1="135" y1="245" x2="135" y2="215" stroke="#1976D2" stroke-width="1.4"/>
+  <line x1="245" y1="245" x2="245" y2="215" stroke="#1976D2" stroke-width="1.4"/>
+  <line x1="355" y1="245" x2="355" y2="215" stroke="#1976D2" stroke-width="1.4"/>
+  <line x1="555" y1="245" x2="555" y2="215" stroke="#1976D2" stroke-width="1.4"/>
 </svg>

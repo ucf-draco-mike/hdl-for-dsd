@@ -57,7 +57,7 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Before: Copy-Paste Stimulus</h2>
-    <pre class="mistake" style="font-size:0.58em;"><code class="language-verilog" data-signal-colors="a:#00ACC1,b:#FFB300,sum:#43A047,tests_failed:#FF5252,tests_run:#7E57C2">initial begin
+    <pre class="mistake" style="font-size:0.58em;"><code class="language-verilog" data-signal-colors="a:#FFB74D,b:#FFB74D,sum:#81C784,tests_failed:#EF5350,tests_run:#CE93D8">initial begin
     // Test case 1: 5 + 3
     a = 4'd5; b = 4'd3;
     #10;
@@ -85,13 +85,13 @@ end</code></pre>
     <h2><span style="color:#D4A843;">🧱</span> Before &mdash; Stamped-Out Block Diagram</h2>
     <img src="diagrams/d06_s3_before_copypaste_rtl.svg" alt="Copy-paste stimulus: same five-line block repeated 20 times" style="width:90%;max-height:60vh;display:block;margin:0.2em auto 0;">
     <div class="callout-warning" style="font-size:0.66em;margin-top:0.3em;">
-        <strong>Stamped-out:</strong> the same five-line block is duplicated N times inside a single <code>initial</code>. The same signals (<span style="color:#00ACC1;font-weight:700;font-family:monospace;">a</span>, <span style="color:#FFB300;font-weight:700;font-family:monospace;">b</span>, <span style="color:#43A047;font-weight:700;font-family:monospace;">sum</span>) and the same counters (<span style="color:#7E57C2;font-weight:700;font-family:monospace;">tests_run</span>, <span style="color:#FF5252;font-weight:700;font-family:monospace;">tests_failed</span>) appear in every copy &mdash; if you change the check, you change it 20 times.
+        <strong>Stamped-out:</strong> the same five-line block is duplicated N times inside a single <code>initial</code>. The same signals (<span style="color:#F57C00;font-weight:700;font-family:monospace;">a</span>, <span style="color:#F57C00;font-weight:700;font-family:monospace;">b</span>, <span style="color:#2E7D32;font-weight:700;font-family:monospace;">sum</span>) and the same counters (<span style="color:#7B1FA2;font-weight:700;font-family:monospace;">tests_run</span>, <span style="color:#D32F2F;font-weight:700;font-family:monospace;">tests_failed</span>) appear in every copy &mdash; if you change the check, you change it 20 times.
     </div>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; After: Stimulus-and-Check Task</h2>
-    <pre class="synth" style="font-size:0.64em;"><code class="language-verilog" data-signal-colors="test_add:#26A69A,a_in:#00ACC1,b_in:#FFB300,expected:#1E88E5,a:#00ACC1,b:#FFB300,sum:#43A047,tests_run:#7E57C2,tests_failed:#FF5252">task test_add;
+    <pre class="synth" style="font-size:0.64em;"><code class="language-verilog" data-signal-colors="test_add:#F06292,a_in:#F48FB1,b_in:#F48FB1,expected:#F48FB1,a:#FFB74D,b:#FFB74D,sum:#81C784,tests_run:#CE93D8,tests_failed:#EF5350">task test_add;
     input [3:0] a_in, b_in;
     input [4:0] expected;
     begin
@@ -111,7 +111,7 @@ initial begin
     $display("=== %0d passed, %0d failed ===", tests_run - tests_failed, tests_failed);
 end</code></pre>
     <div class="callout" style="font-size:0.66em;">
-        <strong>The fix:</strong> One task <span style="color:#26A69A;font-weight:700;font-family:monospace;">test_add</span>; one-line call per case. Each call passes three colored values (<span style="color:#00ACC1;font-weight:700;font-family:monospace;">a_in</span>, <span style="color:#FFB300;font-weight:700;font-family:monospace;">b_in</span>, <span style="color:#1E88E5;font-weight:700;font-family:monospace;">expected</span>). Diagram next.
+        <strong>The fix:</strong> One task <span style="color:#C2185B;font-weight:700;font-family:monospace;">test_add</span>; one-line call per case. Each call passes three colored values (<span style="color:#C2185B;font-weight:700;font-family:monospace;">a_in</span>, <span style="color:#C2185B;font-weight:700;font-family:monospace;">b_in</span>, <span style="color:#C2185B;font-weight:700;font-family:monospace;">expected</span>). Diagram next.
     </div>
     <aside class="notes">Top-level initial becomes a scannable test plan. Each line is one case. Adding a new case is adding one line. Adding a new check (e.g. check done signal) is one edit inside the task.</aside>
 </section>
@@ -120,13 +120,13 @@ end</code></pre>
     <h2><span style="color:#D4A843;">🧱</span> After &mdash; One Block, Many Callers</h2>
     <img src="diagrams/d06_s3_after_task_rtl.svg" alt="task test_add: one canonical block, many one-line calls feeding it" style="width:92%;max-height:62vh;display:block;margin:0.2em auto 0;">
     <div class="callout" style="font-size:0.66em;margin-top:0.3em;">
-        <strong>Reading the diagram:</strong> the test plan on the left fires three colored arrows (<span style="color:#00ACC1;font-weight:700;font-family:monospace;">a_in</span>, <span style="color:#FFB300;font-weight:700;font-family:monospace;">b_in</span>, <span style="color:#1E88E5;font-weight:700;font-family:monospace;">expected</span>) into the single task body on the right. Stimulus + check + label are centralized — one edit, every case benefits.
+        <strong>Reading the diagram:</strong> the test plan on the left fires three colored arrows (<span style="color:#C2185B;font-weight:700;font-family:monospace;">a_in</span>, <span style="color:#C2185B;font-weight:700;font-family:monospace;">b_in</span>, <span style="color:#C2185B;font-weight:700;font-family:monospace;">expected</span>) into the single task body on the right. Stimulus + check + label are centralized — one edit, every case benefits.
     </div>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sequential Stimulus Task</h2>
-    <pre class="synth" style="font-size:0.66em;"><code class="language-verilog" data-signal-colors="apply_and_check:#26A69A,d_in:#00ACC1,en_in:#AB47BC,q_expected:#1E88E5,clk:#E91E63,d:#00ACC1,en:#AB47BC,q:#43A047">// For a clocked DUT: drive inputs at posedge, sample after
+    <pre class="synth" style="font-size:0.66em;"><code class="language-verilog" data-signal-colors="apply_and_check:#F06292,d_in:#F48FB1,en_in:#F48FB1,q_expected:#F48FB1,clk:#4FC3F7,d:#FFB74D,en:#FFB74D,q:#81C784">// For a clocked DUT: drive inputs at posedge, sample after
 task apply_and_check;
     input [7:0] d_in;
     input       en_in;
@@ -142,14 +142,14 @@ task apply_and_check;
 endtask</code></pre>
     <img src="diagrams/d06_s3_apply_and_check_rtl.svg" alt="apply_and_check task — clock-aligned drive + sample + check" style="width:88%;max-height:42vh;display:block;margin:0.2em auto 0;">
     <div class="fragment callout" style="font-size:0.66em;">
-        <strong>Together:</strong> clock synchronization, input driving, output checking — three concerns in one task. The diagram shows the five timed steps (<span style="color:#E91E63;font-weight:700;font-family:monospace;">@posedge</span> → drive → <span style="color:#E91E63;font-weight:700;font-family:monospace;">@posedge</span> → sample → check). Edge alignment lives in one place.
+        <strong>Together:</strong> clock synchronization, input driving, output checking — three concerns in one task. The diagram shows the five timed steps (<span style="color:#1976D2;font-weight:700;font-family:monospace;">@posedge</span> → drive → <span style="color:#1976D2;font-weight:700;font-family:monospace;">@posedge</span> → sample → check). Edge alignment lives in one place.
     </div>
     <aside class="notes">Sequential testbenches need edge alignment. Putting the timing logic inside the task means there's one canonical place where it lives — not 20 copies that might accidentally drift. The diagram makes the five-step flow visible.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Refactor This</h2>
-    <pre style="font-size:0.6em;"><code class="language-verilog" data-signal-colors="rst:#FF6F00,en:#AB47BC,d:#00ACC1,q:#43A047,clk:#E91E63">initial begin
+    <pre style="font-size:0.6em;"><code class="language-verilog" data-signal-colors="rst:#EF5350,en:#FFB74D,d:#FFB74D,q:#81C784,clk:#4FC3F7">initial begin
     rst = 1; #10; rst = 0;
     en = 1; d = 8'hAA; @(posedge clk); #1;
     if (q !== 8'hAA) $display("FAIL A"); else $display("PASS A");
@@ -164,7 +164,7 @@ end</code></pre>
     <p style="font-size:0.7em;margin-top:0.2em;">Define <code>apply_and_check</code> and rewrite the three cases as one-liners.</p>
     <div class="fragment callout" style="font-size:0.66em;">
         <strong>Sketch:</strong>
-        <pre style="font-size:0.85em;"><code class="language-verilog" data-signal-colors="reset_dut:#26A69A,apply_and_check:#26A69A,8'hAA:#00ACC1,8'h55:#00ACC1,8'hFF:#00ACC1">reset_dut();
+        <pre style="font-size:0.85em;"><code class="language-verilog" data-signal-colors="reset_dut:#F06292,apply_and_check:#F06292,8'hAA:#FFB74D,8'h55:#FFB74D,8'hFF:#FFB74D">reset_dut();
 apply_and_check(1, 8'hAA, 8'hAA);  // load
 apply_and_check(1, 8'h55, 8'h55);  // update
 apply_and_check(0, 8'hFF, 8'h55);  // en=0: hold

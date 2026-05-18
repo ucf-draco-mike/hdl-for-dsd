@@ -5,130 +5,130 @@
       <path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/>
     </marker>
     <marker id="arrV" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#7E57C2"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#7B1FA2"/>
     </marker>
     <marker id="arrA" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00ACC1"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#F57C00"/>
     </marker>
     <marker id="arrB" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FFB300"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#F57C00"/>
     </marker>
     <marker id="arrE" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#1E88E5"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#C2185B"/>
     </marker>
     <marker id="arrS" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/>
     </marker>
     <marker id="arrI" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FF5252"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#D32F2F"/>
     </marker>
   </defs>
 
-  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">File-Driven Testing — <tspan fill="#7E57C2" font-family="JetBrains Mono">$readmemh</tspan> + indexed loop</text>
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">File-Driven Testing — <tspan fill="#7B1FA2" font-family="JetBrains Mono">$readmemh</tspan> + indexed loop</text>
   <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">vectors live in a hex file; one loop iterates the entire set</text>
 
   <!-- File icon (left) -->
-  <rect x="30" y="65" width="180" height="180" rx="6" fill="#fff" stroke="#7E57C2" stroke-width="2"/>
-  <polygon points="30,65 165,65 210,110 210,245 30,245" fill="none" stroke="#7E57C2" stroke-width="2"/>
-  <polyline points="165,65 165,110 210,110" fill="none" stroke="#7E57C2" stroke-width="2"/>
-  <text x="120" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">vectors.hex</text>
+  <rect x="30" y="65" width="180" height="180" rx="6" fill="#fff" stroke="#7B1FA2" stroke-width="2"/>
+  <polygon points="30,65 165,65 210,110 210,245 30,245" fill="none" stroke="#7B1FA2" stroke-width="2"/>
+  <polyline points="165,65 165,110 210,110" fill="none" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="120" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2" font-family="JetBrains Mono">vectors.hex</text>
   <text x="40" y="130" font-size="9" font-family="JetBrains Mono">
-    <tspan fill="#00ACC1" font-weight="700">05</tspan>
-    <tspan fill="#FFB300" font-weight="700">03</tspan>
+    <tspan fill="#F57C00" font-weight="700">05</tspan>
+    <tspan fill="#F57C00" font-weight="700">03</tspan>
     <tspan fill="#555">_</tspan>
-    <tspan fill="#1E88E5" font-weight="700">0008</tspan>
+    <tspan fill="#C2185B" font-weight="700">0008</tspan>
   </text>
   <text x="40" y="146" font-size="9" font-family="JetBrains Mono">
-    <tspan fill="#00ACC1" font-weight="700">07</tspan>
-    <tspan fill="#FFB300" font-weight="700">09</tspan>
+    <tspan fill="#F57C00" font-weight="700">07</tspan>
+    <tspan fill="#F57C00" font-weight="700">09</tspan>
     <tspan fill="#555">_</tspan>
-    <tspan fill="#1E88E5" font-weight="700">0010</tspan>
+    <tspan fill="#C2185B" font-weight="700">0010</tspan>
   </text>
   <text x="40" y="162" font-size="9" font-family="JetBrains Mono">
-    <tspan fill="#00ACC1" font-weight="700">0F</tspan>
-    <tspan fill="#FFB300" font-weight="700">0F</tspan>
+    <tspan fill="#F57C00" font-weight="700">0F</tspan>
+    <tspan fill="#F57C00" font-weight="700">0F</tspan>
     <tspan fill="#555">_</tspan>
-    <tspan fill="#1E88E5" font-weight="700">001E</tspan>
+    <tspan fill="#C2185B" font-weight="700">001E</tspan>
   </text>
   <text x="40" y="178" font-size="9" fill="#888">…</text>
   <text x="40" y="194" font-size="9" font-family="JetBrains Mono" fill="#888">16 lines</text>
 
   <!-- Bit layout legend -->
   <text x="40" y="220" font-size="8" font-family="JetBrains Mono">
-    <tspan fill="#00ACC1" font-weight="700">[31:24]a</tspan>
+    <tspan fill="#F57C00" font-weight="700">[31:24]a</tspan>
   </text>
   <text x="40" y="232" font-size="8" font-family="JetBrains Mono">
-    <tspan fill="#FFB300" font-weight="700">[23:16]b</tspan>
+    <tspan fill="#F57C00" font-weight="700">[23:16]b</tspan>
   </text>
   <text x="100" y="220" font-size="8" font-family="JetBrains Mono">
-    <tspan fill="#1E88E5" font-weight="700">[8:0]exp</tspan>
+    <tspan fill="#C2185B" font-weight="700">[8:0]exp</tspan>
   </text>
 
   <!-- arrow from file to readmemh -->
-  <line x1="210" y1="155" x2="245" y2="155" stroke="#7E57C2" stroke-width="2.5" marker-end="url(#arrV)"/>
-  <text x="223" y="148" font-size="9" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">$readmemh</text>
+  <line x1="210" y1="155" x2="245" y2="155" stroke="#7B1FA2" stroke-width="2.5" marker-end="url(#arrV)"/>
+  <text x="223" y="148" font-size="9" font-weight="700" fill="#7B1FA2" font-family="JetBrains Mono">$readmemh</text>
 
   <!-- Memory array vec_mem -->
-  <rect x="250" y="100" width="220" height="120" rx="8" fill="#fff" stroke="#7E57C2" stroke-width="2.5"/>
-  <text x="360" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">vec_mem [0:15]</text>
+  <rect x="250" y="100" width="220" height="120" rx="8" fill="#fff" stroke="#7B1FA2" stroke-width="2.5"/>
+  <text x="360" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2" font-family="JetBrains Mono">vec_mem [0:15]</text>
   <text x="360" y="135" text-anchor="middle" font-size="9" fill="#555">reg [31:0] — packed</text>
 
   <!-- vec slot visualization -->
-  <rect x="260" y="145" width="200" height="22" fill="#F3E5F5" stroke="#7E57C2"/>
+  <rect x="260" y="145" width="200" height="22" fill="#F3E5F5" stroke="#7B1FA2"/>
   <rect x="260" y="145" width="55" height="22" fill="#E0F7FA"/>
   <rect x="315" y="145" width="55" height="22" fill="#FFF8E1"/>
   <rect x="370" y="145" width="90" height="22" fill="#E3F2FD"/>
-  <text x="287" y="160" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#00ACC1" font-weight="700">a</text>
-  <text x="342" y="160" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#FFB300" font-weight="700">b</text>
-  <text x="415" y="160" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#1E88E5" font-weight="700">expected</text>
+  <text x="287" y="160" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#F57C00" font-weight="700">a</text>
+  <text x="342" y="160" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#F57C00" font-weight="700">b</text>
+  <text x="415" y="160" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#C2185B" font-weight="700">expected</text>
 
   <!-- Index counter -->
-  <rect x="290" y="180" width="140" height="30" rx="6" fill="#FFEBEE" stroke="#FF5252" stroke-width="2"/>
-  <text x="360" y="200" text-anchor="middle" font-size="11" font-weight="700" fill="#FF5252" font-family="JetBrains Mono">i = 0 … 15</text>
+  <rect x="290" y="180" width="140" height="30" rx="6" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2"/>
+  <text x="360" y="200" text-anchor="middle" font-size="11" font-weight="700" fill="#D32F2F" font-family="JetBrains Mono">i = 0 … 15</text>
 
   <!-- Slice extractors -->
-  <line x1="287" y1="167" x2="287" y2="240" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrA)"/>
-  <line x1="342" y1="167" x2="342" y2="240" stroke="#FFB300" stroke-width="2" marker-end="url(#arrB)"/>
-  <line x1="415" y1="167" x2="415" y2="335" stroke="#1E88E5" stroke-width="2" stroke-dasharray="3,2"/>
+  <line x1="287" y1="167" x2="287" y2="240" stroke="#F57C00" stroke-width="2" marker-end="url(#arrA)"/>
+  <line x1="342" y1="167" x2="342" y2="240" stroke="#F57C00" stroke-width="2" marker-end="url(#arrB)"/>
+  <line x1="415" y1="167" x2="415" y2="335" stroke="#C2185B" stroke-width="2" stroke-dasharray="3,2"/>
 
   <!-- DUT box -->
-  <rect x="500" y="100" width="220" height="120" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <rect x="500" y="100" width="220" height="120" rx="8" fill="#FFF8E1" stroke="#F57C00" stroke-width="2.5"/>
   <text x="610" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="#333">DUT — adder</text>
   <text x="610" y="148" text-anchor="middle" font-size="10" font-family="JetBrains Mono">
-    <tspan fill="#00ACC1">a</tspan>
+    <tspan fill="#F57C00">a</tspan>
     <tspan fill="#555">[7:0]  </tspan>
-    <tspan fill="#FFB300">b</tspan>
+    <tspan fill="#F57C00">b</tspan>
     <tspan fill="#555">[7:0]</tspan>
   </text>
   <text x="610" y="172" text-anchor="middle" font-size="11" font-family="JetBrains Mono">
     <tspan fill="#555">→ </tspan>
-    <tspan fill="#43A047" font-weight="700">sum</tspan>
+    <tspan fill="#2E7D32" font-weight="700">sum</tspan>
     <tspan fill="#555">[8:0]</tspan>
   </text>
   <text x="610" y="200" text-anchor="middle" font-size="9" font-style="italic" fill="#888">combinational settle (#10)</text>
 
   <!-- Loop body container (faint dashed surround) -->
-  <rect x="245" y="240" width="475" height="100" rx="10" fill="#fff" stroke="#FF5252" stroke-width="1.8" stroke-dasharray="7,4"/>
+  <rect x="245" y="240" width="475" height="100" rx="10" fill="#fff" stroke="#D32F2F" stroke-width="1.8" stroke-dasharray="7,4"/>
   <text x="260" y="258" font-size="11" font-family="JetBrains Mono">
-    <tspan fill="#FF5252" font-weight="700">for (i=0; i&lt;16; i++)</tspan>
+    <tspan fill="#D32F2F" font-weight="700">for (i=0; i&lt;16; i++)</tspan>
     <tspan fill="#555"> {</tspan>
   </text>
 
   <text x="265" y="278" font-size="10" font-family="JetBrains Mono">
-    <tspan fill="#00ACC1" font-weight="700">a</tspan>
+    <tspan fill="#F57C00" font-weight="700">a</tspan>
     <tspan fill="#555"> = vec_mem[</tspan>
-    <tspan fill="#FF5252" font-weight="700">i</tspan>
+    <tspan fill="#D32F2F" font-weight="700">i</tspan>
     <tspan fill="#555">][31:24];   </tspan>
-    <tspan fill="#FFB300" font-weight="700">b</tspan>
+    <tspan fill="#F57C00" font-weight="700">b</tspan>
     <tspan fill="#555"> = vec_mem[</tspan>
-    <tspan fill="#FF5252" font-weight="700">i</tspan>
+    <tspan fill="#D32F2F" font-weight="700">i</tspan>
     <tspan fill="#555">][23:16];</tspan>
   </text>
   <text x="265" y="295" font-size="10" font-family="JetBrains Mono">
     <tspan fill="#555">#10;  check_eq(</tspan>
-    <tspan fill="#43A047" font-weight="700">sum</tspan>
+    <tspan fill="#2E7D32" font-weight="700">sum</tspan>
     <tspan fill="#555">, </tspan>
-    <tspan fill="#1E88E5" font-weight="700">vec_mem[i][8:0]</tspan>
+    <tspan fill="#C2185B" font-weight="700">vec_mem[i][8:0]</tspan>
     <tspan fill="#555">, "vec[i]");</tspan>
   </text>
   <text x="260" y="320" font-size="11" font-family="JetBrains Mono">
@@ -136,11 +136,11 @@
   </text>
 
   <!-- arrows from a/b to DUT, sum back -->
-  <line x1="287" y1="278" x2="500" y2="155" stroke="#00ACC1" stroke-width="1.8" stroke-dasharray="3,2" marker-end="url(#arrA)"/>
-  <line x1="342" y1="278" x2="500" y2="170" stroke="#FFB300" stroke-width="1.8" stroke-dasharray="3,2" marker-end="url(#arrB)"/>
-  <line x1="715" y1="170" x2="730" y2="170" stroke="#43A047" stroke-width="2.5"/>
-  <line x1="730" y1="170" x2="730" y2="295" stroke="#43A047" stroke-width="2.5"/>
-  <line x1="730" y1="295" x2="720" y2="295" stroke="#43A047" stroke-width="2.5" marker-end="url(#arrS)"/>
+  <line x1="287" y1="278" x2="500" y2="155" stroke="#F57C00" stroke-width="1.8" stroke-dasharray="3,2" marker-end="url(#arrA)"/>
+  <line x1="342" y1="278" x2="500" y2="170" stroke="#F57C00" stroke-width="1.8" stroke-dasharray="3,2" marker-end="url(#arrB)"/>
+  <line x1="715" y1="170" x2="730" y2="170" stroke="#2E7D32" stroke-width="2.5"/>
+  <line x1="730" y1="170" x2="730" y2="295" stroke="#2E7D32" stroke-width="2.5"/>
+  <line x1="730" y1="295" x2="720" y2="295" stroke="#2E7D32" stroke-width="2.5" marker-end="url(#arrS)"/>
 
   <text x="480" y="365" text-anchor="middle" font-size="10" font-style="italic" fill="#888">grow vectors.hex → grow coverage · zero Verilog changes</text>
 </svg>

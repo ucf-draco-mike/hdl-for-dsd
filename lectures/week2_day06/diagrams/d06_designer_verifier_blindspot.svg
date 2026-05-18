@@ -13,7 +13,7 @@
   <circle cx="180" cy="180" r="105" fill="#fff" stroke="#1E88E5" stroke-width="2.5"/>
   <text x="180" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#1E88E5">What the SPEC says</text>
   <text x="180" y="155" text-anchor="middle" font-size="11" font-family="JetBrains Mono">
-    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+    <tspan fill="#D32F2F" font-weight="700">rst</tspan>
     <tspan fill="#555"> is active-LOW,</tspan>
   </text>
   <text x="180" y="175" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">synchronous,</text>
@@ -25,7 +25,7 @@
   <text x="580" y="130" text-anchor="middle" font-size="12" font-weight="700" fill="#FF5252">What you BUILT</text>
   <text x="580" y="155" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">misread spec —</text>
   <text x="580" y="175" text-anchor="middle" font-size="11" font-family="JetBrains Mono">
-    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+    <tspan fill="#D32F2F" font-weight="700">rst</tspan>
     <tspan fill="#555"> active-HIGH,</tspan>
   </text>
   <text x="580" y="195" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="#555">async, 1 cycle</text>
@@ -36,7 +36,7 @@
   <text x="380" y="158" text-anchor="middle" font-size="11" font-weight="700" fill="#333">Your testbench</text>
   <text x="380" y="178" text-anchor="middle" font-size="9" font-family="JetBrains Mono">
     <tspan fill="#555">also drives </tspan>
-    <tspan fill="#FF6F00" font-weight="700">rst</tspan>
+    <tspan fill="#D32F2F" font-weight="700">rst</tspan>
   </text>
   <text x="380" y="194" text-anchor="middle" font-size="9" fill="#555">active-HIGH,</text>
   <text x="380" y="210" text-anchor="middle" font-size="9" font-weight="700" fill="#FF5252">async, 1 cycle</text>

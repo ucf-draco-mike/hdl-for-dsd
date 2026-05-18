@@ -63,19 +63,19 @@
     parameter <span style="color:#FFD54F;font-weight:700;">MAX_VAL</span>  = 2**<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1  // derived
 ) (
     input  wire                <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
-    output reg  [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#BA68C8;font-weight:700;">o_count</span>
+    output reg  [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#81C784;font-weight:700;">o_count</span>
 );
     always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
-        if      (<span style="color:#EF5350;font-weight:700;">i_reset</span>)              <span style="color:#BA68C8;font-weight:700;">o_count</span> &lt;= 0;
-        else if (<span style="color:#BA68C8;font-weight:700;">o_count</span>==<span style="color:#FFD54F;font-weight:700;">MAX_VAL</span>) <span style="color:#BA68C8;font-weight:700;">o_count</span> &lt;= 0;
-        else                          <span style="color:#BA68C8;font-weight:700;">o_count</span> &lt;= <span style="color:#BA68C8;font-weight:700;">o_count</span>+1'b1;
+        if      (<span style="color:#EF5350;font-weight:700;">i_reset</span>)              <span style="color:#81C784;font-weight:700;">o_count</span> &lt;= 0;
+        else if (<span style="color:#81C784;font-weight:700;">o_count</span>==<span style="color:#FFD54F;font-weight:700;">MAX_VAL</span>) <span style="color:#81C784;font-weight:700;">o_count</span> &lt;= 0;
+        else                          <span style="color:#81C784;font-weight:700;">o_count</span> &lt;= <span style="color:#81C784;font-weight:700;">o_count</span>+1'b1;
     end
 endmodule
 
 // Instantiation with override
 counter #(.<span style="color:#FFD54F;font-weight:700;">WIDTH</span>(12)) <span style="color:#CE93D8;font-weight:700;">u_ticker</span> (
     .<span style="color:#4FC3F7;font-weight:700;">i_clk</span>(clk), .<span style="color:#EF5350;font-weight:700;">i_reset</span>(rst),
-    .<span style="color:#BA68C8;font-weight:700;">o_count</span>(tick));</code></pre>
+    .<span style="color:#81C784;font-weight:700;">o_count</span>(tick));</code></pre>
         <img src="diagrams/d08_param_counter_rtl.svg" alt="RTL block diagram of a parameterized counter. A WIDTH-bit register (blue) feeds a +1 adder, a comparator checks o_count==MAX_VAL (orange) and steers a MUX to wrap to 0; on match the comparator drives the MUX select. Signals are colored: i_clk blue, i_reset red, o_count purple, WIDTH and MAX_VAL annotated in gold." style="width:100%;max-width:540px;display:block;">
     </div>
     <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
@@ -91,21 +91,21 @@ counter #(.<span style="color:#FFD54F;font-weight:700;">WIDTH</span>(12)) <span 
     parameter <span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span> = 500_000   // user knob
 ) (
     input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#FFB74D;font-weight:700;">i_noisy</span>,
-    output reg  <span style="color:#66BB6A;font-weight:700;">o_clean</span>
+    output reg  <span style="color:#81C784;font-weight:700;">o_clean</span>
 );
     // localparam = internal, NOT overridable
     localparam <span style="color:#FFD54F;font-weight:700;">COUNT_WIDTH</span> =
                   $clog2(<span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span>);
 
-    reg [<span style="color:#FFD54F;font-weight:700;">COUNT_WIDTH</span>-1:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;
+    reg [<span style="color:#FFD54F;font-weight:700;">COUNT_WIDTH</span>-1:0] <span style="color:#CE93D8;font-weight:700;">r_count</span>;
     // counter increments while
-    // <span style="color:#FFB74D;font-weight:700;">i_noisy</span> matches <span style="color:#66BB6A;font-weight:700;">r_clean</span>;
-    // latches new <span style="color:#66BB6A;font-weight:700;">o_clean</span> at threshold.
+    // <span style="color:#FFB74D;font-weight:700;">i_noisy</span> matches <span style="color:#81C784;font-weight:700;">r_clean</span>;
+    // latches new <span style="color:#81C784;font-weight:700;">o_clean</span> at threshold.
 endmodule</code></pre>
         <img src="diagrams/d08_param_debounce_rtl.svg" alt="RTL block diagram of parameterized debounce. Top-right pill shows parameter CLKS_STABLE and derived localparam COUNT_WIDTH=$clog2(CLKS_STABLE). The body shows an equality compare between i_noisy (orange) and r_clean (green, feedback), feeding a COUNT_WIDTH-sized r_count register (blue/purple). A threshold comparator (orange) detects r_count == CLKS_STABLE-1 and gates the r_clean register to latch the new value. Signals colored: i_clk blue, i_reset red, i_noisy orange, o_clean green, r_count purple." style="width:100%;max-width:580px;display:block;">
     </div>
     <div class="fragment callout" style="font-size:0.66em;">
-        <strong>Together:</strong> <code><span style="color:#B8860B;">parameter</span></code> exposes a knob. <code>localparam</code> is internal — derived, not overridable. <code>$clog2</code> picks the smallest width that fits. Users set <code><span style="color:#B8860B;">CLKS_STABLE</span></code>; <code><span style="color:#B8860B;">COUNT_WIDTH</span></code> and the <code><span style="color:#9C27B0;">r_count</span></code> register auto-size to match.
+        <strong>Together:</strong> <code><span style="color:#B8860B;">parameter</span></code> exposes a knob. <code>localparam</code> is internal — derived, not overridable. <code>$clog2</code> picks the smallest width that fits. Users set <code><span style="color:#B8860B;">CLKS_STABLE</span></code>; <code><span style="color:#B8860B;">COUNT_WIDTH</span></code> and the <code><span style="color:#7B1FA2;">r_count</span></code> register auto-size to match.
     </div>
     <aside class="notes">parameter vs localparam. parameter = user knob. localparam = derived constant, not overridable. $clog2 auto-sizes. The diagram shows why: the orange comparator and the purple counter both depend on CLKS_STABLE, so deriving COUNT_WIDTH internally keeps them consistent forever.</aside>
 </section>
@@ -116,14 +116,14 @@ endmodule</code></pre>
     <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:0.5em;align-items:start;margin-top:0.2em;">
         <pre class="synth" style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module fifo (
     input  wire        <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
-    input  wire        <span style="color:#F48FB1;font-weight:700;">i_wr</span>, <span style="color:#A1887F;font-weight:700;">i_rd</span>,
-    input  wire [7:0]  <span style="color:#7986CB;font-weight:700;">i_wdata</span>,    // 8-bit
-    output reg  [7:0]  <span style="color:#4DD0E1;font-weight:700;">o_rdata</span>,    // 8-bit
-    output wire        <span style="color:#FFD54F;font-weight:700;">o_full</span>, <span style="color:#FFD54F;font-weight:700;">o_empty</span>
+    input  wire        <span style="color:#F48FB1;font-weight:700;">i_wr</span>, <span style="color:#F48FB1;font-weight:700;">i_rd</span>,
+    input  wire [7:0]  <span style="color:#FFB74D;font-weight:700;">i_wdata</span>,    // 8-bit
+    output reg  [7:0]  <span style="color:#81C784;font-weight:700;">o_rdata</span>,    // 8-bit
+    output wire        <span style="color:#F48FB1;font-weight:700;">o_full</span>, <span style="color:#F48FB1;font-weight:700;">o_empty</span>
 );
     reg [7:0] memory [0:15];      // 16 × 8
-    reg [3:0] <span style="color:#F48FB1;font-weight:700;">r_wptr</span>, <span style="color:#A1887F;font-weight:700;">r_rptr</span>;   // 4-bit
-    reg [4:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;            // 0..16 = 5 bits
+    reg [3:0] <span style="color:#CE93D8;font-weight:700;">r_wptr</span>, <span style="color:#CE93D8;font-weight:700;">r_rptr</span>;   // 4-bit
+    reg [4:0] <span style="color:#CE93D8;font-weight:700;">r_count</span>;            // 0..16 = 5 bits
     // ... read/write/full/empty logic ...
 endmodule</code></pre>
         <img src="diagrams/d08_fifo_rtl.svg" alt="RTL block diagram of FIFO. Center: memory[0..DEPTH-1] with DEPTH rows × WIDTH bits (blue). Left: r_wptr write pointer (pink), r_rptr read pointer (brown), r_count occupancy counter (purple). Right: o_rdata (cyan), full/empty comparator (orange) producing o_full and o_empty (gold). i_wdata (indigo) enters memory; i_wr (pink), i_rd (brown), i_clk (blue), i_reset (red) on the left. The parameter pill shows DEPTH/WIDTH and the derived ADDR_W and COUNT_W localparams." style="width:100%;max-width:540px;display:block;">
@@ -131,15 +131,15 @@ endmodule</code></pre>
     <div class="fragment callout" style="font-size:0.55em;margin-top:0.2em;">
         <strong>Reveal &mdash; parameterized version:</strong>
         <pre style="font-size:0.9em;margin:0.2em 0 0 0;"><code class="nohighlight" style="color:#D4D4D4;">module fifo #(parameter <span style="color:#FFD54F;font-weight:700;">DEPTH</span>=16, parameter <span style="color:#FFD54F;font-weight:700;">WIDTH</span>=8) (
-    input  wire              <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#F48FB1;font-weight:700;">i_wr</span>, <span style="color:#A1887F;font-weight:700;">i_rd</span>,
-    input  wire [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#7986CB;font-weight:700;">i_wdata</span>,
-    output reg  [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#4DD0E1;font-weight:700;">o_rdata</span>,
-    output wire              <span style="color:#FFD54F;font-weight:700;">o_full</span>, <span style="color:#FFD54F;font-weight:700;">o_empty</span>);
+    input  wire              <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#F48FB1;font-weight:700;">i_wr</span>, <span style="color:#F48FB1;font-weight:700;">i_rd</span>,
+    input  wire [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#FFB74D;font-weight:700;">i_wdata</span>,
+    output reg  [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#81C784;font-weight:700;">o_rdata</span>,
+    output wire              <span style="color:#F48FB1;font-weight:700;">o_full</span>, <span style="color:#F48FB1;font-weight:700;">o_empty</span>);
     localparam <span style="color:#FFD54F;font-weight:700;">ADDR_W</span>  = $clog2(<span style="color:#FFD54F;font-weight:700;">DEPTH</span>);     // pointer width
     localparam <span style="color:#FFD54F;font-weight:700;">COUNT_W</span> = $clog2(<span style="color:#FFD54F;font-weight:700;">DEPTH</span>+1);   // count needs DEPTH+1 values
     reg [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]   memory [0:<span style="color:#FFD54F;font-weight:700;">DEPTH</span>-1];
-    reg [<span style="color:#FFD54F;font-weight:700;">ADDR_W</span>-1:0]  <span style="color:#F48FB1;font-weight:700;">r_wptr</span>, <span style="color:#A1887F;font-weight:700;">r_rptr</span>;
-    reg [<span style="color:#FFD54F;font-weight:700;">COUNT_W</span>-1:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;
+    reg [<span style="color:#FFD54F;font-weight:700;">ADDR_W</span>-1:0]  <span style="color:#CE93D8;font-weight:700;">r_wptr</span>, <span style="color:#CE93D8;font-weight:700;">r_rptr</span>;
+    reg [<span style="color:#FFD54F;font-weight:700;">COUNT_W</span>-1:0] <span style="color:#CE93D8;font-weight:700;">r_count</span>;
     // ... same logic, size-agnostic ...
 endmodule</code></pre>
     Same logic, same RTL picture — only the gold annotations change. Works for 8×8, 1024×64, or anything else.
