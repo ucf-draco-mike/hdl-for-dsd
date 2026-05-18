@@ -45,14 +45,14 @@
   <text x="730" y="162" text-anchor="middle" font-size="10" fill="#7B1FA2">shift: {1'b1, r_shift[7:1]}</text>
   <text x="730" y="182" text-anchor="middle" font-size="9" fill="#888" font-style="italic">LSB → o_tx every bit time</text>
 
-  <!-- inputs -->
-  <text x="40" y="105" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
-  <line x1="76" y1="100" x2="870" y2="100" stroke="#1976D2" stroke-width="2"/>
-  <line x1="290" y1="100" x2="290" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
-  <line x1="510" y1="100" x2="510" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
-  <line x1="510" y1="180" x2="510" y2="180" stroke="#1976D2" stroke-width="0"/>
-  <line x1="510" y1="175" x2="510" y2="180" stroke="#1976D2" stroke-width="1.5"/>
-  <line x1="730" y1="100" x2="730" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <!-- inputs — i_clk bus lifted above the register rects so it does not pass through them -->
+  <text x="40" y="83" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="76" y1="78" x2="870" y2="78" stroke="#1976D2" stroke-width="2"/>
+  <line x1="350" y1="78" x2="350" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="540" y1="78" x2="540" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="730" y1="78" x2="730" y2="85" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="410" y1="78" x2="410" y2="210" stroke="#1976D2" stroke-width="1.5"/>
+  <line x1="410" y1="210" x2="420" y2="210" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
 
   <text x="40" y="140" font-size="12" fill="#D32F2F" font-weight="700">i_reset</text>
   <line x1="88" y1="135" x2="200" y2="135" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRed)"/>

@@ -27,11 +27,11 @@
   <text x="560" y="145" text-anchor="middle" font-size="10" fill="#7B1FA2">10-bit reg</text>
   <text x="560" y="160" text-anchor="middle" font-size="9" fill="#888">posedge clk</text>
 
-  <!-- i_clk -->
-  <text x="60" y="100" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
-  <line x1="92" y1="95" x2="670" y2="95" stroke="#1976D2" stroke-width="2"/>
-  <line x1="340" y1="95" x2="340" y2="85" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
-  <line x1="560" y1="95" x2="560" y2="105" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <!-- i_clk routed above mem[] and o_sample so the bus does not pass through them -->
+  <text x="60" y="82" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="92" y1="77" x2="670" y2="77" stroke="#1976D2" stroke-width="2"/>
+  <line x1="340" y1="77" x2="340" y2="85" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <line x1="560" y1="77" x2="560" y2="105" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
 
   <!-- i_phase -->
   <text x="60" y="142" font-size="12" fill="#F57C00" font-weight="700">i_phase[9:0]</text>

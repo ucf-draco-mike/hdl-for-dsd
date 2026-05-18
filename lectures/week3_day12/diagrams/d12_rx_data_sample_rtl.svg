@@ -39,12 +39,15 @@
   <text x="225" y="228" text-anchor="middle" font-size="9" fill="#888">data-bit index 0..7</text>
   <text x="225" y="244" text-anchor="middle" font-size="9" fill="#888" font-style="italic">+1 per slot==15 wrap</text>
 
-  <!-- inputs -->
-  <text x="40" y="100" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
-  <line x1="76" y1="95" x2="820" y2="95" stroke="#1976D2" stroke-width="2"/>
-  <line x1="225" y1="95" x2="225" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
-  <line x1="595" y1="95" x2="595" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
-  <line x1="225" y1="180" x2="225" y2="190" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <!-- inputs — i_clk lifted above the top-aligned rects so the bus does not pass through them -->
+  <text x="40" y="75" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="76" y1="70" x2="820" y2="70" stroke="#1976D2" stroke-width="2"/>
+  <line x1="225" y1="70" x2="225" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="595" y1="70" x2="595" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <!-- r_bit clk: branch down outside the r_slot/r_data column to enter r_bit from above -->
+  <line x1="120" y1="70" x2="120" y2="190" stroke="#1976D2" stroke-width="1.5"/>
+  <circle cx="120" cy="70" r="2.5" fill="#1976D2"/>
+  <line x1="120" y1="190" x2="140" y2="190" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
 
   <text x="40" y="138" font-size="12" fill="#00838F" font-weight="700">r_osx_tick</text>
   <line x1="116" y1="133" x2="140" y2="133" stroke="#00838F" stroke-width="2" marker-end="url(#aTeal)"/>

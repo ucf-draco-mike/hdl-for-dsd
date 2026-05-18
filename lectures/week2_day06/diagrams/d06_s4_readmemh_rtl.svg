@@ -88,7 +88,9 @@
 
   <!-- Slice extractors -->
   <line x1="287" y1="167" x2="287" y2="240" stroke="#F57C00" stroke-width="2" marker-end="url(#arrA)"/>
-  <line x1="342" y1="167" x2="342" y2="240" stroke="#F57C00" stroke-width="2" marker-end="url(#arrB)"/>
+  <line x1="342" y1="167" x2="342" y2="180" stroke="#F57C00" stroke-width="2"/>
+  <line x1="342" y1="180" x2="342" y2="210" stroke="#F57C00" stroke-width="2" stroke-dasharray="3,2"/>
+  <line x1="342" y1="210" x2="342" y2="240" stroke="#F57C00" stroke-width="2" marker-end="url(#arrB)"/>
   <line x1="415" y1="167" x2="415" y2="335" stroke="#C2185B" stroke-width="2" stroke-dasharray="3,2"/>
 
   <!-- DUT box -->
