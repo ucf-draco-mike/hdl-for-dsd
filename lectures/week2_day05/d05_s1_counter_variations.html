@@ -100,16 +100,16 @@
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Modulo-N Counter</h2>
     <pre class="synth"><code class="language-verilog" data-noescape>module counter_mod_n #(parameter N = 10) (
-    input  wire <span style="color:#1E88E5;font-weight:700">i_clk</span>, <span style="color:#E53935;font-weight:700">i_reset</span>, <span style="color:#8E24AA;font-weight:700">i_enable</span>,
-    output reg  [$clog2(N)-1:0] <span style="color:#FB8C00;font-weight:700">o_count</span>,
-    output wire <span style="color:#43A047;font-weight:700">o_wrap</span>
+    input  wire <span style="color:#4FC3F7;font-weight:700">i_clk</span>, <span style="color:#EF5350;font-weight:700">i_reset</span>, <span style="color:#FFB74D;font-weight:700">i_enable</span>,
+    output reg  [$clog2(N)-1:0] <span style="color:#81C784;font-weight:700">o_count</span>,
+    output wire <span style="color:#81C784;font-weight:700">o_wrap</span>
 );
-    always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
-        if (<span style="color:#E53935;font-weight:700">i_reset</span>)                          <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= 0;
-        else if (<span style="color:#8E24AA;font-weight:700">i_enable</span> &amp;&amp; <span style="color:#FB8C00;font-weight:700">o_count</span> == N-1) <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= 0;          // wrap
-        else if (<span style="color:#8E24AA;font-weight:700">i_enable</span>)                    <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= <span style="color:#FB8C00;font-weight:700">o_count</span> + 1'b1;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700">i_clk</span>) begin
+        if (<span style="color:#EF5350;font-weight:700">i_reset</span>)                          <span style="color:#81C784;font-weight:700">o_count</span> &lt;= 0;
+        else if (<span style="color:#FFB74D;font-weight:700">i_enable</span> &amp;&amp; <span style="color:#81C784;font-weight:700">o_count</span> == N-1) <span style="color:#81C784;font-weight:700">o_count</span> &lt;= 0;          // wrap
+        else if (<span style="color:#FFB74D;font-weight:700">i_enable</span>)                    <span style="color:#81C784;font-weight:700">o_count</span> &lt;= <span style="color:#81C784;font-weight:700">o_count</span> + 1'b1;
     end
-    assign <span style="color:#43A047;font-weight:700">o_wrap</span> = <span style="color:#8E24AA;font-weight:700">i_enable</span> &amp;&amp; (<span style="color:#FB8C00;font-weight:700">o_count</span> == N-1);                    // pulse at rollover
+    assign <span style="color:#81C784;font-weight:700">o_wrap</span> = <span style="color:#FFB74D;font-weight:700">i_enable</span> &amp;&amp; (<span style="color:#81C784;font-weight:700">o_count</span> == N-1);                    // pulse at rollover
 endmodule</code></pre>
     <div class="callout" style="font-size:0.7em;">
         <strong>My thinking:</strong> the port width comes straight from the math definition,
@@ -123,18 +123,18 @@ endmodule</code></pre>
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Up/Down Counter</h2>
     <pre class="synth" style="font-size:0.78em;"><code class="language-verilog" data-noescape>module up_down_counter #(parameter W = 8) (
-    input  wire <span style="color:#1E88E5;font-weight:700">i_clk</span>, <span style="color:#E53935;font-weight:700">i_reset</span>, <span style="color:#8E24AA;font-weight:700">i_up</span>,
-    output reg  [W-1:0] <span style="color:#FB8C00;font-weight:700">o_count</span>
+    input  wire <span style="color:#4FC3F7;font-weight:700">i_clk</span>, <span style="color:#EF5350;font-weight:700">i_reset</span>, <span style="color:#FFB74D;font-weight:700">i_up</span>,
+    output reg  [W-1:0] <span style="color:#81C784;font-weight:700">o_count</span>
 );
-    always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
-        if (<span style="color:#E53935;font-weight:700">i_reset</span>)   <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= 0;
-        else if (<span style="color:#8E24AA;font-weight:700">i_up</span>) <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= <span style="color:#FB8C00;font-weight:700">o_count</span> + 1'b1;
-        else           <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= <span style="color:#FB8C00;font-weight:700">o_count</span> - 1'b1;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700">i_clk</span>) begin
+        if (<span style="color:#EF5350;font-weight:700">i_reset</span>)   <span style="color:#81C784;font-weight:700">o_count</span> &lt;= 0;
+        else if (<span style="color:#FFB74D;font-weight:700">i_up</span>) <span style="color:#81C784;font-weight:700">o_count</span> &lt;= <span style="color:#81C784;font-weight:700">o_count</span> + 1'b1;
+        else           <span style="color:#81C784;font-weight:700">o_count</span> &lt;= <span style="color:#81C784;font-weight:700">o_count</span> - 1'b1;
     end
 endmodule</code></pre>
     <img src="diagrams/d05_updown_counter_rtl.svg" alt="Up/Down counter RTL: +1 and -1 adders feed a 2:1 MUX, i_up selects which result enters the register" style="width:100%;max-width:720px;display:block;margin:0.2em auto;">
     <div class="fragment callout" style="font-size:0.68em;">
-        <strong>Together:</strong> What happens when <code><span style="color:#8E24AA;font-weight:700">i_up</span>=0</code> and <code><span style="color:#FB8C00;font-weight:700">o_count</span>=0</code>? Rollover to <code>2<sup>W</sup>-1</code> — unsigned wraparound. If you want saturation instead, add a conditional guard.
+        <strong>Together:</strong> What happens when <code><span style="color:#F57C00;font-weight:700">i_up</span>=0</code> and <code><span style="color:#2E7D32;font-weight:700">o_count</span>=0</code>? Rollover to <code>2<sup>W</sup>-1</code> — unsigned wraparound. If you want saturation instead, add a conditional guard.
     </div>
     <aside class="notes">Up/down on i_up. Notice: no mutual exclusion between up and down directions — i_up selects. When counting down from 0, wraparound to all-ones. For a saturating counter you'd add <code>else if (i_up &amp;&amp; &amp;o_count)</code> etc. Different use cases, different patterns.</aside>
 </section>
@@ -142,13 +142,13 @@ endmodule</code></pre>
 <!-- You Do: loadable -->
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Write the Loadable Counter</h2>
-    <p style="font-size:0.74em;">Extend the basic counter: synchronous load of <code><span style="color:#00897B;font-weight:700">i_load_val</span></code> when <code><span style="color:#8E24AA;font-weight:700">i_load</span>=1</code>, otherwise increment.</p>
+    <p style="font-size:0.74em;">Extend the basic counter: synchronous load of <code><span style="color:#C2185B;font-weight:700">i_load_val</span></code> when <code><span style="color:#F57C00;font-weight:700">i_load</span>=1</code>, otherwise increment.</p>
     <div class="fragment callout" style="font-size:0.66em;">
         <strong>Answer:</strong>
-        <pre style="font-size:0.78em;"><code class="language-verilog" data-noescape>always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
-    if      (<span style="color:#E53935;font-weight:700">i_reset</span>) <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= 0;
-    else if (<span style="color:#8E24AA;font-weight:700">i_load</span>)  <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= <span style="color:#00897B;font-weight:700">i_load_val</span>;
-    else              <span style="color:#FB8C00;font-weight:700">o_count</span> &lt;= <span style="color:#FB8C00;font-weight:700">o_count</span> + 1'b1;
+        <pre style="font-size:0.78em;"><code class="language-verilog" data-noescape>always @(posedge <span style="color:#1976D2;font-weight:700">i_clk</span>) begin
+    if      (<span style="color:#D32F2F;font-weight:700">i_reset</span>) <span style="color:#2E7D32;font-weight:700">o_count</span> &lt;= 0;
+    else if (<span style="color:#F57C00;font-weight:700">i_load</span>)  <span style="color:#2E7D32;font-weight:700">o_count</span> &lt;= <span style="color:#C2185B;font-weight:700">i_load_val</span>;
+    else              <span style="color:#2E7D32;font-weight:700">o_count</span> &lt;= <span style="color:#2E7D32;font-weight:700">o_count</span> + 1'b1;
 end</code></pre>
         <img src="diagrams/d05_loadable_counter_rtl.svg" alt="Loadable counter RTL: 2:1 MUX picks i_load_val or count+1, register holds o_count, reset has top priority on the register" style="width:100%;max-width:680px;display:block;margin:0.2em auto;">
         <strong>Priority:</strong> reset &gt; load &gt; count. This is the preload pattern used in timers and PWM period registers.
@@ -170,28 +170,28 @@ end</code></pre>
 <!-- PWM period register — RTL minisketch -->
 <section>
     <h2><span style="color:#27AE60;">🧩</span> PWM Period Register &mdash; RTL Sketch</h2>
-    <p style="font-size:0.66em;">Not the full peripheral &mdash; just the three pieces that turn the previous diagram into Verilog. The middle block is literally the loadable counter you just wrote, with the wrap event playing the role of <code><span style="color:#8E24AA;font-weight:700">i_load</span></code>.</p>
+    <p style="font-size:0.66em;">Not the full peripheral &mdash; just the three pieces that turn the previous diagram into Verilog. The middle block is literally the loadable counter you just wrote, with the wrap event playing the role of <code><span style="color:#F57C00;font-weight:700">i_load</span></code>.</p>
     <pre class="synth" style="font-size:0.66em;"><code class="language-verilog" data-noescape>// 1) Period & duty registers — software-loadable (CSR-style)
-reg [W-1:0] <span style="color:#FB8C00;font-weight:700">period</span>, <span style="color:#FB8C00;font-weight:700">duty</span>;          // period = N-1; duty = high-time
-always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
-    if (<span style="color:#8E24AA;font-weight:700">i_we_period</span>) <span style="color:#FB8C00;font-weight:700">period</span> &lt;= <span style="color:#00897B;font-weight:700">i_wdata</span>;
-    if (<span style="color:#3949AB;font-weight:700">i_we_duty</span>)   <span style="color:#FB8C00;font-weight:700">duty</span>   &lt;= <span style="color:#00897B;font-weight:700">i_wdata</span>;
+reg [W-1:0] <span style="color:#CE93D8;font-weight:700">period</span>, <span style="color:#CE93D8;font-weight:700">duty</span>;          // period = N-1; duty = high-time
+always @(posedge <span style="color:#4FC3F7;font-weight:700">i_clk</span>) begin
+    if (<span style="color:#F48FB1;font-weight:700">i_we_period</span>) <span style="color:#CE93D8;font-weight:700">period</span> &lt;= <span style="color:#F48FB1;font-weight:700">i_wdata</span>;
+    if (<span style="color:#F48FB1;font-weight:700">i_we_duty</span>)   <span style="color:#CE93D8;font-weight:700">duty</span>   &lt;= <span style="color:#F48FB1;font-weight:700">i_wdata</span>;
 end
 
 // 2) Period counter — same priority chain as the previous slide.
 //    The "load" event is the natural end-of-period wrap.
-reg [W-1:0] <span style="color:#FB8C00;font-weight:700">count</span>;
-always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
-    if      (<span style="color:#E53935;font-weight:700">i_reset</span>)         <span style="color:#FB8C00;font-weight:700">count</span> &lt;= 0;
-    else if (<span style="color:#FB8C00;font-weight:700">count</span> == <span style="color:#FB8C00;font-weight:700">period</span>) <span style="color:#FB8C00;font-weight:700">count</span> &lt;= 0;        // ← reload @ wrap
-    else                      <span style="color:#FB8C00;font-weight:700">count</span> &lt;= <span style="color:#FB8C00;font-weight:700">count</span> + 1'b1;
+reg [W-1:0] <span style="color:#CE93D8;font-weight:700">count</span>;
+always @(posedge <span style="color:#4FC3F7;font-weight:700">i_clk</span>) begin
+    if      (<span style="color:#EF5350;font-weight:700">i_reset</span>)         <span style="color:#CE93D8;font-weight:700">count</span> &lt;= 0;
+    else if (<span style="color:#CE93D8;font-weight:700">count</span> == <span style="color:#CE93D8;font-weight:700">period</span>) <span style="color:#CE93D8;font-weight:700">count</span> &lt;= 0;        // ← reload @ wrap
+    else                      <span style="color:#CE93D8;font-weight:700">count</span> &lt;= <span style="color:#CE93D8;font-weight:700">count</span> + 1'b1;
 end
 
 // 3) Duty comparator drives the PWM output
-assign <span style="color:#43A047;font-weight:700">o_pwm</span> = (<span style="color:#FB8C00;font-weight:700">count</span> &lt; <span style="color:#FB8C00;font-weight:700">duty</span>);</code></pre>
+assign <span style="color:#81C784;font-weight:700">o_pwm</span> = (<span style="color:#CE93D8;font-weight:700">count</span> &lt; <span style="color:#CE93D8;font-weight:700">duty</span>);</code></pre>
     <img src="diagrams/d05_pwm_period_rtl.svg" alt="PWM period register RTL: write enables gate CSR registers (period and duty), period counter wraps when count==period, count<duty drives o_pwm" style="width:100%;max-width:780px;display:block;margin:0.2em auto;">
     <div class="callout" style="font-size:0.62em;margin-top:0.1em;">
-        <strong>Three signals to keep straight:</strong> <code><span style="color:#FB8C00;font-weight:700">period</span></code> sets $N$ (frequency), <code><span style="color:#FB8C00;font-weight:700">duty</span></code> sets the high-time (brightness), <code><span style="color:#FB8C00;font-weight:700">count</span></code> is the loadable counter sweeping <code>0..N-1</code>. Topic 10's PWM lab is this skeleton plus bus glue.
+        <strong>Three signals to keep straight:</strong> <code><span style="color:#7B1FA2;font-weight:700">period</span></code> sets $N$ (frequency), <code><span style="color:#7B1FA2;font-weight:700">duty</span></code> sets the high-time (brightness), <code><span style="color:#7B1FA2;font-weight:700">count</span></code> is the loadable counter sweeping <code>0..N-1</code>. Topic 10's PWM lab is this skeleton plus bus glue.
     </div>
     <aside class="notes">Keep this sketch visible during the live demo. Connect the dots: i_load_val from the previous slide → the period register here; the loadable counter's i_load case → the wrap-to-zero branch; the new compare is what actually makes it a PWM. The CSR write-enables (i_we_period, i_we_duty) are how software changes period/duty at runtime — that's how a CPU updates LED brightness or motor speed without rebuilding the bitstream.</aside>
 </section>

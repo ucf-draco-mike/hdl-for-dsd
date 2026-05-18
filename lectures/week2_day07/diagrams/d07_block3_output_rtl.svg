@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 320" font-family="Inter, sans-serif">
   <defs>
-    <marker id="b3-state" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#EF6C00"/></marker>
-    <marker id="b3-g"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/></marker>
-    <marker id="b3-y"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#FBC02D"/></marker>
-    <marker id="b3-r"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#E53935"/></marker>
+    <marker id="b3-state" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#7B1FA2"/></marker>
+    <marker id="b3-g"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/></marker>
+    <marker id="b3-y"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/></marker>
+    <marker id="b3-r"     markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/></marker>
   </defs>
 
   <text x="270" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">
@@ -19,23 +19,23 @@
 
   <!-- Per-output AND-gate rows (drawn as small comb cells) -->
   <g font-family="JetBrains Mono, monospace" font-size="9.5">
-    <rect x="190" y="125" width="180" height="32" rx="3" fill="#FFFFFF" stroke="#43A047" stroke-width="1.4"/>
-    <text x="200" y="138" fill="#EF6C00" font-weight="700">r_state</text>
+    <rect x="190" y="125" width="180" height="32" rx="3" fill="#FFFFFF" stroke="#2E7D32" stroke-width="1.4"/>
+    <text x="200" y="138" fill="#7B1FA2" font-weight="700">r_state</text>
     <text x="252" y="138" fill="#555">==</text>
-    <text x="272" y="138" fill="#43A047" font-weight="700">S_GREEN</text>
-    <text x="280" y="152" text-anchor="middle" fill="#43A047" font-style="italic">→ o_green = 1</text>
+    <text x="272" y="138" fill="#7B1FA2" font-weight="700">S_GREEN</text>
+    <text x="280" y="152" text-anchor="middle" fill="#2E7D32" font-style="italic">→ o_green = 1</text>
 
-    <rect x="190" y="165" width="180" height="32" rx="3" fill="#FFFFFF" stroke="#FBC02D" stroke-width="1.4"/>
-    <text x="200" y="178" fill="#EF6C00" font-weight="700">r_state</text>
+    <rect x="190" y="165" width="180" height="32" rx="3" fill="#FFFFFF" stroke="#7B1FA2" stroke-width="1.4"/>
+    <text x="200" y="178" fill="#7B1FA2" font-weight="700">r_state</text>
     <text x="252" y="178" fill="#555">==</text>
-    <text x="272" y="178" fill="#FBC02D" font-weight="700">S_YELLOW</text>
-    <text x="280" y="192" text-anchor="middle" fill="#B8860B" font-style="italic">→ o_yellow = 1</text>
+    <text x="272" y="178" fill="#7B1FA2" font-weight="700">S_YELLOW</text>
+    <text x="280" y="192" text-anchor="middle" fill="#2E7D32" font-style="italic">→ o_yellow = 1</text>
 
-    <rect x="190" y="205" width="180" height="32" rx="3" fill="#FFFFFF" stroke="#E53935" stroke-width="1.4"/>
-    <text x="200" y="218" fill="#EF6C00" font-weight="700">r_state</text>
+    <rect x="190" y="205" width="180" height="32" rx="3" fill="#FFFFFF" stroke="#7B1FA2" stroke-width="1.4"/>
+    <text x="200" y="218" fill="#7B1FA2" font-weight="700">r_state</text>
     <text x="252" y="218" fill="#555">==</text>
-    <text x="272" y="218" fill="#E53935" font-weight="700">S_RED</text>
-    <text x="280" y="232" text-anchor="middle" fill="#E53935" font-style="italic">→ o_red = 1</text>
+    <text x="272" y="218" fill="#7B1FA2" font-weight="700">S_RED</text>
+    <text x="280" y="232" text-anchor="middle" fill="#2E7D32" font-style="italic">→ o_red = 1</text>
   </g>
 
   <text x="280" y="262" text-anchor="middle" font-size="9" fill="#C62828" font-style="italic">
@@ -43,19 +43,19 @@
   </text>
 
   <!-- r_state input (deep orange) -->
-  <line x1="20" y1="170" x2="168" y2="170" stroke="#EF6C00" stroke-width="3" marker-end="url(#b3-state)"/>
-  <text x="20" y="160" font-size="11" font-weight="700" fill="#EF6C00">r_state</text>
+  <line x1="20" y1="170" x2="168" y2="170" stroke="#7B1FA2" stroke-width="3" marker-end="url(#b3-state)"/>
+  <text x="20" y="160" font-size="11" font-weight="700" fill="#7B1FA2">r_state</text>
   <text x="20" y="186" font-size="9" fill="#888" font-style="italic">(from Block 1)</text>
 
   <!-- Outputs -->
-  <line x1="390" y1="141" x2="510" y2="141" stroke="#43A047" stroke-width="3" marker-end="url(#b3-g)"/>
-  <text x="438" y="133" font-size="11" font-weight="700" fill="#43A047">o_green</text>
+  <line x1="390" y1="141" x2="510" y2="141" stroke="#2E7D32" stroke-width="3" marker-end="url(#b3-g)"/>
+  <text x="438" y="133" font-size="11" font-weight="700" fill="#2E7D32">o_green</text>
 
-  <line x1="390" y1="181" x2="510" y2="181" stroke="#FBC02D" stroke-width="3" marker-end="url(#b3-y)"/>
-  <text x="438" y="173" font-size="11" font-weight="700" fill="#B8860B">o_yellow</text>
+  <line x1="390" y1="181" x2="510" y2="181" stroke="#2E7D32" stroke-width="3" marker-end="url(#b3-y)"/>
+  <text x="438" y="173" font-size="11" font-weight="700" fill="#2E7D32">o_yellow</text>
 
-  <line x1="390" y1="221" x2="510" y2="221" stroke="#E53935" stroke-width="3" marker-end="url(#b3-r)"/>
-  <text x="438" y="213" font-size="11" font-weight="700" fill="#E53935">o_red</text>
+  <line x1="390" y1="221" x2="510" y2="221" stroke="#2E7D32" stroke-width="3" marker-end="url(#b3-r)"/>
+  <text x="438" y="213" font-size="11" font-weight="700" fill="#2E7D32">o_red</text>
 
   <text x="270" y="305" text-anchor="middle" font-size="10" fill="#555" font-style="italic">
     Moore: only r_state drives outputs · no inputs in the output equation

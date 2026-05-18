@@ -6,9 +6,9 @@
   <text x="190" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#FF5252">"is the FSM correct?"</text>
   <g transform="translate(50,62)">
     <!-- clk -->
-    <text x="-5" y="14" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#E91E63">clk</text>
+    <text x="-5" y="14" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#1976D2">clk</text>
     <polyline points="0,18 10,18 10,5 20,5 20,18 30,18 30,5 40,5 40,18 50,18 50,5 60,5 60,18 70,18 70,5 80,5 80,18 90,18 90,5 100,5 100,18 110,18 110,5 120,5 120,18 130,18 130,5 140,5 140,18 150,18 150,5 160,5 160,18 170,18 170,5 180,5 180,18 190,18 190,5 200,5 200,18 210,18 210,5 220,5 220,18 230,18 230,5 240,5 240,18 250,18 250,5 260,5 260,18 270,18 270,5 280,5 280,18"
-       fill="none" stroke="#E91E63" stroke-width="1.4"/>
+       fill="none" stroke="#1976D2" stroke-width="1.4"/>
     <!-- state[3:0] bus -->
     <text x="-5" y="40" text-anchor="end" font-size="9" font-weight="700" font-family="JetBrains Mono" fill="#7E57C2">state</text>
     <rect x="0" y="30" width="40" height="18" fill="#F3E5F5" stroke="#7E57C2"/>

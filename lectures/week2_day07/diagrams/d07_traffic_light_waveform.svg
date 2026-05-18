@@ -54,43 +54,43 @@
   </g>
 
   <!-- clk row (cyan) -->
-  <text x="170" y="74" text-anchor="end" class="label" fill="#00B8D4">i_clk</text>
-  <g stroke="#00B8D4" stroke-width="1.6" fill="none">
+  <text x="170" y="74" text-anchor="end" class="label" fill="#1976D2">i_clk</text>
+  <g stroke="#1976D2" stroke-width="1.6" fill="none">
     <path d="M 172,80 L 172,68 L 194,68 L 194,80 L 217,80 L 217,68 L 239,68 L 239,80 L 262,80 L 262,68 L 284,68 L 284,80 L 307,80 L 307,68 L 329,68 L 329,80 L 352,80 L 352,68 L 374,68 L 374,80 L 397,80 L 397,68 L 419,68 L 419,80 L 442,80 L 442,68 L 464,68 L 464,80 L 487,80 L 487,68 L 509,68 L 509,80 L 532,80 L 532,68 L 554,68 L 554,80 L 577,80 L 577,68 L 599,68 L 599,80 L 622,80 L 622,68 L 644,68 L 644,80 L 667,80 L 667,68 L 689,68 L 689,80 L 712,80 L 712,68 L 734,68 L 734,80 L 757,80"/>
   </g>
 
   <!-- timer row (purple) -->
-  <text x="170" y="105" text-anchor="end" class="label" fill="#7B1FA2">timer_done</text>
-  <g stroke="#7B1FA2" stroke-width="1.8" fill="none">
+  <text x="170" y="105" text-anchor="end" class="label" fill="#F57C00">timer_done</text>
+  <g stroke="#F57C00" stroke-width="1.8" fill="none">
     <path d="M 172,110 L 307,110 L 307,95 L 352,95 L 352,110 L 487,110 L 487,95 L 532,95 L 532,110 L 667,110 L 667,95 L 712,95 L 712,110 L 757,110"/>
   </g>
 
   <!-- state row (orange theme) -->
-  <text x="170" y="143" text-anchor="end" class="label" fill="#EF6C00">r_state</text>
+  <text x="170" y="143" text-anchor="end" class="label" fill="#7B1FA2">r_state</text>
   <line x1="172" y1="148" x2="757" y2="148" stroke="#999" stroke-width="0.8"/>
   <line x1="172" y1="132" x2="757" y2="132" stroke="#999" stroke-width="0.8"/>
   <g>
-    <rect x="172" y="132" width="180" height="16" fill="#E8F5E9" stroke="#43A047" stroke-width="1.2"/>
-    <text x="262" y="144" text-anchor="middle" class="stateLbl" fill="#2E7D32">S_GREEN</text>
+    <rect x="172" y="132" width="180" height="16" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.2"/>
+    <text x="262" y="144" text-anchor="middle" class="stateLbl" fill="#7B1FA2">S_GREEN</text>
 
-    <rect x="352" y="132" width="45" height="16" fill="#FFFDE7" stroke="#FBC02D" stroke-width="1.2"/>
-    <text x="374" y="144" text-anchor="middle" class="stateLbl" fill="#B8860B">Y</text>
+    <rect x="352" y="132" width="45" height="16" fill="#FFFDE7" stroke="#7B1FA2" stroke-width="1.2"/>
+    <text x="374" y="144" text-anchor="middle" class="stateLbl" fill="#7B1FA2">Y</text>
 
     <rect x="397" y="132" width="360" height="16" fill="url(#hatch)" stroke="#999" stroke-width="1" stroke-dasharray="4,2"/>
     <text x="577" y="144" text-anchor="middle" class="questionLbl">? ? ? ? ? ? ? ?</text>
   </g>
 
   <!-- o_green row (green) -->
-  <text x="170" y="178" text-anchor="end" class="label" fill="#43A047">o_green</text>
-  <g stroke="#43A047" stroke-width="1.8" fill="none">
+  <text x="170" y="178" text-anchor="end" class="label" fill="#2E7D32">o_green</text>
+  <g stroke="#2E7D32" stroke-width="1.8" fill="none">
     <path d="M 172,168 L 352,168 L 352,183 L 397,183"/>
   </g>
   <rect x="397" y="166" width="360" height="20" fill="url(#hatch)" opacity="0.5"/>
   <text x="577" y="180" text-anchor="middle" class="questionLbl">? ? ? ? ? ? ? ?</text>
 
   <!-- o_red row (red) -->
-  <text x="170" y="213" text-anchor="end" class="label" fill="#E53935">o_red</text>
-  <g stroke="#E53935" stroke-width="1.8" fill="none">
+  <text x="170" y="213" text-anchor="end" class="label" fill="#2E7D32">o_red</text>
+  <g stroke="#2E7D32" stroke-width="1.8" fill="none">
     <path d="M 172,218 L 397,218"/>
   </g>
   <rect x="397" y="201" width="360" height="20" fill="url(#hatch)" opacity="0.5"/>

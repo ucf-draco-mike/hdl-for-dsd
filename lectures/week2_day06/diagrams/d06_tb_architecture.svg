@@ -9,12 +9,12 @@
   <text x="320" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Testbench Architecture</text>
 
   <!-- Outer box: testbench (no ports) -->
-  <rect x="30" y="40" width="580" height="230" rx="10" fill="#FAFAFA" stroke="#1565C0" stroke-width="2.5" stroke-dasharray="8,4"/>
-  <text x="50" y="62" font-size="12" font-weight="700" fill="#1565C0">tb_my_design (no ports!)</text>
+  <rect x="30" y="40" width="580" height="230" rx="10" fill="#FAFAFA" stroke="#1976D2" stroke-width="2.5" stroke-dasharray="8,4"/>
+  <text x="50" y="62" font-size="12" font-weight="700" fill="#1976D2">tb_my_design (no ports!)</text>
 
   <!-- Stimulus generation -->
-  <rect x="55" y="85" width="160" height="90" rx="6" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
-  <text x="135" y="108" text-anchor="middle" font-size="11" font-weight="600" fill="#1565C0">Stimulus Gen</text>
+  <rect x="55" y="85" width="160" height="90" rx="6" fill="#E3F2FD" stroke="#1976D2" stroke-width="1.5"/>
+  <text x="135" y="108" text-anchor="middle" font-size="11" font-weight="600" fill="#1976D2">Stimulus Gen</text>
   <text x="135" y="124" text-anchor="middle" font-size="9" fill="#555">initial block</text>
   <text x="135" y="138" text-anchor="middle" font-size="9" fill="#555">clock generator</text>
   <text x="135" y="152" text-anchor="middle" font-size="9" fill="#555">reg inputs</text>
@@ -24,7 +24,7 @@
   <text x="237" y="122" text-anchor="middle" font-size="8" fill="#666">drive</text>
 
   <!-- DUT box -->
-  <rect x="265" y="80" width="160" height="100" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+  <rect x="265" y="80" width="160" height="100" rx="6" fill="#FFF8E1" stroke="#F57C00" stroke-width="2"/>
   <text x="345" y="108" text-anchor="middle" font-size="12" font-weight="700" fill="#333">DUT</text>
   <text x="345" y="126" text-anchor="middle" font-size="10" fill="#555">my_design uut</text>
   <text x="345" y="142" text-anchor="middle" font-size="9" fill="#888">(.i_clk(clk), ...)</text>
@@ -42,10 +42,10 @@
   <text x="535" y="156" text-anchor="middle" font-size="9" fill="#555">PASS / FAIL</text>
 
   <!-- Waveform dump -->
-  <rect x="200" y="200" width="240" height="45" rx="6" fill="#F3E5F5" stroke="#9C27B0" stroke-width="1.5"/>
-  <text x="320" y="220" text-anchor="middle" font-size="10" font-weight="600" fill="#9C27B0">$dumpfile / $dumpvars</text>
+  <rect x="200" y="200" width="240" height="45" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.5"/>
+  <text x="320" y="220" text-anchor="middle" font-size="10" font-weight="600" fill="#7B1FA2">$dumpfile / $dumpvars</text>
   <text x="320" y="236" text-anchor="middle" font-size="9" fill="#666">→ design.vcd → GTKWave</text>
 
   <!-- Arrow down from DUT to dump -->
-  <line x1="345" y1="180" x2="345" y2="195" stroke="#9C27B0" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="345" y1="180" x2="345" y2="195" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#arr)"/>
 </svg>

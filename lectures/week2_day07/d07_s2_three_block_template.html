@@ -32,17 +32,18 @@
     white-space: pre; overflow-x: auto;
 }
 .reveal pre.code-rtl.mistake { border-left-color: #C62828; }
-.sig-clk   { color:#00B8D4; font-weight:700; }
-.sig-rst   { color:#E91E63; font-weight:700; }
-.sig-state { color:#EF6C00; font-weight:700; }
-.sig-next  { color:#FFA000; font-weight:700; }
-.sig-timer { color:#7B1FA2; font-weight:700; }
-.sig-g     { color:#43A047; font-weight:700; }
-.sig-y     { color:#FBC02D; font-weight:700; }
-.sig-r     { color:#E53935; font-weight:700; }
-.sig-bit   { color:#0288D1; font-weight:700; }
-.sig-det   { color:#43A047; font-weight:700; }
-.sig-sinit { color:#90A4AE; font-weight:700; }
+.sig-clk   { color:#4FC3F7; font-weight:700; }
+.sig-rst   { color:#EF5350; font-weight:700; }
+.sig-state { color:#CE93D8; font-weight:700; }
+.sig-next  { color:#4DD0E1; font-weight:700; }
+.sig-timer { color:#FFB74D; font-weight:700; }
+.sig-g     { color:#CE93D8; font-weight:700; }
+.sig-y     { color:#CE93D8; font-weight:700; }
+.sig-r     { color:#CE93D8; font-weight:700; }
+.sig-bit   { color:#FFB74D; font-weight:700; }
+.sig-det   { color:#81C784; font-weight:700; }
+.sig-sinit { color:#CE93D8; font-weight:700; }
+.sig-out   { color:#81C784; font-weight:700; }
 .kw        { color:#C586C0; }
 .cm        { color:#6A9955; font-style:italic; }
 .num       { color:#B5CEA8; }
@@ -132,7 +133,7 @@
         </div>
     </div>
     <div class="callout" style="font-size:0.66em;">
-        <strong>My thinking:</strong> Block 1 is <strong>always trivial</strong>. It says: &ldquo;on every clock edge, load <span class="sig-next">r_next_state</span> into <span class="sig-state">r_state</span>; on reset, go to <span class="sig-sinit">S_INIT</span>.&rdquo; That's all it ever does. If you find yourself putting <em>logic</em> here, you're doing it wrong — logic goes in Block 2.
+        <strong>My thinking:</strong> Block 1 is <strong>always trivial</strong>. It says: &ldquo;on every clock edge, load <span style="color:#00838F;font-weight:700;">r_next_state</span> into <span style="color:#7B1FA2;font-weight:700;">r_state</span>; on reset, go to <span style="color:#7B1FA2;font-weight:700;">S_INIT</span>.&rdquo; That's all it ever does. If you find yourself putting <em>logic</em> here, you're doing it wrong — logic goes in Block 2.
     </div>
     <aside class="notes">Memorize: Block 1 is always trivial. It's a D flip-flop with reset. Nothing more. The FSM's intelligence lives in Blocks 2 and 3.</aside>
 </section>
@@ -175,7 +176,7 @@
     <div class="fragment callout" style="font-size:0.66em;">
         <strong>Together — two critical habits:</strong>
         <ol style="font-size:0.9em;">
-            <li><strong>Default assignment <em>first</em>:</strong> <code><span class="sig-next">r_next_state</span> = <span class="sig-state">r_state</span>;</code> — prevents latch inference and means &ldquo;if no transition fires, stay put.&rdquo;</li>
+            <li><strong>Default assignment <em>first</em>:</strong> <code><span style="color:#00838F;font-weight:700;">r_next_state</span> = <span style="color:#7B1FA2;font-weight:700;">r_state</span>;</code> — prevents latch inference and means &ldquo;if no transition fires, stay put.&rdquo;</li>
             <li><strong><code>default</code> case at end:</strong> recovers from illegal states. For a 2-bit state with only 3 legal values, the 4th is unreachable <em>in theory</em>, but silicon glitches happen in practice.</li>
         </ol>
     </div>
@@ -202,14 +203,14 @@
 <pre class="code-rtl" style="font-size:0.56em;"><span class="cm">// --- Block 3: output logic (Moore: f(state) only) ---</span>
 <span class="kw">always</span> @(*) <span class="kw">begin</span>
     <span class="cm">// defaults for ALL outputs (no latches)</span>
-    <span class="sig-r">o_red</span>    = <span class="num">1'b0</span>;
-    <span class="sig-y">o_yellow</span> = <span class="num">1'b0</span>;
-    <span class="sig-g">o_green</span>  = <span class="num">1'b0</span>;
+    <span class="sig-out">o_red</span>    = <span class="num">1'b0</span>;
+    <span class="sig-out">o_yellow</span> = <span class="num">1'b0</span>;
+    <span class="sig-out">o_green</span>  = <span class="num">1'b0</span>;
 
     <span class="kw">case</span> (<span class="sig-state">r_state</span>)
-        <span class="sig-g">S_GREEN</span>:  <span class="sig-g">o_green</span>  = <span class="num">1'b1</span>;
-        <span class="sig-y">S_YELLOW</span>: <span class="sig-y">o_yellow</span> = <span class="num">1'b1</span>;
-        <span class="sig-r">S_RED</span>:    <span class="sig-r">o_red</span>    = <span class="num">1'b1</span>;
+        <span class="sig-g">S_GREEN</span>:  <span class="sig-out">o_green</span>  = <span class="num">1'b1</span>;
+        <span class="sig-y">S_YELLOW</span>: <span class="sig-out">o_yellow</span> = <span class="num">1'b1</span>;
+        <span class="sig-r">S_RED</span>:    <span class="sig-out">o_red</span>    = <span class="num">1'b1</span>;
         <span class="kw">default</span>: ;  <span class="cm">// all off</span>
     <span class="kw">endcase</span>
 <span class="kw">end</span></pre>
@@ -222,7 +223,7 @@
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.66em;">
-        <strong>Together — the same two habits reappear:</strong> defaults at top (for <em>every</em> output, not just one), <code>default:</code> case at end. Same discipline, same reasons, same template. <strong>Moore</strong> = outputs depend only on <span class="sig-state">r_state</span>; <strong>Mealy</strong> = outputs also depend on inputs, but the structure stays identical.
+        <strong>Together — the same two habits reappear:</strong> defaults at top (for <em>every</em> output, not just one), <code>default:</code> case at end. Same discipline, same reasons, same template. <strong>Moore</strong> = outputs depend only on <span style="color:#7B1FA2;font-weight:700;">r_state</span>; <strong>Mealy</strong> = outputs also depend on inputs, but the structure stays identical.
     </div>
     <aside class="notes">Output logic follows the same template. Defaults for every output. Case by state. Default-case for safety. Mealy variants add inputs to the condition, not additional structure.</aside>
 </section>
@@ -246,9 +247,9 @@
         <div>
 <pre class="code-rtl mistake" style="font-size:0.58em;"><span class="kw">always</span> @(*) <span class="kw">begin</span>
     <span class="kw">case</span> (<span class="sig-state">r_state</span>)
-        <span class="sig-g">S_GREEN</span>:  <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-y">S_YELLOW</span>; <span class="sig-g">o_green</span> = <span class="num">1</span>; <span class="kw">end</span>
+        <span class="sig-g">S_GREEN</span>:  <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-y">S_YELLOW</span>; <span class="sig-out">o_green</span> = <span class="num">1</span>; <span class="kw">end</span>
         <span class="sig-y">S_YELLOW</span>: <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-r">S_RED</span>;                 <span class="kw">end</span>
-        <span class="sig-r">S_RED</span>:    <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-g">S_GREEN</span>;  <span class="sig-r">o_red</span>   = <span class="num">1</span>; <span class="kw">end</span>
+        <span class="sig-r">S_RED</span>:    <span class="kw">begin</span> <span class="sig-next">r_next_state</span> = <span class="sig-g">S_GREEN</span>;  <span class="sig-out">o_red</span>   = <span class="num">1</span>; <span class="kw">end</span>
     <span class="kw">endcase</span>
 <span class="kw">end</span></pre>
             <p style="font-size:0.68em; margin: 0.25em 0 0;">Three bugs. Find them.</p>
@@ -264,8 +265,8 @@
         <strong>Answers:</strong>
         <ol style="font-size:0.95em; margin:0.2em 0;">
             <li><strong>Combined blocks:</strong> state and output logic are in the same <code>always</code> block — violates the template.</li>
-            <li><strong>No defaults:</strong> <span class="sig-g">o_green</span>, <span class="sig-y">o_yellow</span>, <span class="sig-r">o_red</span> aren't assigned in every branch → <strong>latch inference</strong>.</li>
-            <li><strong>No <code>default:</code> case:</strong> if <span class="sig-state">r_state</span> takes an illegal value, <span class="sig-next">r_next_state</span> isn't assigned → another latch, plus no recovery.</li>
+            <li><strong>No defaults:</strong> <span style="color:#2E7D32;font-weight:700;">o_green</span>, <span style="color:#2E7D32;font-weight:700;">o_yellow</span>, <span style="color:#2E7D32;font-weight:700;">o_red</span> aren't assigned in every branch → <strong>latch inference</strong>.</li>
+            <li><strong>No <code>default:</code> case:</strong> if <span style="color:#7B1FA2;font-weight:700;">r_state</span> takes an illegal value, <span style="color:#00838F;font-weight:700;">r_next_state</span> isn't assigned → another latch, plus no recovery.</li>
         </ol>
     </div>
     <aside class="notes">Three canonical FSM bugs in one 5-line snippet. Each breaks the template in a different way. Memorable because every newcomer writes something like this first.</aside>

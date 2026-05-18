@@ -95,14 +95,14 @@
 //   <span style="color:#4FC3F7;font-weight:700;">i_clk</span>    : synchronous clock
 //   <span style="color:#EF5350;font-weight:700;">i_reset</span>  : synchronous reset (active high)
 //   <span style="color:#FFB74D;font-weight:700;">i_noisy</span>  : input from external switch
-//   <span style="color:#66BB6A;font-weight:700;">o_clean</span>  : stable debounced output
+//   <span style="color:#81C784;font-weight:700;">o_clean</span>  : stable debounced output
 //
 // Latency: up to <span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span> cycles.
 // Usage:   debounce #(.<span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span>(N)) u_deb (...);
 //----------------------------------------------------
 module debounce #(parameter <span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span>=500_000) (
     input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#FFB74D;font-weight:700;">i_noisy</span>,
-    output reg  <span style="color:#66BB6A;font-weight:700;">o_clean</span>
+    output reg  <span style="color:#81C784;font-weight:700;">o_clean</span>
 );
     // ... implementation ...
 endmodule</code></pre>
@@ -167,10 +167,10 @@ module debounce #(
     parameter <span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span> = 500_000
 ) (
     input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#FFB74D;font-weight:700;">i_noisy</span>,
-    output reg  <span style="color:#66BB6A;font-weight:700;">o_clean</span>
+    output reg  <span style="color:#81C784;font-weight:700;">o_clean</span>
 );
     localparam <span style="color:#FFD54F;font-weight:700;">W</span> = $clog2(<span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span>);
-    reg [<span style="color:#FFD54F;font-weight:700;">W</span>-1:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;
+    reg [<span style="color:#FFD54F;font-weight:700;">W</span>-1:0] <span style="color:#CE93D8;font-weight:700;">r_count</span>;
     // ... logic with docs ...
 endmodule</code></pre>
         </div>

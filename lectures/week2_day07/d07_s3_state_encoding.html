@@ -18,14 +18,15 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.18);
     white-space: pre; overflow-x: auto;
 }
-.sig-clk   { color:#00B8D4; font-weight:700; }
-.sig-rst   { color:#E91E63; font-weight:700; }
-.sig-state { color:#EF6C00; font-weight:700; }
-.sig-next  { color:#FFA000; font-weight:700; }
-.sig-timer { color:#7B1FA2; font-weight:700; }
-.sig-g     { color:#43A047; font-weight:700; }
-.sig-y     { color:#FBC02D; font-weight:700; }
-.sig-r     { color:#E53935; font-weight:700; }
+.sig-clk   { color:#4FC3F7; font-weight:700; }
+.sig-rst   { color:#EF5350; font-weight:700; }
+.sig-state { color:#CE93D8; font-weight:700; }
+.sig-next  { color:#4DD0E1; font-weight:700; }
+.sig-timer { color:#FFB74D; font-weight:700; }
+.sig-g     { color:#CE93D8; font-weight:700; }
+.sig-y     { color:#CE93D8; font-weight:700; }
+.sig-r     { color:#CE93D8; font-weight:700; }
+.sig-out   { color:#81C784; font-weight:700; }
 .kw        { color:#C586C0; }
 .cm        { color:#6A9955; font-style:italic; }
 .num       { color:#B5CEA8; }
@@ -126,9 +127,9 @@
 
 <span class="cm">// Same next-state structure — only the encoding changed</span>
 <span class="cm">// Outputs become single-wire taps:</span>
-<span class="kw">assign</span> <span class="sig-g">o_green</span>  = <span class="sig-state">r_state</span>[<span class="num">0</span>];
-<span class="kw">assign</span> <span class="sig-y">o_yellow</span> = <span class="sig-state">r_state</span>[<span class="num">1</span>];
-<span class="kw">assign</span> <span class="sig-r">o_red</span>    = <span class="sig-state">r_state</span>[<span class="num">2</span>];</pre>
+<span class="kw">assign</span> <span class="sig-out">o_green</span>  = <span class="sig-state">r_state</span>[<span class="num">0</span>];
+<span class="kw">assign</span> <span class="sig-out">o_yellow</span> = <span class="sig-state">r_state</span>[<span class="num">1</span>];
+<span class="kw">assign</span> <span class="sig-out">o_red</span>    = <span class="sig-state">r_state</span>[<span class="num">2</span>];</pre>
         </div>
         <div>
             <img src="diagrams/d07_onehot_encoding_rtl.svg"
@@ -138,7 +139,7 @@
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.66em;">
-        <strong>Together:</strong> Only three things changed: state width (2→3), state values (binary→one-hot), register width. The <code>case</code> structure is identical. The <strong>output logic gets faster</strong> because, e.g., <code><span class="sig-g">o_green</span> = <span class="sig-state">r_state</span>[0]</code> — a single wire, no decoder. That's the one-hot win.
+        <strong>Together:</strong> Only three things changed: state width (2→3), state values (binary→one-hot), register width. The <code>case</code> structure is identical. The <strong>output logic gets faster</strong> because, e.g., <code><span style="color:#2E7D32;font-weight:700;">o_green</span> = <span style="color:#7B1FA2;font-weight:700;">r_state</span>[0]</code> — a single wire, no decoder. That's the one-hot win.
     </div>
     <aside class="notes">One-hot: output = single bit, no decoder needed. That's the speed advantage. Cost: N flops instead of log2(N).</aside>
 </section>

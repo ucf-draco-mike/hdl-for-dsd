@@ -57,7 +57,7 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; <code>$readmemh</code> and the Test Loop</h2>
-    <pre class="synth" style="font-size:0.6em;"><code class="language-verilog" data-signal-colors="vec_mem:#7E57C2,$readmemh:#7E57C2,a:#00ACC1,b:#FFB300,sum:#43A047,i:#FF5252">// vectors.hex:  16 lines, 8 hex chars each = {a[7:0], b[7:0], expected_sum[8:0]}
+    <pre class="synth" style="font-size:0.6em;"><code class="language-verilog" data-signal-colors="vec_mem:#FFD54F,$readmemh:#CE93D8,a:#FFB74D,b:#FFB74D,sum:#81C784,i:#F48FB1">// vectors.hex:  16 lines, 8 hex chars each = {a[7:0], b[7:0], expected_sum[8:0]}
 // 0503_0008
 // 0709_0010
 // 0F0F_001E
@@ -82,7 +82,7 @@ initial begin
     $finish;
 end</code></pre>
     <div class="callout" style="font-size:0.62em;">
-        <strong>Pack &amp; loop:</strong> each test vector is one hex word with three colored fields. <span style="color:#7E57C2;font-weight:700;font-family:monospace;">$readmemh</span> loads them; the loop unpacks via slicing — adding 1000 more cases requires zero Verilog changes. Diagram next.
+        <strong>Pack &amp; loop:</strong> each test vector is one hex word with three colored fields. <span style="color:#7B1FA2;font-weight:700;font-family:monospace;">$readmemh</span> loads them; the loop unpacks via slicing — adding 1000 more cases requires zero Verilog changes. Diagram next.
     </div>
     <aside class="notes">The pattern: pack each case into one hex word. Load with $readmemh. Loop. Adding cases = editing the .hex file. Colors in the comment header (cyan/amber/blue) map directly to the slice indices later in the loop.</aside>
 </section>
@@ -91,13 +91,13 @@ end</code></pre>
     <h2><span style="color:#D4A843;">🧱</span> File-Driven Pipeline &mdash; RTL Diagram</h2>
     <img src="diagrams/d06_s4_readmemh_rtl.svg" alt="$readmemh + loop: file → memory → slice → DUT → check" style="width:92%;max-height:62vh;display:block;margin:0.2em auto 0;">
     <div class="callout" style="font-size:0.66em;margin-top:0.3em;">
-        <strong>Reading the diagram:</strong> the hex file is loaded once into <span style="color:#7E57C2;font-weight:700;font-family:monospace;">vec_mem</span>. The loop index <span style="color:#FF5252;font-weight:700;font-family:monospace;">i</span> walks the array; bit slices extract <span style="color:#00ACC1;font-weight:700;font-family:monospace;">a</span>, <span style="color:#FFB300;font-weight:700;font-family:monospace;">b</span>, and <span style="color:#1E88E5;font-weight:700;font-family:monospace;">expected</span>. Drive into the DUT, settle, then <code>check_eq</code>. Same colors as the code.
+        <strong>Reading the diagram:</strong> the hex file is loaded once into <span style="color:#9A6F00;font-weight:700;font-family:monospace;">vec_mem</span>. The loop index <span style="color:#C2185B;font-weight:700;font-family:monospace;">i</span> walks the array; bit slices extract <span style="color:#F57C00;font-weight:700;font-family:monospace;">a</span>, <span style="color:#F57C00;font-weight:700;font-family:monospace;">b</span>, and <span style="color:#C2185B;font-weight:700;font-family:monospace;">expected</span>. Drive into the DUT, settle, then <code>check_eq</code>. Same colors as the code.
     </div>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Pure-Random Vectors from Python</h2>
-    <pre style="font-size:0.62em;"><code class="language-python" data-signal-colors="a:#00ACC1,b:#FFB300,s:#43A047">#!/usr/bin/env python3
+    <pre style="font-size:0.62em;"><code class="language-python" data-signal-colors="a:#FFB74D,b:#FFB74D,s:#81C784">#!/usr/bin/env python3
 # gen_vectors.py — produces vectors.hex for adder testbench
 import random
 
@@ -111,7 +111,7 @@ with open("vectors.hex", "w") as f:
 print("Wrote 1000 vectors.")</code></pre>
     <img src="diagrams/d06_s4_python_gen_rtl.svg" alt="Python generator → vectors.hex → Verilog $readmemh consumer" style="width:92%;max-height:42vh;display:block;margin:0.2em auto 0;">
     <div class="fragment callout" style="font-size:0.62em;">
-        <strong>Two ideas:</strong> (1) Python is the <strong>golden reference</strong> &mdash; <span style="color:#43A047;font-weight:700;font-family:monospace;">s = a + b</span> is trivially right, so any Verilog mismatch is a DUT bug. (2) <strong>Pure random</strong>: every (<span style="color:#00ACC1;font-weight:700;font-family:monospace;">a</span>,<span style="color:#FFB300;font-weight:700;font-family:monospace;">b</span>) is legal. Seeded by <span style="color:#FFC107;font-weight:700;font-family:monospace;">42</span> → reproducible. The diagram shows the cross-language data flow.
+        <strong>Two ideas:</strong> (1) Python is the <strong>golden reference</strong> &mdash; <span style="color:#2E7D32;font-weight:700;font-family:monospace;">s = a + b</span> is trivially right, so any Verilog mismatch is a DUT bug. (2) <strong>Pure random</strong>: every (<span style="color:#F57C00;font-weight:700;font-family:monospace;">a</span>,<span style="color:#F57C00;font-weight:700;font-family:monospace;">b</span>) is legal. Seeded by <span style="color:#9A6F00;font-weight:700;font-family:monospace;">42</span> → reproducible. The diagram shows the cross-language data flow.
     </div>
     <aside class="notes">Two things in one slide. First — Python as reference: simple math in Python is easier to trust than the same math in Verilog, and this pattern scales to complex protocols. Second — be honest about what this IS: pure uniform random. It works here because the adder is stateless. For protocols with rules, pure random wastes simulation time. That's the bridge to constrained-random on the next slide.</aside>
 </section>
@@ -120,14 +120,14 @@ print("Wrote 1000 vectors.")</code></pre>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Debug the Hex Format</h2>
     <p style="font-size:0.78em;">Your <code>vectors.hex</code> looks like this. Your testbench reports &ldquo;all zeros, all fail.&rdquo; What's wrong?</p>
     <pre style="font-size:0.7em;"><code class="nohighlight" data-noescape># vectors.hex
-<span style="color:#FF5252;font-weight:700;">Test 1:</span> <span style="color:#00ACC1;font-weight:700;">05</span><span style="color:#FFB300;font-weight:700;">03</span>_<span style="color:#1E88E5;font-weight:700;">0008</span>
-<span style="color:#FF5252;font-weight:700;">Test 2:</span> <span style="color:#00ACC1;font-weight:700;">07</span><span style="color:#FFB300;font-weight:700;">09</span>_<span style="color:#1E88E5;font-weight:700;">0010</span></code></pre>
+<span style="color:#EF5350;font-weight:700;">Test 1:</span> <span style="color:#FFB74D;font-weight:700;">05</span><span style="color:#FFB74D;font-weight:700;">03</span>_<span style="color:#F48FB1;font-weight:700;">0008</span>
+<span style="color:#EF5350;font-weight:700;">Test 2:</span> <span style="color:#FFB74D;font-weight:700;">07</span><span style="color:#FFB74D;font-weight:700;">09</span>_<span style="color:#F48FB1;font-weight:700;">0010</span></code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answer:</strong> <code>$readmemh</code> doesn't parse <span style="color:#FF5252;font-weight:700;">&ldquo;Test 1:&rdquo;</span> prefixes or colons — it expects <strong>hex digits only</strong> (with optional <code>//</code> comments and <code>_</code> as a visual separator). Fix: strip the labels, keep only the hex.
+        <strong>Answer:</strong> <code>$readmemh</code> doesn't parse <span style="color:#D32F2F;font-weight:700;">&ldquo;Test 1:&rdquo;</span> prefixes or colons — it expects <strong>hex digits only</strong> (with optional <code>//</code> comments and <code>_</code> as a visual separator). Fix: strip the labels, keep only the hex.
         <pre style="font-size:0.85em;"><code class="nohighlight" data-noescape><span style="color:#888;">// Test 1</span>
-<span style="color:#00ACC1;font-weight:700;">05</span><span style="color:#FFB300;font-weight:700;">03</span>_<span style="color:#1E88E5;font-weight:700;">0008</span>
+<span style="color:#FFB74D;font-weight:700;">05</span><span style="color:#FFB74D;font-weight:700;">03</span>_<span style="color:#F48FB1;font-weight:700;">0008</span>
 <span style="color:#888;">// Test 2</span>
-<span style="color:#00ACC1;font-weight:700;">07</span><span style="color:#FFB300;font-weight:700;">09</span>_<span style="color:#1E88E5;font-weight:700;">0010</span></code></pre>
+<span style="color:#FFB74D;font-weight:700;">07</span><span style="color:#FFB74D;font-weight:700;">09</span>_<span style="color:#F48FB1;font-weight:700;">0010</span></code></pre>
     </div>
     <aside class="notes">Common first-time bug. $readmemh is strict — only hex digits, optional // comments, optional _ separators. No labels, no JSON, no CSV. Notice the colors map to the bit-field layout: cyan=a, amber=b, blue=expected.</aside>
 </section>

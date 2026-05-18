@@ -2,111 +2,111 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Inter, sans-serif">
   <defs>
     <marker id="arrCk" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#E91E63"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#1976D2"/>
     </marker>
     <marker id="arrD" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00ACC1"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#F57C00"/>
     </marker>
     <marker id="arrEn" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#AB47BC"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#7B1FA2"/>
     </marker>
     <marker id="arrQ" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/>
     </marker>
     <marker id="arrEx" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#1E88E5"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#C2185B"/>
     </marker>
   </defs>
 
-  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Sequential task <tspan font-family="JetBrains Mono" fill="#26A69A">apply_and_check</tspan> — clock-aligned drive + sample</text>
+  <text x="380" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#222">Sequential task <tspan font-family="JetBrains Mono" fill="#00838F">apply_and_check</tspan> — clock-aligned drive + sample</text>
   <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">edge alignment lives inside the task — one canonical place</text>
 
   <!-- Task boundary -->
-  <rect x="20" y="58" width="720" height="290" rx="14" fill="#E0F7FA" stroke="#26A69A" stroke-width="2.5" stroke-dasharray="9,4"/>
-  <text x="34" y="80" font-size="12" font-weight="700" fill="#26A69A" font-family="JetBrains Mono">task apply_and_check (d_in, en_in, q_expected)</text>
+  <rect x="20" y="58" width="720" height="290" rx="14" fill="#E0F7FA" stroke="#00838F" stroke-width="2.5" stroke-dasharray="9,4"/>
+  <text x="34" y="80" font-size="12" font-weight="700" fill="#00838F" font-family="JetBrains Mono">task apply_and_check (d_in, en_in, q_expected)</text>
 
   <!-- Inputs panel -->
   <rect x="40" y="100" width="160" height="110" rx="8" fill="#fff" stroke="#888" stroke-width="1.5"/>
   <text x="120" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#333">task arguments</text>
-  <text x="50" y="140" font-size="11" font-family="JetBrains Mono"><tspan fill="#00ACC1" font-weight="700">d_in</tspan><tspan fill="#555">  [7:0]</tspan></text>
-  <text x="50" y="160" font-size="11" font-family="JetBrains Mono"><tspan fill="#AB47BC" font-weight="700">en_in</tspan><tspan fill="#555"></tspan></text>
-  <text x="50" y="180" font-size="11" font-family="JetBrains Mono"><tspan fill="#1E88E5" font-weight="700">q_expected</tspan></text>
+  <text x="50" y="140" font-size="11" font-family="JetBrains Mono"><tspan fill="#F57C00" font-weight="700">d_in</tspan><tspan fill="#555">  [7:0]</tspan></text>
+  <text x="50" y="160" font-size="11" font-family="JetBrains Mono"><tspan fill="#7B1FA2" font-weight="700">en_in</tspan><tspan fill="#555"></tspan></text>
+  <text x="50" y="180" font-size="11" font-family="JetBrains Mono"><tspan fill="#C2185B" font-weight="700">q_expected</tspan></text>
   <text x="120" y="200" text-anchor="middle" font-size="9" fill="#888" font-style="italic">caller passes</text>
 
   <!-- Step 1: wait posedge clk -->
-  <rect x="240" y="100" width="160" height="55" rx="8" fill="#FFF5F8" stroke="#E91E63" stroke-width="2"/>
-  <text x="320" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#E91E63" font-family="JetBrains Mono">@(posedge clk)</text>
+  <rect x="240" y="100" width="160" height="55" rx="8" fill="#FFF5F8" stroke="#1976D2" stroke-width="2"/>
+  <text x="320" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#1976D2" font-family="JetBrains Mono">@(posedge clk)</text>
   <text x="320" y="138" text-anchor="middle" font-size="9" fill="#555">align to clock edge</text>
   <text x="320" y="151" text-anchor="middle" font-size="9" font-style="italic" fill="#888">step 1</text>
 
   <!-- Step 2: drive d, en -->
-  <rect x="240" y="170" width="160" height="55" rx="8" fill="#fff" stroke="#00ACC1" stroke-width="2"/>
+  <rect x="240" y="170" width="160" height="55" rx="8" fill="#fff" stroke="#F57C00" stroke-width="2"/>
   <text x="320" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#333" font-family="JetBrains Mono">
-    drive <tspan fill="#00ACC1">d</tspan>, <tspan fill="#AB47BC">en</tspan>
+    drive <tspan fill="#F57C00">d</tspan>, <tspan fill="#7B1FA2">en</tspan>
   </text>
   <text x="320" y="206" text-anchor="middle" font-size="9" fill="#555">d = d_in;  en = en_in;</text>
   <text x="320" y="219" text-anchor="middle" font-size="9" font-style="italic" fill="#888">step 2</text>
 
   <!-- arrows from inputs to drive step -->
-  <line x1="200" y1="140" x2="240" y2="190" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrD)"/>
-  <line x1="200" y1="160" x2="240" y2="195" stroke="#AB47BC" stroke-width="2" marker-end="url(#arrEn)"/>
+  <line x1="200" y1="140" x2="240" y2="190" stroke="#F57C00" stroke-width="2" marker-end="url(#arrD)"/>
+  <line x1="200" y1="160" x2="240" y2="195" stroke="#7B1FA2" stroke-width="2" marker-end="url(#arrEn)"/>
 
   <!-- DUT box (yellow, central-right) -->
-  <rect x="450" y="115" width="160" height="110" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2.5"/>
+  <rect x="450" y="115" width="160" height="110" rx="8" fill="#FFF8E1" stroke="#F57C00" stroke-width="2.5"/>
   <text x="530" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#333">DUT</text>
   <text x="530" y="160" text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#555">flop with enable</text>
-  <text x="530" y="180" text-anchor="middle" font-size="10" font-family="JetBrains Mono"><tspan fill="#00ACC1">.d</tspan> <tspan fill="#555">/</tspan> <tspan fill="#AB47BC">.en</tspan> <tspan fill="#555">/</tspan> <tspan fill="#43A047">.q</tspan></text>
-  <text x="530" y="205" text-anchor="middle" font-size="9" font-family="JetBrains Mono"><tspan fill="#E91E63">clk</tspan></text>
+  <text x="530" y="180" text-anchor="middle" font-size="10" font-family="JetBrains Mono"><tspan fill="#F57C00">.d</tspan> <tspan fill="#555">/</tspan> <tspan fill="#7B1FA2">.en</tspan> <tspan fill="#555">/</tspan> <tspan fill="#2E7D32">.q</tspan></text>
+  <text x="530" y="205" text-anchor="middle" font-size="9" font-family="JetBrains Mono"><tspan fill="#1976D2">clk</tspan></text>
   <text x="530" y="220" text-anchor="middle" font-size="9" font-style="italic" fill="#888">captures on edge</text>
 
   <!-- wires to DUT -->
-  <line x1="400" y1="197" x2="450" y2="170" stroke="#00ACC1" stroke-width="2" marker-end="url(#arrD)"/>
-  <line x1="400" y1="200" x2="450" y2="185" stroke="#AB47BC" stroke-width="2" marker-end="url(#arrEn)"/>
-  <line x1="320" y1="155" x2="320" y2="248" stroke="#E91E63" stroke-width="1.6" stroke-dasharray="3,2"/>
-  <line x1="320" y1="248" x2="475" y2="248" stroke="#E91E63" stroke-width="1.6" stroke-dasharray="3,2" marker-end="url(#arrCk)"/>
+  <line x1="400" y1="197" x2="450" y2="170" stroke="#F57C00" stroke-width="2" marker-end="url(#arrD)"/>
+  <line x1="400" y1="200" x2="450" y2="185" stroke="#7B1FA2" stroke-width="2" marker-end="url(#arrEn)"/>
+  <line x1="320" y1="155" x2="320" y2="248" stroke="#1976D2" stroke-width="1.6" stroke-dasharray="3,2"/>
+  <line x1="320" y1="248" x2="475" y2="248" stroke="#1976D2" stroke-width="1.6" stroke-dasharray="3,2" marker-end="url(#arrCk)"/>
 
   <!-- Step 3: wait next posedge clk (DUT samples) -->
-  <rect x="240" y="240" width="160" height="55" rx="8" fill="#FFF5F8" stroke="#E91E63" stroke-width="2"/>
-  <text x="320" y="260" text-anchor="middle" font-size="11" font-weight="700" fill="#E91E63" font-family="JetBrains Mono">@(posedge clk)</text>
+  <rect x="240" y="240" width="160" height="55" rx="8" fill="#FFF5F8" stroke="#1976D2" stroke-width="2"/>
+  <text x="320" y="260" text-anchor="middle" font-size="11" font-weight="700" fill="#1976D2" font-family="JetBrains Mono">@(posedge clk)</text>
   <text x="320" y="278" text-anchor="middle" font-size="9" fill="#555">DUT captures input</text>
   <text x="320" y="291" text-anchor="middle" font-size="9" font-style="italic" fill="#888">step 3</text>
 
   <!-- Step 4: #1 settle + sample q -->
-  <rect x="450" y="240" width="160" height="55" rx="8" fill="#fff" stroke="#43A047" stroke-width="2"/>
-  <text x="530" y="260" text-anchor="middle" font-size="11" font-weight="700" fill="#43A047" font-family="JetBrains Mono">#1; sample q</text>
+  <rect x="450" y="240" width="160" height="55" rx="8" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
+  <text x="530" y="260" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">#1; sample q</text>
   <text x="530" y="278" text-anchor="middle" font-size="9" fill="#555">read DUT output</text>
   <text x="530" y="291" text-anchor="middle" font-size="9" font-style="italic" fill="#888">step 4</text>
 
   <!-- q wire from DUT -->
-  <line x1="610" y1="200" x2="640" y2="200" stroke="#43A047" stroke-width="2.2"/>
-  <line x1="640" y1="200" x2="640" y2="265" stroke="#43A047" stroke-width="2.2"/>
-  <line x1="640" y1="265" x2="615" y2="265" stroke="#43A047" stroke-width="2.2" marker-end="url(#arrQ)"/>
-  <text x="615" y="195" font-size="10" font-weight="700" fill="#43A047" font-family="JetBrains Mono">q</text>
+  <line x1="610" y1="200" x2="640" y2="200" stroke="#2E7D32" stroke-width="2.2"/>
+  <line x1="640" y1="200" x2="640" y2="265" stroke="#2E7D32" stroke-width="2.2"/>
+  <line x1="640" y1="265" x2="615" y2="265" stroke="#2E7D32" stroke-width="2.2" marker-end="url(#arrQ)"/>
+  <text x="615" y="195" font-size="10" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">q</text>
 
   <!-- Step 5: check_eq -->
-  <rect x="240" y="310" width="370" height="32" rx="8" fill="#fff" stroke="#26A69A" stroke-width="2"/>
+  <rect x="240" y="310" width="370" height="32" rx="8" fill="#fff" stroke="#00838F" stroke-width="2"/>
   <text x="425" y="331" text-anchor="middle" font-size="11" font-family="JetBrains Mono">
-    <tspan fill="#26A69A" font-weight="700">check_eq</tspan>
+    <tspan fill="#00838F" font-weight="700">check_eq</tspan>
     <tspan fill="#555">(</tspan>
-    <tspan fill="#43A047" font-weight="700">q</tspan>
+    <tspan fill="#2E7D32" font-weight="700">q</tspan>
     <tspan fill="#555">, </tspan>
-    <tspan fill="#1E88E5" font-weight="700">q_expected</tspan>
+    <tspan fill="#C2185B" font-weight="700">q_expected</tspan>
     <tspan fill="#555">, </tspan>
-    <tspan fill="#26A69A">$sformatf(...)</tspan>
+    <tspan fill="#00838F">$sformatf(...)</tspan>
     <tspan fill="#555">);</tspan>
   </text>
 
-  <line x1="610" y1="270" x2="635" y2="270" stroke="#43A047" stroke-width="1.5"/>
-  <line x1="635" y1="270" x2="635" y2="325" stroke="#43A047" stroke-width="1.5"/>
-  <line x1="635" y1="325" x2="615" y2="325" stroke="#43A047" stroke-width="1.5" marker-end="url(#arrQ)"/>
+  <line x1="610" y1="270" x2="635" y2="270" stroke="#2E7D32" stroke-width="1.5"/>
+  <line x1="635" y1="270" x2="635" y2="325" stroke="#2E7D32" stroke-width="1.5"/>
+  <line x1="635" y1="325" x2="615" y2="325" stroke="#2E7D32" stroke-width="1.5" marker-end="url(#arrQ)"/>
 
-  <line x1="200" y1="180" x2="220" y2="180" stroke="#1E88E5" stroke-width="1.5"/>
-  <line x1="220" y1="180" x2="220" y2="325" stroke="#1E88E5" stroke-width="1.5"/>
-  <line x1="220" y1="325" x2="240" y2="325" stroke="#1E88E5" stroke-width="1.5" marker-end="url(#arrEx)"/>
+  <line x1="200" y1="180" x2="220" y2="180" stroke="#C2185B" stroke-width="1.5"/>
+  <line x1="220" y1="180" x2="220" y2="325" stroke="#C2185B" stroke-width="1.5"/>
+  <line x1="220" y1="325" x2="240" y2="325" stroke="#C2185B" stroke-width="1.5" marker-end="url(#arrEx)"/>
 
-  <text x="56" y="334" font-size="10" font-family="JetBrains Mono" fill="#26A69A" font-weight="700">endtask</text>
+  <text x="56" y="334" font-size="10" font-family="JetBrains Mono" fill="#00838F" font-weight="700">endtask</text>
 
   <!-- Clock generator hint at top -->
-  <text x="630" y="80" font-size="10" font-family="JetBrains Mono" font-weight="700" fill="#E91E63">clk</text>
+  <text x="630" y="80" font-size="10" font-family="JetBrains Mono" font-weight="700" fill="#1976D2">clk</text>
   <text x="630" y="92" font-size="9" font-style="italic" fill="#888">tb 100 MHz</text>
 </svg>

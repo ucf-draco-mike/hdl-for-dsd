@@ -2,16 +2,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" font-family="Inter, sans-serif">
   <defs>
     <marker id="arrA" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#43A047"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#2E7D32"/>
     </marker>
     <marker id="arrE" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#1E88E5"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#C2185B"/>
     </marker>
     <marker id="arrL" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#26A69A"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#00838F"/>
     </marker>
     <marker id="arrCt" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#FF5252"/>
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#D32F2F"/>
     </marker>
     <marker id="arrK" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <path d="M0,0 L9,3.5 L0,7 Z" fill="#333"/>
@@ -22,62 +22,62 @@
   <text x="380" y="40" text-anchor="middle" font-size="11" fill="#555" font-style="italic">three inputs flow into one compare; result updates two counters and emits PASS/FAIL</text>
 
   <!-- Inputs (left side) -->
-  <rect x="30" y="80" width="150" height="34" rx="6" fill="#fff" stroke="#43A047" stroke-width="2"/>
-  <text x="105" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#43A047" font-family="JetBrains Mono">actual</text>
-  <line x1="180" y1="97" x2="280" y2="170" stroke="#43A047" stroke-width="2.2" marker-end="url(#arrA)"/>
+  <rect x="30" y="80" width="150" height="34" rx="6" fill="#fff" stroke="#2E7D32" stroke-width="2"/>
+  <text x="105" y="102" text-anchor="middle" font-size="12" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">actual</text>
+  <line x1="180" y1="97" x2="280" y2="170" stroke="#2E7D32" stroke-width="2.2" marker-end="url(#arrA)"/>
 
-  <rect x="30" y="135" width="150" height="34" rx="6" fill="#fff" stroke="#1E88E5" stroke-width="2"/>
-  <text x="105" y="157" text-anchor="middle" font-size="12" font-weight="700" fill="#1E88E5" font-family="JetBrains Mono">expected</text>
-  <line x1="180" y1="152" x2="280" y2="190" stroke="#1E88E5" stroke-width="2.2" marker-end="url(#arrE)"/>
+  <rect x="30" y="135" width="150" height="34" rx="6" fill="#fff" stroke="#C2185B" stroke-width="2"/>
+  <text x="105" y="157" text-anchor="middle" font-size="12" font-weight="700" fill="#C2185B" font-family="JetBrains Mono">expected</text>
+  <line x1="180" y1="152" x2="280" y2="190" stroke="#C2185B" stroke-width="2.2" marker-end="url(#arrE)"/>
 
-  <rect x="30" y="190" width="150" height="34" rx="6" fill="#fff" stroke="#26A69A" stroke-width="2"/>
-  <text x="105" y="212" text-anchor="middle" font-size="12" font-weight="700" fill="#26A69A" font-family="JetBrains Mono">label</text>
-  <line x1="180" y1="207" x2="280" y2="207" stroke="#26A69A" stroke-width="2.2" stroke-dasharray="4,3"/>
+  <rect x="30" y="190" width="150" height="34" rx="6" fill="#fff" stroke="#00838F" stroke-width="2"/>
+  <text x="105" y="212" text-anchor="middle" font-size="12" font-weight="700" fill="#00838F" font-family="JetBrains Mono">label</text>
+  <line x1="180" y1="207" x2="280" y2="207" stroke="#00838F" stroke-width="2.2" stroke-dasharray="4,3"/>
 
   <!-- !== Compare block -->
-  <rect x="285" y="155" width="140" height="60" rx="8" fill="#FFEBEE" stroke="#C62828" stroke-width="2.2"/>
-  <text x="355" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#C62828" font-family="JetBrains Mono">!==</text>
+  <rect x="285" y="155" width="140" height="60" rx="8" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2.2"/>
+  <text x="355" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#D32F2F" font-family="JetBrains Mono">!==</text>
   <text x="355" y="200" text-anchor="middle" font-size="10" fill="#333">case-inequality</text>
   <text x="355" y="212" text-anchor="middle" font-size="9" fill="#888" font-style="italic">X-safe compare</text>
 
   <!-- mismatch / match branches -->
-  <line x1="425" y1="175" x2="500" y2="120" stroke="#FF5252" stroke-width="2.2" marker-end="url(#arrCt)"/>
-  <text x="445" y="135" font-size="10" font-weight="700" fill="#FF5252">mismatch</text>
+  <line x1="425" y1="175" x2="500" y2="120" stroke="#D32F2F" stroke-width="2.2" marker-end="url(#arrCt)"/>
+  <text x="445" y="135" font-size="10" font-weight="700" fill="#D32F2F">mismatch</text>
 
-  <line x1="425" y1="195" x2="500" y2="250" stroke="#43A047" stroke-width="2.2" marker-end="url(#arrA)"/>
-  <text x="448" y="245" font-size="10" font-weight="700" fill="#43A047">match</text>
+  <line x1="425" y1="195" x2="500" y2="250" stroke="#2E7D32" stroke-width="2.2" marker-end="url(#arrA)"/>
+  <text x="448" y="245" font-size="10" font-weight="700" fill="#2E7D32">match</text>
 
   <!-- tests_failed counter (top right) -->
-  <rect x="505" y="95" width="170" height="60" rx="8" fill="#fff" stroke="#FF5252" stroke-width="2.2"/>
-  <text x="590" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#FF5252" font-family="JetBrains Mono">tests_failed</text>
+  <rect x="505" y="95" width="170" height="60" rx="8" fill="#fff" stroke="#D32F2F" stroke-width="2.2"/>
+  <text x="590" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#D32F2F" font-family="JetBrains Mono">tests_failed</text>
   <text x="590" y="133" text-anchor="middle" font-size="10" fill="#333">+= 1 (on FAIL)</text>
   <text x="590" y="148" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#888">$display "FAIL: …"</text>
 
   <!-- tests_run counter (always increments) -->
-  <rect x="505" y="170" width="170" height="48" rx="8" fill="#fff" stroke="#7E57C2" stroke-width="2.2"/>
-  <text x="590" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#7E57C2" font-family="JetBrains Mono">tests_run</text>
+  <rect x="505" y="170" width="170" height="48" rx="8" fill="#fff" stroke="#7B1FA2" stroke-width="2.2"/>
+  <text x="590" y="190" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2" font-family="JetBrains Mono">tests_run</text>
   <text x="590" y="208" text-anchor="middle" font-size="10" fill="#333">+= 1 (always)</text>
-  <line x1="355" y1="215" x2="355" y2="245" stroke="#7E57C2" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <line x1="355" y1="245" x2="505" y2="245" stroke="#7E57C2" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <line x1="505" y1="245" x2="505" y2="200" stroke="#7E57C2" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrK)"/>
+  <line x1="355" y1="215" x2="355" y2="245" stroke="#7B1FA2" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="355" y1="245" x2="505" y2="245" stroke="#7B1FA2" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="505" y1="245" x2="505" y2="200" stroke="#7B1FA2" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arrK)"/>
 
   <!-- PASS display (bottom right) -->
-  <rect x="505" y="240" width="170" height="50" rx="8" fill="#E8F5E9" stroke="#43A047" stroke-width="2.2"/>
-  <text x="590" y="261" text-anchor="middle" font-size="11" font-weight="700" fill="#43A047" font-family="JetBrains Mono">PASS branch</text>
+  <rect x="505" y="240" width="170" height="50" rx="8" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2.2"/>
+  <text x="590" y="261" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32" font-family="JetBrains Mono">PASS branch</text>
   <text x="590" y="278" text-anchor="middle" font-size="9" font-family="JetBrains Mono" fill="#888">$display "PASS: …"</text>
 
   <!-- Summary line at the bottom -->
-  <rect x="40" y="305" width="680" height="50" rx="6" fill="#fff" stroke="#FFC107" stroke-width="2"/>
+  <rect x="40" y="305" width="680" height="50" rx="6" fill="#fff" stroke="#9A6F00" stroke-width="2"/>
   <text x="50" y="324" font-size="11" font-weight="700" fill="#333">End-of-test summary (after the </text>
   <text x="240" y="324" font-size="11" font-weight="700" fill="#333" font-family="JetBrains Mono">initial</text>
   <text x="290" y="324" font-size="11" font-weight="700" fill="#333"> block):</text>
   <text x="50" y="345" font-size="11" font-family="JetBrains Mono" fill="#333">
     <tspan fill="#888">$display("=== %0d passed, %0d failed ===", </tspan>
-    <tspan fill="#7E57C2" font-weight="700">tests_run</tspan>
+    <tspan fill="#7B1FA2" font-weight="700">tests_run</tspan>
     <tspan fill="#888"> - </tspan>
-    <tspan fill="#FF5252" font-weight="700">tests_failed</tspan>
+    <tspan fill="#D32F2F" font-weight="700">tests_failed</tspan>
     <tspan fill="#888">, </tspan>
-    <tspan fill="#FF5252" font-weight="700">tests_failed</tspan>
+    <tspan fill="#D32F2F" font-weight="700">tests_failed</tspan>
     <tspan fill="#888">);</tspan>
   </text>
 

@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 240" font-family="Inter, sans-serif">
   <defs>
-    <marker id="rPnk" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C2185B"/></marker>
-    <marker id="rPur" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
-    <marker id="rBrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#5D4037"/></marker>
+    <marker id="rPnk" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+    <marker id="rPur" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="rBrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
     <marker id="rGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
   </defs>
 
   <text x="470" y="20" text-anchor="middle" font-size="15" font-weight="700" fill="#333">N-Bit Ripple Adder — generate for Replicates the Full-Adder Cell</text>
 
   <!-- carry-in -->
-  <text x="14" y="120" font-size="12" fill="#C2185B" font-weight="700">cin</text>
-  <line x1="42" y1="116" x2="80" y2="116" stroke="#C2185B" stroke-width="2.2" marker-end="url(#rPnk)"/>
-  <text x="48" y="108" font-size="9" fill="#C2185B" font-style="italic">= carry[0]</text>
+  <text x="14" y="120" font-size="12" fill="#00838F" font-weight="700">cin</text>
+  <line x1="42" y1="116" x2="80" y2="116" stroke="#00838F" stroke-width="2.2" marker-end="url(#rPnk)"/>
+  <text x="48" y="108" font-size="9" fill="#00838F" font-style="italic">= carry[0]</text>
 
   <!-- FA[0] -->
   <rect x="80" y="80" width="120" height="80" rx="6" fill="#FFF" stroke="#1565C0" stroke-width="2"/>
   <text x="140" y="105" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">full_adder</text>
   <text x="140" y="122" text-anchor="middle" font-size="10" fill="#666">g_fa[0].u_fa</text>
-  <text x="93" y="142" font-size="9" fill="#7B1FA2" font-weight="700">a[0]</text>
-  <text x="93" y="155" font-size="9" fill="#5D4037" font-weight="700">b[0]</text>
+  <text x="93" y="142" font-size="9" fill="#F57C00" font-weight="700">a[0]</text>
+  <text x="93" y="155" font-size="9" fill="#F57C00" font-weight="700">b[0]</text>
 
   <!-- a/b for FA[0] (from top) -->
-  <line x1="115" y1="48" x2="115" y2="80" stroke="#7B1FA2" stroke-width="1.8" marker-end="url(#rPur)"/>
-  <text x="113" y="42" text-anchor="end" font-size="10" fill="#7B1FA2" font-weight="700">a[0]</text>
-  <line x1="140" y1="56" x2="140" y2="80" stroke="#5D4037" stroke-width="1.8" marker-end="url(#rBrn)"/>
-  <text x="142" y="50" font-size="10" fill="#5D4037" font-weight="700">b[0]</text>
+  <line x1="115" y1="48" x2="115" y2="80" stroke="#F57C00" stroke-width="1.8" marker-end="url(#rPur)"/>
+  <text x="113" y="42" text-anchor="end" font-size="10" fill="#F57C00" font-weight="700">a[0]</text>
+  <line x1="140" y1="56" x2="140" y2="80" stroke="#F57C00" stroke-width="1.8" marker-end="url(#rBrn)"/>
+  <text x="142" y="50" font-size="10" fill="#F57C00" font-weight="700">b[0]</text>
 
   <!-- sum[0] -->
   <line x1="170" y1="80" x2="170" y2="46" stroke="#2E7D32" stroke-width="2" marker-end="url(#rGrn)"/>
   <text x="170" y="40" text-anchor="middle" font-size="11" fill="#2E7D32" font-weight="700">sum[0]</text>
 
   <!-- carry[1] -->
-  <line x1="200" y1="116" x2="270" y2="116" stroke="#C2185B" stroke-width="2.2" marker-end="url(#rPnk)"/>
-  <text x="235" y="108" text-anchor="middle" font-size="10" fill="#C2185B" font-weight="700">carry[1]</text>
+  <line x1="200" y1="116" x2="270" y2="116" stroke="#00838F" stroke-width="2.2" marker-end="url(#rPnk)"/>
+  <text x="235" y="108" text-anchor="middle" font-size="10" fill="#00838F" font-weight="700">carry[1]</text>
 
   <!-- FA[1] -->
   <rect x="270" y="80" width="120" height="80" rx="6" fill="#FFF" stroke="#1565C0" stroke-width="2"/>
   <text x="330" y="105" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">full_adder</text>
   <text x="330" y="122" text-anchor="middle" font-size="10" fill="#666">g_fa[1].u_fa</text>
-  <text x="283" y="142" font-size="9" fill="#7B1FA2" font-weight="700">a[1]</text>
-  <text x="283" y="155" font-size="9" fill="#5D4037" font-weight="700">b[1]</text>
+  <text x="283" y="142" font-size="9" fill="#F57C00" font-weight="700">a[1]</text>
+  <text x="283" y="155" font-size="9" fill="#F57C00" font-weight="700">b[1]</text>
 
-  <line x1="305" y1="48" x2="305" y2="80" stroke="#7B1FA2" stroke-width="1.8" marker-end="url(#rPur)"/>
-  <text x="303" y="42" text-anchor="end" font-size="10" fill="#7B1FA2" font-weight="700">a[1]</text>
-  <line x1="330" y1="56" x2="330" y2="80" stroke="#5D4037" stroke-width="1.8" marker-end="url(#rBrn)"/>
-  <text x="332" y="50" font-size="10" fill="#5D4037" font-weight="700">b[1]</text>
+  <line x1="305" y1="48" x2="305" y2="80" stroke="#F57C00" stroke-width="1.8" marker-end="url(#rPur)"/>
+  <text x="303" y="42" text-anchor="end" font-size="10" fill="#F57C00" font-weight="700">a[1]</text>
+  <line x1="330" y1="56" x2="330" y2="80" stroke="#F57C00" stroke-width="1.8" marker-end="url(#rBrn)"/>
+  <text x="332" y="50" font-size="10" fill="#F57C00" font-weight="700">b[1]</text>
 
   <line x1="360" y1="80" x2="360" y2="46" stroke="#2E7D32" stroke-width="2" marker-end="url(#rGrn)"/>
   <text x="360" y="40" text-anchor="middle" font-size="11" fill="#2E7D32" font-weight="700">sum[1]</text>
 
   <!-- carry[2] -->
-  <line x1="390" y1="116" x2="460" y2="116" stroke="#C2185B" stroke-width="2.2" marker-end="url(#rPnk)"/>
-  <text x="425" y="108" text-anchor="middle" font-size="10" fill="#C2185B" font-weight="700">carry[2]</text>
+  <line x1="390" y1="116" x2="460" y2="116" stroke="#00838F" stroke-width="2.2" marker-end="url(#rPnk)"/>
+  <text x="425" y="108" text-anchor="middle" font-size="10" fill="#00838F" font-weight="700">carry[2]</text>
 
   <!-- ellipsis -->
   <text x="490" y="122" font-size="24" fill="#999">···</text>
-  <line x1="540" y1="116" x2="610" y2="116" stroke="#C2185B" stroke-width="2.2" marker-end="url(#rPnk)"/>
-  <text x="575" y="108" text-anchor="middle" font-size="10" fill="#C2185B" font-weight="700">carry[N-1]</text>
+  <line x1="540" y1="116" x2="610" y2="116" stroke="#00838F" stroke-width="2.2" marker-end="url(#rPnk)"/>
+  <text x="575" y="108" text-anchor="middle" font-size="10" fill="#00838F" font-weight="700">carry[N-1]</text>
 
   <!-- FA[N-1] -->
   <rect x="610" y="80" width="140" height="80" rx="6" fill="#FFF" stroke="#1565C0" stroke-width="2"/>
   <text x="680" y="105" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">full_adder</text>
   <text x="680" y="122" text-anchor="middle" font-size="10" fill="#666">g_fa[N-1].u_fa</text>
-  <text x="623" y="142" font-size="9" fill="#7B1FA2" font-weight="700">a[N-1]</text>
-  <text x="623" y="155" font-size="9" fill="#5D4037" font-weight="700">b[N-1]</text>
+  <text x="623" y="142" font-size="9" fill="#F57C00" font-weight="700">a[N-1]</text>
+  <text x="623" y="155" font-size="9" fill="#F57C00" font-weight="700">b[N-1]</text>
 
-  <line x1="655" y1="48" x2="655" y2="80" stroke="#7B1FA2" stroke-width="1.8" marker-end="url(#rPur)"/>
-  <text x="653" y="42" text-anchor="end" font-size="10" fill="#7B1FA2" font-weight="700">a[N-1]</text>
-  <line x1="685" y1="56" x2="685" y2="80" stroke="#5D4037" stroke-width="1.8" marker-end="url(#rBrn)"/>
-  <text x="687" y="50" font-size="10" fill="#5D4037" font-weight="700">b[N-1]</text>
+  <line x1="655" y1="48" x2="655" y2="80" stroke="#F57C00" stroke-width="1.8" marker-end="url(#rPur)"/>
+  <text x="653" y="42" text-anchor="end" font-size="10" fill="#F57C00" font-weight="700">a[N-1]</text>
+  <line x1="685" y1="56" x2="685" y2="80" stroke="#F57C00" stroke-width="1.8" marker-end="url(#rBrn)"/>
+  <text x="687" y="50" font-size="10" fill="#F57C00" font-weight="700">b[N-1]</text>
 
   <line x1="715" y1="80" x2="715" y2="46" stroke="#2E7D32" stroke-width="2" marker-end="url(#rGrn)"/>
   <text x="715" y="40" text-anchor="middle" font-size="11" fill="#2E7D32" font-weight="700">sum[N-1]</text>
 
   <!-- carry-out -->
-  <line x1="750" y1="116" x2="820" y2="116" stroke="#C2185B" stroke-width="2.2" marker-end="url(#rPnk)"/>
-  <text x="830" y="120" font-size="12" fill="#C2185B" font-weight="700">cout</text>
-  <text x="785" y="108" text-anchor="middle" font-size="9" fill="#C2185B" font-style="italic">= carry[N]</text>
+  <line x1="750" y1="116" x2="820" y2="116" stroke="#00838F" stroke-width="2.2" marker-end="url(#rPnk)"/>
+  <text x="830" y="120" font-size="12" fill="#00838F" font-weight="700">cout</text>
+  <text x="785" y="108" text-anchor="middle" font-size="9" fill="#00838F" font-style="italic">= carry[N]</text>
 
   <!-- generate scope -->
   <rect x="70" y="68" width="690" height="110" rx="8" fill="none" stroke="#B8860B" stroke-width="1.6" stroke-dasharray="5,4"/>

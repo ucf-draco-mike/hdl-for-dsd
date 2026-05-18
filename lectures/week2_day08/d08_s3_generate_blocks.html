@@ -63,7 +63,7 @@
 ) (
     input  wire         <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
     input  wire [<span style="color:#FFD54F;font-weight:700;">N</span>-1:0] <span style="color:#FFB74D;font-weight:700;">i_buttons</span>,
-    output wire [<span style="color:#FFD54F;font-weight:700;">N</span>-1:0] <span style="color:#66BB6A;font-weight:700;">o_clean</span>
+    output wire [<span style="color:#FFD54F;font-weight:700;">N</span>-1:0] <span style="color:#81C784;font-weight:700;">o_clean</span>
 );
     genvar <span style="color:#FFD54F;font-weight:700;">gi</span>;        // compile-time index
     generate
@@ -73,7 +73,7 @@
                 .<span style="color:#4FC3F7;font-weight:700;">i_clk</span>   (<span style="color:#4FC3F7;font-weight:700;">i_clk</span>),
                 .<span style="color:#EF5350;font-weight:700;">i_reset</span> (<span style="color:#EF5350;font-weight:700;">i_reset</span>),
                 .<span style="color:#FFB74D;font-weight:700;">i_noisy</span> (<span style="color:#FFB74D;font-weight:700;">i_buttons</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]),
-                .<span style="color:#66BB6A;font-weight:700;">o_clean</span> (<span style="color:#66BB6A;font-weight:700;">o_clean</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>])
+                .<span style="color:#81C784;font-weight:700;">o_clean</span> (<span style="color:#81C784;font-weight:700;">o_clean</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>])
             );
         end
     endgenerate
@@ -81,7 +81,7 @@ endmodule</code></pre>
         <img src="diagrams/d08_button_array_rtl.svg" alt="RTL block diagram of button_array shown at N=4. A gold dashed generate-scope box labeled g_btn wraps four debounce instances g_btn[0..3].u_deb. The i_buttons[N-1:0] bus (orange) fans out one bit per instance; outputs collect back into o_clean[N-1:0] (green). i_clk (blue) and i_reset (red) form shared buses across all instances. Source file size is constant — silicon scales with N." style="width:100%;max-width:600px;display:block;">
     </div>
     <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
-        <strong>Three idioms:</strong> (1) <code><span style="color:#B8860B;">genvar gi</span></code> = compile-time loop index. (2) <code>begin : <span style="color:#B8860B;">g_btn</span></code> names the generate scope — shows up in waveforms as <code>dut.<span style="color:#B8860B;">g_btn</span>[0].<span style="color:#9C27B0;">u_deb</span></code>. (3) Inner code reads as one instantiation; elaborator produces <span style="color:#B8860B;">N</span> physical copies.
+        <strong>Three idioms:</strong> (1) <code><span style="color:#B8860B;">genvar gi</span></code> = compile-time loop index. (2) <code>begin : <span style="color:#B8860B;">g_btn</span></code> names the generate scope — shows up in waveforms as <code>dut.<span style="color:#B8860B;">g_btn</span>[0].<span style="color:#7B1FA2;">u_deb</span></code>. (3) Inner code reads as one instantiation; elaborator produces <span style="color:#B8860B;">N</span> physical copies.
     </div>
     <aside class="notes">Standard pattern for &ldquo;array of this thing.&rdquo; Named scope is mandatory and shows up in waveforms — very important for debug navigation. The orange-fanout and green-collect in the diagram are exactly what the [gi] subscript means in the code.</aside>
 </section>
@@ -93,18 +93,18 @@ endmodule</code></pre>
     parameter <span style="color:#FFD54F;font-weight:700;">USE_SYNCHRONIZER</span> = 1
 ) (
     input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#FFB74D;font-weight:700;">i_in</span>,
-    output wire <span style="color:#66BB6A;font-weight:700;">o_out</span>
+    output wire <span style="color:#81C784;font-weight:700;">o_out</span>
 );
     generate
     if (<span style="color:#FFD54F;font-weight:700;">USE_SYNCHRONIZER</span>) begin : <span style="color:#FFD54F;font-weight:700;">g_sync</span>
-        reg <span style="color:#BA68C8;font-weight:700;">r_meta</span>, <span style="color:#BA68C8;font-weight:700;">r_stable</span>;
+        reg <span style="color:#CE93D8;font-weight:700;">r_meta</span>, <span style="color:#CE93D8;font-weight:700;">r_stable</span>;
         always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
-            <span style="color:#BA68C8;font-weight:700;">r_meta</span>   &lt;= <span style="color:#FFB74D;font-weight:700;">i_in</span>;
-            <span style="color:#BA68C8;font-weight:700;">r_stable</span> &lt;= <span style="color:#BA68C8;font-weight:700;">r_meta</span>;
+            <span style="color:#CE93D8;font-weight:700;">r_meta</span>   &lt;= <span style="color:#FFB74D;font-weight:700;">i_in</span>;
+            <span style="color:#CE93D8;font-weight:700;">r_stable</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_meta</span>;
         end
-        assign <span style="color:#66BB6A;font-weight:700;">o_out</span> = <span style="color:#BA68C8;font-weight:700;">r_stable</span>;
+        assign <span style="color:#81C784;font-weight:700;">o_out</span> = <span style="color:#CE93D8;font-weight:700;">r_stable</span>;
     end else begin : <span style="color:#FFD54F;font-weight:700;">g_nosync</span>
-        assign <span style="color:#66BB6A;font-weight:700;">o_out</span> = <span style="color:#FFB74D;font-weight:700;">i_in</span>;   // direct
+        assign <span style="color:#81C784;font-weight:700;">o_out</span> = <span style="color:#FFB74D;font-weight:700;">i_in</span>;   // direct
     end
     endgenerate
 endmodule</code></pre>
@@ -118,20 +118,20 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Generate an N-Bit Ripple Adder</h2>
-    <p style="font-size:0.66em;margin:0;">Build an N-bit ripple-carry adder from N full-adder instances. Each <code>full_adder</code> has inputs <code><span style="color:#9C27B0;">a</span></code>, <code><span style="color:#795548;">b</span></code>, <code><span style="color:#C2185B;">cin</span></code> and outputs <code><span style="color:#2E7D32;">sum</span></code>, <code><span style="color:#C2185B;">cout</span></code>. The carry chains from bit <em>i</em> to bit <em>i+1</em>.</p>
+    <p style="font-size:0.66em;margin:0;">Build an N-bit ripple-carry adder from N full-adder instances. Each <code>full_adder</code> has inputs <code><span style="color:#F57C00;">a</span></code>, <code><span style="color:#F57C00;">b</span></code>, <code><span style="color:#00838F;">cin</span></code> and outputs <code><span style="color:#2E7D32;">sum</span></code>, <code><span style="color:#00838F;">cout</span></code>. The carry chains from bit <em>i</em> to bit <em>i+1</em>.</p>
     <img src="diagrams/d08_ripple_adder_rtl.svg" alt="RTL block diagram of an N-bit ripple-carry adder. Three full_adder instances g_fa[0].u_fa, g_fa[1].u_fa, and g_fa[N-1].u_fa (with ellipsis between) sit inside a gold dashed generate-scope box. The carry chain (pink) flows left-to-right: cin → carry[1] → carry[2] → … → carry[N-1] → cout. Each cell takes a[i] (purple) and b[i] (brown) inputs from above and emits sum[i] (green) upward." style="width:100%;max-width:880px;display:block;margin:0.2em auto;">
     <div class="fragment callout" style="font-size:0.55em;margin-top:0.1em;">
         <strong>Sketch:</strong>
-        <pre style="font-size:0.95em;margin:0.2em 0 0 0;"><code class="nohighlight" style="color:#D4D4D4;">wire [<span style="color:#FFD54F;font-weight:700;">N</span>:0] <span style="color:#F48FB1;font-weight:700;">carry</span>;
-assign <span style="color:#F48FB1;font-weight:700;">carry</span>[0] = <span style="color:#F48FB1;font-weight:700;">cin</span>;
+        <pre style="font-size:0.95em;margin:0.2em 0 0 0;"><code class="nohighlight" style="color:#D4D4D4;">wire [<span style="color:#FFD54F;font-weight:700;">N</span>:0] <span style="color:#4DD0E1;font-weight:700;">carry</span>;
+assign <span style="color:#4DD0E1;font-weight:700;">carry</span>[0] = <span style="color:#4DD0E1;font-weight:700;">cin</span>;
 genvar <span style="color:#FFD54F;font-weight:700;">gi</span>;
 generate for (<span style="color:#FFD54F;font-weight:700;">gi</span> = 0; <span style="color:#FFD54F;font-weight:700;">gi</span> &lt; <span style="color:#FFD54F;font-weight:700;">N</span>; <span style="color:#FFD54F;font-weight:700;">gi</span> = <span style="color:#FFD54F;font-weight:700;">gi</span> + 1) begin : <span style="color:#FFD54F;font-weight:700;">g_fa</span>
     full_adder <span style="color:#CE93D8;font-weight:700;">u_fa</span> (
-        .a(<span style="color:#9575CD;font-weight:700;">a</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .b(<span style="color:#A1887F;font-weight:700;">b</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .cin(<span style="color:#F48FB1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]),
-        .sum(<span style="color:#66BB6A;font-weight:700;">sum</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .cout(<span style="color:#F48FB1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>+1])
+        .a(<span style="color:#FFB74D;font-weight:700;">a</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .b(<span style="color:#FFB74D;font-weight:700;">b</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .cin(<span style="color:#4DD0E1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]),
+        .sum(<span style="color:#81C784;font-weight:700;">sum</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .cout(<span style="color:#4DD0E1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>+1])
     );
 end endgenerate
-assign <span style="color:#F48FB1;font-weight:700;">cout</span> = <span style="color:#F48FB1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">N</span>];</code></pre>
+assign <span style="color:#4DD0E1;font-weight:700;">cout</span> = <span style="color:#4DD0E1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">N</span>];</code></pre>
         The carry wire of width <span style="color:#B8860B;">N+1</span> chains the full-adders — element <code>gi+1</code> reads what element <code>gi</code> wrote. Classic bit-serial pattern.
     </div>
     <aside class="notes">Ripple carry adder is the canonical generate-for example. Notice the carry chain wire has width N+1 to accommodate the final cout. It's easy to get the carry wire width wrong by one. Pink in the diagram is the carry chain; green flows up as sum; purple and brown drop in as a and b operands.</aside>

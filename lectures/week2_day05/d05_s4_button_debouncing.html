@@ -58,25 +58,25 @@
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; The Counter-Based Debouncer</h2>
     <pre class="synth" style="font-size:0.68em;"><code class="language-verilog" data-noescape>module debounce #(parameter CLKS_STABLE = 500_000) (  // 20ms @ 25MHz
-    input  wire <span style="color:#1E88E5;font-weight:700">i_clk</span>, <span style="color:#E53935;font-weight:700">i_reset</span>, <span style="color:#00897B;font-weight:700">i_noisy</span>,
-    output reg  <span style="color:#43A047;font-weight:700">o_clean</span>
+    input  wire <span style="color:#4FC3F7;font-weight:700">i_clk</span>, <span style="color:#EF5350;font-weight:700">i_reset</span>, <span style="color:#FFB74D;font-weight:700">i_noisy</span>,
+    output reg  <span style="color:#81C784;font-weight:700">o_clean</span>
 );
-    reg [$clog2(CLKS_STABLE)-1:0] <span style="color:#FB8C00;font-weight:700">r_count</span>;
+    reg [$clog2(CLKS_STABLE)-1:0] <span style="color:#CE93D8;font-weight:700">r_count</span>;
 
-    always @(posedge <span style="color:#1E88E5;font-weight:700">i_clk</span>) begin
-        if (<span style="color:#E53935;font-weight:700">i_reset</span>) begin
-            <span style="color:#FB8C00;font-weight:700">r_count</span> &lt;= 0;
-            <span style="color:#43A047;font-weight:700">o_clean</span> &lt;= 1'b0;
-        end else if (<span style="color:#00897B;font-weight:700">i_noisy</span> != <span style="color:#43A047;font-weight:700">o_clean</span>) begin
+    always @(posedge <span style="color:#4FC3F7;font-weight:700">i_clk</span>) begin
+        if (<span style="color:#EF5350;font-weight:700">i_reset</span>) begin
+            <span style="color:#CE93D8;font-weight:700">r_count</span> &lt;= 0;
+            <span style="color:#81C784;font-weight:700">o_clean</span> &lt;= 1'b0;
+        end else if (<span style="color:#FFB74D;font-weight:700">i_noisy</span> != <span style="color:#81C784;font-weight:700">o_clean</span>) begin
             // input differs from stable output — start/continue counting
-            if (<span style="color:#FB8C00;font-weight:700">r_count</span> == CLKS_STABLE - 1) begin
-                <span style="color:#43A047;font-weight:700">o_clean</span> &lt;= <span style="color:#00897B;font-weight:700">i_noisy</span>;        // persisted long enough, accept
-                <span style="color:#FB8C00;font-weight:700">r_count</span> &lt;= 0;
+            if (<span style="color:#CE93D8;font-weight:700">r_count</span> == CLKS_STABLE - 1) begin
+                <span style="color:#81C784;font-weight:700">o_clean</span> &lt;= <span style="color:#FFB74D;font-weight:700">i_noisy</span>;        // persisted long enough, accept
+                <span style="color:#CE93D8;font-weight:700">r_count</span> &lt;= 0;
             end else begin
-                <span style="color:#FB8C00;font-weight:700">r_count</span> &lt;= <span style="color:#FB8C00;font-weight:700">r_count</span> + 1'b1;
+                <span style="color:#CE93D8;font-weight:700">r_count</span> &lt;= <span style="color:#CE93D8;font-weight:700">r_count</span> + 1'b1;
             end
         end else begin
-            <span style="color:#FB8C00;font-weight:700">r_count</span> &lt;= 0;                   // bounced back — reset counter
+            <span style="color:#CE93D8;font-weight:700">r_count</span> &lt;= 0;                   // bounced back — reset counter
         end
     end
 endmodule</code></pre>
@@ -128,18 +128,18 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; The Complete Input Pipeline</h2>
-    <pre class="synth"><code class="language-verilog" data-noescape>//  <span style="color:#00897B;font-weight:700">i_btn</span>  →  [2-FF sync]  →  [debouncer]  →  [edge detect]  →  <span style="color:#43A047;font-weight:700">pressed_pulse</span>
+    <pre class="synth"><code class="language-verilog" data-noescape>//  <span style="color:#FFB74D;font-weight:700">i_btn</span>  →  [2-FF sync]  →  [debouncer]  →  [edge detect]  →  <span style="color:#81C784;font-weight:700">pressed_pulse</span>
 //  (raw)      (metastable      (filter         (1-cycle
 //              safety)          bounces)        pulse per press)
 
-wire <span style="color:#FB8C00;font-weight:700">w_synced</span>, <span style="color:#D81B60;font-weight:700">w_clean</span>;
-reg  <span style="color:#FB8C00;font-weight:700">r_clean_d1</span>;
+wire <span style="color:#4DD0E1;font-weight:700">w_synced</span>, <span style="color:#4DD0E1;font-weight:700">w_clean</span>;
+reg  <span style="color:#CE93D8;font-weight:700">r_clean_d1</span>;
 
-synchronizer u_sync (.i_clk(<span style="color:#1E88E5;font-weight:700">clk</span>), .i_async_in(<span style="color:#00897B;font-weight:700">i_btn</span>),    .o_sync_out(<span style="color:#FB8C00;font-weight:700">w_synced</span>));
-debounce     u_deb  (.i_clk(<span style="color:#1E88E5;font-weight:700">clk</span>), .i_reset(<span style="color:#E53935;font-weight:700">rst</span>), .i_noisy(<span style="color:#FB8C00;font-weight:700">w_synced</span>), .o_clean(<span style="color:#D81B60;font-weight:700">w_clean</span>));
+synchronizer u_sync (.i_clk(<span style="color:#4FC3F7;font-weight:700">clk</span>), .i_async_in(<span style="color:#FFB74D;font-weight:700">i_btn</span>),    .o_sync_out(<span style="color:#4DD0E1;font-weight:700">w_synced</span>));
+debounce     u_deb  (.i_clk(<span style="color:#4FC3F7;font-weight:700">clk</span>), .i_reset(<span style="color:#EF5350;font-weight:700">rst</span>), .i_noisy(<span style="color:#4DD0E1;font-weight:700">w_synced</span>), .o_clean(<span style="color:#4DD0E1;font-weight:700">w_clean</span>));
 
-always @(posedge <span style="color:#1E88E5;font-weight:700">clk</span>) <span style="color:#FB8C00;font-weight:700">r_clean_d1</span> &lt;= <span style="color:#D81B60;font-weight:700">w_clean</span>;
-wire <span style="color:#43A047;font-weight:700">pressed_pulse</span> = <span style="color:#D81B60;font-weight:700">w_clean</span> &amp; ~<span style="color:#FB8C00;font-weight:700">r_clean_d1</span>;  // rising-edge detect</code></pre>
+always @(posedge <span style="color:#4FC3F7;font-weight:700">clk</span>) <span style="color:#CE93D8;font-weight:700">r_clean_d1</span> &lt;= <span style="color:#4DD0E1;font-weight:700">w_clean</span>;
+wire <span style="color:#81C784;font-weight:700">pressed_pulse</span> = <span style="color:#4DD0E1;font-weight:700">w_clean</span> &amp; ~<span style="color:#CE93D8;font-weight:700">r_clean_d1</span>;  // rising-edge detect</code></pre>
     <div class="fragment callout" style="font-size:0.7em;">
         <strong>The three-stage pipeline:</strong> (1) synchronizer — metastability safety, (2) debouncer — bounce filter, (3) edge detector — one-cycle pulse. Any external button signal needs all three stages. Build it as a reusable module and instantiate it.
     </div>
