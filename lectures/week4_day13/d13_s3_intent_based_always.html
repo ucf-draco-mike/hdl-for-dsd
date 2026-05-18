@@ -75,23 +75,30 @@
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>always_comb</code></h2>
-    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// SV: declared combinational. Compiler checks.
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.62em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// SV: declared combinational. Compiler checks.
 always_comb begin
-    // Defaults at top (SV enforces full assignment — missing one is a warning)
-    o_green = 1'b0; o_yellow = 1'b0; o_red = 1'b0;
+    // Defaults at top (SV enforces full assignment)
+    <span style="color:#81C784;font-weight:700;">o_green</span> = 1'b0; <span style="color:#81C784;font-weight:700;">o_yellow</span> = 1'b0; <span style="color:#81C784;font-weight:700;">o_red</span> = 1'b0;
 
-    case (r_state)
-        S_GREEN:  o_green  = 1'b1;
-        S_YELLOW: o_yellow = 1'b1;
-        S_RED:    o_red    = 1'b1;
+    case (<span style="color:#CE93D8;font-weight:700;">r_state</span>)
+        S_GREEN:  <span style="color:#81C784;font-weight:700;">o_green</span>  = 1'b1;
+        S_YELLOW: <span style="color:#81C784;font-weight:700;">o_yellow</span> = 1'b1;
+        S_RED:    <span style="color:#81C784;font-weight:700;">o_red</span>    = 1'b1;
         default: ;  // required
     endcase
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d13_s3_always_comb_traffic_rtl.svg" alt="RTL diagram of the combinational state decoder: r_state (purple) drives a 3-output decoder; o_green, o_yellow, o_red (all green) emerge as the three combinational outputs. A green banner notes always_comb enforces full assignment on every path — no inferred latches." style="width:100%;max-width:420px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.2em;">
         <strong>Together:</strong> <code>always_comb</code> adds two superpowers over <code>always @(*)</code>:
         <ol style="font-size:0.95em;">
             <li><strong>Auto-sensitivity</strong>: the block wakes on <em>any</em> signal read inside, no stale list to maintain.</li>
-            <li><strong>Latch prevention</strong>: the compiler warns if any path through the block fails to assign every output — even subtle ones you'd miss in a code review.</li>
+            <li><strong>Latch prevention</strong>: the compiler warns if any path through the block fails to assign every output.</li>
         </ol>
     </div>
     <aside class="notes">always_comb is strictly better than always @(*). Auto-sensitivity + latch prevention. No downsides. Drop-in replacement.</aside>
@@ -99,12 +106,19 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>always_ff</code></h2>
-    <pre class="synth" style="font-size:0.7em;"><code class="language-verilog">// SV: declared flip-flop. One clock. No combinational paths.
-always_ff @(posedge i_clk) begin
-    if (i_reset) r_state &lt;= S_INIT;
-    else         r_state &lt;= r_next_state;
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.66em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// SV: declared flip-flop. One clock.
+always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+    if (<span style="color:#EF5350;font-weight:700;">i_reset</span>) <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_INIT;
+    else         <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">r_next_state</span>;
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d13_s3_always_ff_state_rtl.svg" alt="RTL diagram of always_ff: i_clk (blue) is the single clock; i_reset (red) selects S_INIT via a mux; r_next_state (teal) is the data path; r_state (purple) is a D-flip-flop output. The always_ff keyword enforces single-clock semantics — multi-clock sensitivity lists are forbidden at elaboration." style="width:100%;max-width:420px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.2em;">
         <strong>Together:</strong> <code>always_ff</code> forbids:
         <ul style="font-size:0.95em;">
             <li>Multiple clock edges in one block (no <code>@(posedge clk1 or posedge clk2)</code> — common CDC bug)</li>
@@ -118,57 +132,73 @@ end</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Modernize an FSM</h2>
-    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">// Verilog-2001
-always @(posedge clk or posedge rst)
-    if (rst) state &lt;= IDLE;
-    else     state &lt;= next_state;
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="mistake" style="font-size:0.58em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Verilog-2001 — has a latent latch
+always @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span> or posedge <span style="color:#EF5350;font-weight:700;">rst</span>)
+    if (<span style="color:#EF5350;font-weight:700;">rst</span>) <span style="color:#CE93D8;font-weight:700;">state</span> &lt;= IDLE;
+    else     <span style="color:#CE93D8;font-weight:700;">state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">next_state</span>;
 
 always @(*) begin
-    case (state)
-        IDLE:    if (go) next_state = BUSY;
-        BUSY:    if (done) next_state = IDLE;
-        default: next_state = IDLE;
+    case (<span style="color:#CE93D8;font-weight:700;">state</span>)
+        IDLE:    if (<span style="color:#FFB74D;font-weight:700;">go</span>)   <span style="color:#4DD0E1;font-weight:700;">next_state</span> = BUSY;
+        BUSY:    if (<span style="color:#FFB74D;font-weight:700;">done</span>) <span style="color:#4DD0E1;font-weight:700;">next_state</span> = IDLE;
+        default: <span style="color:#4DD0E1;font-weight:700;">next_state</span> = IDLE;
     endcase
 end</code></pre>
-    <p style="font-size:0.78em;">Rewrite in SV. Note the bug the SV version exposes.</p>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <pre style="font-size:0.88em;"><code class="language-verilog">always_ff @(posedge clk) begin            // synchronous reset (see below)
-    if (rst) state &lt;= IDLE;
-    else     state &lt;= next_state;
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d13_s3_fsm_v2001_latch_rtl.svg" alt="RTL diagram of the Verilog-2001 FSM showing a latent latch: clk (blue), rst (red), go and done (orange) feed a next-state combinational block that — because the case has no default for the no-match path — silently infers a D-latch on next_state (teal). A red warning callout explains that always @(*) accepts this silently while always_comb would catch it." style="width:100%;max-width:440px;display:block;">
+      </div>
+    </div>
+    <p style="font-size:0.7em;margin-top:0.3em;">Rewrite in SV. Note the bug the SV version exposes.</p>
+    <div class="fragment callout" style="font-size:0.62em;margin-top:0.2em;">
+        <div class="two-col">
+          <div class="col" style="flex:1;">
+            <pre style="font-size:0.85em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin       // sync reset
+    if (<span style="color:#EF5350;font-weight:700;">rst</span>) <span style="color:#CE93D8;font-weight:700;">state</span> &lt;= IDLE;
+    else     <span style="color:#CE93D8;font-weight:700;">state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">next_state</span>;
 end
 
 always_comb begin
-    next_state = state;                    // DEFAULT — was missing!
-    case (state)
-        IDLE:    if (go) next_state = BUSY;
-        BUSY:    if (done) next_state = IDLE;
-        default:                  next_state = IDLE;
+    <span style="color:#4DD0E1;font-weight:700;">next_state</span> = <span style="color:#CE93D8;font-weight:700;">state</span>;  // DEFAULT — was missing!
+    case (<span style="color:#CE93D8;font-weight:700;">state</span>)
+        IDLE:    if (<span style="color:#FFB74D;font-weight:700;">go</span>)   <span style="color:#4DD0E1;font-weight:700;">next_state</span> = BUSY;
+        BUSY:    if (<span style="color:#FFB74D;font-weight:700;">done</span>) <span style="color:#4DD0E1;font-weight:700;">next_state</span> = IDLE;
+        default:               <span style="color:#4DD0E1;font-weight:700;">next_state</span> = IDLE;
     endcase
 end</code></pre>
-        <strong>Bug caught:</strong> original <code>always @(*)</code> was missing the default <code>next_state = state</code>. <code>always_comb</code> warns about the missing assignment — revealing a latent latch in the Verilog-2001 code. Fix: add the default.
+          </div>
+          <div class="col" style="flex:1;">
+            <img src="diagrams/d13_s3_fsm_sv_clean_rtl.svg" alt="RTL diagram of the SystemVerilog FSM: clk (blue), rst (red), go and done (orange) feed a clean next-state combinational block (green border) producing next_state (teal); state (purple) is a D-flip-flop with synchronous reset. always_comb mathematically forbids the latent latch." style="width:100%;max-width:430px;display:block;">
+          </div>
+        </div>
+        <strong>Bug caught:</strong> original <code>always @(*)</code> was missing the default <code>next_state = state</code>. <code>always_comb</code> warns about the missing assignment — revealing a latent latch.
     </div>
     <aside class="notes">This is the core value of the migration: SV variants catch bugs that Verilog-2001 silently permits. Every module you modernize might expose one of these latent issues.</aside>
 </section>
 
 <section data-background-color="#FAFAFA">
     <h2><span style="color:#27AE60;">🔧</span> Synchronous vs Asynchronous Reset</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
-        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #5A7FA0;">
-            <p style="color:#5A7FA0;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">SYNCHRONOUS RESET (prefer)</p>
-<pre style="font-size:0.56em;margin:0;"><code class="language-verilog">always_ff @(posedge clk) begin
-    if (rst) r_state &lt;= S_INIT;
-    else     r_state &lt;= r_next;
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.2em;">
+        <div style="background:#fff;padding:0.4em;border-radius:6px;border:2px solid #5A7FA0;">
+            <p style="color:#5A7FA0;font-size:0.62em;margin:0 0 0.2em 0;font-weight:700;">SYNCHRONOUS RESET (prefer)</p>
+<pre style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+    if (<span style="color:#EF5350;font-weight:700;">rst</span>) <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_INIT;
+    else     <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">r_next</span>;
 end</code></pre>
-            <p style="font-size:0.68em;margin-top:0.2em;">Reset applies at the clock edge. Cleanest timing. FPGA-preferred.</p>
+            <img src="diagrams/d13_s3_sync_reset_rtl.svg" alt="RTL diagram of synchronous reset: clk (blue) feeds a D-flip-flop r_state (purple) whose D input comes from a mux that selects between S_INIT (red) and r_next (teal) under rst (red) — the reset signal does not touch the FF reset pin; it only redirects the data path at the clock edge." style="width:100%;max-width:420px;display:block;margin-top:0.3em;">
+            <p style="font-size:0.65em;margin-top:0.2em;">Reset applies at the clock edge. Cleanest timing. FPGA-preferred.</p>
         </div>
-        <div style="background:#fff;padding:0.5em;border-radius:6px;border:2px solid #D4A843;">
-            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">ASYNCHRONOUS RESET</p>
-<pre style="font-size:0.56em;margin:0;"><code class="language-verilog">always_ff @(posedge clk
-           or posedge rst) begin
-    if (rst) r_state &lt;= S_INIT;
-    else     r_state &lt;= r_next;
+        <div style="background:#fff;padding:0.4em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.62em;margin:0 0 0.2em 0;font-weight:700;">ASYNCHRONOUS RESET</p>
+<pre style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>
+           or posedge <span style="color:#EF5350;font-weight:700;">rst</span>) begin
+    if (<span style="color:#EF5350;font-weight:700;">rst</span>) <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_INIT;
+    else     <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">r_next</span>;
 end</code></pre>
-            <p style="font-size:0.68em;margin-top:0.2em;">Reset takes effect immediately. Needed in some ASIC flows. Requires release-edge synchronization — tricky.</p>
+            <img src="diagrams/d13_s3_async_reset_rtl.svg" alt="RTL diagram of asynchronous reset: clk (blue) feeds the flip-flop, r_next (teal) goes straight to D, and rst (red) drives the FF's dedicated async reset pin — reset fires the instant it asserts, not at the clock edge." style="width:100%;max-width:420px;display:block;margin-top:0.3em;">
+            <p style="font-size:0.65em;margin-top:0.2em;">Reset takes effect immediately. Needed in some ASIC flows. Requires release-edge sync — tricky.</p>
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.68em;margin-top:0.3em;">

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBluC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aRedC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="aGrnC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aTealC" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+  </defs>
+
+  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">counter — same hardware whether you write wire/reg or logic</text>
+
+  <!-- Module box -->
+  <rect x="40" y="50" width="640" height="210" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="55" y="70" font-size="12" font-weight="700" fill="#37474F">module counter</text>
+
+  <!-- Inputs: clk, rst -->
+  <text x="55" y="105" font-size="12" fill="#1976D2" font-weight="700">clk</text>
+  <line x1="84" y1="100" x2="465" y2="100" stroke="#1976D2" stroke-width="2"/>
+  <line x1="465" y1="100" x2="465" y2="135" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluC)"/>
+
+  <text x="55" y="145" font-size="12" fill="#D32F2F" font-weight="700">rst</text>
+  <line x1="84" y1="140" x2="220" y2="140" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRedC)"/>
+
+  <!-- Adder (next_count) -->
+  <rect x="220" y="115" width="140" height="60" rx="8" fill="#E0F2F1" stroke="#00838F" stroke-width="2"/>
+  <text x="290" y="138" text-anchor="middle" font-size="12" font-weight="700" fill="#00838F">+ 1</text>
+  <text x="290" y="155" text-anchor="middle" font-size="10" fill="#00838F" font-style="italic">next_count</text>
+  <text x="290" y="169" text-anchor="middle" font-size="9" fill="#555">assign next_count = count+1</text>
+
+  <!-- Mux for reset -->
+  <polygon points="385,118 420,130 420,165 385,177 385,118" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2"/>
+  <text x="403" y="150" text-anchor="middle" font-size="10" fill="#D32F2F" font-weight="700">mux</text>
+  <text x="403" y="186" text-anchor="middle" font-size="8" fill="#D32F2F">rst</text>
+
+  <!-- DFF -->
+  <rect x="440" y="115" width="120" height="80" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="500" y="138" text-anchor="middle" font-size="12" font-weight="700" fill="#7B1FA2">count[7:0]</text>
+  <text x="500" y="155" text-anchor="middle" font-size="10" fill="#7B1FA2">D Flip-Flop</text>
+  <text x="500" y="170" text-anchor="middle" font-size="9" fill="#888" font-style="italic">always_ff @(posedge clk)</text>
+  <text x="500" y="184" text-anchor="middle" font-size="9" fill="#888" font-style="italic">(or always @ in V-2001)</text>
+
+  <!-- next_count -> mux -->
+  <line x1="360" y1="147" x2="385" y2="147" stroke="#00838F" stroke-width="2" marker-end="url(#aTealC)"/>
+
+  <!-- mux -> DFF -->
+  <line x1="420" y1="148" x2="440" y2="148" stroke="#7B1FA2" stroke-width="2"/>
+
+  <!-- count out + feedback -->
+  <line x1="560" y1="148" x2="640" y2="148" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrnC)"/>
+  <text x="647" y="152" font-size="12" fill="#2E7D32" font-weight="700">count</text>
+  <text x="647" y="164" font-size="9" fill="#2E7D32">[7:0]</text>
+
+  <!-- feedback path -->
+  <line x1="600" y1="148" x2="600" y2="215" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="600" y1="215" x2="180" y2="215" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="180" y1="215" x2="180" y2="148" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="180" y1="148" x2="220" y2="148" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aTealC)"/>
+  <text x="380" y="227" text-anchor="middle" font-size="9" fill="#7B1FA2" font-style="italic">feedback (count drives + 1 next cycle)</text>
+
+  <!-- caption -->
+  <text x="360" y="252" text-anchor="middle" font-size="10" fill="#555" font-style="italic">V-2001 wire/reg → SV logic: identical post-synthesis netlist (1 mux + 8 DFF + 8-bit adder)</text>
+</svg>

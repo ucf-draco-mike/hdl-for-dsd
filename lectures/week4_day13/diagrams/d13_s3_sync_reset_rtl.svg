@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 220" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBluSr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aRedSr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="aPurSr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aTealSr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+  </defs>
+  <text x="270" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">Synchronous Reset (preferred for FPGA)</text>
+
+  <rect x="20" y="40" width="500" height="160" rx="10" fill="#F0F8FF" stroke="#5A7FA0" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- clk -->
+  <text x="30" y="80" font-size="11" fill="#1976D2" font-weight="700">clk</text>
+  <line x1="56" y1="75" x2="370" y2="75" stroke="#1976D2" stroke-width="2"/>
+  <line x1="370" y1="75" x2="370" y2="100" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluSr)"/>
+
+  <!-- rst (synchronous: into mux, NOT into FF reset pin) -->
+  <text x="30" y="115" font-size="11" fill="#D32F2F" font-weight="700">rst</text>
+  <line x1="56" y1="110" x2="180" y2="110" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRedSr)"/>
+
+  <!-- r_next -->
+  <text x="30" y="148" font-size="11" fill="#00838F" font-weight="700">r_next</text>
+  <line x1="68" y1="143" x2="180" y2="143" stroke="#00838F" stroke-width="2" marker-end="url(#aTealSr)"/>
+
+  <!-- mux (sync reset is just data-side mux) -->
+  <polygon points="183,100 220,112 220,148 183,160 183,100" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2"/>
+  <text x="200" y="132" text-anchor="middle" font-size="9" font-weight="700" fill="#D32F2F">mux</text>
+
+  <!-- DFF (no reset pin used) -->
+  <rect x="320" y="100" width="120" height="75" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="380" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#7B1FA2">r_state</text>
+  <text x="380" y="142" text-anchor="middle" font-size="10" fill="#7B1FA2">D Flip-Flop</text>
+  <text x="380" y="158" text-anchor="middle" font-size="9" fill="#888" font-style="italic">no async reset pin</text>
+
+  <line x1="220" y1="130" x2="320" y2="130" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="440" y1="130" x2="510" y2="130" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPurSr)"/>
+  <text x="497" y="120" font-size="10" fill="#7B1FA2" font-weight="700">r_state</text>
+
+  <text x="270" y="195" text-anchor="middle" font-size="9" fill="#555" font-style="italic">reset takes effect only at clock edge — clean STA, FPGA-friendly</text>
+</svg>

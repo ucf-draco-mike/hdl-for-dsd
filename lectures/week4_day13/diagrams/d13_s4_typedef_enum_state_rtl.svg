@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBluTe" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aPurTe" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aTealTe" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+    <marker id="aIndTe" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#303F9F"/></marker>
+  </defs>
+
+  <text x="300" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">SystemVerilog typedef enum (named, type-checked, width-inferred)</text>
+
+  <rect x="30" y="40" width="540" height="220" rx="10" fill="#F0F8FF" stroke="#5A7FA0" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="45" y="60" font-size="11" font-weight="700" fill="#1565C0">typedef enum logic [1:0] { S_GREEN, S_YELLOW, S_RED } state_t;  state_t r_state, r_next;</text>
+
+  <!-- enum type definition box -->
+  <rect x="50" y="80" width="170" height="105" rx="6" fill="#E8EAF6" stroke="#303F9F" stroke-width="2"/>
+  <text x="135" y="100" text-anchor="middle" font-size="11" font-weight="700" fill="#303F9F">state_t  (enum type)</text>
+  <text x="60" y="125" font-size="10" fill="#7B1FA2" font-weight="700">S_GREEN</text>  <text x="155" y="125" font-size="10" fill="#555">≡ 0</text>
+  <text x="60" y="145" font-size="10" fill="#7B1FA2" font-weight="700">S_YELLOW</text> <text x="155" y="145" font-size="10" fill="#555">≡ 1</text>
+  <text x="60" y="165" font-size="10" fill="#7B1FA2" font-weight="700">S_RED</text>    <text x="155" y="165" font-size="10" fill="#555">≡ 2</text>
+  <text x="135" y="180" text-anchor="middle" font-size="8" fill="#303F9F" font-style="italic">width auto-inferred</text>
+
+  <!-- clk -->
+  <text x="245" y="105" font-size="11" fill="#1976D2" font-weight="700">clk</text>
+  <line x1="270" y1="100" x2="400" y2="100" stroke="#1976D2" stroke-width="2"/>
+  <line x1="400" y1="100" x2="400" y2="120" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluTe)"/>
+
+  <!-- r_next (state_t) -->
+  <text x="240" y="155" font-size="11" fill="#00838F" font-weight="700">r_next</text>
+  <text x="240" y="167" font-size="8" fill="#303F9F" font-style="italic">: state_t</text>
+  <line x1="280" y1="150" x2="350" y2="150" stroke="#00838F" stroke-width="2" marker-end="url(#aTealTe)"/>
+
+  <!-- DFF -->
+  <rect x="350" y="120" width="120" height="75" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="410" y="144" text-anchor="middle" font-size="12" font-weight="700" fill="#7B1FA2">r_state</text>
+  <text x="410" y="161" text-anchor="middle" font-size="10" fill="#303F9F" font-weight="700">state_t  D-FF</text>
+  <text x="410" y="180" text-anchor="middle" font-size="9" fill="#303F9F" font-style="italic">typed by enum</text>
+
+  <line x1="470" y1="155" x2="555" y2="155" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPurTe)"/>
+  <text x="540" y="145" font-size="10" fill="#7B1FA2" font-weight="700">r_state</text>
+
+  <!-- benefits -->
+  <rect x="30" y="210" width="540" height="38" rx="3" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
+  <text x="300" y="225" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">GTKWave shows S_GREEN, S_YELLOW, S_RED automatically</text>
+  <text x="300" y="240" text-anchor="middle" font-size="9" fill="#2E7D32" font-style="italic">type-safe: r_state = RX_IDLE (different enum) ⇒ compile error</text>
+</svg>

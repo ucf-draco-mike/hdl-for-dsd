@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBrnSt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#5D4037"/></marker>
+    <marker id="aOrgSt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrnSt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+  </defs>
+  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">typedef struct packed — uart_frame_t bundles four signals into one 11-bit wire</text>
+
+  <!-- frame_in: a packed struct visualised as 11 contiguous bits -->
+  <text x="55" y="55" font-size="11" font-weight="700" fill="#5D4037">uart_frame_t frame_in</text>
+
+  <g>
+    <!-- start_bit -->
+    <rect x="55" y="65" width="40" height="50" fill="#FFEBEE" stroke="#C2185B" stroke-width="1.5"/>
+    <text x="75" y="85" text-anchor="middle" font-size="9" fill="#C2185B" font-weight="700">start_bit</text>
+    <text x="75" y="100" text-anchor="middle" font-size="8" fill="#888">[10]</text>
+    <text x="75" y="112" text-anchor="middle" font-size="8" fill="#555">1b</text>
+
+    <!-- data[7:0] -->
+    <rect x="95" y="65" width="200" height="50" fill="#FFF3E0" stroke="#F57C00" stroke-width="1.5"/>
+    <text x="195" y="85" text-anchor="middle" font-size="9" fill="#F57C00" font-weight="700">data[7:0]</text>
+    <text x="195" y="100" text-anchor="middle" font-size="8" fill="#888">[9:2]</text>
+    <text x="195" y="112" text-anchor="middle" font-size="8" fill="#555">8b</text>
+
+    <!-- parity -->
+    <rect x="295" y="65" width="40" height="50" fill="#FFFDE7" stroke="#9A6F00" stroke-width="1.5"/>
+    <text x="315" y="85" text-anchor="middle" font-size="9" fill="#9A6F00" font-weight="700">parity</text>
+    <text x="315" y="100" text-anchor="middle" font-size="8" fill="#888">[1]</text>
+    <text x="315" y="112" text-anchor="middle" font-size="8" fill="#555">1b</text>
+
+    <!-- stop_bit -->
+    <rect x="335" y="65" width="40" height="50" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.5"/>
+    <text x="355" y="85" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="700">stop_bit</text>
+    <text x="355" y="100" text-anchor="middle" font-size="8" fill="#888">[0]</text>
+    <text x="355" y="112" text-anchor="middle" font-size="8" fill="#555">1b</text>
+  </g>
+
+  <text x="215" y="135" text-anchor="middle" font-size="10" fill="#5D4037" font-style="italic">11 bits, packed left-to-right — $bits(uart_frame_t)=11</text>
+
+  <!-- Arrow into module -->
+  <line x1="385" y1="90" x2="450" y2="90" stroke="#5D4037" stroke-width="2.5" marker-end="url(#aBrnSt)"/>
+  <text x="395" y="80" font-size="9" fill="#5D4037" font-style="italic">one port</text>
+
+  <!-- Consuming module -->
+  <rect x="450" y="50" width="220" height="180" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="560" y="70" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">consumer module</text>
+
+  <text x="465" y="100" font-size="10" fill="#5D4037" font-weight="700">frame_in.data</text>
+  <text x="465" y="115" font-size="9" fill="#888">— still field-accessible</text>
+
+  <text x="465" y="140" font-size="10" fill="#5D4037" font-weight="700">frame_in.parity</text>
+  <text x="465" y="160" font-size="10" fill="#5D4037" font-weight="700">frame_in.stop_bit</text>
+
+  <text x="465" y="195" font-size="9" fill="#555" font-style="italic">port count: 1, not 4</text>
+  <text x="465" y="210" font-size="9" fill="#555" font-style="italic">layout: contiguous bits</text>
+
+  <!-- bottom note -->
+  <text x="360" y="265" text-anchor="middle" font-size="10" fill="#5D4037" font-weight="700">'{start_bit:0, data:8'hA5, parity:1, stop_bit:1}' — assign struct literal in one statement</text>
+</svg>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBluCg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aMagCg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C2185B"/></marker>
+    <marker id="aPurCg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aOrgCg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aDtealCg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00695C"/></marker>
+  </defs>
+  <text x="380" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">covergroup uart_cg — samples r_state and i_data, plus their cross</text>
+
+  <rect x="30" y="40" width="700" height="260" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- DUT -->
+  <rect x="45" y="60" width="220" height="220" rx="8" fill="#FFF3E0" stroke="#C2185B" stroke-width="2"/>
+  <text x="155" y="80" text-anchor="middle" font-size="11" font-weight="700" fill="#C2185B">DUT (uart_tx)</text>
+  <text x="60" y="115" font-size="11" fill="#1976D2" font-weight="700">clk</text>
+  <text x="60" y="150" font-size="11" fill="#7B1FA2" font-weight="700">r_state</text>
+  <text x="60" y="185" font-size="11" fill="#F57C00" font-weight="700">i_data[7:0]</text>
+  <text x="60" y="220" font-size="11" fill="#C2185B" font-weight="700">i_valid</text>
+
+  <!-- Taps to covergroup -->
+  <line x1="265" y1="110" x2="350" y2="110" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluCg)"/>
+  <line x1="265" y1="145" x2="350" y2="145" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPurCg)"/>
+  <line x1="265" y1="180" x2="350" y2="180" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrgCg)"/>
+  <line x1="265" y1="215" x2="350" y2="215" stroke="#C2185B" stroke-width="2" marker-end="url(#aMagCg)"/>
+
+  <!-- covergroup container -->
+  <rect x="355" y="60" width="370" height="220" rx="10" fill="#E0F2F1" stroke="#00695C" stroke-width="2.5"/>
+  <text x="540" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#00695C">covergroup uart_cg @(posedge clk)</text>
+
+  <!-- state_cov bin -->
+  <rect x="365" y="95" width="160" height="65" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="445" y="113" text-anchor="middle" font-size="10" font-weight="700" fill="#7B1FA2">state_cov</text>
+  <text x="445" y="128" text-anchor="middle" font-size="9" fill="#7B1FA2">coverpoint r_state</text>
+  <text x="445" y="142" text-anchor="middle" font-size="9" fill="#555">bins: IDLE,START,</text>
+  <text x="445" y="154" text-anchor="middle" font-size="9" fill="#555">       DATA,STOP</text>
+
+  <!-- byte_cov bin -->
+  <rect x="535" y="95" width="180" height="65" rx="6" fill="#FFF3E0" stroke="#F57C00" stroke-width="1.8"/>
+  <text x="625" y="113" text-anchor="middle" font-size="10" font-weight="700" fill="#F57C00">byte_cov</text>
+  <text x="625" y="128" text-anchor="middle" font-size="9" fill="#F57C00">coverpoint i_data iff (i_valid)</text>
+  <text x="625" y="142" text-anchor="middle" font-size="9" fill="#555">bins: zero, all_ones,</text>
+  <text x="625" y="154" text-anchor="middle" font-size="9" fill="#555">       typical [1:254]</text>
+
+  <!-- cross bin -->
+  <rect x="365" y="175" width="350" height="60" rx="6" fill="#E0F2F1" stroke="#00695C" stroke-width="1.8"/>
+  <text x="540" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="#00695C">state_x_byte = cross state_cov, byte_cov</text>
+  <text x="540" y="212" text-anchor="middle" font-size="9" fill="#00695C">12 bins (4 states × 3 byte classes)</text>
+  <text x="540" y="225" text-anchor="middle" font-size="9" fill="#888" font-style="italic">cross coverage is where bugs hide</text>
+
+  <text x="540" y="262" text-anchor="middle" font-size="10" fill="#00695C" font-weight="700">→ report:  state_cov 4/4 (100%)   byte_cov 2/3 (67%)   cross 8/12 (67%)</text>
+</svg>

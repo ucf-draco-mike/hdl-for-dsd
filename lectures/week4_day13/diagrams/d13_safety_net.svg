@@ -1,54 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" font-family="Inter, sans-serif">
-  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">SystemVerilog Safety Net — Design Features</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" font-family="Inter, sans-serif">
+  <text x="380" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">SystemVerilog Safety Net — Verilog risk ⇒ SV feature ⇒ how it helps</text>
 
   <!-- Column headers -->
-  <rect x="30" y="40" width="220" height="30" rx="4" fill="#FFEBEE"/>
-  <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#C62828">Verilog Risk</text>
-  <rect x="270" y="40" width="200" height="30" rx="4" fill="#E8F5E9"/>
-  <text x="370" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32">SV Protection</text>
-  <rect x="490" y="40" width="200" height="30" rx="4" fill="#E3F2FD"/>
-  <text x="590" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">How It Helps</text>
+  <rect x="30" y="40" width="230" height="30" rx="4" fill="#FFEBEE" stroke="#C62828" stroke-width="1.2"/>
+  <text x="145" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#C62828">Verilog Risk (the bug)</text>
+  <rect x="270" y="40" width="220" height="30" rx="4" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.2"/>
+  <text x="380" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#2E7D32">SV Protection (the feature)</text>
+  <rect x="500" y="40" width="230" height="30" rx="4" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.2"/>
+  <text x="615" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#1565C0">How It Helps</text>
 
-  <!-- Row 1 -->
-  <rect x="30" y="78" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
-  <text x="140" y="95" text-anchor="middle" font-size="9" fill="#333">Latch from incomplete</text>
-  <text x="140" y="107" text-anchor="middle" font-size="9" fill="#333">always @(*)</text>
-  <rect x="270" y="78" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
-  <text x="370" y="100" text-anchor="middle" font-size="9" fill="#333" font-weight="600">always_comb errors</text>
-  <rect x="490" y="78" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
-  <text x="590" y="100" text-anchor="middle" font-size="9" fill="#333">Compile-time catch</text>
+  <!-- Row 1: latch -->
+  <rect x="30" y="78" width="230" height="42" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="145" y="95" text-anchor="middle" font-size="10" fill="#333">Inferred latch from incomplete</text>
+  <text x="145" y="108" text-anchor="middle" font-size="10" fill="#E65100" font-weight="700">always @(*)</text>
+  <rect x="270" y="78" width="220" height="42" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="380" y="103" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">always_comb (latch-free)</text>
+  <rect x="500" y="78" width="230" height="42" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="615" y="103" text-anchor="middle" font-size="10" fill="#1565C0">elaboration-time warning</text>
 
-  <!-- Row 2 -->
-  <rect x="30" y="126" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
-  <text x="140" y="143" text-anchor="middle" font-size="9" fill="#333">Blocking = in sequential</text>
-  <text x="140" y="155" text-anchor="middle" font-size="9" fill="#333">block</text>
-  <rect x="270" y="126" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
-  <text x="370" y="148" text-anchor="middle" font-size="9" fill="#333" font-weight="600">always_ff warns on =</text>
-  <rect x="490" y="126" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
-  <text x="590" y="148" text-anchor="middle" font-size="9" fill="#333">Enforces &lt;= usage</text>
+  <!-- Row 2: blocking in seq -->
+  <rect x="30" y="128" width="230" height="42" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="145" y="145" text-anchor="middle" font-size="10" fill="#333">Blocking '=' inside</text>
+  <text x="145" y="158" text-anchor="middle" font-size="10" fill="#1976D2" font-weight="700">always @(posedge clk)</text>
+  <rect x="270" y="128" width="220" height="42" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="380" y="153" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">always_ff warns on '='</text>
+  <rect x="500" y="128" width="230" height="42" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="615" y="153" text-anchor="middle" font-size="10" fill="#1565C0">enforces non-blocking '&lt;=' for FFs</text>
 
-  <!-- Row 3 -->
-  <rect x="30" y="174" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
-  <text x="140" y="197" text-anchor="middle" font-size="9" fill="#333">reg ≠ register confusion</text>
-  <rect x="270" y="174" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
-  <text x="370" y="197" text-anchor="middle" font-size="9" fill="#333" font-weight="600">logic is usage-neutral</text>
-  <rect x="490" y="174" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
-  <text x="590" y="197" text-anchor="middle" font-size="9" fill="#333">No misleading keyword</text>
+  <!-- Row 3: reg confusion -->
+  <rect x="30" y="178" width="230" height="42" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="145" y="201" text-anchor="middle" font-size="10" fill="#333"><tspan fill="#E65100" font-weight="700">reg</tspan> ≠ register confusion (vs <tspan fill="#00838F" font-weight="700">wire</tspan>)</text>
+  <rect x="270" y="178" width="220" height="42" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="380" y="203" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">logic — usage-neutral</text>
+  <rect x="500" y="178" width="230" height="42" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="615" y="203" text-anchor="middle" font-size="10" fill="#1565C0">no misleading keyword</text>
 
-  <!-- Row 4 -->
-  <rect x="30" y="222" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
-  <text x="140" y="245" text-anchor="middle" font-size="9" fill="#333">State encoding mismatch</text>
-  <rect x="270" y="222" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
-  <text x="370" y="245" text-anchor="middle" font-size="9" fill="#333" font-weight="600">enum is type-checked</text>
-  <rect x="490" y="222" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
-  <text x="590" y="245" text-anchor="middle" font-size="9" fill="#333">Invalid state = warning</text>
+  <!-- Row 4: state encoding -->
+  <rect x="30" y="228" width="230" height="42" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="145" y="245" text-anchor="middle" font-size="10" fill="#333">State encoding mismatch</text>
+  <text x="145" y="258" text-anchor="middle" font-size="10" fill="#9A6F00" font-weight="700">(localparam, untyped)</text>
+  <rect x="270" y="228" width="220" height="42" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="380" y="253" text-anchor="middle" font-size="10" fill="#303F9F" font-weight="700">typedef enum (type-checked)</text>
+  <rect x="500" y="228" width="230" height="42" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="615" y="253" text-anchor="middle" font-size="10" fill="#1565C0">cross-enum assignment = error</text>
 
-  <!-- Row 5 -->
-  <rect x="30" y="270" width="220" height="40" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
-  <text x="140" y="293" text-anchor="middle" font-size="9" fill="#333">Duplicate constants</text>
-  <rect x="270" y="270" width="200" height="40" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
-  <text x="370" y="293" text-anchor="middle" font-size="9" fill="#333" font-weight="600">package — single source</text>
-  <rect x="490" y="270" width="200" height="40" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
-  <text x="590" y="293" text-anchor="middle" font-size="9" fill="#333">Change once, used everywhere</text>
+  <!-- Row 5: duplicate constants -->
+  <rect x="30" y="278" width="230" height="42" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="145" y="303" text-anchor="middle" font-size="10" fill="#333">Duplicate constants per file</text>
+  <rect x="270" y="278" width="220" height="42" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="380" y="303" text-anchor="middle" font-size="10" fill="#5D4037" font-weight="700">package — single source</text>
+  <rect x="500" y="278" width="230" height="42" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="615" y="303" text-anchor="middle" font-size="10" fill="#1565C0">change once, used everywhere</text>
+
+  <!-- Row 6 (NEW): multi-driver wires -->
+  <rect x="30" y="328" width="230" height="22" rx="3" fill="#FFF5F5" stroke="#FFCDD2" stroke-width="1"/>
+  <text x="145" y="343" text-anchor="middle" font-size="9" fill="#333">Accidental multi-driver (silent X)</text>
+  <rect x="270" y="328" width="220" height="22" rx="3" fill="#F1F8E9" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="380" y="343" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="700">logic — single-driver enforced</text>
+  <rect x="500" y="328" width="230" height="22" rx="3" fill="#E8F4FD" stroke="#BBDEFB" stroke-width="1"/>
+  <text x="615" y="343" text-anchor="middle" font-size="9" fill="#1565C0">elaboration warning at compile</text>
 </svg>

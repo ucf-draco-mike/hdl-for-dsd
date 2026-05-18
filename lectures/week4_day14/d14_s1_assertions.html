@@ -57,25 +57,32 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Immediate Assertions</h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module counter_with_assertions (
-    input  logic       clk, rst, en,
-    output logic [7:0] count
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.58em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module counter_with_assertions (
+    input  logic       <span style="color:#4FC3F7;font-weight:700;">clk</span>, <span style="color:#EF5350;font-weight:700;">rst</span>, <span style="color:#FFB74D;font-weight:700;">en</span>,
+    output logic [7:0] <span style="color:#81C784;font-weight:700;">count</span>
 );
-    always_ff @(posedge clk) begin
-        if (rst)      count &lt;= 0;
-        else if (en)  count &lt;= count + 1'b1;
+    always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+        if (<span style="color:#EF5350;font-weight:700;">rst</span>)      <span style="color:#81C784;font-weight:700;">count</span> &lt;= 0;
+        else if (<span style="color:#FFB74D;font-weight:700;">en</span>)  <span style="color:#81C784;font-weight:700;">count</span> &lt;= <span style="color:#81C784;font-weight:700;">count</span> + 1'b1;
     end
 
-    // Immediate assertion — checked at the moment it's reached
-    always_ff @(posedge clk) begin
-        assert (count !== 8'hXX)
-            else $error("Counter went X-valued at time %0t", $time);
+    // Immediate assertions
+    always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+        <span style="color:#F06292;font-weight:700;">assert</span> (<span style="color:#81C784;font-weight:700;">count</span> !== 8'hXX)
+            else $error("X at %0t", $time);
 
-        assert (count &lt; 8'hFF || rst || !en)
-            else $warning("Counter about to wrap");
+        <span style="color:#F06292;font-weight:700;">assert</span> (<span style="color:#81C784;font-weight:700;">count</span> &lt; 8'hFF || <span style="color:#EF5350;font-weight:700;">rst</span> || !<span style="color:#FFB74D;font-weight:700;">en</span>)
+            else $warning("about to wrap");
     end
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.7em;">
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d14_s1_counter_assert_rtl.svg" alt="RTL diagram of counter_with_assertions: clk (blue), rst (red), en (orange) drive an 8-bit count D-flip-flop (purple); count (green) exits as the output and is non-invasively tapped (dashed magenta lines) into an immediate-assertion checker that verifies count !== 8'hXX and count not about to wrap, raising $error/$warning." style="width:100%;max-width:420px;display:block;">
+      </div>
+    </div>
+    <div class="callout" style="font-size:0.7em;margin-top:0.2em;">
         <strong>My thinking:</strong> An immediate assertion is like an <code>if</code> statement with teeth. &ldquo;<em>At this clock edge, <code>count</code> should not be X.</em>&rdquo; If it is, the simulator fires <code>$error</code> and typically halts. Lightweight. Lives inside RTL or TB. Classic uses: check for uninitialized state, check for bound violations.
     </div>
     <aside class="notes">Immediate assertions are simple — at this moment, this must be true. Great for X-value detection (uninitialized flops) and range checks.</aside>
@@ -83,22 +90,29 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Concurrent Assertions (<code>property</code>)</h2>
-    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">// Concurrent assertion — a rule about sequences across cycles
-// "When valid asserts, ready must arrive within 10 cycles."
-property p_handshake;
-    @(posedge clk) disable iff (rst)
-        valid |-&gt; ##[1:10] ready;
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.55em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Concurrent assertion — a rule about sequences
+// "When valid asserts, ready within 10 cycles."
+<span style="color:#F06292;font-weight:700;">property p_handshake</span>;
+    @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) disable iff (<span style="color:#EF5350;font-weight:700;">rst</span>)
+        <span style="color:#F48FB1;font-weight:700;">valid</span> |-&gt; ##[1:10] <span style="color:#F48FB1;font-weight:700;">ready</span>;
 endproperty
 
-a_handshake: assert property (p_handshake)
-    else $error("Handshake violation: valid at %0t without ready", $time);
+<span style="color:#F06292;font-weight:700;">a_handshake</span>: assert property (<span style="color:#F06292;font-weight:700;">p_handshake</span>)
+    else $error("valid at %0t no ready", $time);
 
-// "tx_busy must go low exactly one cycle after tx_start"
-property p_start_then_busy;
-    @(posedge clk) $rose(tx_start) |=&gt; tx_busy;
+// "tx_busy must rise one cycle after tx_start"
+<span style="color:#F06292;font-weight:700;">property p_start_then_busy</span>;
+    @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) $rose(<span style="color:#F48FB1;font-weight:700;">tx_start</span>) |=&gt; <span style="color:#F48FB1;font-weight:700;">tx_busy</span>;
 endproperty
-a_start_then_busy: assert property (p_start_then_busy);</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
+<span style="color:#F06292;font-weight:700;">a_start_then_busy</span>: assert property (<span style="color:#F06292;font-weight:700;">p_start_then_busy</span>);</code></pre>
+      </div>
+      <div class="col" style="flex:1.05;">
+        <img src="diagrams/d14_s1_concurrent_property_rtl.svg" alt="RTL diagram of a concurrent property: a DUT exposes clk (blue), rst (red), valid (magenta) and ready (magenta) that are non-invasively tapped into a p_handshake property checker (rose) which fires $error if ready doesn't arrive within 1-10 cycles of rose(valid). disable iff (rst) pauses checking during reset." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.2em;">
         <strong>Together — the notation:</strong>
         <ul style="font-size:0.95em;">
             <li><code>|-&gt;</code> (overlapping): &ldquo;if LHS, then RHS must hold <em>this</em> cycle&rdquo;</li>
@@ -113,15 +127,23 @@ a_start_then_busy: assert property (p_start_then_busy);</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Write an Assertion for UART TX</h2>
-    <p style="font-size:0.78em;">Your Topic 11 UART TX has signals <code>i_valid</code>, <code>o_busy</code>, and <code>o_tx_line</code>. Write a concurrent assertion: <em>&ldquo;Once the TX asserts busy, <code>tx_line</code> must stay low for exactly <code>CLKS_PER_BIT</code> cycles (the start bit).&rdquo;</em></p>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <pre style="font-size:0.85em;"><code class="language-verilog">property p_start_bit_length;
-    @(posedge clk) disable iff (rst)
-        $rose(o_busy) |=&gt; (!o_tx_line) [*CLKS_PER_BIT];
+    <p style="font-size:0.72em;">Your Topic 11 UART TX has signals <code>i_valid</code>, <code>o_busy</code>, and <code>o_tx_line</code>. Write a concurrent assertion: <em>&ldquo;Once the TX asserts busy, <code>tx_line</code> must stay low for exactly <code>CLKS_PER_BIT</code> cycles.&rdquo;</em></p>
+    <div class="fragment callout" style="font-size:0.62em;margin-top:0.2em;">
+      <div class="two-col">
+        <div class="col" style="flex:1;">
+          <pre style="font-size:0.85em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;"><span style="color:#F06292;font-weight:700;">property p_start_bit_length</span>;
+    @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) disable iff (<span style="color:#EF5350;font-weight:700;">rst</span>)
+        $rose(<span style="color:#F48FB1;font-weight:700;">o_busy</span>) |=&gt;
+            (!<span style="color:#81C784;font-weight:700;">o_tx_line</span>) [*CLKS_PER_BIT];
 endproperty
-a_start_bit: assert property (p_start_bit_length)
-    else $error("Start bit was not %0d cycles long", CLKS_PER_BIT);</code></pre>
-        <strong>What it says:</strong> when <code>o_busy</code> rises, the next CLKS_PER_BIT cycles must have <code>o_tx_line == 0</code>. If the TX breaks the start-bit timing (e.g., off-by-one in the counter), the assertion fires immediately. The bug is caught even if no testbench case happened to measure the start bit.
+<span style="color:#F06292;font-weight:700;">a_start_bit</span>: assert property (<span style="color:#F06292;font-weight:700;">p_start_bit_length</span>)
+    else $error("Start bit not %0d cycles", CLKS_PER_BIT);</code></pre>
+        </div>
+        <div class="col" style="flex:1;">
+          <img src="diagrams/d14_s1_uart_tx_start_assert_rtl.svg" alt="RTL diagram showing the a_start_bit assertion on uart_tx: clk (blue), o_busy (magenta) and o_tx_line (green) are tapped from the DUT into a rose-bordered property checker that triggers on rose(o_busy) and requires o_tx_line to stay low for exactly CLKS_PER_BIT consecutive cycles. $error fires the moment the start bit is off by one." style="width:100%;max-width:430px;display:block;">
+        </div>
+      </div>
+      <strong style="display:block;margin-top:0.3em;">What it says:</strong> when <code>o_busy</code> rises, the next CLKS_PER_BIT cycles must have <code>o_tx_line == 0</code>. Off-by-one in the counter ⇒ assertion fires immediately, even when no testbench case happened to measure bit length.
     </div>
     <aside class="notes">[*N] is the repetition operator: &ldquo;this condition holds for N consecutive cycles.&rdquo; Perfect for bit-length enforcement. Notice how one property catches a whole class of timing bugs.</aside>
 </section>

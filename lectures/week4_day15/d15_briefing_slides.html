@@ -71,36 +71,46 @@
 
 <section>
     <h2>Step 2: Skeleton Top Module</h2>
-    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module capstone_top (
-    input  logic i_clk,
-    input  logic i_switch1, i_switch2, i_switch3, i_switch4,
-    output logic o_led1, o_led2, o_led3, o_led4,
-    output logic o_uart_tx
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module capstone_top (
+    input  logic <span style="color:#4FC3F7;font-weight:700;">i_clk</span>,
+    input  logic <span style="color:#FFB74D;font-weight:700;">i_switch1</span>, <span style="color:#FFB74D;font-weight:700;">i_switch2</span>,
+                 <span style="color:#FFB74D;font-weight:700;">i_switch3</span>, <span style="color:#FFB74D;font-weight:700;">i_switch4</span>,
+    output logic <span style="color:#81C784;font-weight:700;">o_led1</span>, <span style="color:#81C784;font-weight:700;">o_led2</span>,
+                 <span style="color:#81C784;font-weight:700;">o_led3</span>, <span style="color:#81C784;font-weight:700;">o_led4</span>,
+    output logic <span style="color:#81C784;font-weight:700;">o_uart_tx</span>
 );
-    // Reset synchronizer (Week 2) — bring up first
-    logic r_rst_sync;
-    reset_sync u_rst   (.i_clk, .i_rst_async(i_switch1), .o_rst_sync(r_rst_sync));
+    // Reset synchronizer — bring up first
+    logic <span style="color:#CE93D8;font-weight:700;">r_rst_sync</span>;
+    <span style="color:#F06292;font-weight:700;">reset_sync u_rst</span> (.i_clk, .i_rst_async(<span style="color:#FFB74D;font-weight:700;">i_switch1</span>),
+                          .o_rst_sync(<span style="color:#CE93D8;font-weight:700;">r_rst_sync</span>));
 
-    // UART TX (Week 3) — add after reset works
-    logic       w_tx_valid, w_tx_busy;
-    logic [7:0] w_tx_data;
-    uart_tx #(.CLKS_PER_BIT(217)) u_tx (
-        .i_clk, .i_rst(r_rst_sync),
-        .i_valid(w_tx_valid), .i_data(w_tx_data),
-        .o_busy(w_tx_busy),   .o_tx_line(o_uart_tx)
+    // UART TX — add after reset works
+    logic       <span style="color:#F48FB1;font-weight:700;">w_tx_valid</span>, <span style="color:#F48FB1;font-weight:700;">w_tx_busy</span>;
+    logic [7:0] <span style="color:#FFB74D;font-weight:700;">w_tx_data</span>;
+    <span style="color:#F06292;font-weight:700;">uart_tx</span> #(.CLKS_PER_BIT(217)) <span style="color:#F06292;font-weight:700;">u_tx</span> (
+        .i_clk, .i_rst(<span style="color:#CE93D8;font-weight:700;">r_rst_sync</span>),
+        .i_valid(<span style="color:#F48FB1;font-weight:700;">w_tx_valid</span>), .i_data(<span style="color:#FFB74D;font-weight:700;">w_tx_data</span>),
+        .o_busy(<span style="color:#F48FB1;font-weight:700;">w_tx_busy</span>), .o_tx_line(<span style="color:#81C784;font-weight:700;">o_uart_tx</span>)
     );
 
-    // FSM controller (new for capstone) — add last
-    capstone_fsm u_fsm (
-        .i_clk, .i_rst(r_rst_sync),
-        .i_sw({i_switch4, i_switch3, i_switch2}),
-        .o_led({o_led4, o_led3, o_led2, o_led1}),
-        .o_tx_valid(w_tx_valid), .o_tx_data(w_tx_data),
-        .i_tx_busy(w_tx_busy)
+    // FSM controller — add last
+    <span style="color:#F06292;font-weight:700;">capstone_fsm u_fsm</span> (
+        .i_clk, .i_rst(<span style="color:#CE93D8;font-weight:700;">r_rst_sync</span>),
+        .i_sw({<span style="color:#FFB74D;font-weight:700;">i_switch4</span>,<span style="color:#FFB74D;font-weight:700;">i_switch3</span>,<span style="color:#FFB74D;font-weight:700;">i_switch2</span>}),
+        .o_led({<span style="color:#81C784;font-weight:700;">o_led4</span>,<span style="color:#81C784;font-weight:700;">o_led3</span>,<span style="color:#81C784;font-weight:700;">o_led2</span>,<span style="color:#81C784;font-weight:700;">o_led1</span>}),
+        .o_tx_valid(<span style="color:#F48FB1;font-weight:700;">w_tx_valid</span>), .o_tx_data(<span style="color:#FFB74D;font-weight:700;">w_tx_data</span>),
+        .i_tx_busy(<span style="color:#F48FB1;font-weight:700;">w_tx_busy</span>)
     );
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>Observe:</strong> the top reads like a wiring diagram. All the <em>work</em> is in the sub-modules; the top just composes them. Echoes Topic 12's &ldquo;wrapper smaller than sub-modules&rdquo; rule. Each sub-module can be brought up one at a time.
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d15_capstone_top_rtl.svg" alt="RTL diagram of capstone_top: i_clk (blue) fans out to all three submodules (magenta) — u_rst reset_sync converts i_switch1 (red dashed async) to r_rst_sync (purple) which feeds u_tx uart_tx and u_fsm capstone_fsm; i_switch[4:2] (orange) feed the FSM; the FSM emits w_tx_valid/w_tx_data/w_tx_busy handshake (magenta/orange) to uart_tx; outputs o_led[3:0] (green) and o_uart_tx (green) leave the top." style="width:100%;max-width:480px;display:block;">
+      </div>
+    </div>
+    <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
+        <strong>Observe:</strong> the top reads like a wiring diagram. All the <em>work</em> is in the sub-modules; the top just composes them. Echoes Topic 12's &ldquo;wrapper smaller than sub-modules&rdquo; rule.
     </div>
     <aside class="notes">Skeleton first, flesh later. The top-level is wire routing; each sub-module is testable in isolation. Incremental fill-in.</aside>
 </section>
@@ -127,22 +137,29 @@ endmodule</code></pre>
 
 <section>
     <h2>UART Printf Debugging</h2>
-    <p style="font-size:0.76em;">Your UART TX is now a <em>debug instrument</em>. Wire it up so the FSM can send a byte per state transition to your laptop terminal. Silicon's closest thing to <code>printf</code>.</p>
-    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">// In FSM, on each state change:
-always_ff @(posedge clk) begin
-    if (r_state != r_prev_state) begin
-        o_tx_valid &lt;= 1'b1;
-        case (r_state)
-            S_IDLE: o_tx_data &lt;= 8'h49;  // 'I'
-            S_RUN:  o_tx_data &lt;= 8'h52;  // 'R'
-            S_DONE: o_tx_data &lt;= 8'h44;  // 'D'
-            S_ERR:  o_tx_data &lt;= 8'h45;  // 'E'
+    <p style="font-size:0.7em;">Your UART TX is now a <em>debug instrument</em>. Wire it up so the FSM emits a byte per state transition. Silicon's closest thing to <code>printf</code>.</p>
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.56em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// In FSM, on each state change:
+always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>) begin
+    if (<span style="color:#CE93D8;font-weight:700;">r_state</span> != <span style="color:#CE93D8;font-weight:700;">r_prev_state</span>) begin
+        <span style="color:#F48FB1;font-weight:700;">o_tx_valid</span> &lt;= 1'b1;
+        case (<span style="color:#CE93D8;font-weight:700;">r_state</span>)
+            S_IDLE: <span style="color:#FFB74D;font-weight:700;">o_tx_data</span> &lt;= 8'h49;  // 'I'
+            S_RUN:  <span style="color:#FFB74D;font-weight:700;">o_tx_data</span> &lt;= 8'h52;  // 'R'
+            S_DONE: <span style="color:#FFB74D;font-weight:700;">o_tx_data</span> &lt;= 8'h44;  // 'D'
+            S_ERR:  <span style="color:#FFB74D;font-weight:700;">o_tx_data</span> &lt;= 8'h45;  // 'E'
         endcase
-    end else o_tx_valid &lt;= 1'b0;
-    r_prev_state &lt;= r_state;
+    end else <span style="color:#F48FB1;font-weight:700;">o_tx_valid</span> &lt;= 1'b0;
+    <span style="color:#CE93D8;font-weight:700;">r_prev_state</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_state</span>;
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Power:</strong> open <code>minicom</code>, press buttons on the Go Board, watch the FSM's trace stream to your terminal. &ldquo;I → R → D&rdquo; tells you the FSM progressed through states you expected. &ldquo;I → R → R → E&rdquo; tells you it went to error — and you know exactly where. This is the single highest-yield debug technique you have today.
+      </div>
+      <div class="col" style="flex:1.05;">
+        <img src="diagrams/d15_printf_debug_rtl.svg" alt="RTL diagram of the UART printf debug logic: clk (blue) feeds an r_prev_state D-flip-flop (purple) that holds the previous FSM state; r_state (purple) is compared against r_prev_state by a ≠ comparator (magenta) whose output is o_tx_valid (magenta); r_state also indexes an ASCII lookup case (amber) producing o_tx_data (orange) into uart_tx which emits o_uart_tx (green) to the laptop's minicom." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.2em;">
+        <strong>Power:</strong> open <code>minicom</code>, press buttons on the Go Board, watch the FSM's trace. &ldquo;I → R → D&rdquo; says the FSM hit the states you expected. &ldquo;I → R → R → E&rdquo; says it went to error — and you know exactly where.
     </div>
     <aside class="notes">UART printf is the closest thing to gdb you have on an FPGA. It's easy to forget to use it; it transforms debug from guessing to observing.</aside>
 </section>

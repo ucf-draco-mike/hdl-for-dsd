@@ -96,12 +96,19 @@
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Which Bug Would SV Have Caught?</h2>
-    <pre class="mistake" style="font-size:0.66em;"><code class="language-verilog">always @(*) begin
-    if (sel)
-        out = a;     // missing else — infers a latch silently
+    <div class="two-col" style="margin-top:0.3em;">
+      <div class="col" style="flex:1;">
+        <pre class="mistake" style="font-size:0.66em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">always @(*) begin
+    if (<span style="color:#FFB74D;font-weight:700;">sel</span>)
+        <span style="color:#81C784;font-weight:700;">out</span> = <span style="color:#FFB74D;font-weight:700;">a</span>;     // missing else — infers a latch silently
 end</code></pre>
-    <p style="font-size:0.78em;">Which SV feature would have prevented this bug at compile time?</p>
-    <div class="fragment callout" style="font-size:0.7em;">
+        <p style="font-size:0.7em;margin-top:0.3em;">Which SV feature would have prevented this bug at compile time?</p>
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d13_s1_latch_bug_rtl.svg" alt="RTL diagram showing a D-latch silently inferred from the always @(*) block: sel (orange) becomes the enable, a (orange) is the data, out (green) holds its value whenever sel is low. A warning callout notes always_comb would flag this at compile time." style="width:100%;max-width:440px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.7em;margin-top:0.3em;">
         <strong>Answer:</strong> <code>always_comb</code>. Replace <code>always @(*)</code> with <code>always_comb</code> and the compiler <em>flags the latch inference</em> as a warning or error — the block is declared combinational, and latches aren't combinational, so the tool complains. Same logic, different declared intent, bug caught.
     </div>
     <div class="fragment callout" style="font-size:0.68em;">
