@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Every serial link in a modern SoC — UART, SPI, I2C, JTAG, PCIe serdes, Ethernet PHY — has shift registers at its heart. Even high-speed SerDes (28 Gbps+) runs on parallel-in-serial-out / serial-in-parallel-out architectures internally. Mastering SIPO and PISO means mastering the innards of <em>every</em> serial protocol you'll ever touch.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">Every byte that has ever crossed a USB cable arrived one bit at a time. Every pixel on your monitor over HDMI: one bit at a time. Every NFC tap, Bluetooth handshake, SD card read, keyboard keystroke over USB-C. Wires are narrow and numbers are wide &mdash; somewhere on both ends, something has to take a parade of bits and reassemble them into a value.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Topic 11 UART transmitter is PISO. Topic 12 UART receiver is SIPO + oversampling. Topic 12 SPI shifts both in and out simultaneously. Your capstone uses these patterns. Today's video is the foundation.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">Miss the alignment by a single cycle and 0x55 turns into 0xAA. An SD card looks empty when it isn't. A bootloader stares forever at a magic number that will never arrive. A pressure sensor reports &minus;2,147,483,648 PSI. Off-by-one in a serial stream is the most common bring-up bug in any embedded product &mdash; and the most embarrassing, because the data is right there on the scope.</p>
         </div>
     </div>
     <aside class="notes">SIPO = serial-in, parallel-out. PISO = parallel-in, serial-out. These are the two directions of every serial protocol. UART TX = PISO. UART RX = SIPO.</aside>

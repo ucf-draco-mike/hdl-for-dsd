@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Production testbenches at Apple, Qualcomm, or AMD contain hundreds of test cases. Every one is one-line call to a <code>task</code> with meaningful parameters. The top-level <code>initial</code> block reads like a test plan. When you look at a senior engineer's testbench, the test cases are scannable: you see the intent, not the boilerplate.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">A production verification file at Apple or Qualcomm has hundreds of test scenarios, and the top of the file reads like prose: <code>send_packet(BAD_CRC); send_packet(GOOD_CRC); send_packet(TRUNCATED);</code>. You see what the test is doing at a glance. You don't see the setup boilerplate &mdash; it's been factored out, once, into a named procedure the rest of the file calls.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Today's pattern applies to every testbench you write from here forward. Video 4 combines tasks with file-driven test vectors — the combination that enables the thousand-case testbenches in Topic 11 UART validation.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">Knight Capital lost $440M in 45 minutes in August 2012 because the same chunk of setup code lived in eight copies on eight servers, and seven were updated. Anywhere &ldquo;I'll copy-paste this and tweak it&rdquo; appears in test infrastructure, the copies drift over time, and the bug hides between the versions that almost agree. The eye reads them as identical. The CPU does not.</p>
         </div>
     </div>
     <aside class="notes">Tasks are the refactoring pattern that turns a beginner's testbench into a professional one. The top-level test plan becomes a sequence of one-liners.</aside>

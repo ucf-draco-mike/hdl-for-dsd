@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Mars Pathfinder. The 1986 Therac-25. Multiple Xilinx errata. Intel's Pentium FDIV bug had asynchronous cousins. <strong>Real silicon has failed in the real world from inadequate synchronization.</strong> Every FPGA/ASIC design guide from Intel, Xilinx, and Lattice devotes a chapter to this. Every code review at a senior RTL shop checks for missing synchronizers on asynchronous inputs.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">Anywhere two clocks meet. Your finger presses a key whenever it feels like it, but the chip inside the keyboard ticks at 100MHz. A Bluetooth packet arrives on the radio's clock and needs to land in the CPU's. Your laptop's CPU, GPU, memory bus, USB controller, and WiFi radio all keep their own time &mdash; and they hand each other signals millions of times a second.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Topic 5 button debouncer needs synchronizers (next video). Topic 11 UART RX needs synchronizers on the incoming data line. Topic 12 SPI CS needs one. Every external signal into every module for the rest of the course needs this pattern.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">The fault is invisible. It doesn't appear on the schematic. It doesn't appear in simulation. The chip works on the bench all afternoon. Then a customer ships ten thousand units and one in five locks up after eleven hours. Every senior FPGA/ASIC engineer has a story about chasing this for weeks. Every chip vendor's errata sheet has a paragraph about it.</p>
         </div>
     </div>
     <div class="fragment callout-warning" style="font-size:0.72em;margin-top:0.5em;">

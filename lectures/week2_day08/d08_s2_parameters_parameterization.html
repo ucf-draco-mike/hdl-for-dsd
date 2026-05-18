@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Every reusable IP block is parameterized. Xilinx's MicroBlaze CPU has ~40 parameters (cache size, multiplier presence, FPU presence). ARM's AMBA bus IP is parameterized in data width, burst length, ID width. Cadence, Synopsys, and ARM sell IP that's <em>essentially just Verilog modules with parameters</em> — the value is the generality. A well-parameterized module becomes a product.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">An ARM Cortex CPU isn't one chip &mdash; it's a generator. Same source tree, you can license it with 16KB of cache or 64KB, with two cores or eight, with or without a floating-point unit, at any of half a dozen bus widths. The processor in your phone, the processor in a smart thermostat, and the processor in a Mars rover are siblings: same Verilog, different numbers tweaked at the top of one file.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Your counter, shift register, debouncer, and UART modules all become parameterized today. Your Topic 11 UART will support 9600/115200 baud via one parameter. Your capstone wins judges by showing parameterization — it's what distinguishes &ldquo;built a thing&rdquo; from &ldquo;built a reusable tool.&rdquo;</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">The Boeing 787 had a bug where leaving the flight computer powered for 248 days froze the flight controls &mdash; a width assumption the original engineer thought would never matter. Y2K. The 2038 Unix timestamp. Mars Climate Orbiter's units. Every &ldquo;we'll never go that big / that small / that fast&rdquo; assumption that gets welded into code at compile time eventually meets the customer who breaks it.</p>
         </div>
     </div>
     <aside class="notes">Parameterization is what turns a module into a reusable IP block. IP companies like ARM sell Verilog — with parameters.</aside>

@@ -26,12 +26,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">Every wide bus in a modern SoC is a <code>generate</code> array. 64-bit adders: 64 full-adder cells generated. 8-way set-associative caches: 8 way modules generated. SIMD lanes (NEON, AVX): N parallel ALUs generated. The CPU pipeline is often N parallel execution units generated. A parameterized <code>generate</code> block is how you scale a design from a 4-core chip to a 64-core chip by changing one number.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">Every modern processor contains thousands of nearly-identical adders, registers, lanes, and ports. Nobody types those out. A 64-core chip and a 4-core chip are usually the same source code with one number changed. A 1024-bit memory bus is written once. A 32-lane SIMD unit is written once. The factory cuts the same stencil at every scale.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Your Go Board has 4 buttons — you'll <code>generate</code> 4 debouncers instead of copy-pasting. Your Topic 11 parallel-to-serial converter generates per-bit logic. Topic 12 SPI uses it for variable-width word sizes. Real products scale through this feature.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">The Pentium FDIV bug was wrong entries in a lookup table that had been transcribed by hand instead of generated &mdash; five misses out of 1,066. Multiple GPU vendors have shipped silicon where one of N &ldquo;identical&rdquo; lanes was subtly miswired because someone copy-pasted N times and missed a substitution. When you scale a design by hand, the cost isn't the typing &mdash; it's the lane that almost matches the others, and the bug that takes six months in the field to find.</p>
         </div>
     </div>
     <aside class="notes">Generate is how you scale. Without it, you copy-paste — which doesn't scale, doesn't refactor, doesn't read well. With it, one parameter resizes the whole design.</aside>

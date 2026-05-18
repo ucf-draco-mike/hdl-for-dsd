@@ -68,12 +68,12 @@
     <h2><span style="color:#2E86AB;">🌍</span> Where This Lives</h2>
     <div class="two-col" style="margin-top:0.5em;">
         <div class="col">
-            <h3 style="color:#2E86AB;font-size:1em;">In Industry</h3>
-            <p style="font-size:0.75em;">The 3-block template is <em>the</em> FSM convention at Intel, AMD, Qualcomm, ARM. Every Verilog style guide mandates it. Every static-analysis tool (Spyglass, Lint, Design Compiler) flags deviations. When a senior engineer reviews your code, they scan for the 3-block structure first — if it's absent, the review stops there.</p>
+            <h3 style="color:#2E86AB;font-size:1em;">Where it shows up</h3>
+            <p style="font-size:0.75em;">At Intel, AMD, Qualcomm, ARM &mdash; every internal style guide mandates one specific structural pattern for control logic, and every static-analysis tool (Spyglass, Lint, Design Compiler) flags deviations. Senior reviewers scan the structure before they read the logic. If the structure is wrong, the review stops there. The pattern is so widespread it works as a calling card: engineers can spot each other's training in five seconds.</p>
         </div>
         <div class="col">
-            <h3 style="color:#27AE60;font-size:1em;">In This Course</h3>
-            <p style="font-size:0.75em;">Every FSM from here forward uses this template. Today: traffic light. Tomorrow: pattern detector. Topic 11: UART frame controller. Topic 12: SPI master. Same template, different states and transitions.</p>
+            <h3 style="color:#C0392B;font-size:1em;">When it goes wrong</h3>
+            <p style="font-size:0.75em;">&ldquo;Works in sim, broken in silicon&rdquo; is the most expensive sentence an engineer can write in an email. Almost every instance traces back to two things that should have been kept apart &mdash; present and next, combinational and sequential &mdash; getting blurred into a single line of code. The bug is not reproducible. It does not show in code review. It passes simulation. It appears once, in the field, on a customer's device.</p>
         </div>
     </div>
     <div class="fragment callout" style="font-size:0.72em;margin-top:0.5em;">
