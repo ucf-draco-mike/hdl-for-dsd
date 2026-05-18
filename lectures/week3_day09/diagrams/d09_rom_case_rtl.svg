@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aOrg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+  </defs>
+
+  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">rom_case — Combinational ROM (case-based, no clock)</text>
+
+  <!-- Module box -->
+  <rect x="60" y="50" width="600" height="150" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="75" y="70" font-size="12" font-weight="700" fill="#37474F">module rom_case</text>
+
+  <!-- case mux block -->
+  <rect x="240" y="85" width="240" height="95" rx="8" fill="#FFF3E0" stroke="#9A6F00" stroke-width="2"/>
+  <text x="360" y="108" text-anchor="middle" font-size="13" font-weight="700" fill="#9A6F00">8-entry case</text>
+  <text x="360" y="124" text-anchor="middle" font-size="10" fill="#666" font-style="italic">always @(*)</text>
+  <text x="360" y="142" text-anchor="middle" font-size="9" fill="#555">0→'H' 1→'E' 2→'L'</text>
+  <text x="360" y="156" text-anchor="middle" font-size="9" fill="#555">3→'L' 4→'O' …→0x00</text>
+  <text x="360" y="172" text-anchor="middle" font-size="9" fill="#888" font-style="italic">collapses to ~5 LUT4s</text>
+
+  <!-- Input: i_addr -->
+  <text x="72" y="138" font-size="12" fill="#F57C00" font-weight="700">i_addr[2:0]</text>
+  <line x1="155" y1="133" x2="242" y2="133" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- Output: o_data -->
+  <line x1="480" y1="133" x2="585" y2="133" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+  <text x="592" y="138" font-size="12" fill="#2E7D32" font-weight="700">o_data[7:0]</text>
+
+  <!-- Legend -->
+  <text x="360" y="225" text-anchor="middle" font-size="10" fill="#555" font-style="italic">Pure combinational: 3-bit address → 8-bit data, no clock, no register</text>
+</svg>

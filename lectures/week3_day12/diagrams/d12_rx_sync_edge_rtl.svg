@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 280" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBlu" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aOrg" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aPur" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aTeal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+  </defs>
+
+  <text x="410" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">2-FF Synchronizer + Edge Detector — Catching the Start Bit</text>
+
+  <!-- module box -->
+  <rect x="30" y="45" width="760" height="195" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- 3 FFs in chain -->
+  <rect x="200" y="100" width="100" height="60" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="250" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_rx_sync1</text>
+  <text x="250" y="140" text-anchor="middle" font-size="9" fill="#888">metastab flop</text>
+  <text x="250" y="153" text-anchor="middle" font-size="8" fill="#888" font-style="italic">may briefly oscillate</text>
+
+  <rect x="350" y="100" width="100" height="60" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="400" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_rx_sync2</text>
+  <text x="400" y="140" text-anchor="middle" font-size="9" fill="#888">stable, in-domain</text>
+  <text x="400" y="153" text-anchor="middle" font-size="8" fill="#888" font-style="italic">current value</text>
+
+  <rect x="500" y="100" width="100" height="60" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="550" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">r_rx_sync3</text>
+  <text x="550" y="140" text-anchor="middle" font-size="9" fill="#888">1 cycle earlier</text>
+  <text x="550" y="153" text-anchor="middle" font-size="8" fill="#888" font-style="italic">for edge compare</text>
+
+  <!-- AND gate (edge detect) -->
+  <rect x="640" y="105" width="80" height="50" rx="6" fill="#E0F7FA" stroke="#0277BD" stroke-width="2"/>
+  <text x="680" y="125" text-anchor="middle" font-size="10" font-weight="700" fill="#0277BD">AND</text>
+  <text x="680" y="142" text-anchor="middle" font-size="8" fill="#0277BD">sync3 &amp; ~sync2</text>
+
+  <!-- i_clk fanout -->
+  <text x="40" y="80" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="76" y1="75" x2="700" y2="75" stroke="#1976D2" stroke-width="2"/>
+  <line x1="250" y1="75" x2="250" y2="100" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="400" y1="75" x2="400" y2="100" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="550" y1="75" x2="550" y2="100" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+
+  <!-- i_rx input -->
+  <text x="40" y="135" font-size="12" fill="#F57C00" font-weight="700">i_rx</text>
+  <text x="40" y="148" font-size="9" fill="#F57C00" font-style="italic">(async)</text>
+  <line x1="80" y1="130" x2="200" y2="130" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg)"/>
+
+  <!-- Chain wires (purple - register outputs) -->
+  <line x1="300" y1="130" x2="350" y2="130" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPur)"/>
+  <line x1="450" y1="130" x2="500" y2="130" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPur)"/>
+
+  <!-- sync2 → AND (negated) and sync3 → AND -->
+  <line x1="600" y1="120" x2="640" y2="120" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+  <text x="618" y="113" font-size="8" fill="#7B1FA2">sync3</text>
+  <line x1="450" y1="142" x2="475" y2="142" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="475" y1="142" x2="475" y2="200" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="475" y1="200" x2="630" y2="200" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="630" y1="200" x2="630" y2="148" stroke="#7B1FA2" stroke-width="1.5"/>
+  <line x1="630" y1="148" x2="640" y2="148" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
+  <circle cx="636" cy="148" r="3" fill="white" stroke="#7B1FA2" stroke-width="1"/>
+  <text x="540" y="213" font-size="8" fill="#7B1FA2" font-style="italic">~sync2 (inverted)</text>
+
+  <!-- falling_edge output -->
+  <line x1="720" y1="130" x2="780" y2="130" stroke="#00838F" stroke-width="2" marker-end="url(#aTeal)"/>
+  <text x="753" y="123" font-size="11" fill="#00838F" font-weight="700">falling_edge</text>
+
+  <!-- Also output sync2 as r_rx_sync -->
+  <line x1="450" y1="130" x2="450" y2="248" stroke="#F57C00" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="450" y1="248" x2="780" y2="248" stroke="#F57C00" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#aOrg)"/>
+  <text x="600" y="261" text-anchor="middle" font-size="9" fill="#F57C00" font-weight="700">r_rx_sync (clean) → to S_DATA sample logic</text>
+
+  <text x="410" y="270" text-anchor="middle" font-size="10" fill="#555" font-style="italic">2-FF synchronizer eliminates metastability; 3rd FF stores the previous value for edge detect</text>
+</svg>

@@ -77,39 +77,45 @@
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Transmitting &ldquo;HELLO&rdquo;</h2>
-    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">module hello_tx (
-    input wire i_clk, i_btn, output wire o_tx
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module hello_tx (
+    input wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#FFB74D;font-weight:700;">i_btn</span>, output wire <span style="color:#81C784;font-weight:700;">o_tx</span>
 );
-    // Character ROM: 5 characters (H, E, L, L, O), repeated forever
-    reg [7:0] rom [0:4];
+    // 5 chars (H, E, L, L, O), looped
+    reg [7:0] <span style="color:#FFD54F;font-weight:700;">rom</span> [0:4];
     initial begin
-        rom[0] = 8'h48; rom[1] = 8'h45; rom[2] = 8'h4C;
-        rom[3] = 8'h4C; rom[4] = 8'h4F;
+        <span style="color:#FFD54F;font-weight:700;">rom</span>[0] = 8'h48; <span style="color:#FFD54F;font-weight:700;">rom</span>[1] = 8'h45; <span style="color:#FFD54F;font-weight:700;">rom</span>[2] = 8'h4C;
+        <span style="color:#FFD54F;font-weight:700;">rom</span>[3] = 8'h4C; <span style="color:#FFD54F;font-weight:700;">rom</span>[4] = 8'h4F;
     end
+    // Slow timer — one char per 0.5 s
+    reg [23:0] <span style="color:#CE93D8;font-weight:700;">r_timer</span>;
+    reg [2:0]  <span style="color:#CE93D8;font-weight:700;">r_idx</span>;
+    reg        <span style="color:#F48FB1;font-weight:700;">r_send</span>;
 
-    // Slow timer — one character per ~0.5 s so you can watch in terminal
-    reg [23:0] r_timer;
-    reg [2:0]  r_idx;
-    reg        r_send;
-
-    always @(posedge i_clk) begin
-        r_send &lt;= 1'b0;
-        r_timer &lt;= r_timer + 1;
-        if (r_timer == 24'd12_500_000) begin
-            r_timer &lt;= 0;
-            r_send  &lt;= 1'b1;
-            r_idx   &lt;= (r_idx == 3'd4) ? 3'd0 : r_idx + 1'b1;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+        <span style="color:#F48FB1;font-weight:700;">r_send</span>  &lt;= 1'b0;
+        <span style="color:#CE93D8;font-weight:700;">r_timer</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_timer</span> + 1;
+        if (<span style="color:#CE93D8;font-weight:700;">r_timer</span> == 24'd12_500_000) begin
+            <span style="color:#CE93D8;font-weight:700;">r_timer</span> &lt;= 0;
+            <span style="color:#F48FB1;font-weight:700;">r_send</span>  &lt;= 1'b1;
+            <span style="color:#CE93D8;font-weight:700;">r_idx</span>   &lt;= (<span style="color:#CE93D8;font-weight:700;">r_idx</span> == 3'd4) ? 3'd0 : <span style="color:#CE93D8;font-weight:700;">r_idx</span> + 1'b1;
         end
     end
 
-    uart_tx #(.CLKS_PER_BIT(217)) u_tx (
-        .i_clk(i_clk), .i_reset(1'b0),
-        .i_valid(r_send), .i_data(rom[r_idx]),
-        .o_busy(), .o_tx(o_tx)
+    uart_tx #(.CLKS_PER_BIT(217)) <span style="color:#F06292;font-weight:700;">u_tx</span> (
+        .i_clk(<span style="color:#4FC3F7;font-weight:700;">i_clk</span>), .i_reset(1'b0),
+        .i_valid(<span style="color:#F48FB1;font-weight:700;">r_send</span>), .i_data(<span style="color:#FFD54F;font-weight:700;">rom</span>[<span style="color:#CE93D8;font-weight:700;">r_idx</span>]),
+        .o_busy(), .o_tx(<span style="color:#81C784;font-weight:700;">o_tx</span>)
     );
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> Character ROM (5 entries), slow timer (0.5s), UART TX instance. The timer pulses <code>r_send</code> every 0.5s; the UART TX latches the current character and transmits; the index advances to the next character. <strong>Entire composition: ~25 lines</strong> of new code, using your UART as a ready-to-use building block.
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d11_hello_tx_rtl.svg" alt="RTL diagram of hello_tx wrapper. i_clk (blue) fans out to all three blocks. A character ROM rom[0:4] (amber) holds the 5 bytes for 'HELLO'. r_timer (purple, 24 bits) counts cycles and pulses r_send (magenta) every 12.5M cycles. r_idx (purple, 3 bits) advances through 0..4 on each pulse, addressing the ROM. The selected rom[r_idx] byte feeds u_tx (magenta box, uart_tx submodule) whose .i_valid is tied to r_send and .i_data to rom[r_idx]. The submodule emits o_tx (green) back out to the top." style="width:100%;max-width:480px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.65em;margin-top:0.2em;">
+        <strong>Together:</strong> <span style="color:#9A6F00;font-weight:700;">rom</span> (5 entries) + slow <span style="color:#7B1FA2;font-weight:700;">r_timer</span> + <span style="color:#7B1FA2;font-weight:700;">r_idx</span> walker + <span style="color:#C2185B;font-weight:700;">u_tx</span> instance. The timer pulses <span style="color:#C2185B;font-weight:700;">r_send</span> every 0.5 s; the UART TX latches <span style="color:#9A6F00;font-weight:700;">rom[r_idx]</span> and transmits; the index advances. <strong>~25 lines of new code</strong>, reusing your UART as a ready-to-use building block.
     </div>
     <aside class="notes">Simple composition. Character ROM + timer + UART TX = streaming HELLO. This is the payoff of the week: reusing yesterday's building blocks to produce visible behavior.</aside>
 </section>

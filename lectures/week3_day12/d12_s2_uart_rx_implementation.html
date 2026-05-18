@@ -86,33 +86,55 @@
 </section>
 
 <section>
-    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Key RX Code Pattern</h2>
-    <pre class="synth" style="font-size:0.6em;"><code class="language-verilog">// Oversample generator
-reg [$clog2(CLKS_PER_OSX)-1:0] r_osx_cnt;
-reg                              r_osx_tick;
-always @(posedge i_clk) begin
-    r_osx_tick &lt;= 1'b0;
-    if (r_osx_cnt == CLKS_PER_OSX-1) begin
-        r_osx_cnt  &lt;= 0;
-        r_osx_tick &lt;= 1'b1;  // 1-cycle pulse every CLKS_PER_OSX
-    end else r_osx_cnt &lt;= r_osx_cnt + 1;
-end
-
-// Main FSM, advances on r_osx_tick
-reg [3:0]  r_slot;       // 0..15 within current bit
-reg [2:0]  r_bit;        // 0..7 data bit index
-reg [7:0]  r_data;
-// ...
-S_DATA: if (r_osx_tick) begin
-    if (r_slot == 4'd7) r_data &lt;= {r_rx_sync, r_data[7:1]};  // sample at slot 8
-    if (r_slot == 4'd15) begin
-        r_slot &lt;= 0;
-        if (r_bit == 3'd7) r_state &lt;= S_STOP;
-        else               r_bit &lt;= r_bit + 1;
-    end else r_slot &lt;= r_slot + 1;
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Oversample Generator</h2>
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.6em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Oversample generator
+reg [$clog2(CLKS_PER_OSX)-1:0] <span style="color:#CE93D8;font-weight:700;">r_osx_cnt</span>;
+reg                            <span style="color:#4DD0E1;font-weight:700;">r_osx_tick</span>;
+always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+    <span style="color:#4DD0E1;font-weight:700;">r_osx_tick</span> &lt;= 1'b0;
+    if (<span style="color:#CE93D8;font-weight:700;">r_osx_cnt</span> == CLKS_PER_OSX-1) begin
+        <span style="color:#CE93D8;font-weight:700;">r_osx_cnt</span>  &lt;= 0;
+        <span style="color:#4DD0E1;font-weight:700;">r_osx_tick</span> &lt;= 1'b1;
+        // 1-cycle pulse every CLKS_PER_OSX
+    end else <span style="color:#CE93D8;font-weight:700;">r_osx_cnt</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_osx_cnt</span> + 1;
 end</code></pre>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <strong>Together:</strong> <strong>Sample at <code>r_slot == 7</code></strong> (after slot 7's tick, at the start of what would be slot 8 — the middle of the bit). Shift the sample into <code>r_data</code> LSB-first by putting the new bit at position 7 and shifting existing bits right. After 16 slots, advance to the next bit. After 8 bits, go to <code>S_STOP</code>.
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d12_osx_gen_rtl.svg" alt="RTL diagram of the oversample tick generator. i_clk (blue) clocks two registers (purple): r_osx_cnt counts cycles 0 to CLKS_PER_OSX-1, with a feedback +1 / wrap path. A comparator (blue panel) checks r_osx_cnt == CLKS_PER_OSX-1 and drives r_osx_tick (teal), a 1-bit pulse register that goes high for exactly one cycle each wrap. r_osx_tick fans out to the RX FSM." style="width:100%;max-width:460px;display:block;">
+      </div>
+    </div>
+    <div class="callout" style="font-size:0.66em;margin-top:0.3em;">
+        Inner counter <span style="color:#7B1FA2;font-weight:700;">r_osx_cnt</span> divides <span style="color:#1976D2;font-weight:700;">i_clk</span> down to one tick per oversample slot; <span style="color:#00838F;font-weight:700;">r_osx_tick</span> pulses high for one cycle on wrap. Outer FSM advances on those ticks.
+    </div>
+</section>
+
+<section>
+    <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Sample &amp; Shift Datapath</h2>
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.56em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Main FSM, advances on r_osx_tick
+reg [3:0]  <span style="color:#CE93D8;font-weight:700;">r_slot</span>;       // 0..15 within bit
+reg [2:0]  <span style="color:#CE93D8;font-weight:700;">r_bit</span>;        // 0..7 data bit
+reg [7:0]  <span style="color:#FFD54F;font-weight:700;">r_data</span>;
+// ...
+S_DATA: if (<span style="color:#4DD0E1;font-weight:700;">r_osx_tick</span>) begin
+    if (<span style="color:#CE93D8;font-weight:700;">r_slot</span> == 4'd7)
+        <span style="color:#FFD54F;font-weight:700;">r_data</span> &lt;= {<span style="color:#FFB74D;font-weight:700;">r_rx_sync</span>, <span style="color:#FFD54F;font-weight:700;">r_data</span>[7:1]};
+    if (<span style="color:#CE93D8;font-weight:700;">r_slot</span> == 4'd15) begin
+        <span style="color:#CE93D8;font-weight:700;">r_slot</span> &lt;= 0;
+        if (<span style="color:#CE93D8;font-weight:700;">r_bit</span> == 3'd7) <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= S_STOP;
+        else               <span style="color:#CE93D8;font-weight:700;">r_bit</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_bit</span> + 1;
+    end else <span style="color:#CE93D8;font-weight:700;">r_slot</span> &lt;= <span style="color:#CE93D8;font-weight:700;">r_slot</span> + 1;
+end</code></pre>
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d12_rx_data_sample_rtl.svg" alt="RTL diagram of the S_DATA sample-and-shift datapath. i_clk (blue) clocks every register. r_osx_tick (teal) enables the counters. r_slot (purple, 4 bits) counts 0..15 within a bit; a comparator emits a teal sample-enable when r_slot == 7. r_bit (purple, 3 bits) is the data-bit index 0..7. r_rx_sync (orange) is the synchronized RX line. r_data (amber) is an 8-bit SIPO shift register that loads {r_rx_sync, r_data[7:1]} when sample-enable fires — new bit enters at MSB, old bits shift right, producing LSB-first reception. After 8 bits, the FSM advances to S_STOP. o_data (green) carries the assembled byte." style="width:100%;max-width:500px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.64em;margin-top:0.2em;">
+        <strong>Together:</strong> <strong>Sample at <span style="color:#7B1FA2;font-weight:700;">r_slot</span>==7</strong> — middle of the bit. Shift <span style="color:#F57C00;font-weight:700;">r_rx_sync</span> into <span style="color:#9A6F00;font-weight:700;">r_data</span> LSB-first: new bit at position 7, existing bits shift right. After 16 slots advance to the next bit; after 8 bits go to S_STOP.
     </div>
     <aside class="notes">The critical line: <code>r_data &lt;= {r_rx_sync, r_data[7:1]}</code>. Sample at slot 7, shift the new bit into position 7, old bits shift right. LSB-first matching transmission convention. After 8 shifts, r_data has the full byte.</aside>
 </section>

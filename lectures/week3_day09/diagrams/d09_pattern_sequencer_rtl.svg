@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBlu" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aRed" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="aGrn" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aPur" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aTeal" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+    <marker id="aMag" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C2185B"/></marker>
+  </defs>
+
+  <text x="430" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">pattern_sequencer — Timer + Address Counter + ROM</text>
+
+  <!-- Top module box -->
+  <rect x="30" y="45" width="800" height="260" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="45" y="65" font-size="12" font-weight="700" fill="#37474F">module pattern_sequencer</text>
+
+  <!-- Step timer -->
+  <rect x="155" y="90" width="170" height="90" rx="8" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="240" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#7B1FA2">Step Timer</text>
+  <text x="240" y="130" text-anchor="middle" font-size="10" fill="#7B1FA2">r_step_counter</text>
+  <text x="240" y="148" text-anchor="middle" font-size="9" fill="#888">count 0..STEP_LEN−1</text>
+  <text x="240" y="165" text-anchor="middle" font-size="9" fill="#00838F" font-weight="700">→ w_step_tick</text>
+
+  <!-- Address counter -->
+  <rect x="395" y="90" width="170" height="90" rx="8" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="480" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#7B1FA2">Address Counter</text>
+  <text x="480" y="130" text-anchor="middle" font-size="10" fill="#7B1FA2">r_addr</text>
+  <text x="480" y="148" text-anchor="middle" font-size="9" fill="#888">advances on w_step_tick</text>
+  <text x="480" y="165" text-anchor="middle" font-size="9" fill="#888">0..PATTERN_LEN−1</text>
+
+  <!-- ROM submodule -->
+  <rect x="635" y="90" width="170" height="90" rx="8" fill="#FCE4EC" stroke="#C2185B" stroke-width="2"/>
+  <text x="720" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="#C2185B">u_rom</text>
+  <text x="720" y="128" text-anchor="middle" font-size="10" fill="#C2185B">rom_array</text>
+  <text x="720" y="146" text-anchor="middle" font-size="9" fill="#888">#(.INIT_FILE)</text>
+  <text x="720" y="163" text-anchor="middle" font-size="9" fill="#9A6F00" font-weight="700">mem[PATTERN_LEN×8]</text>
+
+  <!-- Top-level inputs -->
+  <text x="40" y="125" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="75" y1="120" x2="155" y2="120" stroke="#1976D2" stroke-width="2"/>
+  <line x1="155" y1="120" x2="155" y2="120" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <line x1="115" y1="120" x2="115" y2="230" stroke="#1976D2" stroke-width="2"/>
+  <line x1="115" y1="230" x2="395" y2="230" stroke="#1976D2" stroke-width="2"/>
+  <line x1="395" y1="230" x2="395" y2="155" stroke="#1976D2" stroke-width="2"/>
+  <line x1="115" y1="230" x2="635" y2="230" stroke="#1976D2" stroke-width="2"/>
+  <line x1="635" y1="230" x2="635" y2="155" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <line x1="395" y1="155" x2="395" y2="155" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <text x="120" y="244" font-size="8" fill="#1976D2" font-style="italic">clk fanout</text>
+
+  <text x="40" y="160" font-size="12" fill="#D32F2F" font-weight="700">i_reset</text>
+  <line x1="88" y1="155" x2="155" y2="155" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRed)"/>
+  <line x1="148" y1="155" x2="148" y2="260" stroke="#D32F2F" stroke-width="2"/>
+  <line x1="148" y1="260" x2="395" y2="260" stroke="#D32F2F" stroke-width="2"/>
+  <line x1="395" y1="260" x2="395" y2="180" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRed)"/>
+  <text x="150" y="274" font-size="8" fill="#D32F2F" font-style="italic">reset fanout</text>
+
+  <!-- w_step_tick: timer → counter (and back to timer self-clear) -->
+  <line x1="325" y1="135" x2="395" y2="135" stroke="#00838F" stroke-width="2" marker-end="url(#aTeal)"/>
+  <text x="360" y="128" text-anchor="middle" font-size="9" fill="#00838F" font-weight="700">w_step_tick</text>
+
+  <!-- r_addr: counter → rom -->
+  <line x1="565" y1="135" x2="635" y2="135" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPur)"/>
+  <text x="600" y="128" text-anchor="middle" font-size="9" fill="#7B1FA2" font-weight="700">r_addr</text>
+
+  <!-- rom → o_leds -->
+  <line x1="805" y1="135" x2="830" y2="135" stroke="#2E7D32" stroke-width="2"/>
+  <line x1="830" y1="135" x2="830" y2="195" stroke="#2E7D32" stroke-width="2"/>
+  <line x1="830" y1="195" x2="180" y2="195" stroke="#2E7D32" stroke-width="2"/>
+  <text x="500" y="210" text-anchor="middle" font-size="9" fill="#2E7D32" font-weight="700">o_leds[7:0] (from ROM data)</text>
+
+  <text x="40" y="195" font-size="12" fill="#2E7D32" font-weight="700">o_leds[7:0]</text>
+  <line x1="180" y1="195" x2="125" y2="195" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn)"/>
+
+  <!-- Note -->
+  <rect x="180" y="285" width="500" height="28" rx="4" fill="#FFF8E1" stroke="#F9A825" stroke-width="1"/>
+  <text x="430" y="303" text-anchor="middle" font-size="10" fill="#333" font-weight="600">Three blocks composed: slow tick generator → walks address → ROM emits pattern data</text>
+</svg>

@@ -57,62 +57,85 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Approach 1: <code>case</code>-Based ROM</h2>
-    <pre class="synth"><code class="language-verilog">module rom_case (
-    input  wire [2:0] i_addr,
-    output reg  [7:0] o_data
+    <div class="two-col" style="margin-top:0.3em;">
+      <div class="col" style="flex:1.1;">
+        <pre class="synth" style="font-size:0.6em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module rom_case (
+    input  wire [2:0] <span style="color:#F57C00;font-weight:700;">i_addr</span>,
+    output reg  [7:0] <span style="color:#2E7D32;font-weight:700;">o_data</span>
 );
     always @(*) begin
-        case (i_addr)
-            3'd0: o_data = 8'h48;   // 'H'
-            3'd1: o_data = 8'h45;   // 'E'
-            3'd2: o_data = 8'h4C;   // 'L'
-            3'd3: o_data = 8'h4C;   // 'L'
-            3'd4: o_data = 8'h4F;   // 'O'
-            default: o_data = 8'h00;
+        case (<span style="color:#F57C00;font-weight:700;">i_addr</span>)
+            3'd0: <span style="color:#2E7D32;font-weight:700;">o_data</span> = 8'h48;   // 'H'
+            3'd1: <span style="color:#2E7D32;font-weight:700;">o_data</span> = 8'h45;   // 'E'
+            3'd2: <span style="color:#2E7D32;font-weight:700;">o_data</span> = 8'h4C;   // 'L'
+            3'd3: <span style="color:#2E7D32;font-weight:700;">o_data</span> = 8'h4C;   // 'L'
+            3'd4: <span style="color:#2E7D32;font-weight:700;">o_data</span> = 8'h4F;   // 'O'
+            default: <span style="color:#2E7D32;font-weight:700;">o_data</span> = 8'h00;
         endcase
     end
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> Combinational (<code>always @(*)</code>), no clock needed — the ROM's contents are truly fixed at synthesis time. For 5 entries this is perfectly readable. At 256 entries, it becomes a maintenance nightmare. <code>default</code> case covers the unused addresses and prevents latch inference.
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d09_rom_case_rtl.svg" alt="RTL diagram of rom_case: a combinational 8-entry case-statement block. i_addr[2:0] (orange) enters on the left, drives an 'always @(*)' case that collapses to ~5 LUT4s, and produces o_data[7:0] (green) on the right with no clock or register." style="width:100%;max-width:420px;display:block;">
+      </div>
+    </div>
+    <div class="callout" style="font-size:0.66em;margin-top:0.3em;">
+        <strong>My thinking:</strong> Combinational (<code>always @(*)</code>), no clock needed — the ROM's contents are truly fixed at synthesis time. The <span style="color:#F57C00;font-weight:700;">i_addr</span> (orange) feeds the case mux; <span style="color:#2E7D32;font-weight:700;">o_data</span> (green) emerges directly. For 5 entries this is perfectly readable. At 256 entries, it becomes a maintenance nightmare. <code>default</code> case covers the unused addresses and prevents latch inference.
     </div>
     <aside class="notes">Case-based ROMs are fine for tiny tables. Readable, synthesizable. Don't scale past ~16 entries before legibility dies.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Approach 2: Array + <code>$readmemh</code></h2>
-    <pre class="synth"><code class="language-verilog">module rom_array #(
+    <div class="two-col" style="margin-top:0.3em;">
+      <div class="col" style="flex:1.05;">
+        <pre class="synth" style="font-size:0.56em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module rom_array #(
     parameter ADDR_W = 8,
     parameter DATA_W = 8,
     parameter INIT_FILE = "rom_contents.hex"
 ) (
-    input  wire              i_clk,
-    input  wire [ADDR_W-1:0] i_addr,
-    output reg  [DATA_W-1:0] o_data
+    input  wire              <span style="color:#4FC3F7;font-weight:700;">i_clk</span>,
+    input  wire [ADDR_W-1:0] <span style="color:#FFB74D;font-weight:700;">i_addr</span>,
+    output reg  [DATA_W-1:0] <span style="color:#81C784;font-weight:700;">o_data</span>
 );
-    reg [DATA_W-1:0] mem [0:(2**ADDR_W)-1];
+    reg [DATA_W-1:0] <span style="color:#FFD54F;font-weight:700;">mem</span> [0:(2**ADDR_W)-1];
 
-    initial $readmemh(INIT_FILE, mem);      // synth-time content load
+    initial $readmemh(INIT_FILE, <span style="color:#FFD54F;font-weight:700;">mem</span>);   // synth-time load
 
-    always @(posedge i_clk) o_data &lt;= mem[i_addr];  // synchronous read
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) <span style="color:#81C784;font-weight:700;">o_data</span> &lt;= <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">i_addr</span>];  // sync read
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Together:</strong> Three features: <strong>(1)</strong> parameterized depth and width, <strong>(2)</strong> content loaded from external hex file — same <code>$readmemh</code> you saw in Topic 6 testbenches, but here it's used at <em>synthesis</em>, <strong>(3)</strong> <em>synchronous</em> read — <code>o_data</code> appears one cycle after <code>i_addr</code>. That synchronous read is the magic word: it's what triggers block RAM inference.
+      </div>
+      <div class="col" style="flex:1.1;">
+        <img src="diagrams/d09_rom_array_rtl.svg" alt="RTL diagram of rom_array: i_clk (blue) feeds a memory array mem[0:2^ADDR_W-1] (amber) initialized via $readmemh; i_addr (orange) is the address input; the array output is registered into an o_data D-flip-flop (purple) clocked by i_clk; o_data (green) exits one cycle after i_addr. Triggers SB_RAM40_4K inference." style="width:100%;max-width:440px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.65em;margin-top:0.3em;">
+        <strong>Together:</strong> Three features: <strong>(1)</strong> parameterized depth and width, <strong>(2)</strong> <span style="color:#9A6F00;font-weight:700;">mem</span> contents loaded from external hex file at <em>synthesis</em>, <strong>(3)</strong> <em>synchronous</em> read — <span style="color:#2E7D32;font-weight:700;">o_data</span> appears one cycle after <span style="color:#F57C00;font-weight:700;">i_addr</span> because of the <span style="color:#1976D2;font-weight:700;">i_clk</span>-edge update. That synchronous read is the magic word: it's what triggers block RAM inference.
     </div>
     <aside class="notes">The scalable pattern. Parameters + external file + synchronous read. Each of these matters. Sync read is the critical one for block RAM — without it you get LUT RAM or distributed logic.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Identify the Bug</h2>
-    <pre class="mistake"><code class="language-verilog">// Intended: a 1024-entry ROM that should infer block RAM
-module rom_bad (input wire [9:0] addr, output wire [7:0] data);
-    reg [7:0] mem [0:1023];
-    initial $readmemh("rom.hex", mem);
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="mistake" style="font-size:0.62em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Intended: 1024-entry ROM → should infer block RAM
+module rom_bad (
+    input  wire [9:0] <span style="color:#FFB74D;font-weight:700;">addr</span>,
+    output wire [7:0] <span style="color:#81C784;font-weight:700;">data</span>
+);
+    reg [7:0] <span style="color:#FFD54F;font-weight:700;">mem</span> [0:1023];
+    initial $readmemh("rom.hex", <span style="color:#FFD54F;font-weight:700;">mem</span>);
 
-    assign data = mem[addr];        // ← combinational read
+    assign <span style="color:#81C784;font-weight:700;">data</span> = <span style="color:#FFD54F;font-weight:700;">mem</span>[<span style="color:#FFB74D;font-weight:700;">addr</span>]; // ← combinational read
 endmodule</code></pre>
-    <p style="font-size:0.78em;">Why will the tool <em>not</em> infer block RAM here?</p>
-    <div class="fragment callout" style="font-size:0.7em;">
-        <strong>Answer:</strong> <strong>Combinational read</strong> (<code>assign</code>, not a clocked always block). Block RAM reads require a clock edge. The synthesizer will be forced to map this 1024-entry array as LUT RAM or even scattered combinational logic — orders of magnitude more expensive. <strong>Fix:</strong> change to <code>always @(posedge clk) data &lt;= mem[addr];</code> with <code>data</code> as <code>reg</code>.
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d09_rom_bad_rtl.svg" alt="RTL diagram of rom_bad shown in red: addr (orange) drives a 1024-entry mem array (amber); data (green) leaves combinationally via assign with no clocked output register; result is scattered LUT/distributed RAM instead of an EBR. Fix annotation shows always @(posedge clk) data <= mem[addr] with data as reg." style="width:100%;max-width:430px;display:block;"></div>
+    </div>
+    <p style="font-size:0.72em;margin-top:0.3em;">Why will the tool <em>not</em> infer block RAM here?</p>
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Answer:</strong> <strong>Combinational read</strong> (<code>assign</code>, not a clocked always block) — no clock anywhere in the module. Block RAM reads require a clock edge. The synthesizer is forced to map the 1024-entry <span style="color:#9A6F00;font-weight:700;">mem</span> as LUT RAM / scattered logic — orders of magnitude more expensive. <strong>Fix:</strong> <code>always @(posedge <span style="color:#1976D2;font-weight:700;">clk</span>) <span style="color:#2E7D32;font-weight:700;">data</span> &lt;= <span style="color:#9A6F00;font-weight:700;">mem</span>[<span style="color:#F57C00;font-weight:700;">addr</span>];</code> with <code>data</code> as <code>reg</code>.
     </div>
     <aside class="notes">This is the most common ROM bug. Wanting instant reads tempts you to write combinational. Block RAM is synchronous. Always use clocked reads for ROMs beyond trivial size.</aside>
 </section>
