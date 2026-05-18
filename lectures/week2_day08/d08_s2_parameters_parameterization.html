@@ -57,87 +57,94 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Parameterized Counter</h2>
-    <pre class="synth" style="font-size:0.68em;"><code class="language-verilog">module counter #(
-    parameter WIDTH    = 8,          // default value
-    parameter MAX_VAL  = 2**WIDTH-1  // derived from another parameter
+    <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:0.5em;align-items:center;">
+        <pre class="synth" style="font-size:0.55em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module counter #(
+    parameter <span style="color:#FFD54F;font-weight:700;">WIDTH</span>    = 8,           // default
+    parameter <span style="color:#FFD54F;font-weight:700;">MAX_VAL</span>  = 2**<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1  // derived
 ) (
-    input  wire              i_clk, i_reset,
-    output reg  [WIDTH-1:0]  o_count
+    input  wire                <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
+    output reg  [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#BA68C8;font-weight:700;">o_count</span>
 );
-    always @(posedge i_clk) begin
-        if      (i_reset)           o_count &lt;= 0;
-        else if (o_count == MAX_VAL) o_count &lt;= 0;
-        else                         o_count &lt;= o_count + 1'b1;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+        if      (<span style="color:#EF5350;font-weight:700;">i_reset</span>)              <span style="color:#BA68C8;font-weight:700;">o_count</span> &lt;= 0;
+        else if (<span style="color:#BA68C8;font-weight:700;">o_count</span>==<span style="color:#FFD54F;font-weight:700;">MAX_VAL</span>) <span style="color:#BA68C8;font-weight:700;">o_count</span> &lt;= 0;
+        else                          <span style="color:#BA68C8;font-weight:700;">o_count</span> &lt;= <span style="color:#BA68C8;font-weight:700;">o_count</span>+1'b1;
     end
 endmodule
 
 // Instantiation with override
-counter #(.WIDTH(12)) u_ticker (.i_clk(clk), .i_reset(rst), .o_count(tick));
-//       ^^^^^^^^^^^^  overrides default WIDTH=8 → WIDTH=12</code></pre>
-    <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> Three idioms. (1) <strong>Default value</strong> — <code>WIDTH=8</code> means instantiating without override still works. (2) <strong>Derived parameter</strong> — <code>MAX_VAL = 2**WIDTH-1</code> auto-updates. (3) <strong>Named override</strong> — <code>#(.WIDTH(12))</code>. Never use positional overrides; same reasoning as named ports.
+counter #(.<span style="color:#FFD54F;font-weight:700;">WIDTH</span>(12)) <span style="color:#CE93D8;font-weight:700;">u_ticker</span> (
+    .<span style="color:#4FC3F7;font-weight:700;">i_clk</span>(clk), .<span style="color:#EF5350;font-weight:700;">i_reset</span>(rst),
+    .<span style="color:#BA68C8;font-weight:700;">o_count</span>(tick));</code></pre>
+        <img src="diagrams/d08_param_counter_rtl.svg" alt="RTL block diagram of a parameterized counter. A WIDTH-bit register (blue) feeds a +1 adder, a comparator checks o_count==MAX_VAL (orange) and steers a MUX to wrap to 0; on match the comparator drives the MUX select. Signals are colored: i_clk blue, i_reset red, o_count purple, WIDTH and MAX_VAL annotated in gold." style="width:100%;max-width:540px;display:block;">
     </div>
-    <aside class="notes">Three idioms every good parameterized module uses. Defaults for ergonomic instantiation, derived parameters for consistency, named overrides for safety.</aside>
+    <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
+        <strong>Three idioms:</strong> (1) Default <code><span style="color:#B8860B;">WIDTH</span>=8</code> — instantiation without override still works. (2) Derived <code><span style="color:#B8860B;">MAX_VAL</span>=2**<span style="color:#B8860B;">WIDTH</span>-1</code> auto-updates. (3) Named override <code>#(.<span style="color:#B8860B;">WIDTH</span>(12))</code>. The register, adder, and comparator widths all scale with the gold parameter — that's why the diagram uses one box for any size.
+    </div>
+    <aside class="notes">Three idioms every good parameterized module uses. Defaults for ergonomic instantiation, derived parameters for consistency, named overrides for safety. The RTL diagram is the same picture for WIDTH=4, 8, 12, 16 — only the bit-width annotations change.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>localparam</code> and <code>$clog2</code></h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module debounce #(
-    parameter CLKS_STABLE = 500_000   // user-configurable
+    <div style="display:grid;grid-template-columns:1fr 1.05fr;gap:0.5em;align-items:center;">
+        <pre class="synth" style="font-size:0.56em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module debounce #(
+    parameter <span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span> = 500_000   // user knob
 ) (
-    input  wire i_clk, i_reset, i_noisy,
-    output reg  o_clean
+    input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#FFB74D;font-weight:700;">i_noisy</span>,
+    output reg  <span style="color:#66BB6A;font-weight:700;">o_clean</span>
 );
-    // localparam = internal-only constant, derived from parameter
-    // Caller CANNOT override it
-    localparam COUNT_WIDTH = $clog2(CLKS_STABLE);
+    // localparam = internal, NOT overridable
+    localparam <span style="color:#FFD54F;font-weight:700;">COUNT_WIDTH</span> =
+                  $clog2(<span style="color:#FFD54F;font-weight:700;">CLKS_STABLE</span>);
 
-    reg [COUNT_WIDTH-1:0] r_count;
-    // ... counter logic ...
+    reg [<span style="color:#FFD54F;font-weight:700;">COUNT_WIDTH</span>-1:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;
+    // counter increments while
+    // <span style="color:#FFB74D;font-weight:700;">i_noisy</span> matches <span style="color:#66BB6A;font-weight:700;">r_clean</span>;
+    // latches new <span style="color:#66BB6A;font-weight:700;">o_clean</span> at threshold.
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Together:</strong> <code>parameter</code> exposes a knob to the user. <code>localparam</code> is for <em>internal</em> derivations — &ldquo;this constant is computed from the parameter, don't touch it.&rdquo; <code>$clog2</code> computes the ceiling of log2 at compile time. Combined: users set CLKS_STABLE, the width auto-sizes, no manual calculation ever.
+        <img src="diagrams/d08_param_debounce_rtl.svg" alt="RTL block diagram of parameterized debounce. Top-right pill shows parameter CLKS_STABLE and derived localparam COUNT_WIDTH=$clog2(CLKS_STABLE). The body shows an equality compare between i_noisy (orange) and r_clean (green, feedback), feeding a COUNT_WIDTH-sized r_count register (blue/purple). A threshold comparator (orange) detects r_count == CLKS_STABLE-1 and gates the r_clean register to latch the new value. Signals colored: i_clk blue, i_reset red, i_noisy orange, o_clean green, r_count purple." style="width:100%;max-width:580px;display:block;">
     </div>
-    <aside class="notes">parameter vs localparam. parameter = user knob. localparam = derived constant, not overridable. $clog2 auto-sizes. These three work together to give you clean parameterized modules.</aside>
+    <div class="fragment callout" style="font-size:0.66em;">
+        <strong>Together:</strong> <code><span style="color:#B8860B;">parameter</span></code> exposes a knob. <code>localparam</code> is internal — derived, not overridable. <code>$clog2</code> picks the smallest width that fits. Users set <code><span style="color:#B8860B;">CLKS_STABLE</span></code>; <code><span style="color:#B8860B;">COUNT_WIDTH</span></code> and the <code><span style="color:#9C27B0;">r_count</span></code> register auto-size to match.
+    </div>
+    <aside class="notes">parameter vs localparam. parameter = user knob. localparam = derived constant, not overridable. $clog2 auto-sizes. The diagram shows why: the orange comparator and the purple counter both depend on CLKS_STABLE, so deriving COUNT_WIDTH internally keeps them consistent forever.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Design a Parameterized FIFO</h2>
-    <p style="font-size:0.72em;">Here&rsquo;s a hard-coded 16-deep &times; 8-wide FIFO. Every dimension is baked in. <strong>Find every number that would need to change for a different size — then parameterize them.</strong></p>
-    <pre class="synth" style="font-size:0.6em;margin-top:0.3em;"><code class="language-verilog">module fifo (
-    input  wire        i_clk, i_reset,
-    input  wire        i_wr,   i_rd,
-    input  wire [7:0]  i_wdata,        // 8-bit data in
-    output reg  [7:0]  o_rdata,        // 8-bit data out
-    output wire        o_full, o_empty
+    <p style="font-size:0.65em;margin:0;">Hard-coded 16-deep &times; 8-wide FIFO. Find every number that would need to change for a different size — then parameterize.</p>
+    <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:0.5em;align-items:start;margin-top:0.2em;">
+        <pre class="synth" style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module fifo (
+    input  wire        <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
+    input  wire        <span style="color:#F48FB1;font-weight:700;">i_wr</span>, <span style="color:#A1887F;font-weight:700;">i_rd</span>,
+    input  wire [7:0]  <span style="color:#7986CB;font-weight:700;">i_wdata</span>,    // 8-bit
+    output reg  [7:0]  <span style="color:#4DD0E1;font-weight:700;">o_rdata</span>,    // 8-bit
+    output wire        <span style="color:#FFD54F;font-weight:700;">o_full</span>, <span style="color:#FFD54F;font-weight:700;">o_empty</span>
 );
-    reg [7:0] memory [0:15];           // 16 entries, 8 bits each
-    reg [3:0] r_wptr, r_rptr;          // 4-bit pointers ($clog2(16)=4)
-    reg [4:0] r_count;                 // 0..16 → needs 5 bits
+    reg [7:0] memory [0:15];      // 16 × 8
+    reg [3:0] <span style="color:#F48FB1;font-weight:700;">r_wptr</span>, <span style="color:#A1887F;font-weight:700;">r_rptr</span>;   // 4-bit
+    reg [4:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;            // 0..16 = 5 bits
     // ... read/write/full/empty logic ...
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.65em;">
-        <strong>Reveal &mdash; parameterized version:</strong>
-        <pre style="font-size:0.85em;"><code class="language-verilog">module fifo #(
-    parameter DEPTH = 16,         // user: how many entries
-    parameter WIDTH = 8           // user: bits per entry
-) (
-    input  wire              i_clk, i_reset, i_wr, i_rd,
-    input  wire [WIDTH-1:0]  i_wdata,
-    output reg  [WIDTH-1:0]  o_rdata,
-    output wire              o_full, o_empty
-);
-    localparam ADDR_W  = $clog2(DEPTH);     // pointer width auto-sizes
-    localparam COUNT_W = $clog2(DEPTH+1);   // count needs one more value
-
-    reg [WIDTH-1:0]   memory [0:DEPTH-1];
-    reg [ADDR_W-1:0]  r_wptr, r_rptr;
-    reg [COUNT_W-1:0] r_count;
-    // ... same logic, now size-agnostic ...
-endmodule</code></pre>
-    Same logic. One source. Works for 8&times;8, 1024&times;64, or any other size by changing two numbers at instantiation.
+        <img src="diagrams/d08_fifo_rtl.svg" alt="RTL block diagram of FIFO. Center: memory[0..DEPTH-1] with DEPTH rows × WIDTH bits (blue). Left: r_wptr write pointer (pink), r_rptr read pointer (brown), r_count occupancy counter (purple). Right: o_rdata (cyan), full/empty comparator (orange) producing o_full and o_empty (gold). i_wdata (indigo) enters memory; i_wr (pink), i_rd (brown), i_clk (blue), i_reset (red) on the left. The parameter pill shows DEPTH/WIDTH and the derived ADDR_W and COUNT_W localparams." style="width:100%;max-width:540px;display:block;">
     </div>
-    <aside class="notes">Start by reading the hardcoded version aloud and pointing at each magic number: 7, 15, 3, 4. Each one is a parameter waiting to happen. The reveal shows the &ldquo;after&rdquo; — note the count needs $clog2(DEPTH+1), not $clog2(DEPTH), because the count ranges 0..DEPTH inclusive. Classic off-by-one trap.</aside>
+    <div class="fragment callout" style="font-size:0.55em;margin-top:0.2em;">
+        <strong>Reveal &mdash; parameterized version:</strong>
+        <pre style="font-size:0.9em;margin:0.2em 0 0 0;"><code class="nohighlight" style="color:#D4D4D4;">module fifo #(parameter <span style="color:#FFD54F;font-weight:700;">DEPTH</span>=16, parameter <span style="color:#FFD54F;font-weight:700;">WIDTH</span>=8) (
+    input  wire              <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>, <span style="color:#F48FB1;font-weight:700;">i_wr</span>, <span style="color:#A1887F;font-weight:700;">i_rd</span>,
+    input  wire [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#7986CB;font-weight:700;">i_wdata</span>,
+    output reg  [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]  <span style="color:#4DD0E1;font-weight:700;">o_rdata</span>,
+    output wire              <span style="color:#FFD54F;font-weight:700;">o_full</span>, <span style="color:#FFD54F;font-weight:700;">o_empty</span>);
+    localparam <span style="color:#FFD54F;font-weight:700;">ADDR_W</span>  = $clog2(<span style="color:#FFD54F;font-weight:700;">DEPTH</span>);     // pointer width
+    localparam <span style="color:#FFD54F;font-weight:700;">COUNT_W</span> = $clog2(<span style="color:#FFD54F;font-weight:700;">DEPTH</span>+1);   // count needs DEPTH+1 values
+    reg [<span style="color:#FFD54F;font-weight:700;">WIDTH</span>-1:0]   memory [0:<span style="color:#FFD54F;font-weight:700;">DEPTH</span>-1];
+    reg [<span style="color:#FFD54F;font-weight:700;">ADDR_W</span>-1:0]  <span style="color:#F48FB1;font-weight:700;">r_wptr</span>, <span style="color:#A1887F;font-weight:700;">r_rptr</span>;
+    reg [<span style="color:#FFD54F;font-weight:700;">COUNT_W</span>-1:0] <span style="color:#BA68C8;font-weight:700;">r_count</span>;
+    // ... same logic, size-agnostic ...
+endmodule</code></pre>
+    Same logic, same RTL picture — only the gold annotations change. Works for 8×8, 1024×64, or anything else.
+    </div>
+    <aside class="notes">Read the hardcoded version aloud and point at each magic number: 7, 15, 3, 4. Each one is a parameter waiting to happen. Note count needs $clog2(DEPTH+1), not $clog2(DEPTH), because count ranges 0..DEPTH inclusive. Classic off-by-one trap. The RTL diagram is identical for both versions — just relabel the bit-widths.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

@@ -57,127 +57,84 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Array of Debouncers</h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module button_array #(
-    parameter N = 4                 // number of buttons
+    <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:0.5em;align-items:center;">
+        <pre class="synth" style="font-size:0.52em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module button_array #(
+    parameter <span style="color:#FFD54F;font-weight:700;">N</span> = 4         // # buttons
 ) (
-    input  wire         i_clk, i_reset,
-    input  wire [N-1:0] i_buttons,  // raw noisy buttons
-    output wire [N-1:0] o_clean     // debounced clean signals
+    input  wire         <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#EF5350;font-weight:700;">i_reset</span>,
+    input  wire [<span style="color:#FFD54F;font-weight:700;">N</span>-1:0] <span style="color:#FFB74D;font-weight:700;">i_buttons</span>,
+    output wire [<span style="color:#FFD54F;font-weight:700;">N</span>-1:0] <span style="color:#66BB6A;font-weight:700;">o_clean</span>
 );
-    genvar gi;                       // generate-index variable
+    genvar <span style="color:#FFD54F;font-weight:700;">gi</span>;        // compile-time index
     generate
-        for (gi = 0; gi &lt; N; gi = gi + 1) begin : g_btn
-            debounce #(.CLKS_STABLE(500_000)) u_deb (
-                .i_clk   (i_clk),
-                .i_reset (i_reset),
-                .i_noisy (i_buttons[gi]),
-                .o_clean (o_clean[gi])
+        for (<span style="color:#FFD54F;font-weight:700;">gi</span>=0; <span style="color:#FFD54F;font-weight:700;">gi</span>&lt;<span style="color:#FFD54F;font-weight:700;">N</span>; <span style="color:#FFD54F;font-weight:700;">gi</span>=<span style="color:#FFD54F;font-weight:700;">gi</span>+1)
+        begin : <span style="color:#FFD54F;font-weight:700;">g_btn</span>      // <-- named scope
+            debounce #(.CLKS_STABLE(500_000)) <span style="color:#CE93D8;font-weight:700;">u_deb</span> (
+                .<span style="color:#4FC3F7;font-weight:700;">i_clk</span>   (<span style="color:#4FC3F7;font-weight:700;">i_clk</span>),
+                .<span style="color:#EF5350;font-weight:700;">i_reset</span> (<span style="color:#EF5350;font-weight:700;">i_reset</span>),
+                .<span style="color:#FFB74D;font-weight:700;">i_noisy</span> (<span style="color:#FFB74D;font-weight:700;">i_buttons</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]),
+                .<span style="color:#66BB6A;font-weight:700;">o_clean</span> (<span style="color:#66BB6A;font-weight:700;">o_clean</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>])
             );
         end
     endgenerate
 endmodule</code></pre>
-    <div class="callout" style="font-size:0.7em;">
-        <strong>My thinking:</strong> Three idioms. (1) <code>genvar gi</code> declares a compile-time loop index. (2) <code>begin : g_btn</code> names the generate scope — required, and shows up in waveforms as <code>dut.g_btn[0].u_deb</code>. (3) The inner code looks like one debouncer instantiation; the generator creates N of them.
+        <img src="diagrams/d08_button_array_rtl.svg" alt="RTL block diagram of button_array shown at N=4. A gold dashed generate-scope box labeled g_btn wraps four debounce instances g_btn[0..3].u_deb. The i_buttons[N-1:0] bus (orange) fans out one bit per instance; outputs collect back into o_clean[N-1:0] (green). i_clk (blue) and i_reset (red) form shared buses across all instances. Source file size is constant — silicon scales with N." style="width:100%;max-width:600px;display:block;">
     </div>
-    <aside class="notes">Standard pattern for &ldquo;array of this thing.&rdquo; Named scope is mandatory and shows up in waveforms — very important for debug navigation.</aside>
+    <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
+        <strong>Three idioms:</strong> (1) <code><span style="color:#B8860B;">genvar gi</span></code> = compile-time loop index. (2) <code>begin : <span style="color:#B8860B;">g_btn</span></code> names the generate scope — shows up in waveforms as <code>dut.<span style="color:#B8860B;">g_btn</span>[0].<span style="color:#9C27B0;">u_deb</span></code>. (3) Inner code reads as one instantiation; elaborator produces <span style="color:#B8860B;">N</span> physical copies.
+    </div>
+    <aside class="notes">Standard pattern for &ldquo;array of this thing.&rdquo; Named scope is mandatory and shows up in waveforms — very important for debug navigation. The orange-fanout and green-collect in the diagram are exactly what the [gi] subscript means in the code.</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>generate if</code> for Conditional Hardware</h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">module configurable_pipe #(
-    parameter USE_SYNCHRONIZER = 1   // compile-time switch
+    <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:0.5em;align-items:center;">
+        <pre class="synth" style="font-size:0.55em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module configurable_pipe #(
+    parameter <span style="color:#FFD54F;font-weight:700;">USE_SYNCHRONIZER</span> = 1
 ) (
-    input wire i_clk, i_in, output wire o_out
+    input  wire <span style="color:#4FC3F7;font-weight:700;">i_clk</span>, <span style="color:#FFB74D;font-weight:700;">i_in</span>,
+    output wire <span style="color:#66BB6A;font-weight:700;">o_out</span>
 );
     generate
-        if (USE_SYNCHRONIZER) begin : g_sync
-            reg r_meta, r_stable;
-            always @(posedge i_clk) begin
-                r_meta   &lt;= i_in;
-                r_stable &lt;= r_meta;
-            end
-            assign o_out = r_stable;
-        end else begin : g_nosync
-            assign o_out = i_in;     // direct pass-through — no flops at all
+    if (<span style="color:#FFD54F;font-weight:700;">USE_SYNCHRONIZER</span>) begin : <span style="color:#FFD54F;font-weight:700;">g_sync</span>
+        reg <span style="color:#BA68C8;font-weight:700;">r_meta</span>, <span style="color:#BA68C8;font-weight:700;">r_stable</span>;
+        always @(posedge <span style="color:#4FC3F7;font-weight:700;">i_clk</span>) begin
+            <span style="color:#BA68C8;font-weight:700;">r_meta</span>   &lt;= <span style="color:#FFB74D;font-weight:700;">i_in</span>;
+            <span style="color:#BA68C8;font-weight:700;">r_stable</span> &lt;= <span style="color:#BA68C8;font-weight:700;">r_meta</span>;
         end
+        assign <span style="color:#66BB6A;font-weight:700;">o_out</span> = <span style="color:#BA68C8;font-weight:700;">r_stable</span>;
+    end else begin : <span style="color:#FFD54F;font-weight:700;">g_nosync</span>
+        assign <span style="color:#66BB6A;font-weight:700;">o_out</span> = <span style="color:#FFB74D;font-weight:700;">i_in</span>;   // direct
+    end
     endgenerate
 endmodule</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
-        <strong>Together:</strong> <code>generate if</code> includes hardware <em>conditionally</em> based on parameter values. Setting <code>USE_SYNCHRONIZER=0</code> means the synthesizer builds no synchronizer — not even a wire. This is how you optimize instances that don't need certain features: internal signals skip the synchronizer, external signals get one.
+        <img src="diagrams/d08_generate_if_rtl.svg" alt="RTL diagram showing two compile-time configurations side-by-side. Left (green) USE_SYNCHRONIZER=1: i_in (orange) feeds r_meta FF (blue) feeding r_stable FF (blue), Q drives o_out (green). Both FFs share i_clk (blue dashed). Right (red) USE_SYNCHRONIZER=0: i_in (orange) routes directly through to o_out with no flip-flops; ghost dashed boxes indicate zero silicon. Only one branch elaborates." style="width:100%;max-width:600px;display:block;">
     </div>
-    <aside class="notes">Generate if = compile-time option. Unlike an always block with a variable condition, the unused branch produces zero silicon — not &ldquo;inactive&rdquo; hardware, zero hardware. Great for feature toggles.</aside>
+    <div class="fragment callout" style="font-size:0.62em;margin-top:0.2em;">
+        <strong>Together:</strong> <code>generate if</code> includes hardware <em>conditionally</em> at compile time. <code><span style="color:#B8860B;">USE_SYNCHRONIZER</span>=0</code> means the tool builds <em>no</em> synchronizer — not even a wire-through-an-FF. Internal signals skip the synchronizer; external signals get one.
+    </div>
+    <aside class="notes">Generate if = compile-time option. Unlike an always block with a variable condition, the unused branch produces zero silicon — not &ldquo;inactive&rdquo; hardware, zero hardware. Great for feature toggles. The diagram makes that real: the right side shows literal ghost (dashed, no fill) FF outlines to convey "this never gets built".</aside>
 </section>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Generate an N-Bit Ripple Adder</h2>
-    <p style="font-size:0.72em;">Build an N-bit ripple-carry adder from N full-adder instances. Each <code>full_adder</code> has inputs <code>a, b, cin</code> and outputs <code>sum, cout</code>. The carry chains from bit <em>i</em> to bit <em>i+1</em>.</p>
-    <div style="margin-top:0.3em;text-align:center;">
-        <svg viewBox="0 0 920 180" style="max-width:100%;height:auto;font-family:'JetBrains Mono',monospace;">
-            <!-- carry-in label -->
-            <text x="8" y="98" font-size="12" fill="#C0392B">cin</text>
-            <line x1="30" y1="95" x2="60" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
-            <defs>
-                <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#C0392B"/></marker>
-                <marker id="arrK" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#333"/></marker>
-            </defs>
-
-            <!-- FA[0] -->
-            <rect x="60" y="60" width="110" height="70" rx="6" fill="#FFF" stroke="#2E86AB" stroke-width="2"/>
-            <text x="115" y="88" font-size="13" text-anchor="middle" fill="#2E86AB" font-weight="700">full_adder</text>
-            <text x="115" y="106" font-size="11" text-anchor="middle" fill="#666">u_fa[0]</text>
-            <text x="115" y="122" font-size="10" text-anchor="middle" fill="#888">a[0] b[0]</text>
-            <!-- sum out -->
-            <line x1="115" y1="60" x2="115" y2="35" stroke="#27AE60" stroke-width="2"/>
-            <text x="115" y="28" font-size="11" text-anchor="middle" fill="#27AE60">sum[0]</text>
-            <!-- carry out 0 → cin 1 -->
-            <line x1="170" y1="95" x2="240" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
-            <text x="205" y="88" font-size="10" text-anchor="middle" fill="#C0392B">carry[1]</text>
-
-            <!-- FA[1] -->
-            <rect x="240" y="60" width="110" height="70" rx="6" fill="#FFF" stroke="#2E86AB" stroke-width="2"/>
-            <text x="295" y="88" font-size="13" text-anchor="middle" fill="#2E86AB" font-weight="700">full_adder</text>
-            <text x="295" y="106" font-size="11" text-anchor="middle" fill="#666">u_fa[1]</text>
-            <text x="295" y="122" font-size="10" text-anchor="middle" fill="#888">a[1] b[1]</text>
-            <line x1="295" y1="60" x2="295" y2="35" stroke="#27AE60" stroke-width="2"/>
-            <text x="295" y="28" font-size="11" text-anchor="middle" fill="#27AE60">sum[1]</text>
-            <line x1="350" y1="95" x2="420" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
-            <text x="385" y="88" font-size="10" text-anchor="middle" fill="#C0392B">carry[2]</text>
-
-            <!-- ellipsis -->
-            <text x="445" y="100" font-size="22" fill="#888">···</text>
-            <line x1="480" y1="95" x2="540" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
-            <text x="510" y="88" font-size="10" text-anchor="middle" fill="#C0392B">carry[N-1]</text>
-
-            <!-- FA[N-1] -->
-            <rect x="540" y="60" width="130" height="70" rx="6" fill="#FFF" stroke="#2E86AB" stroke-width="2"/>
-            <text x="605" y="88" font-size="13" text-anchor="middle" fill="#2E86AB" font-weight="700">full_adder</text>
-            <text x="605" y="106" font-size="11" text-anchor="middle" fill="#666">u_fa[N-1]</text>
-            <text x="605" y="122" font-size="10" text-anchor="middle" fill="#888">a[N-1] b[N-1]</text>
-            <line x1="605" y1="60" x2="605" y2="35" stroke="#27AE60" stroke-width="2"/>
-            <text x="605" y="28" font-size="11" text-anchor="middle" fill="#27AE60">sum[N-1]</text>
-            <line x1="670" y1="95" x2="730" y2="95" stroke="#C0392B" stroke-width="2" marker-end="url(#arr)"/>
-            <text x="755" y="98" font-size="12" fill="#C0392B">cout</text>
-
-            <!-- generate scope label -->
-            <rect x="50" y="50" width="630" height="92" rx="8" fill="none" stroke="#D4A843" stroke-width="1.5" stroke-dasharray="4 3"/>
-            <text x="365" y="160" font-size="11" text-anchor="middle" fill="#D4A843" font-weight="700">generate for (gi=0; gi&lt;N; gi=gi+1) begin : g_fa</text>
-        </svg>
-    </div>
-    <div class="fragment callout" style="font-size:0.66em;margin-top:0.2em;">
+    <p style="font-size:0.66em;margin:0;">Build an N-bit ripple-carry adder from N full-adder instances. Each <code>full_adder</code> has inputs <code><span style="color:#9C27B0;">a</span></code>, <code><span style="color:#795548;">b</span></code>, <code><span style="color:#C2185B;">cin</span></code> and outputs <code><span style="color:#2E7D32;">sum</span></code>, <code><span style="color:#C2185B;">cout</span></code>. The carry chains from bit <em>i</em> to bit <em>i+1</em>.</p>
+    <img src="diagrams/d08_ripple_adder_rtl.svg" alt="RTL block diagram of an N-bit ripple-carry adder. Three full_adder instances g_fa[0].u_fa, g_fa[1].u_fa, and g_fa[N-1].u_fa (with ellipsis between) sit inside a gold dashed generate-scope box. The carry chain (pink) flows left-to-right: cin → carry[1] → carry[2] → … → carry[N-1] → cout. Each cell takes a[i] (purple) and b[i] (brown) inputs from above and emits sum[i] (green) upward." style="width:100%;max-width:880px;display:block;margin:0.2em auto;">
+    <div class="fragment callout" style="font-size:0.55em;margin-top:0.1em;">
         <strong>Sketch:</strong>
-        <pre style="font-size:0.85em;"><code class="language-verilog">wire [N:0] carry;
-assign carry[0] = cin;
-genvar gi;
-generate for (gi = 0; gi &lt; N; gi = gi + 1) begin : g_fa
-    full_adder u_fa (
-        .a(a[gi]), .b(b[gi]), .cin(carry[gi]),
-        .sum(sum[gi]), .cout(carry[gi+1])
+        <pre style="font-size:0.95em;margin:0.2em 0 0 0;"><code class="nohighlight" style="color:#D4D4D4;">wire [<span style="color:#FFD54F;font-weight:700;">N</span>:0] <span style="color:#F48FB1;font-weight:700;">carry</span>;
+assign <span style="color:#F48FB1;font-weight:700;">carry</span>[0] = <span style="color:#F48FB1;font-weight:700;">cin</span>;
+genvar <span style="color:#FFD54F;font-weight:700;">gi</span>;
+generate for (<span style="color:#FFD54F;font-weight:700;">gi</span> = 0; <span style="color:#FFD54F;font-weight:700;">gi</span> &lt; <span style="color:#FFD54F;font-weight:700;">N</span>; <span style="color:#FFD54F;font-weight:700;">gi</span> = <span style="color:#FFD54F;font-weight:700;">gi</span> + 1) begin : <span style="color:#FFD54F;font-weight:700;">g_fa</span>
+    full_adder <span style="color:#CE93D8;font-weight:700;">u_fa</span> (
+        .a(<span style="color:#9575CD;font-weight:700;">a</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .b(<span style="color:#A1887F;font-weight:700;">b</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .cin(<span style="color:#F48FB1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]),
+        .sum(<span style="color:#66BB6A;font-weight:700;">sum</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>]), .cout(<span style="color:#F48FB1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">gi</span>+1])
     );
 end endgenerate
-assign cout = carry[N];</code></pre>
-        The carry wire of width N+1 chains the full-adders — element <code>gi+1</code> reads what element <code>gi</code> wrote. This is the classic pattern for bit-serial structures.
+assign <span style="color:#F48FB1;font-weight:700;">cout</span> = <span style="color:#F48FB1;font-weight:700;">carry</span>[<span style="color:#FFD54F;font-weight:700;">N</span>];</code></pre>
+        The carry wire of width <span style="color:#B8860B;">N+1</span> chains the full-adders — element <code>gi+1</code> reads what element <code>gi</code> wrote. Classic bit-serial pattern.
     </div>
-    <aside class="notes">Ripple carry adder is the canonical generate-for example. Notice the carry chain wire has width N+1 to accommodate the final cout. It's easy to get the carry wire width wrong by one.</aside>
+    <aside class="notes">Ripple carry adder is the canonical generate-for example. Notice the carry chain wire has width N+1 to accommodate the final cout. It's easy to get the carry wire width wrong by one. Pink in the diagram is the carry chain; green flows up as sum; purple and brown drop in as a and b operands.</aside>
 </section>
 
 <section data-background-color="#000000" class="live-demo">

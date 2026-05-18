@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 280" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="zBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="zRed"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="zOrg"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="zGrn"  markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="zGrey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#888"/></marker>
+  </defs>
+
+  <text x="440" y="20" text-anchor="middle" font-size="15" font-weight="700" fill="#333">"Works for Me" → "Reusable" — Same Hardware, Different Reach</text>
+
+  <!-- LEFT: BEFORE -->
+  <rect x="20" y="40" width="400" height="220" rx="10" fill="#FFEBEE" stroke="#C62828" stroke-width="2"/>
+  <text x="220" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#C62828">BEFORE — module btn</text>
+
+  <!-- ambiguous module -->
+  <rect x="130" y="100" width="200" height="100" rx="8" fill="#FFF" stroke="#C62828" stroke-width="2"/>
+  <text x="230" y="135" text-anchor="middle" font-size="13" font-weight="700" fill="#C62828">btn</text>
+  <text x="230" y="158" text-anchor="middle" font-size="10" fill="#888" font-style="italic">[18:0] cnt = hard-coded</text>
+  <text x="230" y="174" text-anchor="middle" font-size="10" fill="#888" font-style="italic">"20 ms @ 25 MHz"</text>
+
+  <!-- pins -->
+  <line x1="75" y1="120" x2="130" y2="120" stroke="#888" stroke-width="1.8" marker-end="url(#zGrey)"/>
+  <text x="80" y="116" font-size="11" fill="#888" font-weight="700">clk</text>
+
+  <line x1="75" y1="150" x2="130" y2="150" stroke="#888" stroke-width="1.8" marker-end="url(#zGrey)"/>
+  <text x="80" y="146" font-size="11" fill="#888" font-weight="700">rst</text>
+
+  <line x1="75" y1="180" x2="130" y2="180" stroke="#888" stroke-width="1.8" marker-end="url(#zGrey)"/>
+  <text x="88" y="176" font-size="11" fill="#888" font-weight="700">x</text>
+  <text x="78" y="194" font-size="9" fill="#C62828" font-style="italic">what is x?</text>
+
+  <line x1="330" y1="150" x2="395" y2="150" stroke="#888" stroke-width="1.8" marker-end="url(#zGrey)"/>
+  <text x="350" y="146" font-size="11" fill="#888" font-weight="700">y</text>
+  <text x="335" y="166" font-size="9" fill="#C62828" font-style="italic">what is y?</text>
+
+  <text x="220" y="240" text-anchor="middle" font-size="10" fill="#C62828" font-style="italic">Fixed clock, no parameter, signal purposes hidden</text>
+
+  <!-- RIGHT: AFTER -->
+  <rect x="460" y="40" width="400" height="220" rx="10" fill="#E8F5E9" stroke="#2E7D32" stroke-width="2"/>
+  <text x="660" y="64" text-anchor="middle" font-size="12" font-weight="700" fill="#2E7D32">AFTER — module debounce</text>
+
+  <!-- well-named module -->
+  <rect x="570" y="100" width="200" height="100" rx="8" fill="#FFF" stroke="#2E7D32" stroke-width="2"/>
+  <text x="670" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#2E7D32">debounce</text>
+  <text x="670" y="150" text-anchor="middle" font-size="10" fill="#B8860B" font-weight="700">#(CLKS_STABLE)</text>
+  <text x="670" y="172" text-anchor="middle" font-size="9" fill="#888" font-style="italic">$clog2-sized r_count</text>
+
+  <!-- pins -->
+  <line x1="515" y1="120" x2="570" y2="120" stroke="#1976D2" stroke-width="2" marker-end="url(#zBlue)"/>
+  <text x="518" y="116" font-size="11" fill="#1976D2" font-weight="700">i_clk</text>
+
+  <line x1="515" y1="150" x2="570" y2="150" stroke="#D32F2F" stroke-width="2" marker-end="url(#zRed)"/>
+  <text x="510" y="146" font-size="11" fill="#D32F2F" font-weight="700">i_reset</text>
+
+  <line x1="515" y1="180" x2="570" y2="180" stroke="#F57C00" stroke-width="2" marker-end="url(#zOrg)"/>
+  <text x="503" y="176" font-size="11" fill="#F57C00" font-weight="700">i_noisy</text>
+
+  <line x1="770" y1="150" x2="835" y2="150" stroke="#2E7D32" stroke-width="2" marker-end="url(#zGrn)"/>
+  <text x="775" y="146" font-size="11" fill="#2E7D32" font-weight="700">o_clean</text>
+
+  <text x="660" y="240" text-anchor="middle" font-size="10" fill="#2E7D32" font-style="italic">Parameter for window, named-by-function pins, documented latency</text>
+</svg>

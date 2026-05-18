@@ -1,67 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 340" font-family="Inter, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" font-family="Inter, sans-serif">
   <defs>
-    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#333"/>
+    <marker id="hArr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#37474F"/>
     </marker>
   </defs>
 
-  <text x="350" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Hierarchical Module Design — Go Board Top</text>
+  <text x="380" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Hierarchical Module Design — Go Board Top</text>
+  <text x="380" y="38" text-anchor="middle" font-size="10" fill="#777" font-style="italic">Three levels: integration · functional blocks · primitives</text>
 
-  <!-- TOP MODULE -->
-  <rect x="240" y="40" width="220" height="44" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5"/>
-  <text x="350" y="60" text-anchor="middle" font-size="12" font-weight="700" fill="#1565C0">top_button_counter</text>
-  <text x="350" y="76" text-anchor="middle" font-size="9" fill="#555">Level 0 — system integration</text>
+  <!-- LEVEL 0: top -->
+  <rect x="260" y="56" width="240" height="48" rx="8" fill="#E3F2FD" stroke="#1565C0" stroke-width="2.5"/>
+  <text x="380" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1565C0">top_button_counter</text>
+  <text x="380" y="94" text-anchor="middle" font-size="9" fill="#555" font-style="italic">Level 0 — system integration</text>
 
-  <!-- Connector lines to level 1 -->
-  <line x1="120" y1="84" x2="120" y2="120" stroke="#555" stroke-width="1.5"/>
-  <line x1="280" y1="84" x2="280" y2="120" stroke="#555" stroke-width="1.5"/>
-  <line x1="420" y1="84" x2="420" y2="120" stroke="#555" stroke-width="1.5"/>
-  <line x1="560" y1="84" x2="560" y2="120" stroke="#555" stroke-width="1.5"/>
-  <line x1="120" y1="84" x2="560" y2="84" stroke="#555" stroke-width="1.5"/>
-  <line x1="350" y1="84" x2="350" y2="84" stroke="#555" stroke-width="1.5"/>
+  <!-- bus lines -->
+  <line x1="120" y1="104" x2="120" y2="140" stroke="#37474F" stroke-width="1.5"/>
+  <line x1="280" y1="104" x2="280" y2="140" stroke="#37474F" stroke-width="1.5"/>
+  <line x1="440" y1="104" x2="440" y2="140" stroke="#37474F" stroke-width="1.5"/>
+  <line x1="610" y1="104" x2="610" y2="140" stroke="#37474F" stroke-width="1.5"/>
+  <line x1="120" y1="104" x2="610" y2="104" stroke="#37474F" stroke-width="1.5"/>
 
-  <!-- DEBOUNCE x2 -->
-  <rect x="30" y="120" width="180" height="44" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1.5"/>
-  <text x="120" y="140" text-anchor="middle" font-size="10" font-weight="600" fill="#333">debounce × 2</text>
-  <text x="120" y="155" text-anchor="middle" font-size="8" fill="#888">#(.CLKS_TO_STABLE(250000))</text>
+  <!-- LEVEL 1: 4 functional blocks, each in its own bright color -->
+  <!-- debounce ×2 (orange) -->
+  <rect x="30" y="140" width="180" height="50" rx="6" fill="#FFF3E0" stroke="#F57C00" stroke-width="2"/>
+  <text x="120" y="161" text-anchor="middle" font-size="11" font-weight="700" fill="#F57C00">debounce × 2</text>
+  <text x="120" y="178" text-anchor="middle" font-size="9" fill="#9A6F00">#(.CLKS_STABLE(250_000))</text>
 
-  <!-- EDGE DETECTOR -->
-  <rect x="220" y="120" width="120" height="44" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1.5"/>
-  <text x="280" y="140" text-anchor="middle" font-size="10" font-weight="600" fill="#333">edge_detector</text>
-  <text x="280" y="155" text-anchor="middle" font-size="8" fill="#888">press pulse gen</text>
+  <!-- edge_detector (pink) -->
+  <rect x="220" y="140" width="140" height="50" rx="6" fill="#FCE4EC" stroke="#C2185B" stroke-width="2"/>
+  <text x="290" y="161" text-anchor="middle" font-size="11" font-weight="700" fill="#C2185B">edge_detector</text>
+  <text x="290" y="178" text-anchor="middle" font-size="9" fill="#555">press pulse gen</text>
 
-  <!-- COUNTER -->
-  <rect x="350" y="120" width="140" height="44" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1.5"/>
-  <text x="420" y="140" text-anchor="middle" font-size="10" font-weight="600" fill="#333">counter_mod_n</text>
-  <text x="420" y="155" text-anchor="middle" font-size="8" fill="#888">#(.N(16))</text>
+  <!-- counter_mod_n (purple) -->
+  <rect x="370" y="140" width="140" height="50" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="440" y="161" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">counter_mod_n</text>
+  <text x="440" y="178" text-anchor="middle" font-size="9" fill="#555">#(.N(16))</text>
 
-  <!-- HEX TO 7SEG -->
-  <rect x="500" y="120" width="120" height="44" rx="6" fill="#FFF8E1" stroke="#F9A825" stroke-width="1.5"/>
-  <text x="560" y="140" text-anchor="middle" font-size="10" font-weight="600" fill="#333">hex_to_7seg</text>
-  <text x="560" y="155" text-anchor="middle" font-size="8" fill="#888">display decoder</text>
+  <!-- hex_to_7seg (teal) -->
+  <rect x="525" y="140" width="170" height="50" rx="6" fill="#E0F2F1" stroke="#00838F" stroke-width="2"/>
+  <text x="610" y="161" text-anchor="middle" font-size="11" font-weight="700" fill="#00838F">hex_to_7seg</text>
+  <text x="610" y="178" text-anchor="middle" font-size="9" fill="#555">display decoder</text>
 
-  <!-- Level 2 — inside debounce -->
-  <line x1="70" y1="164" x2="70" y2="200" stroke="#999" stroke-width="1"/>
-  <line x1="170" y1="164" x2="170" y2="200" stroke="#999" stroke-width="1"/>
-  <line x1="70" y1="190" x2="170" y2="190" stroke="#999" stroke-width="1"/>
+  <!-- LEVEL 2: inside debounce -->
+  <line x1="70" y1="190" x2="70" y2="224" stroke="#888" stroke-width="1"/>
+  <line x1="170" y1="190" x2="170" y2="224" stroke="#888" stroke-width="1"/>
+  <line x1="70" y1="220" x2="170" y2="220" stroke="#888" stroke-width="1"/>
 
-  <rect x="20" y="200" width="110" height="36" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
-  <text x="75" y="218" text-anchor="middle" font-size="9" font-weight="600" fill="#2E7D32">synchronizer</text>
-  <text x="75" y="230" text-anchor="middle" font-size="7" fill="#888">2-FF sync</text>
+  <rect x="20" y="224" width="100" height="42" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.6"/>
+  <text x="70" y="244" text-anchor="middle" font-size="10" font-weight="700" fill="#2E7D32">synchronizer</text>
+  <text x="70" y="258" text-anchor="middle" font-size="8" fill="#555">2-FF sync</text>
 
-  <rect x="140" y="200" width="110" height="36" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1"/>
-  <text x="195" y="218" text-anchor="middle" font-size="9" font-weight="600" fill="#2E7D32">counter</text>
-  <text x="195" y="230" text-anchor="middle" font-size="7" fill="#888">stability timer</text>
+  <rect x="130" y="224" width="100" height="42" rx="5" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.6"/>
+  <text x="180" y="244" text-anchor="middle" font-size="10" font-weight="700" fill="#2E7D32">counter</text>
+  <text x="180" y="258" text-anchor="middle" font-size="8" fill="#555">stability timer</text>
 
-  <!-- Level labels -->
-  <text x="680" y="66" font-size="9" fill="#1565C0" font-weight="600">Level 0</text>
-  <text x="680" y="146" font-size="9" fill="#F9A825" font-weight="600">Level 1</text>
-  <text x="680" y="222" font-size="9" fill="#2E7D32" font-weight="600">Level 2</text>
+  <!-- level labels -->
+  <text x="712" y="84" font-size="10" fill="#1565C0" font-weight="700">Level 0</text>
+  <text x="712" y="172" font-size="10" fill="#9A6F00" font-weight="700">Level 1</text>
+  <text x="712" y="250" font-size="10" fill="#2E7D32" font-weight="700">Level 2</text>
 
-  <!-- Design philosophy box -->
-  <rect x="60" y="264" width="580" height="55" rx="8" fill="#F5F5F5" stroke="#DDD" stroke-width="1"/>
-  <text x="350" y="283" text-anchor="middle" font-size="10" font-weight="600" fill="#333">Design Philosophy</text>
-  <text x="350" y="300" text-anchor="middle" font-size="9" fill="#555">Design top-down (architecture) · Implement bottom-up (test leaves first) · Integrate and verify at each level</text>
-  <text x="350" y="312" text-anchor="middle" font-size="9" fill="#888">Each module: independently understandable, testable, and reusable</text>
+  <!-- philosophy box -->
+  <rect x="60" y="290" width="640" height="58" rx="8" fill="#FAFAFA" stroke="#37474F" stroke-width="1.2"/>
+  <text x="380" y="310" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">Design Philosophy</text>
+  <text x="380" y="326" text-anchor="middle" font-size="9" fill="#555">Design top-down (architecture) · Implement bottom-up (test leaves first) · Integrate and verify at each level</text>
+  <text x="380" y="340" text-anchor="middle" font-size="9" fill="#888" font-style="italic">Each module: independently understandable, testable, and reusable</text>
 </svg>

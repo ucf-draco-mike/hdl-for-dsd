@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBlue2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aGrey" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#6E6E6E"/></marker>
+    <marker id="aGrn2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aMag" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C2185B"/></marker>
+  </defs>
+
+  <text x="360" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#C62828">Bad Hierarchy — Anonymous Names Make This Diagram Unreadable</text>
+
+  <!-- Outer top module -->
+  <rect x="20" y="40" width="680" height="160" rx="10" fill="#FFEBEE" stroke="#C62828" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="32" y="60" font-size="12" font-weight="700" fill="#C62828">module top — what do x, y, z actually carry?</text>
+
+  <!-- inputs -->
+  <text x="32" y="125" font-size="11" fill="#1976D2" font-weight="700">clk</text>
+  <line x1="52" y1="122" x2="105" y2="122" stroke="#1976D2" stroke-width="1.8" marker-end="url(#aBlue2)"/>
+  <text x="28" y="155" font-size="11" fill="#C2185B" font-weight="700">data_in</text>
+  <line x1="68" y1="151" x2="105" y2="151" stroke="#C2185B" stroke-width="1.8" marker-end="url(#aMag)"/>
+
+  <!-- submod1 -->
+  <rect x="105" y="105" width="100" height="62" rx="6" fill="#FFF" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="155" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">submod1</text>
+  <text x="155" y="148" text-anchor="middle" font-size="10" fill="#888" font-style="italic">u1 — ?</text>
+
+  <!-- wire x -->
+  <line x1="205" y1="136" x2="245" y2="136" stroke="#6E6E6E" stroke-width="1.8" marker-end="url(#aGrey)"/>
+  <text x="225" y="129" text-anchor="middle" font-size="10" fill="#6E6E6E" font-style="italic">x</text>
+
+  <!-- submod2 -->
+  <rect x="245" y="105" width="100" height="62" rx="6" fill="#FFF" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="295" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">submod2</text>
+  <text x="295" y="148" text-anchor="middle" font-size="10" fill="#888" font-style="italic">u2 — ?</text>
+
+  <!-- wire y -->
+  <line x1="345" y1="136" x2="385" y2="136" stroke="#6E6E6E" stroke-width="1.8" marker-end="url(#aGrey)"/>
+  <text x="365" y="129" text-anchor="middle" font-size="10" fill="#6E6E6E" font-style="italic">y</text>
+
+  <!-- submod3 -->
+  <rect x="385" y="105" width="100" height="62" rx="6" fill="#FFF" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="435" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">submod3</text>
+  <text x="435" y="148" text-anchor="middle" font-size="10" fill="#888" font-style="italic">u3 — ?</text>
+
+  <!-- wire z -->
+  <line x1="485" y1="136" x2="525" y2="136" stroke="#6E6E6E" stroke-width="1.8" marker-end="url(#aGrey)"/>
+  <text x="505" y="129" text-anchor="middle" font-size="10" fill="#6E6E6E" font-style="italic">z</text>
+
+  <!-- submod4 -->
+  <rect x="525" y="105" width="100" height="62" rx="6" fill="#FFF" stroke="#7B1FA2" stroke-width="1.8"/>
+  <text x="575" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#7B1FA2">submod4</text>
+  <text x="575" y="148" text-anchor="middle" font-size="10" fill="#888" font-style="italic">u4 — ?</text>
+
+  <!-- output -->
+  <line x1="625" y1="136" x2="670" y2="136" stroke="#2E7D32" stroke-width="1.8" marker-end="url(#aGrn2)"/>
+  <text x="680" y="140" font-size="11" fill="#2E7D32" font-weight="700">done</text>
+
+  <!-- positional connection callout -->
+  <text x="360" y="190" text-anchor="middle" font-size="10" fill="#C62828" font-style="italic">All ports are positional — swap an argument and the design silently changes meaning.</text>
+
+  <text x="360" y="225" text-anchor="middle" font-size="11" fill="#666" font-style="italic">Names are the documentation. Erase them and the diagram tells you nothing.</text>
+</svg>
