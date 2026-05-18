@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aOrg1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrn1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aRed1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#E65100"/></marker>
+  </defs>
+
+  <text x="360" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">always @(*) — silent latch from missing else</text>
+
+  <!-- Module box -->
+  <rect x="40" y="50" width="640" height="170" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="55" y="70" font-size="12" font-weight="700" fill="#37474F">always @(*)  begin  if (sel) out = a;  end</text>
+
+  <!-- sel input -->
+  <text x="50" y="105" font-size="12" fill="#F57C00" font-weight="700">sel</text>
+  <line x1="78" y1="100" x2="265" y2="100" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg1)"/>
+
+  <!-- a input -->
+  <text x="50" y="155" font-size="12" fill="#F57C00" font-weight="700">a</text>
+  <line x1="68" y1="150" x2="265" y2="150" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrg1)"/>
+
+  <!-- Latch (D-latch) -->
+  <rect x="270" y="80" width="180" height="90" rx="8" fill="#FFF3E0" stroke="#E65100" stroke-width="2.5"/>
+  <text x="360" y="103" text-anchor="middle" font-size="13" font-weight="700" fill="#E65100">Inferred D-Latch</text>
+  <text x="360" y="121" text-anchor="middle" font-size="10" fill="#E65100" font-style="italic">⚠ unintended</text>
+  <text x="360" y="139" text-anchor="middle" font-size="10" fill="#555">enable = sel</text>
+  <text x="360" y="155" text-anchor="middle" font-size="10" fill="#555">data  = a</text>
+
+  <!-- Output out -->
+  <line x1="450" y1="125" x2="615" y2="125" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrn1)"/>
+  <text x="622" y="129" font-size="12" fill="#2E7D32" font-weight="700">out</text>
+
+  <!-- Bug arrow -->
+  <line x1="360" y1="205" x2="360" y2="175" stroke="#E65100" stroke-width="2" marker-end="url(#aRed1)"/>
+  <text x="365" y="218" font-size="10" font-style="italic" fill="#E65100" text-anchor="middle">missing &lt;else&gt; ⇒ value must persist when sel=0 ⇒ LATCH</text>
+
+  <!-- always_comb hint -->
+  <rect x="60" y="195" width="170" height="22" rx="11" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.2"/>
+  <text x="145" y="210" text-anchor="middle" font-size="10" fill="#2E7D32" font-weight="700">always_comb ⇒ caught at compile</text>
+</svg>

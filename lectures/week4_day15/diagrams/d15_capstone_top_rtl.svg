@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBluCt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aRedCt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="aOrgCt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#F57C00"/></marker>
+    <marker id="aGrnCt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2E7D32"/></marker>
+    <marker id="aTealCt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+    <marker id="aMagCt" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C2185B"/></marker>
+  </defs>
+  <text x="400" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">capstone_top — top-level integration (reset_sync + uart_tx + capstone_fsm)</text>
+
+  <!-- Top module box -->
+  <rect x="30" y="45" width="740" height="320" rx="10" fill="#FAFAFA" stroke="#37474F" stroke-width="2" stroke-dasharray="6,4"/>
+  <text x="45" y="65" font-size="12" font-weight="700" fill="#37474F">module capstone_top</text>
+
+  <!-- inputs: i_clk -->
+  <text x="40" y="105" font-size="11" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="70" y1="100" x2="160" y2="100" stroke="#1976D2" stroke-width="2"/>
+  <line x1="160" y1="100" x2="160" y2="155" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluCt)"/>
+  <line x1="160" y1="100" x2="450" y2="100" stroke="#1976D2" stroke-width="2"/>
+  <line x1="450" y1="100" x2="450" y2="155" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluCt)"/>
+  <line x1="450" y1="100" x2="640" y2="100" stroke="#1976D2" stroke-width="2"/>
+  <line x1="640" y1="100" x2="640" y2="155" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluCt)"/>
+
+  <!-- i_switch1 → reset_sync as async rst -->
+  <text x="40" y="145" font-size="11" fill="#F57C00" font-weight="700">i_switch1</text>
+  <line x1="92" y1="140" x2="130" y2="140" stroke="#D32F2F" stroke-width="2" stroke-dasharray="3,3"/>
+  <line x1="130" y1="140" x2="155" y2="140" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRedCt)"/>
+
+  <!-- u_rst : reset_sync -->
+  <rect x="155" y="155" width="180" height="80" rx="8" fill="#FFF3E0" stroke="#C2185B" stroke-width="2"/>
+  <text x="245" y="178" text-anchor="middle" font-size="11" font-weight="700" fill="#C2185B">u_rst : reset_sync</text>
+  <text x="245" y="196" text-anchor="middle" font-size="9" fill="#888">2-FF metastability sync</text>
+  <text x="245" y="213" text-anchor="middle" font-size="9" fill="#888" font-style="italic">async-in, sync-out</text>
+
+  <!-- r_rst_sync wire to others -->
+  <line x1="335" y1="195" x2="365" y2="195" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="365" y1="195" x2="365" y2="280" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="365" y1="280" x2="440" y2="280" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aMagCt)"/>
+  <line x1="365" y1="195" x2="540" y2="195" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="540" y1="195" x2="640" y2="195" stroke="#7B1FA2" stroke-width="2"/>
+  <line x1="640" y1="195" x2="640" y2="190" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="400" y="188" font-size="9" fill="#7B1FA2" font-weight="700">r_rst_sync</text>
+
+  <!-- u_tx : uart_tx -->
+  <rect x="540" y="155" width="180" height="80" rx="8" fill="#FFF3E0" stroke="#C2185B" stroke-width="2"/>
+  <text x="630" y="178" text-anchor="middle" font-size="11" font-weight="700" fill="#C2185B">u_tx : uart_tx</text>
+  <text x="630" y="196" text-anchor="middle" font-size="9" fill="#888">CLKS_PER_BIT=217</text>
+  <text x="630" y="213" text-anchor="middle" font-size="9" fill="#888" font-style="italic">8N1 serial output</text>
+
+  <!-- u_fsm : capstone_fsm (bottom row) -->
+  <rect x="245" y="260" width="240" height="90" rx="8" fill="#FFF3E0" stroke="#C2185B" stroke-width="2.5"/>
+  <text x="365" y="282" text-anchor="middle" font-size="11" font-weight="700" fill="#C2185B">u_fsm : capstone_fsm</text>
+  <text x="365" y="300" text-anchor="middle" font-size="9" fill="#888">switches → LEDs, TX byte</text>
+  <text x="365" y="315" text-anchor="middle" font-size="9" fill="#888" font-style="italic">main control logic</text>
+
+  <!-- i_switch[4:2] to FSM -->
+  <text x="40" y="295" font-size="11" fill="#F57C00" font-weight="700">i_switch[4:2]</text>
+  <line x1="118" y1="290" x2="240" y2="290" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrgCt)"/>
+
+  <!-- clk to FSM -->
+  <line x1="160" y1="195" x2="160" y2="310" stroke="#1976D2" stroke-width="0.7" stroke-dasharray="2,2"/>
+  <line x1="160" y1="310" x2="240" y2="310" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluCt)"/>
+
+  <!-- FSM TX handshake -->
+  <line x1="485" y1="285" x2="540" y2="285" stroke="#C2185B" stroke-width="2"/>
+  <line x1="540" y1="285" x2="540" y2="230" stroke="#C2185B" stroke-width="2" marker-end="url(#aMagCt)"/>
+  <text x="495" y="278" font-size="9" fill="#C2185B" font-weight="700">w_tx_valid</text>
+
+  <line x1="485" y1="310" x2="510" y2="310" stroke="#F57C00" stroke-width="2"/>
+  <line x1="510" y1="310" x2="510" y2="225" stroke="#F57C00" stroke-width="2"/>
+  <line x1="510" y1="225" x2="540" y2="225" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrgCt)"/>
+  <text x="495" y="320" font-size="9" fill="#F57C00" font-weight="700">w_tx_data</text>
+
+  <line x1="540" y1="220" x2="500" y2="220" stroke="#C2185B" stroke-width="2"/>
+  <line x1="500" y1="220" x2="500" y2="335" stroke="#C2185B" stroke-width="2"/>
+  <line x1="500" y1="335" x2="485" y2="335" stroke="#C2185B" stroke-width="2" marker-end="url(#aMagCt)"/>
+  <text x="515" y="335" font-size="9" fill="#C2185B" font-weight="700">w_tx_busy</text>
+
+  <!-- LEDs out -->
+  <line x1="485" y1="265" x2="730" y2="265" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrnCt)"/>
+  <text x="735" y="269" font-size="11" fill="#2E7D32" font-weight="700">o_led[3:0]</text>
+
+  <!-- tx_line out -->
+  <line x1="720" y1="185" x2="755" y2="185" stroke="#2E7D32" stroke-width="2" marker-end="url(#aGrnCt)"/>
+  <text x="730" y="178" font-size="11" fill="#2E7D32" font-weight="700">o_uart_tx</text>
+</svg>

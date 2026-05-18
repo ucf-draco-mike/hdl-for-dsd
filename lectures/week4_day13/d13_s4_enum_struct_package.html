@@ -57,31 +57,33 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; <code>typedef enum</code> for FSM States</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
-        <div style="background:#fff8e1;padding:0.6em;border-radius:6px;border:2px solid #D4A843;">
-            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">VERILOG-2001</p>
-<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">localparam [1:0]
-    S_GREEN  = 2'd0,
-    S_YELLOW = 2'd1,
-    S_RED    = 2'd2;
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.2em;">
+        <div style="background:#fff8e1;padding:0.4em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">VERILOG-2001 (untyped localparam)</p>
+<pre style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">localparam [1:0]
+    <span style="color:#CE93D8;font-weight:700;">S_GREEN</span>  = 2'd0,
+    <span style="color:#CE93D8;font-weight:700;">S_YELLOW</span> = 2'd1,
+    <span style="color:#CE93D8;font-weight:700;">S_RED</span>    = 2'd2;
 
-reg [1:0] r_state, r_next;
+reg [1:0] <span style="color:#CE93D8;font-weight:700;">r_state</span>, <span style="color:#4DD0E1;font-weight:700;">r_next</span>;
 
-always @(posedge clk)
-    r_state &lt;= r_next;</code></pre>
+always @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>)
+    <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">r_next</span>;</code></pre>
+            <img src="diagrams/d13_s4_localparam_state_rtl.svg" alt="RTL diagram of the Verilog-2001 localparam approach: a list of untyped 2-bit constants (S_GREEN=0, S_YELLOW=1, S_RED=2) feeds an r_state D-flip-flop clocked by clk. A red callout notes GTKWave shows numeric values (2'd0, 2'd1, 2'd2) and that r_state can be silently assigned a constant from a different FSM." style="width:100%;max-width:420px;display:block;margin-top:0.3em;">
         </div>
-        <div style="background:#f0f8ff;padding:0.6em;border-radius:6px;border:2px solid #2E86AB;">
-            <p style="color:#2E86AB;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">SYSTEMVERILOG</p>
-<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">typedef enum logic [1:0] {
-    S_GREEN,
-    S_YELLOW,
-    S_RED
-} state_t;
+        <div style="background:#f0f8ff;padding:0.4em;border-radius:6px;border:2px solid #2E86AB;">
+            <p style="color:#2E86AB;font-size:0.6em;margin:0 0 0.2em 0;font-weight:700;">SYSTEMVERILOG (typedef enum)</p>
+<pre style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">typedef enum logic [1:0] {
+    <span style="color:#CE93D8;font-weight:700;">S_GREEN</span>,
+    <span style="color:#CE93D8;font-weight:700;">S_YELLOW</span>,
+    <span style="color:#CE93D8;font-weight:700;">S_RED</span>
+} <span style="color:#7986CB;font-weight:700;">state_t</span>;
 
-state_t r_state, r_next;
+<span style="color:#7986CB;font-weight:700;">state_t</span> <span style="color:#CE93D8;font-weight:700;">r_state</span>, <span style="color:#4DD0E1;font-weight:700;">r_next</span>;
 
-always_ff @(posedge clk)
-    r_state &lt;= r_next;</code></pre>
+always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>)
+    <span style="color:#CE93D8;font-weight:700;">r_state</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">r_next</span>;</code></pre>
+            <img src="diagrams/d13_s4_typedef_enum_state_rtl.svg" alt="RTL diagram of the SystemVerilog typedef enum approach: a state_t enum type (indigo) with named values S_GREEN, S_YELLOW, S_RED feeds an r_state D-flip-flop clocked by clk. A green callout notes GTKWave automatically shows enum names and that cross-enum assignment is rejected at compile time." style="width:100%;max-width:420px;display:block;margin-top:0.3em;">
         </div>
     </div>
     <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
@@ -92,23 +94,30 @@ always_ff @(posedge clk)
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>struct</code> for Bundled Signals</h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Bundle a UART frame into one struct
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1.1;">
+        <pre class="synth" style="font-size:0.58em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Bundle a UART frame into one struct
 typedef struct packed {
-    logic       start_bit;    // 1 bit
-    logic [7:0] data;         // 8 bits
-    logic       parity;       // 1 bit
-    logic       stop_bit;     // 1 bit
-} uart_frame_t;                // total: 11 bits, packed left-to-right
+    logic       <span style="color:#F48FB1;font-weight:700;">start_bit</span>;    // 1 bit
+    logic [7:0] <span style="color:#FFB74D;font-weight:700;">data</span>;         // 8 bits
+    logic       <span style="color:#FFD54F;font-weight:700;">parity</span>;       // 1 bit
+    logic       <span style="color:#81C784;font-weight:700;">stop_bit</span>;     // 1 bit
+} <span style="color:#BCAAA4;font-weight:700;">uart_frame_t</span>;            // 11b packed L→R
 
-// Now this is one signal, not four
-uart_frame_t frame_in, frame_out;
+// One signal, not four
+<span style="color:#BCAAA4;font-weight:700;">uart_frame_t</span> <span style="color:#CE93D8;font-weight:700;">frame_in</span>, <span style="color:#CE93D8;font-weight:700;">frame_out</span>;
 
-// Access individual fields:
-assign frame_out.data = processed_byte;
-// Or assign the whole thing:
-assign frame_out = '{start_bit: 1'b0, data: 8'hA5,
-                     parity: 1'b1, stop_bit: 1'b1};</code></pre>
-    <div class="fragment callout" style="font-size:0.72em;">
+// Field-level access:
+assign <span style="color:#CE93D8;font-weight:700;">frame_out</span>.<span style="color:#FFB74D;font-weight:700;">data</span> = <span style="color:#FFB74D;font-weight:700;">processed_byte</span>;
+// Or whole-struct literal:
+assign <span style="color:#CE93D8;font-weight:700;">frame_out</span> = '{<span style="color:#F48FB1;font-weight:700;">start_bit</span>:0, <span style="color:#FFB74D;font-weight:700;">data</span>:8'hA5,
+                     <span style="color:#FFD54F;font-weight:700;">parity</span>:1, <span style="color:#81C784;font-weight:700;">stop_bit</span>:1};</code></pre>
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d13_s4_uart_frame_struct_rtl.svg" alt="Diagram of the packed uart_frame_t struct: 11 contiguous bits with start_bit (magenta), data[7:0] (orange), parity (amber), stop_bit (green). The struct enters a consumer module as a single brown port, with individual fields still accessible via .data, .parity, .stop_bit." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.2em;">
         <strong>Together:</strong> <code>packed struct</code> means the struct lives contiguously in memory as a flat bit vector — <code>$bits(uart_frame_t)</code> = 11, and you can treat <code>frame_out</code> as an <code>[10:0]</code> value. Ports that carry frames no longer need 4 separate signals; they carry one <code>uart_frame_t</code>. Port lists shrink; bundling is explicit; individual fields are still accessible.
     </div>
     <aside class="notes">packed struct = explicit bit layout = flat wire in silicon. One port carries the whole frame. Dramatically reduces port list sprawl for protocol-heavy designs.</aside>
@@ -116,30 +125,38 @@ assign frame_out = '{start_bit: 1'b0, data: 8'hA5,
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; <code>package</code> for Shared Types</h2>
-    <pre class="synth" style="font-size:0.62em;"><code class="language-verilog">// File: uart_pkg.sv
-package uart_pkg;
-    parameter int DEFAULT_BAUD = 115200;
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.55em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// File: uart_pkg.sv
+package <span style="color:#BCAAA4;font-weight:700;">uart_pkg</span>;
+    parameter int <span style="color:#BCAAA4;font-weight:700;">DEFAULT_BAUD</span> = 115200;
 
     typedef enum logic [1:0] {
-        PARITY_NONE, PARITY_EVEN, PARITY_ODD, PARITY_MARK
-    } parity_t;
+        <span style="color:#CE93D8;font-weight:700;">PARITY_NONE</span>, <span style="color:#CE93D8;font-weight:700;">PARITY_EVEN</span>,
+        <span style="color:#CE93D8;font-weight:700;">PARITY_ODD</span>,  <span style="color:#CE93D8;font-weight:700;">PARITY_MARK</span>
+    } <span style="color:#7986CB;font-weight:700;">parity_t</span>;
 
     typedef struct packed {
-        logic       start_bit;
-        logic [7:0] data;
-        parity_t    parity_mode;   // nested enum!
-        logic       stop_bit;
-    } frame_t;
+        logic       <span style="color:#F48FB1;font-weight:700;">start_bit</span>;
+        logic [7:0] <span style="color:#FFB74D;font-weight:700;">data</span>;
+        <span style="color:#7986CB;font-weight:700;">parity_t</span>    <span style="color:#FFD54F;font-weight:700;">parity_mode</span>;   // nested!
+        logic       <span style="color:#81C784;font-weight:700;">stop_bit</span>;
+    } <span style="color:#BCAAA4;font-weight:700;">frame_t</span>;
 endpackage
 
 // File: uart_tx.sv
-import uart_pkg::*;        // now frame_t, parity_t, DEFAULT_BAUD all visible
+import <span style="color:#BCAAA4;font-weight:700;">uart_pkg</span>::*;        // frame_t, parity_t, DEFAULT_BAUD
 
-module uart_tx #(parameter BAUD = DEFAULT_BAUD) (
-    input frame_t frame_in,
+module <span style="color:#F06292;font-weight:700;">uart_tx</span> #(parameter BAUD = <span style="color:#BCAAA4;font-weight:700;">DEFAULT_BAUD</span>) (
+    input <span style="color:#BCAAA4;font-weight:700;">frame_t</span> <span style="color:#FFB74D;font-weight:700;">frame_in</span>,
     // ...
 );</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
+      </div>
+      <div class="col" style="flex:1.05;">
+        <img src="diagrams/d13_s4_uart_pkg_rtl.svg" alt="RTL diagram of uart_pkg: a brown package file holds DEFAULT_BAUD, the parity_t enum, and the frame_t packed struct. Three consumer modules (u_tx uart_tx, u_rx uart_rx, u_top capstone) all import uart_pkg::* (brown arrows) and pick up frame_t and DEFAULT_BAUD. A green annotation explains: change once, propagate everywhere." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.2em;">
         <strong>Together:</strong> One <code>package</code> file defines all shared types and constants. Every module that needs them <code>import</code>s. Change the definition in one place, everyone sees the update. This is how real codebases scale from 10 modules to 1000 without drowning.
     </div>
     <aside class="notes">Package = header file for RTL. Single source of truth for types and constants. Change once, propagate to all importers. Fundamental to scalable codebases.</aside>
@@ -147,26 +164,35 @@ module uart_tx #(parameter BAUD = DEFAULT_BAUD) (
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Design a Package for Week 3's UART</h2>
-    <p style="font-size:0.78em;">Your UART TX, UART RX, and top-level need a shared definition. Sketch a <code>uart_pkg.sv</code> for them.</p>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <pre style="font-size:0.85em;"><code class="language-verilog">package uart_pkg;
-    parameter int DEFAULT_CLKS_PER_BIT = 217;    // 25 MHz / 115200
+    <p style="font-size:0.72em;">Your UART TX, UART RX, and top-level need a shared definition. Sketch a <code>uart_pkg.sv</code> for them.</p>
+    <div class="fragment callout" style="font-size:0.62em;margin-top:0.2em;">
+      <div class="two-col">
+        <div class="col" style="flex:1.05;">
+          <pre style="font-size:0.78em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">package <span style="color:#BCAAA4;font-weight:700;">uart_pkg</span>;
+    parameter int <span style="color:#BCAAA4;font-weight:700;">DEFAULT_CLKS_PER_BIT</span> = 217;
 
     typedef enum logic [1:0] {
-        TX_IDLE, TX_START, TX_DATA, TX_STOP
-    } tx_state_t;
+        <span style="color:#CE93D8;font-weight:700;">TX_IDLE</span>, <span style="color:#CE93D8;font-weight:700;">TX_START</span>,
+        <span style="color:#CE93D8;font-weight:700;">TX_DATA</span>, <span style="color:#CE93D8;font-weight:700;">TX_STOP</span>
+    } <span style="color:#7986CB;font-weight:700;">tx_state_t</span>;
 
     typedef enum logic [1:0] {
-        RX_IDLE, RX_START, RX_DATA, RX_STOP
-    } rx_state_t;
+        <span style="color:#CE93D8;font-weight:700;">RX_IDLE</span>, <span style="color:#CE93D8;font-weight:700;">RX_START</span>,
+        <span style="color:#CE93D8;font-weight:700;">RX_DATA</span>, <span style="color:#CE93D8;font-weight:700;">RX_STOP</span>
+    } <span style="color:#7986CB;font-weight:700;">rx_state_t</span>;
 
     typedef struct packed {
-        logic       valid;
-        logic [7:0] data;
-        logic       frame_error;
-    } rx_result_t;
+        logic       <span style="color:#F48FB1;font-weight:700;">valid</span>;
+        logic [7:0] <span style="color:#FFB74D;font-weight:700;">data</span>;
+        logic       <span style="color:#F48FB1;font-weight:700;">frame_error</span>;
+    } <span style="color:#BCAAA4;font-weight:700;">rx_result_t</span>;
 endpackage</code></pre>
-        <strong>Note:</strong> Different state types for TX and RX. Import in each module; compiler prevents assigning TX state to RX state variable. Type safety.
+        </div>
+        <div class="col" style="flex:1;">
+          <img src="diagrams/d13_s4_uart_pkg_design_rtl.svg" alt="RTL diagram of the proposed uart_pkg: brown package box holds DEFAULT_CLKS_PER_BIT plus two distinct indigo enums (tx_state_t and rx_state_t). Two consumer modules (u_tx uart_tx, u_rx uart_rx) import the package; u_tx holds a tx_state_t r_state and a comment showing 'r_state = RX_IDLE' triggers a compile error — distinct enum types enable cross-module type checking." style="width:100%;max-width:420px;display:block;">
+        </div>
+      </div>
+      <strong style="display:block;margin-top:0.3em;">Note:</strong> Different state types for TX and RX. Import in each module; compiler prevents assigning TX state to RX state variable. Type safety.
     </div>
     <aside class="notes">Separate enum types for TX and RX = type safety. Compiler catches accidental mix-ups across modules. Tiny investment, large payoff.</aside>
 </section>

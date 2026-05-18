@@ -72,29 +72,36 @@
 
 <section>
     <h2><span style="color:#D4A843;">🤝</span> We Do &mdash; Cover Points in SystemVerilog</h2>
-    <pre class="synth" style="font-size:0.65em;"><code class="language-verilog">// Declare scenarios you care about
-covergroup uart_cg @(posedge clk);
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="synth" style="font-size:0.55em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">// Declare scenarios you care about
+<span style="color:#80CBC4;font-weight:700;">covergroup uart_cg</span> @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>);
     // Did we see each FSM state?
-    state_cov: coverpoint r_state {
-        bins idle  = {TX_IDLE};
-        bins start = {TX_START};
-        bins data  = {TX_DATA};
-        bins stop  = {TX_STOP};
+    <span style="color:#80CBC4;font-weight:700;">state_cov</span>: coverpoint <span style="color:#CE93D8;font-weight:700;">r_state</span> {
+        bins idle  = {<span style="color:#CE93D8;font-weight:700;">TX_IDLE</span>};
+        bins start = {<span style="color:#CE93D8;font-weight:700;">TX_START</span>};
+        bins data  = {<span style="color:#CE93D8;font-weight:700;">TX_DATA</span>};
+        bins stop  = {<span style="color:#CE93D8;font-weight:700;">TX_STOP</span>};
     }
 
     // Did we transmit each byte value?
-    byte_cov: coverpoint i_data iff (i_valid) {
+    <span style="color:#80CBC4;font-weight:700;">byte_cov</span>: coverpoint <span style="color:#FFB74D;font-weight:700;">i_data</span> iff (<span style="color:#F48FB1;font-weight:700;">i_valid</span>) {
         bins zero      = {8'h00};
         bins all_ones  = {8'hFF};
         bins typical   = {[1:254]};
     }
 
     // Cross: which byte in which state?
-    state_x_byte: cross state_cov, byte_cov;
+    <span style="color:#80CBC4;font-weight:700;">state_x_byte</span>: cross <span style="color:#80CBC4;font-weight:700;">state_cov</span>, <span style="color:#80CBC4;font-weight:700;">byte_cov</span>;
 endgroup
 
-uart_cg cov_instance = new();</code></pre>
-    <div class="fragment callout" style="font-size:0.7em;">
+<span style="color:#80CBC4;font-weight:700;">uart_cg cov_instance</span> = new();</code></pre>
+      </div>
+      <div class="col" style="flex:1.05;">
+        <img src="diagrams/d14_s4_covergroup_rtl.svg" alt="RTL diagram of the covergroup: clk (blue), r_state (purple), i_data (orange) and i_valid (magenta) from the DUT feed three teal coverpoints in uart_cg — state_cov bins each FSM state, byte_cov bins data values when i_valid is high, and state_x_byte forms their cross. The output is a coverage report listing percentage hit per bin." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <div class="fragment callout" style="font-size:0.68em;margin-top:0.2em;">
         <strong>Together:</strong> Each run reports coverage: &ldquo;state_cov 4/4 (100%), byte_cov 2/3 (67%), cross 8/12 (67%).&rdquo; Gaps tell you which tests to add: you've never sent 8'h00 in TX_STOP state, which is probably fine but worth verifying. The <em>cross</em> is where most interesting bugs live.
     </div>
     <aside class="notes">Cross coverage is where real bugs live. &ldquo;All states × all bytes&rdquo; reveals the corners no individual coverage hit would surface.</aside>

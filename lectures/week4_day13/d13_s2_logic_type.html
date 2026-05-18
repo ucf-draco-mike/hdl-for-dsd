@@ -57,43 +57,44 @@
 
 <section>
     <h2><span style="color:#D4A843;">👁️</span> I Do &mdash; Verilog-2001 vs SystemVerilog</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6em;margin-top:0.3em;">
-        <div style="background:#fff8e1;padding:0.6em;border-radius:6px;border:2px solid #D4A843;">
-            <p style="color:#D4A843;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">VERILOG-2001</p>
-<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">module counter (
-    input  wire       clk, rst,
-    output reg  [7:0] count    // reg in port
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5em;margin-top:0.2em;">
+        <div style="background:#fff8e1;padding:0.5em;border-radius:6px;border:2px solid #D4A843;">
+            <p style="color:#D4A843;font-size:0.62em;margin:0 0 0.2em 0;font-weight:700;">VERILOG-2001</p>
+<pre style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module counter (
+    input  wire       <span style="color:#4FC3F7;font-weight:700;">clk</span>, <span style="color:#EF5350;font-weight:700;">rst</span>,
+    output reg  [7:0] <span style="color:#81C784;font-weight:700;">count</span>    // reg in port
 );
     // internal:
-    wire [7:0] next_count;
+    wire [7:0] <span style="color:#4DD0E1;font-weight:700;">next_count</span>;
     reg        load_done;
 
-    always @(posedge clk)
-        if (rst) count &lt;= 0;
-        else     count &lt;= next_count;
+    always @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>)
+        if (<span style="color:#EF5350;font-weight:700;">rst</span>) <span style="color:#81C784;font-weight:700;">count</span> &lt;= 0;
+        else     <span style="color:#81C784;font-weight:700;">count</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">next_count</span>;
 
-    assign next_count = count + 1'b1;
+    assign <span style="color:#4DD0E1;font-weight:700;">next_count</span> = <span style="color:#81C784;font-weight:700;">count</span> + 1'b1;
 endmodule</code></pre>
         </div>
-        <div style="background:#f0f8ff;padding:0.6em;border-radius:6px;border:2px solid #2E86AB;">
-            <p style="color:#2E86AB;font-size:0.65em;margin:0 0 0.2em 0;font-weight:700;">SYSTEMVERILOG</p>
-<pre style="font-size:0.55em;margin:0;"><code class="language-verilog">module counter (
-    input  logic       clk, rst,
-    output logic [7:0] count
+        <div style="background:#f0f8ff;padding:0.5em;border-radius:6px;border:2px solid #2E86AB;">
+            <p style="color:#2E86AB;font-size:0.62em;margin:0 0 0.2em 0;font-weight:700;">SYSTEMVERILOG</p>
+<pre style="font-size:0.5em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module counter (
+    input  logic       <span style="color:#4FC3F7;font-weight:700;">clk</span>, <span style="color:#EF5350;font-weight:700;">rst</span>,
+    output logic [7:0] <span style="color:#81C784;font-weight:700;">count</span>
 );
-    logic [7:0] next_count;
+    logic [7:0] <span style="color:#4DD0E1;font-weight:700;">next_count</span>;
     logic       load_done;
 
-    always_ff @(posedge clk)
-        if (rst) count &lt;= 0;
-        else     count &lt;= next_count;
+    always_ff @(posedge <span style="color:#4FC3F7;font-weight:700;">clk</span>)
+        if (<span style="color:#EF5350;font-weight:700;">rst</span>) <span style="color:#81C784;font-weight:700;">count</span> &lt;= 0;
+        else     <span style="color:#81C784;font-weight:700;">count</span> &lt;= <span style="color:#4DD0E1;font-weight:700;">next_count</span>;
 
-    assign next_count = count + 1'b1;
+    assign <span style="color:#4DD0E1;font-weight:700;">next_count</span> = <span style="color:#81C784;font-weight:700;">count</span> + 1'b1;
 endmodule</code></pre>
         </div>
     </div>
-    <div class="callout" style="font-size:0.7em;margin-top:0.3em;">
-        <strong>My thinking:</strong> Exactly the same hardware. The SV version is <em>shorter</em> and <em>uniform</em>. Every signal is <code>logic</code>, regardless of whether it's driven by an <code>always</code> block or a continuous assignment. The synthesis tool figures out the rest.
+    <img src="diagrams/d13_s2_counter_rtl.svg" alt="RTL diagram of counter: clk (blue) drives the 8-bit count D-flip-flop register (purple); rst (red) selects 0 through a mux; next_count (teal) is the combinational +1 adder fed from count's feedback; count (green) is the registered output. The same hardware results whether ports are declared wire/reg or logic." style="width:100%;max-width:680px;display:block;margin:0.2em auto 0;">
+    <div class="callout" style="font-size:0.66em;margin-top:0.2em;">
+        <strong>My thinking:</strong> Exactly the same hardware (diagram applies to both). The SV version is <em>shorter</em> and <em>uniform</em>. Every signal is <code>logic</code>, regardless of whether it's driven by an <code>always</code> block or a continuous assignment.
     </div>
     <aside class="notes">Same synthesis result, different source. Uniform type = fewer decisions, less syntax pressure, less bug surface.</aside>
 </section>
@@ -118,29 +119,36 @@ endmodule</code></pre>
 
 <section>
     <h2><span style="color:#D4A843;">🧪</span> You Do &mdash; Modernize This Snippet</h2>
-    <pre class="mistake" style="font-size:0.65em;"><code class="language-verilog">module uart_tx_ctrl (
-    input  wire        clk, rst, start,
-    input  wire  [7:0] data,
-    output reg         tx_busy,
-    output wire        tx_line
+    <div class="two-col" style="margin-top:0.2em;">
+      <div class="col" style="flex:1;">
+        <pre class="mistake" style="font-size:0.6em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module uart_tx_ctrl (
+    input  wire        <span style="color:#4FC3F7;font-weight:700;">clk</span>, <span style="color:#EF5350;font-weight:700;">rst</span>, <span style="color:#F48FB1;font-weight:700;">start</span>,
+    input  wire  [7:0] <span style="color:#FFB74D;font-weight:700;">data</span>,
+    output reg         <span style="color:#F48FB1;font-weight:700;">tx_busy</span>,
+    output wire        <span style="color:#81C784;font-weight:700;">tx_line</span>
 );
-    reg  [3:0] state;
-    reg  [9:0] shifter;
-    wire       bit_tick;
-    reg  [7:0] count;
+    reg  [3:0] <span style="color:#CE93D8;font-weight:700;">state</span>;
+    reg  [9:0] <span style="color:#FFD54F;font-weight:700;">shifter</span>;
+    wire       <span style="color:#4DD0E1;font-weight:700;">bit_tick</span>;
+    reg  [7:0] <span style="color:#CE93D8;font-weight:700;">count</span>;
     // ...
 endmodule</code></pre>
-    <p style="font-size:0.78em;">Rewrite the declarations in SV style.</p>
-    <div class="fragment callout" style="font-size:0.68em;">
-        <pre style="font-size:0.88em;"><code class="language-verilog">module uart_tx_ctrl (
-    input  logic       clk, rst, start,
-    input  logic [7:0] data,
-    output logic       tx_busy, tx_line
+      </div>
+      <div class="col" style="flex:1;">
+        <img src="diagrams/d13_s2_uart_tx_ctrl_rtl.svg" alt="RTL diagram of uart_tx_ctrl: clk (blue), rst (red), start (magenta) and data[7:0] (orange) feed an FSM + datapath block with internal regs state (purple), shifter (amber), count (purple), and bit_tick wire (teal); outputs tx_busy (magenta) and tx_line (green). All wire/reg become logic in SV." style="width:100%;max-width:430px;display:block;">
+      </div>
+    </div>
+    <p style="font-size:0.72em;margin-top:0.3em;">Rewrite the declarations in SV style.</p>
+    <div class="fragment callout" style="font-size:0.66em;margin-top:0.2em;">
+        <pre style="font-size:0.85em;margin:0;"><code class="nohighlight" style="color:#D4D4D4;">module uart_tx_ctrl (
+    input  logic       <span style="color:#4FC3F7;font-weight:700;">clk</span>, <span style="color:#EF5350;font-weight:700;">rst</span>, <span style="color:#F48FB1;font-weight:700;">start</span>,
+    input  logic [7:0] <span style="color:#FFB74D;font-weight:700;">data</span>,
+    output logic       <span style="color:#F48FB1;font-weight:700;">tx_busy</span>, <span style="color:#81C784;font-weight:700;">tx_line</span>
 );
-    logic [3:0] state;
-    logic [9:0] shifter;
-    logic       bit_tick;
-    logic [7:0] count;
+    logic [3:0] <span style="color:#CE93D8;font-weight:700;">state</span>;
+    logic [9:0] <span style="color:#FFD54F;font-weight:700;">shifter</span>;
+    logic       <span style="color:#4DD0E1;font-weight:700;">bit_tick</span>;
+    logic [7:0] <span style="color:#CE93D8;font-weight:700;">count</span>;
     // ...
 endmodule</code></pre>
         Every type becomes <code>logic</code>. No decision fatigue. The synthesis tool infers flops, combinational logic, or wires based on <em>how</em> each signal is driven — not on how it's declared.

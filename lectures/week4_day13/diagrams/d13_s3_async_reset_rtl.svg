@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 220" font-family="Inter, sans-serif">
+  <defs>
+    <marker id="aBluAr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#1976D2"/></marker>
+    <marker id="aRedAr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D32F2F"/></marker>
+    <marker id="aPurAr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7B1FA2"/></marker>
+    <marker id="aTealAr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00838F"/></marker>
+  </defs>
+  <text x="270" y="22" text-anchor="middle" font-size="13" font-weight="700" fill="#9A6F00">Asynchronous Reset (ASIC, requires release-sync)</text>
+
+  <rect x="20" y="40" width="500" height="160" rx="10" fill="#FFF8E1" stroke="#D4A843" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- clk -->
+  <text x="30" y="80" font-size="11" fill="#1976D2" font-weight="700">clk</text>
+  <line x1="56" y1="75" x2="370" y2="75" stroke="#1976D2" stroke-width="2"/>
+  <line x1="370" y1="75" x2="370" y2="100" stroke="#1976D2" stroke-width="2" marker-end="url(#aBluAr)"/>
+
+  <!-- r_next direct into D -->
+  <text x="30" y="130" font-size="11" fill="#00838F" font-weight="700">r_next</text>
+  <line x1="68" y1="125" x2="320" y2="125" stroke="#00838F" stroke-width="2" marker-end="url(#aTealAr)"/>
+
+  <!-- rst into FF's async-reset pin -->
+  <text x="30" y="170" font-size="11" fill="#D32F2F" font-weight="700">rst</text>
+  <line x1="56" y1="165" x2="380" y2="165" stroke="#D32F2F" stroke-width="2"/>
+  <line x1="380" y1="165" x2="380" y2="155" stroke="#D32F2F" stroke-width="2" marker-end="url(#aRedAr)"/>
+
+  <!-- DFF with R input -->
+  <rect x="320" y="100" width="120" height="60" rx="6" fill="#F3E5F5" stroke="#7B1FA2" stroke-width="2"/>
+  <text x="380" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="#7B1FA2">r_state</text>
+  <text x="380" y="142" text-anchor="middle" font-size="10" fill="#7B1FA2">D-FF + async R</text>
+  <text x="335" y="174" font-size="9" fill="#D32F2F" font-weight="700">R</text>
+
+  <line x1="440" y1="130" x2="510" y2="130" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPurAr)"/>
+  <text x="497" y="120" font-size="10" fill="#7B1FA2" font-weight="700">r_state</text>
+
+  <text x="270" y="197" text-anchor="middle" font-size="9" fill="#555" font-style="italic">reset fires immediately; release-edge synchronizer required for clean recovery</text>
+</svg>
