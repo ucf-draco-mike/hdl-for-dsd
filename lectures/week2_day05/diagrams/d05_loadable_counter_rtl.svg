@@ -24,9 +24,10 @@
   <text x="440" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#333">Loadable Counter — RTL Block Diagram</text>
   <text x="440" y="40" text-anchor="middle" font-size="10" fill="#777" font-style="italic">2:1 MUX picks i_load_val or count+1; reset has top priority on the register</text>
 
-  <!-- i_load_val coming in from top (teal) -->
-  <text x="265" y="62" text-anchor="middle" font-size="11" fill="#C2185B" font-weight="700">i_load_val</text>
-  <line x1="265" y1="68" x2="265" y2="108" stroke="#C2185B" stroke-width="1.6" marker-end="url(#arrTeal)"/>
+  <!-- i_load_val routed in from the left so it enters the MUX large/long side at input "1" -->
+  <text x="175" y="62" text-anchor="middle" font-size="11" fill="#C2185B" font-weight="700">i_load_val</text>
+  <line x1="175" y1="68" x2="175" y2="108" stroke="#C2185B" stroke-width="1.6"/>
+  <line x1="175" y1="108" x2="225" y2="108" stroke="#C2185B" stroke-width="1.6" marker-end="url(#arrTeal)"/>
 
   <!-- +1 adder -->
   <rect x="120" y="148" width="70" height="36" rx="4" fill="#E8F5E9" stroke="#2E7D32" stroke-width="1.8"/>
@@ -39,8 +40,6 @@
   <text x="231" y="108" font-size="9" fill="#555" font-weight="700">1</text>
   <text x="231" y="162" font-size="9" fill="#555" font-weight="700">0</text>
 
-  <!-- MUX top input fed from i_load_val -->
-  <line x1="265" y1="108" x2="263" y2="108" stroke="#C2185B" stroke-width="1.6"/>
 
   <!-- MUX out → Register D -->
   <line x1="273" y1="130" x2="340" y2="130" stroke="#333" stroke-width="1.5"/>
@@ -80,10 +79,10 @@
   <line x1="249" y1="58" x2="249" y2="85" stroke="#7B1FA2" stroke-width="1.6" marker-end="url(#arrPurple)"/>
   <text x="255" y="80" font-size="9" fill="#7B1FA2" font-style="italic">sel</text>
 
-  <!-- i_clk -->
-  <text x="60" y="282" text-anchor="end" font-size="11" fill="#1976D2" font-weight="700">i_clk</text>
-  <line x1="65" y1="279" x2="424" y2="279" stroke="#1976D2" stroke-width="1.6"/>
-  <line x1="424" y1="279" x2="424" y2="310" stroke="#1976D2" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+  <!-- i_clk routed below the Register so the wire does not pass through it -->
+  <text x="60" y="328" text-anchor="end" font-size="11" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="65" y1="325" x2="424" y2="325" stroke="#1976D2" stroke-width="1.6"/>
+  <line x1="424" y1="325" x2="424" y2="310" stroke="#1976D2" stroke-width="1.6" marker-end="url(#arrBlue)"/>
 
   <!-- i_reset -->
   <text x="60" y="362" text-anchor="end" font-size="11" fill="#D32F2F" font-weight="700">i_reset</text>

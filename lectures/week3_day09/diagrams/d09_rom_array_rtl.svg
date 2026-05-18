@@ -26,11 +26,11 @@
   <text x="525" y="155" text-anchor="middle" font-size="10" fill="#7B1FA2">D-FF reg</text>
   <text x="525" y="170" text-anchor="middle" font-size="9" fill="#888" font-style="italic">posedge i_clk</text>
 
-  <!-- i_clk -->
-  <text x="60" y="105" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
-  <line x1="92" y1="100" x2="525" y2="100" stroke="#1976D2" stroke-width="2"/>
-  <line x1="525" y1="100" x2="525" y2="115" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
-  <line x1="320" y1="100" x2="320" y2="95" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <!-- i_clk routed above the mem[] block so the bus does not pass through it -->
+  <text x="60" y="90" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="92" y1="85" x2="525" y2="85" stroke="#1976D2" stroke-width="2"/>
+  <line x1="525" y1="85" x2="525" y2="115" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
+  <line x1="320" y1="85" x2="320" y2="95" stroke="#1976D2" stroke-width="2" marker-end="url(#aBlu)"/>
 
   <!-- i_addr -->
   <text x="60" y="148" font-size="12" fill="#F57C00" font-weight="700">i_addr</text>

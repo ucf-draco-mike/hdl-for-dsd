@@ -78,12 +78,12 @@
   <line x1="800" y1="260" x2="675" y2="260" stroke="#2E7D32" stroke-width="1.5" marker-end="url(#aGrn)"/>
   <text x="803" y="235" font-size="8" fill="#2E7D32" font-style="italic">!busy</text>
 
-  <!-- AND result → fifo rd & tx valid -->
-  <line x1="615" y1="240" x2="615" y2="200" stroke="#C2185B" stroke-width="1.5" marker-end="url(#aMag)"/>
-  <text x="618" y="225" font-size="8" fill="#C2185B" font-weight="700">tx.valid</text>
+  <!-- AND result → fifo rd & tx valid, arrows terminate at the rect bottom edges (y=220) -->
+  <line x1="615" y1="240" x2="615" y2="220" stroke="#C2185B" stroke-width="1.5" marker-end="url(#aMag)"/>
+  <text x="618" y="232" font-size="8" fill="#C2185B" font-weight="700">tx.valid</text>
 
   <line x1="555" y1="250" x2="500" y2="250" stroke="#C2185B" stroke-width="1.5"/>
-  <line x1="500" y1="250" x2="500" y2="200" stroke="#C2185B" stroke-width="1.5" marker-end="url(#aMag)"/>
+  <line x1="500" y1="250" x2="500" y2="220" stroke="#C2185B" stroke-width="1.5" marker-end="url(#aMag)"/>
   <text x="463" y="240" font-size="8" fill="#C2185B" font-weight="700">fifo.rd</text>
 
   <!-- tx out -->

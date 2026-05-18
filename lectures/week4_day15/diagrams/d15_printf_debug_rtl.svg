@@ -57,13 +57,12 @@
   <line x1="330" y1="135" x2="370" y2="135" stroke="#7B1FA2" stroke-width="0"/>
   <line x1="350" y1="135" x2="370" y2="135" stroke="#7B1FA2" stroke-width="2" marker-end="url(#aPurPd)"/>
 
-  <!-- ASCII -> o_tx_data -->
+  <!-- ASCII -> o_tx_data, routed around uart_tx so the wire terminates at its left edge -->
   <line x1="530" y1="155" x2="600" y2="155" stroke="#F57C00" stroke-width="2"/>
-  <line x1="600" y1="155" x2="600" y2="220" stroke="#F57C00" stroke-width="2"/>
-  <line x1="600" y1="220" x2="500" y2="220" stroke="#F57C00" stroke-width="2"/>
-  <line x1="500" y1="220" x2="500" y2="245" stroke="#F57C00" stroke-width="2"/>
-  <line x1="500" y1="245" x2="430" y2="245" stroke="#F57C00" stroke-width="0"/>
-  <line x1="500" y1="245" x2="430" y2="245" stroke="#F57C00" stroke-width="2"/>
+  <line x1="600" y1="155" x2="600" y2="215" stroke="#F57C00" stroke-width="2"/>
+  <line x1="600" y1="215" x2="420" y2="215" stroke="#F57C00" stroke-width="2"/>
+  <line x1="420" y1="215" x2="420" y2="245" stroke="#F57C00" stroke-width="2"/>
+  <line x1="420" y1="245" x2="430" y2="245" stroke="#F57C00" stroke-width="2" marker-end="url(#aOrgPd)"/>
 
   <!-- u_tx -->
   <rect x="430" y="225" width="180" height="60" rx="8" fill="#FFF3E0" stroke="#C2185B" stroke-width="2"/>

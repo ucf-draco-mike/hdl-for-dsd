@@ -30,11 +30,11 @@
   <text x="620" y="120" text-anchor="middle" font-size="9" fill="#888">1-bit pulse reg</text>
   <text x="620" y="134" text-anchor="middle" font-size="9" fill="#888" font-style="italic">high for 1 cycle</text>
 
-  <!-- inputs -->
-  <text x="50" y="100" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
-  <line x1="86" y1="95" x2="700" y2="95" stroke="#1976D2" stroke-width="2"/>
-  <line x1="290" y1="95" x2="290" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
-  <line x1="620" y1="95" x2="620" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <!-- inputs — i_clk lifted above all top-aligned rects so the bus does not pass through them -->
+  <text x="50" y="75" font-size="12" fill="#1976D2" font-weight="700">i_clk</text>
+  <line x1="86" y1="70" x2="700" y2="70" stroke="#1976D2" stroke-width="2"/>
+  <line x1="290" y1="70" x2="290" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
+  <line x1="620" y1="70" x2="620" y2="80" stroke="#1976D2" stroke-width="1.5" marker-end="url(#aBlu)"/>
 
   <!-- cnt → compare -->
   <line x1="380" y1="100" x2="420" y2="100" stroke="#7B1FA2" stroke-width="1.5" marker-end="url(#aPur)"/>
